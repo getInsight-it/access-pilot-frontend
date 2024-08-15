@@ -28,6 +28,7 @@ import { Textarea } from '../ui/textarea';
 import { SuccessModal } from '../modal/success-modal';
 import FileUpload from '../ui/file-upload_V1';
 import { FileUploadDemo } from '../FileUploadDemo';
+import { StepLoader } from '../steploader/StepLoader';
 export const IMG_MAX_LIMIT = 3;
 const formSchema = z.object({
   name: z
@@ -230,6 +231,7 @@ export const RequestAccessForm: React.FC<RequestAccessFormProps> = ({
               <Button disabled={loading} className="hidden lg:block mr-auto mt-6" type="submit" onClick={() => setOpen(true)}>
                 {action}
               </Button>
+              
 
             </div>
 
@@ -243,6 +245,7 @@ export const RequestAccessForm: React.FC<RequestAccessFormProps> = ({
           <Button disabled={loading} className="block lg:hidden ml-auto mt-8" type="submit" onClick={() => setOpen(true)}>
             {action}
           </Button>
+          <StepLoader />
         
         </form>
       </Form>
