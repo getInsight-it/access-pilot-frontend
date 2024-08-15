@@ -1,5 +1,4 @@
 import { MotionConfig, motion } from "framer-motion";
-import { Card } from "./Card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { CardShine } from "../CardShine";
@@ -148,9 +147,9 @@ const Testimonial = ({
                 <p className="font-normal text-sm text-gray-50 relative z-10 mt-1 mb-4">
                   {role}
                 </p>
-                <h2 className="font-medium rounded text-center bg-blue-200 text-blue-800 text-md relative z-10">
+                {/* <h2 className="font-medium rounded text-center bg-blue-200 text-blue-800 text-md relative z-10">
                   {status}
-                </h2>
+                </h2> */}
                 <p className="font-normal text-sm text-gray-50 relative z-10 mt-2">
                   {date}
                 </p>

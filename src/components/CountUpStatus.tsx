@@ -4,7 +4,7 @@ import { animate, useInView } from "framer-motion";
 
 export const CountUpStats = () => {
   return (
-    <div className="mx-auto max-w-3xl px-0 py-20">
+    <div className="mx-auto max-w-3xl px-0 py-0 md:py-20">
       {/* <h2 className="mb-8 text-center text-base text-indigo-900 sm:text-lg md:mb-16">
         BUILD TRUST WITH YOUR USERS WITH A
         <span className="text-indigo-500"> BEAUTIFUL LANDING PAGE</span>
@@ -71,7 +71,7 @@ const Stat = ({ num, suffix, prefix, decimals = 0, prefixColor, suffixColor, sub
 
   return (
     <div className="flex w-72 flex-col items-center py-8 sm:py-0">
-      <p className="mb-2 text-center text-3xl xl:text-4xl 2xl:text-5xl font-semibold">
+      <p className="mb-2 text-center text-5xl xl:text-5xl 2xl:text-7xl font-semibold">
         {/* Aplica cor ao prefixo */}
         <span className={prefixColor}>{prefix}</span>
         {/* Número animado */}
@@ -79,7 +79,7 @@ const Stat = ({ num, suffix, prefix, decimals = 0, prefixColor, suffixColor, sub
         {/* Aplica cor ao sufixo */}
         <span className={suffixColor}>{suffix}</span>
       </p>
-      <p className="max-w-24 text-md text-center text-neutral-600 dark:text-neutral-300">{subheading}</p>
+      <p className="max-w-24 text-sm lg:text-md text-center text-neutral-600 dark:text-neutral-300">{subheading}</p>
     </div>
   );
 };

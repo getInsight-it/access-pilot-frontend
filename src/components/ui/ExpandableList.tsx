@@ -151,10 +151,10 @@ export function ExpandableList() {
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
             onClick={() => setActive(card)}
-            className="p-4 grid grid-cols-[1fr_80px_60px] items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            className="px-0 py-4 md:px-4 md:py-4 grid grid-cols-[1fr_80px_60px] items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
           >
             <div className="flex gap-4  md:flex-row">
-              <motion.div layoutId={`image-${card.title}-${id}`}>
+              <motion.div className="hidden md:block" layoutId={`image-${card.title}-${id}`}>
                 <Image
                   width={100}
                   height={100}

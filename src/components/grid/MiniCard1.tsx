@@ -7,16 +7,27 @@ import Button from "../button";
 import { CountUpStats } from "../CountUpStatus";
 import { Stripe } from "../stripe/Stripe";
 
+// export const MiniCard1 = () => {
+//   return (
+//     <div className="col-span-2 h-full md:h-[375px] md:col-span-1">
+//       <Card>
+//         <div className=" w-fit">
+//           <CalloutChip>#2</CalloutChip>
+//         </div>
+//         <CountUpStats />
+//         <Ping />
+//       </Card>
+//     </div>
+//   );
+// };
+
 export const MiniCard1 = () => {
   return (
-    <div className="col-span-2 h-full md:h-[375px] md:col-span-1">
+    <div className="col-span-2  md:col-span-2">
       <Card>
         <div className=" w-fit">
           <CalloutChip>#2</CalloutChip>
         </div>
-        {/* <p className="mb-1.5 text-center text-2xl">Highlight something cool</p> */}
-        {/* <p className="mb-6 text-center text-zinc-400">Short and sweet.</p> */}
-        {/* <button>Call to action</button> */}
         <CountUpStats />
 
         {/* <Stripe /> */}

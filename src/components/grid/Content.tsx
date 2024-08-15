@@ -17,7 +17,7 @@ const Grid = () => (
     <Tower />
     <div className="col-span-1 grid grid-cols-2 gap-4 lg:col-span-8 lg:grid-cols-2">
       <MiniCard1 />
-      <MiniCard2 />
+      {/* <MiniCard2 /> */}
       <LongCard />
     </div>
   </div>

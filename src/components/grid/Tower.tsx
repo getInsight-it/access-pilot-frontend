@@ -8,7 +8,7 @@ import { Award, Bell, Grid, Home, Mail, Settings, User } from "lucide-react";
 
 export const Tower = () => {
   return (
-    <div className="col-span-1 h-[600px] lg:col-span-4 lg:h-[845px]">
+    <div className="col-span-1 h-[600px] lg:col-span-4 lg:h-[818px] 2xl:h-[842px]">
       <Card>
         <PulseLine />
 

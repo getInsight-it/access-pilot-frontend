@@ -210,7 +210,7 @@ const EmptyState: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <Canvas className="empty-state-canvas" shadows camera={{ position: [0, 0, 0], fov: 135 }}>
+        <Canvas className="empty-state-canvas" shadows>
           <fog attach="fog" args={[fogColor, 10, 40]} />
           <color attach="background" args={[backgroundColor]} />
           <Environment preset={environmentPreset} />
@@ -225,6 +225,7 @@ const EmptyState: React.FC = () => {
             shadow-camera-right={20}
             shadow-camera-bottom={-20}
             shadow-camera-left={-20}
+            name="followLight"
           />
           <ambientLight intensity={0.2} />
 
@@ -232,7 +233,15 @@ const EmptyState: React.FC = () => {
             <Physics timeStep="vary" paused={!ready}>
               <Terreno />
               <KeyboardControls map={keyboardMap}>
-                <Ecctrl debug={false} animated>
+                <Ecctrl
+                  debug={false}
+                  animated
+                  mode="FixedCamera"
+                  followLight={true}
+                  // characterInitDir={Math.PI} // Character initial facing direction (in rad)
+                  camInitDis={-8.5} // camera intial position
+                  // camMinDis={-1.8} // camera zoom in closest position
+                >
                   <EcctrlAnimation characterURL={characterURL} animationSet={animationSet}>
                     <Piloto />
                   </EcctrlAnimation>

@@ -155,10 +155,10 @@ export const navItems: NavItem[] = [
     label: 'Dashboard'
   },
   {
-    title: 'Minhas solicitações de acesso',
+    title: 'Minhas solicitações',
     href: '/dashboard/my-access-requests',
     icon: 'book',
-    label: 'Minhas solicitações de acesso'
+    label: 'Minhas solicitações'
   },
   {
     title: 'Solicitar acesso',
