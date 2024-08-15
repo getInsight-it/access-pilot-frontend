@@ -1,8 +1,4 @@
 import { MotionConfig, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { CardShine } from "../CardShine";
-import Cracha from "../canvas/Cracha";
 
 const Testimonial = ({
   imgSrc,
@@ -38,10 +34,6 @@ const Testimonial = ({
       }}
       className="overflow-hidden"
     >
-
-      {/* <div className="w-full h-[720px]">
-        <Cracha />
-      </div> */}
 
       <div className="badge-container border-t lg:border-none rounded-xl max-w-full lg:max-w-[300px] ">
         <div className="event-badge mx-auto">

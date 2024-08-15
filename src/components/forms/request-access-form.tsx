@@ -245,7 +245,8 @@ export const RequestAccessForm: React.FC<RequestAccessFormProps> = ({
           <Button disabled={loading} className="block lg:hidden ml-auto mt-8" type="submit" onClick={() => setOpen(true)}>
             {action}
           </Button>
-          <StepLoader />
+
+          {/* <StepLoader /> */}
         
         </form>
       </Form>

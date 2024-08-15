@@ -98,7 +98,7 @@ canvas {
   height: 500px;
 }
 
-.canvasShift canvas, .cracha canvas, .empty-state-canvas canvas {
+.canvasShift canvas, .empty-state-canvas canvas {
   width: 100%;
   height: 100vh;
 }
