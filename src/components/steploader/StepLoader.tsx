@@ -73,23 +73,12 @@ const loadingStates = [
     text: "Conexão estabelecida",
   },
   {
-    text: "Encontrou com Putin",
+    text: "A solicitação foi criada!",
   },
   {
-    text: "Ele fez sabão",
+    text: "Completo",
   },
-  {
-    text: "Fomos pro bar",
-  },
-  {
-    text: "Iniciou uma briga",
-  },
-  {
-    text: "Curtimos",
-  },
-  {
-    text: "Importação concluída!",
-  },
+
 ];
 
 export function StepLoader() {
@@ -115,13 +104,6 @@ export function StepLoader() {
       >
         Clique para carregar
       </Button>
-
-      {/* <Button
-        type="button"
-        onClick={() => setLoading(true)}
-      >
-        Clique para carregar
-      </Button> */}
 
       {loading && (
         <button

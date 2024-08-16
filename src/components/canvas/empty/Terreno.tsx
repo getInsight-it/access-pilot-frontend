@@ -11,7 +11,7 @@ export default function Terreno(props: MapProps) {
   const { nodes, materials } = useGLTF('/terreno.glb') as any;
 
   const { theme } = useTheme();
-  const terrainMaterial = theme === 'dark' ? '#ff0000' : '#ffffff';
+  const terrainMaterial = theme === 'dark' ? '#333' : '#ffffff';
 
   return (
     <RigidBody type="fixed" colliders="trimesh" ccd>

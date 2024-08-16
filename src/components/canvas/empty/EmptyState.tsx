@@ -134,10 +134,10 @@
 'use client';
 import { Canvas } from '@react-three/fiber';
 import { Physics, RigidBody } from '@react-three/rapier';
-import { Environment, KeyboardControls } from '@react-three/drei';
+import { Environment, KeyboardControls, Loader } from '@react-three/drei';
 import { Suspense, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import Ecctrl, { EcctrlAnimation } from 'ecctrl';
+import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from 'ecctrl';
 import { motion } from "framer-motion";
 
 import Piloto from './Piloto';
@@ -170,7 +170,7 @@ const EmptyState: React.FC = () => {
   // Definir cores e ambiente baseados no tema
   const fogColor = theme === 'dark' ? '#1f1f1f' : '#ffffff';
   const backgroundColor = theme === 'dark' ? '#1f1f1f' : '#ffffff'; // Exemplo de sky blue para light theme
-  const environmentPreset = theme === 'dark' ? 'night' : 'park';
+  const environmentPreset = theme === 'dark' ? 'warehouse' : 'park';
   // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
   
 
@@ -210,6 +210,7 @@ const EmptyState: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
+        {/* <EcctrlJoystick buttonNumber={5} /> */}
         <Canvas className="empty-state-canvas" shadows>
           <fog attach="fog" args={[fogColor, 10, 40]} />
           <color attach="background" args={[backgroundColor]} />
@@ -229,14 +230,16 @@ const EmptyState: React.FC = () => {
           />
           <ambientLight intensity={0.2} />
 
-          <Suspense fallback={null}>
+          <Suspense
+            fallback={null}
+          >
             <Physics timeStep="vary" paused={!ready}>
-              <Terreno />
+              <Terreno position={[-13,0,0]} />
               <KeyboardControls map={keyboardMap}>
                 <Ecctrl
                   debug={false}
                   animated
-                  mode="FixedCamera"
+                  // mode="FixedCamera" // Activate different ecctrl modes ("CameraBasedMovement" | "FixedCamera" | "PointToMove")
                   followLight={true}
                   // characterInitDir={Math.PI} // Character initial facing direction (in rad)
                   camInitDis={-8.5} // camera intial position
@@ -250,10 +253,10 @@ const EmptyState: React.FC = () => {
             </Physics>
           </Suspense>
         </Canvas>
+        <Loader />
       </motion.div>
     </>
   );
 };
 
 export default EmptyState;
-

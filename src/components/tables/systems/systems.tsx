@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
   };
 }
 
-export function RequestsTable<TData, TValue>({
+export function SystemsTable<TData, TValue>({
   columns,
   data,
   pageNo,
@@ -212,6 +212,7 @@ export function RequestsTable<TData, TValue>({
             <SelectItem value="rejeitado">Rejeitado</SelectItem>
           </SelectContent>
         </Select> */}
+        {/* <Input type="email" placeholder="Pesquisar..." /> */}
         <Input
           placeholder={`Pesquisar ${searchKey}...`}
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}

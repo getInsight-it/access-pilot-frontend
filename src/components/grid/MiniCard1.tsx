@@ -42,7 +42,7 @@ const LOOP_DURATION = 6;
 
 const Ping = () => {
   return (
-    <div className="absolute -bottom-16 left-1/2 w-fit -translate-x-1/2 translate-y-1/2">
+    <div className="absolute -bottom-24 lg:-bottom-16 left-1/2 w-fit -translate-x-1/2 translate-y-1/2">
       <Link className="relative z-10 text-7xl text-blue-200" />
       <Band delay={0} />
       <Band delay={LOOP_DURATION * 0.25} />

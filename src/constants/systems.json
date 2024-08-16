@@ -1,0 +1,93 @@
+[
+    {
+      "id": 1,
+      "name": "CRM",
+      "description": "Sistema de gerenciamento de relacionamento com o cliente",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 2,
+      "name": "Portal RH",
+      "description": "Sistema de Gestão de Recursos Humanos",
+      "status": "Não gerenciado"
+    },
+    {
+      "id": 3,
+      "name": "Painel de Daros",
+      "description": "Gerenciar dados",
+      "status": "Não gerenciado"
+    },
+    {
+      "id": 4,
+      "name": "Painel de Análise",
+      "description": "Gerenciar dados",
+      "status": "Não gerenciado"
+    },
+    {
+      "id": 5,
+      "name": "CRM",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 6,
+      "name": "Portal RH",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 7,
+      "name": "Portal de Dados",
+      "description": "Gerenciar dados",
+      "status": "Não gerenciado"
+    },
+    {
+      "id": 8,
+      "name": "CRM",
+      "description": "Gerenciar dados",
+      "status": "Não gerenciado"
+    },
+    {
+      "id": 9,
+      "name": "CRM",
+      "description": "Gerenciar dados",
+      "status": "Rejeitado"
+    },
+    {
+      "id": 10,
+      "name": "Portal de Dados",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 11,
+      "name": "CRM",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 12,
+      "name": "Portal de Dados",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 13,
+      "name": "Portal de Análise",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 14,
+      "name": "CRM",
+      "description": "Gerenciar dados",
+      "status": "Gerenciado"
+    },
+    {
+      "id": 15,
+      "name": "Portal de Dados",
+      "description": "Gerenciar dados",
+      "status": "Rejeitado"
+    }
+  ]
+  

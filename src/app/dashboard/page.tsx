@@ -20,7 +20,7 @@ export default function page() {
     <ScrollArea className="h-full">
       
       <Stripe />
-
+      
       {/* admin dashboard */}
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center justify-between space-y-2">
@@ -33,6 +33,7 @@ export default function page() {
           <TabsDemo />
           <PieGraph />
           <BarGraph />
+          <AreaGraph />
         </div> */}
 
         <FeatureGrid />

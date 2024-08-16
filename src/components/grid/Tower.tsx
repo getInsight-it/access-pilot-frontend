@@ -171,7 +171,7 @@ const MockupMain = () => {
   return (
     <div className="relative w-full">
       <div className="relative z-0 w-full p-4">
-        <div className="w-full border-b pb-2 text-xs font-semibold uppercase text-zinc-500">
+        <div className="w-full border-b pb-2 mb-3 text-xs font-semibold uppercase text-zinc-500">
           <span>Role</span>
         </div>
         {users.map((u, i) => (
@@ -185,7 +185,7 @@ const MockupMain = () => {
             style={{
               zIndex: i === users.length - 1 ? 0 : 1,
             }}
-            className="relative flex items-center gap-2 py-2 text-xs"
+            className="relative flex items-center gap-2 py-2 text-xs mb-1"
           >
             <motion.img
               animate={{
