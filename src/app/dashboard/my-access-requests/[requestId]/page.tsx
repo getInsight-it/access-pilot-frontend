@@ -25,3 +25,18 @@ export default function Page() {
     </ScrollArea>
   );
 }
+
+
+// Esta função gera os parâmetros estáticos para cada solicitação de acesso
+export async function generateStaticParams() {
+  // Simula a busca de solicitações de acesso da sua API ou base de dados
+  const accessRequests = [
+    { _id: '1', requester: 'Carlos', system: 'Sistema ABC', role: 'Administrador', status: 'Gerenciado' },
+    { _id: '2', requester: 'Ana', system: 'Sys XYZ', role: 'Usuário', status: 'Não gerenciado' }
+  ];
+
+  // Mapeia as solicitações para gerar os parâmetros de rota estática
+  return accessRequests.map((request) => ({
+    requestId: request._id,
+  }));
+}

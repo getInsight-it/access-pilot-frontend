@@ -11,7 +11,7 @@ type System = {
   status: string;
 };
 
-const accessRequests: System[] = Systems as System[];
+const systems: System[] = Systems as System[];
 
 interface StatusColors {
   [key: string]: string;

@@ -4,6 +4,7 @@ import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import Link from 'next/link';
 import Notifications from '../Notifications';
+import Image from 'next/image';
 
 export default function Header() {
   return (
@@ -14,8 +15,25 @@ export default function Header() {
             href={'#'}
             target="_blank"
           >
-            <img className="mx-2 h-20 w-60 block dark:hidden" src="/accesspilot.svg" />
-            <img className="mr-2 h-20 w-60 hidden dark:block" src="/accesspilot-w.svg" />
+            {/* <img className="mx-2 h-20 w-60 block dark:hidden" src="/accesspilot.svg" /> */}
+            {/* <img className="mr-2 h-20 w-60 hidden dark:block" src="/accesspilot-w.svg" /> */}
+
+            <Image
+              className="mx-2 h-20 w-60 block dark:hidden"
+              src="/accesspilot.svg"
+              width={500}
+              height={500}
+              alt="Imagem do sistema"
+            />
+
+            <Image
+              className="mr-2 h-20 w-60 hidden dark:block"
+              src="/accesspilot-w.svg"
+              width={500}
+              height={500}
+              alt="Imagem do sistema"
+            />
+            
           </Link>
         </div>
         <div className={cn('block lg:!hidden')}>

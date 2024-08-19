@@ -30,3 +30,22 @@ export default function Page() {
     </ScrollArea>
   );
 }
+
+export async function generateStaticParams() {
+  // Simula a busca dos roles da sua API ou base de dados
+  const roles = [
+    { _id: '1', name: 'Administrador' },
+    { _id: '2', name: 'Gerente' },
+    { _id: '3', name: 'Usuário' }
+  ];
+
+  // Mapeia os roles para gerar os parâmetros de rota estática
+  const roleParams = roles.map((role) => ({
+    roleId: role._id,
+  }));
+
+  // Adiciona o parâmetro "new" para a página de criação
+  const newParam = { roleId: 'new' };
+
+  return [...roleParams, newParam];
+}

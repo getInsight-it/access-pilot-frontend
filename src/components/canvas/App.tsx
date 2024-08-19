@@ -1,18 +1,18 @@
 'use client'
 import * as THREE from 'three'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
-import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
+import { BallCollider, CuboidCollider, Physics, RapierRigidBody, RigidBody, RigidBodyOptions, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
 useGLTF.preload('/card.glb')
 useTexture.preload('/band.jpg')
 
-interface RigidBodyRef extends React.MutableRefObject<any> {
-  lerped?: THREE.Vector3
-}
+// interface RigidBodyRef extends React.MutableRefObject<any> {
+//   lerped?: THREE.Vector3
+// }
 
 export default function App() {
   return (
@@ -43,16 +43,22 @@ interface BandProps {
 
 function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
   const band = useRef<THREE.Mesh>(null)
+  {/* @ts-ignore  */}
   const fixed = useRef<RigidBody>(null)
+  {/* @ts-ignore  */}
   const j1 = useRef<RigidBody>(null)
+  {/* @ts-ignore  */}
   const j2 = useRef<RigidBody>(null)
+  {/* @ts-ignore  */}
   const j3 = useRef<RigidBody>(null)
+  {/* @ts-ignore  */}
   const card = useRef<RigidBody>(null)
   const vec = new THREE.Vector3()
   const ang = new THREE.Vector3()
   const rot = new THREE.Vector3()
   const dir = new THREE.Vector3()
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
+  // const segmentProps = { type: 'dynamic', canSleep: true, angularDamping: 2, linearDamping: 2 }
   const { nodes, materials } = useGLTF('/card.glb') as any
   const texture = useTexture('/band.jpg')
   const { width, height } = useThree((state) => state.size)
@@ -90,6 +96,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
       curve.points[1].copy(j2.current!.lerped)
       curve.points[2].copy(j1.current!.lerped)
       curve.points[3].copy(fixed.current!.translation())
+      {/* @ts-ignore  */}
       band.current!.geometry.setPoints(curve.getPoints(32))
       ang.copy(card.current!.angvel())
       rot.copy(card.current!.rotation())
@@ -103,16 +110,21 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
   return (
     <>
       <group position={[0, 4, 0]}>
+        {/* @ts-ignore  */}
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+        {/* @ts-ignore  */}
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
+          {/* @ts-ignore  */}
         <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
+          {/* @ts-ignore  */}
         <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
+        {/* @ts-ignore  */}
         <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={typeof dragged === 'object' ? 'kinematicPosition' : 'dynamic'}>
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
@@ -131,7 +143,9 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
         </RigidBody>
       </group>
       <mesh ref={band}>
+        {/* @ts-ignore  */}
         <meshLineGeometry />
+        {/* @ts-ignore  */}
         <meshLineMaterial
           color="white"
           depthTest={false}

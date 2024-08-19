@@ -6,7 +6,7 @@ import React from 'react';
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Gerenciar Sistemas', link: '/dashboard/system' },
-  { title: 'Criar', link: '/dashboard/system/create' }
+  { title: 'Criar', link: '/dashboard/system/new' }
 ];
 export default function Page() {
   return (
@@ -24,4 +24,23 @@ export default function Page() {
       </div>
     </ScrollArea>
   );
+}
+
+// Esta função gera os parâmetros estáticos para cada sistema e para a página de criação
+export async function generateStaticParams() {
+  // Simula a busca dos sistemas da sua API ou base de dados
+  const systems = [
+    { _id: '1', name: 'Sistema ABC', status: 'Gerenciado' },
+    { _id: '2', name: 'Sys XYZ', status: 'Não gerenciado' }
+  ];
+
+  // Mapeia os sistemas para gerar os parâmetros de rota estática
+  const systemParams = systems.map((system) => ({
+    systemId: system._id,
+  }));
+
+  // Adiciona o parâmetro "new" para a página de criação
+  const newParam = { systemId: 'new' };
+
+  return [...systemParams, newParam];
 }

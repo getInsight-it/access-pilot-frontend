@@ -35,12 +35,12 @@ export default function Login() {
             </p> */}
           </div>
 
-          <Input placeholder="Seu endereço de e-mail" />
+          {/* <Input placeholder="Seu endereço de e-mail" /> */}
           <Button onClick={onSubmit}>
             Entrar
           </Button>
           
-          <p className="px-0 text-left text-sm text-muted-foreground text-black dark:text-white">
+          {/* <p className="px-0 text-left text-sm text-muted-foreground text-black dark:text-white">
             Ao clicar em continuar, você concorda com nossos{' '}
             <Link
               href="/terms"
@@ -56,7 +56,7 @@ export default function Login() {
               Política de Privacidade.
             </Link>
             .
-          </p>
+          </p> */}
         </div>
 
       </div>

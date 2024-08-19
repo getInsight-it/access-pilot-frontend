@@ -20,6 +20,8 @@ type paramsProps = {
   };
 };
 
+export const dynamic = 'force-static'
+
 export default function Page({ searchParams }: paramsProps) {
   const page = Array.isArray(searchParams.page) ? Number(searchParams.page[0]) : Number(searchParams.page) || 1;
   const pageLimit = Array.isArray(searchParams.limit) ? Number(searchParams.limit[0]) : Number(searchParams.limit) || 10;

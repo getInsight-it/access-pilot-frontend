@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import systems from "@/constants/systems";
 import { LayoutGrid, List } from "lucide-react";
-import { GlareCard } from "./ui/GlareCard";
 import { CardShine } from "./CardShine";
+import Image from "next/image";
 
 const variants = {
   hidden: { opacity: 0, scale: 0.99 },
@@ -81,7 +81,16 @@ function GridList() {
                     </span>
                   </div>
                   <div className={toggleViewMode ? " " : "flex gap-4 items-end "}>
-                    <img className={toggleViewMode ? "w-12" : "w-6"} src={system.url} alt="" />
+                    
+                    {/* <img className={toggleViewMode ? "w-12" : "w-6"} src={system.url} alt="" /> */}
+                    <Image
+                      className={toggleViewMode ? "w-12" : "w-6"}
+                      src={system.url}
+                      width={500}
+                      height={500}
+                      alt="Imagem do sistema"
+                    />
+
                     <p className={`font-bold text-white ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>{system.name}</p>
                     <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
                       {system.role}

@@ -7,7 +7,6 @@ import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 import { DataTableRole } from '@/components/ui/data-table-role';
-import ShuffleSortTable from '@/components/shuffle-sort-table/ShuffleSortTable';
 
 interface UserRoleProps {
   data: Role[];
@@ -32,7 +31,6 @@ export const UserRole: React.FC<UserRoleProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTableRole searchKey="name" columns={columns} data={data} />
-      {/* <ShuffleSortTable /> */}
     </>
   );
 };

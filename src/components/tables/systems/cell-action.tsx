@@ -67,7 +67,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import AccessRequests from '@/constants/systems.json';
+import systems from '@/constants/systems.json';
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';

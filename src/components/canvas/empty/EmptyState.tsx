@@ -137,7 +137,7 @@ import { Physics, RigidBody } from '@react-three/rapier';
 import { Environment, KeyboardControls, Loader } from '@react-three/drei';
 import { Suspense, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from 'ecctrl';
+import Ecctrl, { EcctrlAnimation } from 'ecctrl';
 import { motion } from "framer-motion";
 
 import Piloto from './Piloto';

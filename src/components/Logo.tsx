@@ -1,5 +1,6 @@
 'use client'
 import { GlobeIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 
 export const Logo = () => {
   return (
@@ -15,11 +16,25 @@ export const Logo = () => {
       bg-no-repeat
       p-0
       hover:bg-[position:200%_0,0_0]
-      hover:duration-[1500ms]"
+      hover:duration-1500"
     >
       {/* <img className="" src="./accesspilot-w.svg" /> */}
-      <img className="w-60 hidden dark:block lg:w-60" src="./logo-getinsight.png" />
-      <img className="w-60 block dark:hidden lg:w-60" src="./getinsight-light.png" />
+      <Image
+        className="w-60 hidden dark:block lg:w-60"
+        src="./logo-getinsight.png"
+        width={500}
+        height={500}
+        alt="Imagem do sistema"
+      />
+      <Image
+        className="w-60 block dark:hidden lg:w-60"
+        src="./getinsight-light.png"
+        width={500}
+        height={500}
+        alt="Imagem do sistema"
+      />
+      {/* <img className="w-60 hidden dark:block lg:w-60" src="./logo-getinsight.png" /> */}
+      {/* <img className="w-60 block dark:hidden lg:w-60" src="./getinsight-light.png" /> */}
     </div>
   );
 };
