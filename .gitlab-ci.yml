@@ -1,6 +1,7 @@
 stages:
   - build
   - package
+  - deploy
 
 variables:
   IMAGE_TAG: ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
