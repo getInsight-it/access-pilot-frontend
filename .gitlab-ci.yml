@@ -11,8 +11,6 @@ build-app:
   tags:
     - docker
   image: node:22-alpine
-  before_script:
-    - npm install -g yarn
   script:
     - yarn
     - yarn run build
