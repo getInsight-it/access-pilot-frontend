@@ -40,6 +40,8 @@ build-docker:
 
 .deploy:
   stage: deploy
+  needs:
+    - build-docker
   tags:
     - docker
   image: registry.gitlab.com/getinsight.it/arquitetura/docker-base-images/kubernetes-manage:1.0.0
