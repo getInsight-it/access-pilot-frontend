@@ -10,7 +10,7 @@ items:
 # ----------- CONFIGMAP -------------
 - apiVersion: v1
   data:
-    XPTO: "false"
+    API_URL: ${API_URL}
   kind: ConfigMap
   metadata:
     name: ${CI_PROJECT_NAME}
@@ -30,7 +30,7 @@ items:
     - IPv4
     ipFamilyPolicy: SingleStack
     ports:
-    - name: http-8080
+    - name: http-80
       port: 8080
       protocol: TCP
       targetPort: 80
@@ -76,21 +76,21 @@ items:
             failureThreshold: 3
             httpGet:
               path: /index.html
-              port: 8080
+              port: 80
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
           name: container-0
           ports:
-          - containerPort: 8080
-            name: http-8080
+          - containerPort: 80
+            name: http-80
             protocol: TCP
           readinessProbe:
             failureThreshold: 3
             httpGet:
               path: /index.html
-              port: 8080
+              port: 80
               scheme: HTTP
             periodSeconds: 10
             successThreshold: 1
@@ -100,7 +100,7 @@ items:
             failureThreshold: 3
             httpGet:
               path: /index.html
-              port: 8080
+              port: 80
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -134,7 +134,7 @@ items:
   kind: Ingress
   metadata:
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt
+      cert-manager.io/cluster-issuer: ${CLUSTER_ISSUER}
     name: ${CI_PROJECT_NAME}
     namespace: ${NAMESPACE}-${CI_ENVIRONMENT_NAME}
   spec:

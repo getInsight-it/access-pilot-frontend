@@ -1,19 +1,25 @@
 stages:
   - build
   - package
+  - deploy
+
+variables:
+  IMAGE_TAG: ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
 
 build-app:
   stage: build
   tags:
     - docker
-  image: 
+  image: node:22-alpine
   script:
     - yarn
     - yarn run build
   artifacts:
+    when: on_success
     paths:
       - ./out
   cache:
+    when: on_success
     paths:
       - ./node_modules
 
@@ -28,5 +34,31 @@ build-docker:
   before_script:
     - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
   script:
-    - docker build --no-cache --pull -t ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} .
-    - docker push ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+    - docker build --no-cache --pull -t ${IMAGE_TAG} .
+    - docker push ${IMAGE_TAG}
+
+.deploy:
+  stage: deploy
+  needs:
+    - build-docker
+  tags:
+    - docker
+  image: registry.gitlab.com/getinsight.it/arquitetura/docker-base-images/kubernetes-manage:1.0.0
+  before_script:
+    - mkdir ~/.kube || true
+    - echo $KUBE_CONFIG | base64 --decode > ~/.kube/config
+  script:
+    - envsubst < ./k8s/deployment.yaml | kubectl apply -f - 
+
+deploy-dev:
+  variables:
+    KUBE_CONFIG: ${KUBE_CONFIG_NONPROD}
+  extends: .deploy
+  environment: dev
+  
+deploy-prd:
+  variables:
+    KUBE_CONFIG: ${KUBE_CONFIG_PROD}
+  extends: .deploy
+  environment: prd
+  when: manual
