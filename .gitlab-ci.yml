@@ -1,0 +1,32 @@
+stages:
+  - build
+  - package
+
+build-app:
+  stage: build
+  tags:
+    - docker
+  image: 
+  script:
+    - yarn
+    - yarn run build
+  artifacts:
+    paths:
+      - ./out
+  cache:
+    paths:
+      - ./node_modules
+
+build-docker:    
+  stage: package
+  tags:
+    - docker
+  dependencies: [build-app]
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - echo $CI_JOB_TOKEN | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - docker build --no-cache --pull -t ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
