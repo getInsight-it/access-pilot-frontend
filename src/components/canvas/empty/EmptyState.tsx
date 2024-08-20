@@ -132,12 +132,13 @@
 
 
 'use client';
+import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { Environment, KeyboardControls, Loader } from '@react-three/drei';
 import { Suspense, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import Ecctrl, { EcctrlAnimation } from 'ecctrl';
+import Ecctrl, { EcctrlAnimation, EcctrlJoystick } from 'ecctrl';
 import { motion } from "framer-motion";
 
 import Piloto from './Piloto';
@@ -210,7 +211,15 @@ const EmptyState: React.FC = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        {/* <EcctrlJoystick buttonNumber={5} /> */}
+        <div className="md:hidden">
+          <EcctrlJoystick
+            // joystickBaseProps={{
+            //   receiveShadow: true,
+            //   material: new THREE.MeshStandardMaterial({ color: "white" })
+            // }}
+            buttonNumber={5}
+          />
+        </div>
         <Canvas className="empty-state-canvas" shadows>
           <fog attach="fog" args={[fogColor, 10, 40]} />
           <color attach="background" args={[backgroundColor]} />
@@ -239,7 +248,7 @@ const EmptyState: React.FC = () => {
                 <Ecctrl
                   debug={false}
                   animated
-                  // mode="FixedCamera" // Activate different ecctrl modes ("CameraBasedMovement" | "FixedCamera" | "PointToMove")
+                  mode="FixedCamera" // Activate different ecctrl modes ("CameraBasedMovement" | "FixedCamera" | "PointToMove")
                   followLight={true}
                   // characterInitDir={Math.PI} // Character initial facing direction (in rad)
                   camInitDis={-8.5} // camera intial position

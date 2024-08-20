@@ -127,10 +127,12 @@ export const Copy = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -12, opacity: 0 }}
         >
-          <h2 className="text-lg mb-6 flex items-center gap-x-2">
+          <div className="flex gap-x-2">
             <Clock className="w-5 h-5 text-red-500" />
-            Essa solicitação foi <strong>finalizada</strong> e aguarda definição.
-          </h2>
+            <h2 className="text-lg mb-6">
+              Essa solicitação foi <span className="font-bold">finalizada</span> e aguarda definição.
+            </h2>
+          </div>
           <div className="w-full flex gap-4">
             <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200" type="submit" onClick={() => {}}>
               Rejeitar

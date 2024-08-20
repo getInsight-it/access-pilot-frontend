@@ -20,7 +20,6 @@ export default function page() {
             shadow-input dark:shadow-none dark:bg-gray-500 dark:border-white/[0.2]
             border border-transparent justify-between flex flex-col"
           >
-            {/* <Arbol /> */}
             <App />
           </div>
         </div>
