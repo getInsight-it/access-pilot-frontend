@@ -246,7 +246,7 @@ export const RequestAccessForm: React.FC<RequestAccessFormProps> = ({
             {action}
           </Button>
 
-          {/* <StepLoader /> */}
+          <StepLoader />
         
         </form>
       </Form>

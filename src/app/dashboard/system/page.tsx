@@ -40,7 +40,7 @@ function SystemsPage() {
         <div className="flex items-start justify-between">
           <Heading
             title={`Sistemas (${totalUsers})`}
-            description="Gerenciar sistemas."
+            description=""
           />
           <Button
             className={cn(buttonVariants({ variant: 'default' }))}

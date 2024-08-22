@@ -34,7 +34,7 @@ function Node({ node, style, dragHandle }: NodeRendererProps<any>) {
   return (
     <div className="flex cursor-move p-1" style={style} ref={dragHandle} onClick={() => node.toggle()}>
       
-      <div className="w-[130px] border rounded flex gap-1 px-2 py-1">
+      <div className="w-[140px] border rounded flex gap-2 px-3 p-2 items-center">
         {getIcon(node.data.name)}
         {node.data.name}
       </div>
@@ -50,13 +50,13 @@ export default function App() {
       initialData={data}
       openByDefault={false}
       width={600}
-      height={1000}
+      height={400}
       indent={24}
       // rowHeight={36}
-      rowHeight={44}
+      rowHeight={50}
       paddingTop={30}
       paddingBottom={10}
-      padding={25 /* sets both */}
+      padding={15 /* sets both */}
     >
       {Node}
     </Tree>

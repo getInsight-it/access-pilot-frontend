@@ -15,8 +15,10 @@ export const Tower = () => {
         <CalloutChip>#1</CalloutChip>
         <p className="mb-2 text-2xl">Solicitações pendentes</p>
         <p className="mb-8 text-zinc-400">
-          Um ótimo lugar para fornecer uma análise de alto nível do que
-          seu sistema trata. Tente falar sobre benefícios em vez de recursos.
+          {/* Um ótimo lugar para fornecer uma análise de alto nível do que */}
+          {/* seu sistema trata. Tente falar sobre benefícios em vez de recursos. */}
+          Aqui, é possível acompanhar o status de cada solicitação e tomar as ações necessárias
+          para garantir que os usuários tenham acesso aos sistemas.
         </p>
 
         <CornerBlur />

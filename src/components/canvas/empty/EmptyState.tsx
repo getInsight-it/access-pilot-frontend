@@ -261,6 +261,7 @@ const EmptyState: React.FC = () => {
               </KeyboardControls>
             </Physics>
           </Suspense>
+          
         </Canvas>
         <Loader />
       </motion.div>

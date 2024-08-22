@@ -103,6 +103,12 @@ canvas {
   height: 100vh;
 }
 
+.sceneCanvas canvas {
+  width: 100%;
+  height: 94vh;
+  margin-top: 18px;
+}
+
 .status {
   position: absolute;
   bottom: 6vw;

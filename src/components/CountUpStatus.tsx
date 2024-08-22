@@ -10,12 +10,12 @@ export const CountUpStats = () => {
         <span className="text-indigo-500"> BEAUTIFUL LANDING PAGE</span>
       </h2> */}
 
-      <div className="flex flex-col items-center justify-center sm:flex-row">
+      <div className="flex flex-col items-center justify-center sm:flex-row relative">
         <Stat
           num={45}
           suffix=""
           prefix="+"
-          prefixColor="text-green-600"
+          prefixColor="text-green-600 absolute -ml-8 2xl:-ml-12"
           suffixColor="text-blue-500"
           subheading="Novas solicitações"
         />
@@ -24,7 +24,7 @@ export const CountUpStats = () => {
           num={45}
           suffix=""
           prefix="+"
-          prefixColor="text-red-500"
+          prefixColor="text-red-500 absolute -ml-8 2xl:-ml-12"
           suffixColor="text-yellow-500"
           subheading="Usuários registrados"
         />
@@ -33,7 +33,7 @@ export const CountUpStats = () => {
           num={20}
           suffix=""
           prefix="!"
-          prefixColor="text-orange-500"
+          prefixColor="text-orange-500 absolute -ml-6"
           suffixColor="text-purple-500"
           subheading="Solicitações pendentes"
         />

@@ -109,7 +109,7 @@ function MyAccessRequestsPage() {
         <div className="flex items-start justify-between">
           <Heading
             title={`Minhas solicitações (${totalUsers})`}
-            description="Gerenciar acessos."
+            description=""
           />
 
           <Link

@@ -15,15 +15,14 @@ export default function Header() {
             href={'#'}
             target="_blank"
           >
-            {/* <img className="mx-2 h-20 w-60 block dark:hidden" src="/accesspilot.svg" /> */}
-            {/* <img className="mr-2 h-20 w-60 hidden dark:block" src="/accesspilot-w.svg" /> */}
 
             <Image
               className="mx-2 h-20 w-60 block dark:hidden"
               src="/accesspilot.svg"
               width={500}
               height={500}
-              alt="Imagem do sistema"
+              alt="Logo accesspilot"
+              priority={true}
             />
 
             <Image
@@ -31,7 +30,8 @@ export default function Header() {
               src="/accesspilot-w.svg"
               width={500}
               height={500}
-              alt="Imagem do sistema"
+              alt="Logo accesspilot"
+              priority={true}
             />
             
           </Link>
