@@ -58,6 +58,7 @@
 
 
 'use client';
+import { DetailDrawer } from '@/components/drawers/DetailDrawer';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -113,6 +114,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>
+          {/* <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/request-detail/`)}
+          >
+            <Eye className="mr-2 h-4 w-4" /> Ver detalhes drawer
+          </DropdownMenuItem> */}
+          
           {/* <DropdownMenuItem
             onClick={() => router.push(`/dashboard/access-requests/${data.id}`)}
           >

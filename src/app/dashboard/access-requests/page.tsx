@@ -82,6 +82,7 @@ import Link from 'next/link';
 import localData from '@/constants/access-requests.json';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { RequestAccessDrawer } from '@/components/drawers/RequestAccessDrawer';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -112,12 +113,15 @@ function AccessRequestsPage() {
             description=""
           />
 
-          <Link
+          {/* <Link
             href={'/dashboard/request-access/'}
             className={cn(buttonVariants({ variant: 'default' }))}
           >
             <Plus className="mr-2 h-4 w-4" /> Adicionar novo
-          </Link>
+          </Link> */}
+          
+          <RequestAccessDrawer />
+
         </div>
         <Separator />
 

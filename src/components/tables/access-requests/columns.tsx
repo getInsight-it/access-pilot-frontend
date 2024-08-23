@@ -3,6 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import AccessRequests from '@/constants/access-requests.json';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DetailDrawer } from '@/components/drawers/DetailDrawer';
 
 type AccessRequest = {
   id: number;
@@ -58,7 +59,8 @@ export const columns: ColumnDef<AccessRequest>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <DetailDrawer />
+    // cell: ({ row }) => <CellAction data={row.original} />
   }
 ];
 
