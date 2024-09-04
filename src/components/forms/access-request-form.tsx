@@ -46,7 +46,7 @@ const formSchema = z.object({
   description: z
     .string()
     .min(3, { message: 'Mínimo 3 caracteres' }),
-  status: z.string().min(1, { message: 'Selecione uma categoria' })
+  status: z.string().min(1, { message: 'Selecione um status' })
 });
 
 type AccessRequestFormValues = z.infer<typeof formSchema>;

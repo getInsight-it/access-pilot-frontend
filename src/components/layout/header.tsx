@@ -5,6 +5,7 @@ import { UserNav } from './user-nav';
 import Link from 'next/link';
 import Notifications from '../Notifications';
 import Image from 'next/image';
+import ThemedLogo from './themes/ThemedLogo';
 
 export default function Header() {
   return (
@@ -16,7 +17,7 @@ export default function Header() {
             target="_blank"
           >
 
-            <Image
+            {/* <Image
               className="mx-2 h-20 w-60 block dark:hidden"
               src="/accesspilot.svg"
               width={500}
@@ -32,7 +33,9 @@ export default function Header() {
               height={500}
               alt="Logo accesspilot"
               priority={true}
-            />
+            /> */}
+
+            <ThemedLogo />
             
           </Link>
         </div>

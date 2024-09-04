@@ -101,7 +101,7 @@ const DragCloseDrawer = ({ open, setOpen, children }: Props) => {
             transition={{
               ease: "easeInOut",
             }}
-            className="absolute right-0 bottom-0 w-full lg:w-auto h-full overflow-hidden rounded-tl-3xl bg-white dark:bg-black"
+            className="absolute right-0 bottom-0 w-full lg:w-auto h-full overflow-hidden rounded-tl-3xl bg-secondary"
             style={{ x }}
             drag="x"
             dragControls={controls}
@@ -120,7 +120,7 @@ const DragCloseDrawer = ({ open, setOpen, children }: Props) => {
               right: 0.5,
             }}
           >
-            <div className="left-0 right-0 top-0 z-10 flex justify-between items-center bg-white dark:bg-black p-6">
+            <div className="left-0 border-b right-0 top-0 z-10 flex justify-between items-center bg-secondary p-6">
               <button
                 onPointerDown={(e) => {
                   controls.start(e);
@@ -129,7 +129,7 @@ const DragCloseDrawer = ({ open, setOpen, children }: Props) => {
               ></button>
               <button
                 onClick={handleClose}
-                className=" cursor-grab touch-none rounded-full  active:cursor-grabbing"
+                className=" cursor-pointer touch-none rounded-full  active:cursor-grabbing"
               >
                 {/* <span className="
                   h-2 w-8

@@ -5,7 +5,7 @@ import { CornerGrid } from "@/components/utils/CornerGrid";
 
 export const FeatureGrid = () => {
   return (
-    <div id="features" className="relative overflow-hidden">
+    <div id="features" className="relative overflow-hidden ">
       {/* <CornerBlur /> */}
       {/* <CornerGrid /> */}
       <Content />

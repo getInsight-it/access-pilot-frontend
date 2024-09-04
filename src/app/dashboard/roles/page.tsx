@@ -1,6 +1,7 @@
 import App from '@/components/arvore/Arvore';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { UserRole } from '@/components/tables/role-tables/role';
+import Arvore from '@/components/tree/Arvore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { roles } from '@/constants/data';
@@ -21,7 +22,8 @@ export default function page() {
         <div className="px-8">
           <h2 className="text-xl">Arraste para organizar a hierarquia.</h2>
           <div className="">
-            <App />
+            {/* <App /> */}
+            <Arvore />
           </div>
         </div>
       </ScrollArea>

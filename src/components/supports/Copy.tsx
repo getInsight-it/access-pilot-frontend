@@ -82,7 +82,7 @@ export const Copy = ({
   const isLastSelected = selected === OPTIONS.length - 1;
 
   return (
-    <div className="w-full max-w-xl mt-4">
+    <div className="w-full max-w-xl mt-6">
       {/* <span className="mb-1.5 block text-center text-indigo-600 md:text-start">
         Acompanhar solicitação
       </span> */}

@@ -32,7 +32,7 @@ const Testimonial = ({
       exit={{
         y: 0,
       }}
-      className="overflow-hidden"
+      className="overflow-hidden grid lg:justify-center"
     >
 
       <div className="badge-container border-t lg:border-none rounded-xl max-w-full lg:max-w-[300px] ">

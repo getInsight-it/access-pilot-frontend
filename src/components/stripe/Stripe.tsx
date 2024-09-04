@@ -6,7 +6,7 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
   return (
     <span className="flex items-center justify-center gap-3 px-4 py-2 md:py-0">
       <Icon className="text-2xl text-red-600 md:text-3xl" />
-      <span className="whitespace-nowrap text-md text-[#1f1f1f] dark:text-[#dedede] font-semibold md:text-lg">
+      <span className="whitespace-nowrap text-md text-[var(--stripe-text)] font-semibold md:text-lg">
         {name}
       </span>
     </span>
@@ -15,7 +15,7 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
 
 export const Stripe = () => {
   return (
-    <section className="absolute bottom-0 z-10 scale-[1.01] border-y-2  py-2 bg-white dark:bg-black">
+    <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-blur-bg">
       <div className="relative z-0 flex overflow-hidden ">
         <TranslateWrapper>
           <LogoItemsTop />
@@ -28,7 +28,7 @@ export const Stripe = () => {
         </TranslateWrapper>
       </div>
 
-      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-white to-white/0 dark:from-black dark:to-black/0" />
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-[var(--stripe-gradient-bg-from)] to-[var(--stripe-gradient-bg-to)]" />
     </section>
   );
 };

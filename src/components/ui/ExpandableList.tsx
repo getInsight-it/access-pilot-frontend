@@ -69,7 +69,7 @@ export function ExpandableList() {
             <motion.div
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
-              className="p-4 w-full max-w-[500px] relative h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-[#1f1f1f] sm:rounded-3xl overflow-hidden"
+              className="p-4 w-full max-w-[500px] relative h-full md:h-fit md:max-h-[90%]  flex flex-col bg-secondary sm:rounded-3xl overflow-hidden"
             >
               <motion.div className="absolute right-6 top-6" layoutId={`image-${active.title}-${id}`}>
                 <Image
@@ -92,13 +92,13 @@ export function ExpandableList() {
                   <div className="">
                     <motion.h3
                       layoutId={`title-${active.title}-${id}`}
-                      className="font-bold text-neutral-700 dark:text-neutral-200"
+                      className="font-bold text-[var(--list-color)]"
                     >
                       {active.title}
                     </motion.h3>
                     <motion.p
                       layoutId={`description-${active.description}-${id}`}
-                      className="text-neutral-600 dark:text-neutral-400"
+                      className="text-[var(--list-color)]"
                     >
                       {active.description}
                     </motion.p>
@@ -108,7 +108,7 @@ export function ExpandableList() {
                     layoutId={`button-${active.title}-${id}`}
                     
                     onClick={() => setActive(null)}
-                    className="z-10 cursor-pointer absolute right-6 bottom-6 px-4 py-3 text-sm rounded-full font-bold bg-black dark:bg-white text-white dark:text-black"
+                    className="z-10 cursor-pointer absolute right-6 bottom-6 px-4 py-3 text-sm rounded-full font-bold bg-primary text-secondary"
                   >
                     {/* {active.ctaText} */}
                     Fechar
@@ -129,7 +129,7 @@ export function ExpandableList() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400  [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
+                    className="text-[var(--list-color)] text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto  [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
                   >
                     {typeof active.content === "function"
                       ? active.content()
@@ -151,7 +151,7 @@ export function ExpandableList() {
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
             onClick={() => setActive(card)}
-            className="px-0 py-4 md:px-4 md:py-4 grid grid-cols-[1fr_80px_60px] items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            className="px-0 py-4 md:px-4 md:py-4 grid grid-cols-[1fr_80px_60px] items-center hover:bg-secondary rounded-xl cursor-pointer"
           >
             <div className="flex gap-4  md:flex-row">
               <motion.div className="hidden md:block" layoutId={`image-${card.title}-${id}`}>
@@ -166,13 +166,13 @@ export function ExpandableList() {
               <div className="leading-snug">
                 <motion.h3
                   layoutId={`title-${card.title}-${id}`}
-                  className="font-medium text-neutral-800 dark:text-neutral-200 text-left"
+                  className="font-medium text-[var(--list-color)] text-left"
                 >
                   {card.title}
                 </motion.h3>
                 <motion.p
                   // layoutId={`description-${card.description}-${id}`}
-                  className="text-neutral-600 dark:text-neutral-400 text-left">
+                  className="text-[var(--list-color)] text-left">
                   {card.description}
                 </motion.p>
               </div>
@@ -191,7 +191,7 @@ export function ExpandableList() {
             
             <motion.button
               layoutId={`button-${card.title}-${id}`}
-              className="grid items-center justify-center w-10 h-10 rounded-full bg-black dark:bg-white text-white dark:text-black hover:bg-white dark:hover:bg-black hover:text-black dark:hover:text-white md:mt-0 justify-self-end text-right"
+              className="grid items-center justify-center w-10 h-10 rounded-full bg-primary text-secondary md:mt-0 justify-self-end text-right"
             >
               {/* {card.ctaText} */}
               <Eye />

@@ -79,7 +79,7 @@ const Stat = ({ num, suffix, prefix, decimals = 0, prefixColor, suffixColor, sub
         {/* Aplica cor ao sufixo */}
         <span className={suffixColor}>{suffix}</span>
       </p>
-      <p className="max-w-24 text-sm lg:text-md text-center text-neutral-600 dark:text-neutral-300">{subheading}</p>
+      <p className="max-w-24 text-sm lg:text-md text-center">{subheading}</p>
     </div>
   );
 };

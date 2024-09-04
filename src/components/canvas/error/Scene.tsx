@@ -440,7 +440,7 @@ import { Button } from '@/components/ui/button';
       <group ref={ref} position={[0, 4, -2]}>
         <group ref={group} {...props} dispose={null}>
             <group name="Scene">
-                <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.001}>
+                <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.00085}>
                     <primitive object={nodes.mixamorigHips} />
                 </group>
                 <skinnedMesh
@@ -530,10 +530,12 @@ import { Button } from '@/components/ui/button';
   const Scene: React.FC = () => {
     return (
       <>
+        
+
         <div className="pointer-events-none absolute w-full h-full top-0 left-0 z-10 ">
-          <div className="text-center pt-16 font-bold space-y-6">
+          <div className="pt-16 pl-10 space-y-6">
             <h2 className="text-2xl z-50">
-              Vishh algo deu errado.
+              Algo deu errado.
             </h2>
             <Button className="pointer-events-auto">
               Voltar
@@ -541,6 +543,7 @@ import { Button } from '@/components/ui/button';
           </div>  
           
         </div>
+
         <Canvas className="sceneCanvas" shadows dpr={[1, 2]}>
           <Leva hidden />
           <Suspense fallback="Loading">

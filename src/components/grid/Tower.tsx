@@ -30,7 +30,7 @@ export const Tower = () => {
 };
 
 const Mockup = () => (
-  <div className="absolute -bottom-4 left-6 h-[340px] w-full overflow-hidden rounded-xl border bg-gray-50/50 dark:bg-zinc-950/50 lg:h-[470px]">
+  <div className="absolute -bottom-4 left-6 h-[340px] w-full overflow-hidden rounded-xl border bg-[var(--mockup-bg-color)] lg:h-[470px]">
     <MockupTopBar />
     <div className="flex h-full w-full">
       <MockupSideBar />
@@ -40,7 +40,7 @@ const Mockup = () => (
 );
 
 const MockupSideBar = () => (
-  <div className="h-full w-24 border-r bg-gray-50 dark:bg-zinc-900 p-2">
+  <div className="h-full w-24 border-r bg-[var(--sidebar-mockup-bg)] p-2">
     <div className="mb-4 flex items-center justify-between ">
       <Home className="text-zinc-700" />
       {/* <Bell className="text-blue-500" /> */}
@@ -201,13 +201,13 @@ const MockupMain = () => {
               alt={`Placeholder image for faux user ${u.name}`}
               className="size-5 rounded-full"
             />
-            <span className={i === 0 ? "text-zinc-950 dark:text-zinc-200" : "text-zinc-500"}>
+            <span className={i === 0 ? " dark:text-zinc-200" : "text-zinc-500"}>
               {u.name}
             </span>
           </motion.div>
         ))}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 top-1/4 z-10 bg-gradient-to-b from-gray-100/0 via-gray-100/90 to-gray-100 dark:from-zinc-950/0 dark:via-zinc-950/90 dark:to-zinc-950" />
+      <div className="absolute bottom-0 left-0 right-0 top-1/4 z-10 bg-gradient-to-b from-[var(--gradient-bg-from)] via-[var(--gradient-bg-via)] to-[var(--gradient-bg-to)]" />
     </div>
   );
 };

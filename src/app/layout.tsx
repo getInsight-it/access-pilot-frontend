@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/layout/providers";
+import { ThemeProvider } from '@/components/layout/themes/ThemeProvider'
 import { Toaster } from "@/components/ui/toaster";
 
 const mulish = Mulish({ subsets: ["latin"] });
@@ -19,10 +20,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={mulish.className}>
-        <Providers>
+        {/* <Providers>
           <Toaster />
           {children}
-        </Providers>
+        </Providers> */}
+        <ThemeProvider
+          defaultTheme="light"
+          enableColorScheme
+          themes={['light', 'dark', 'tangerine']}
+        >
+          <Toaster />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

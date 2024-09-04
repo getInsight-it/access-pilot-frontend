@@ -28,6 +28,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../ui/use-toast';
+import { SystemImageUpload } from '../SystemImageUpload';
 // import FileUpload from '../file-upload';
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -51,7 +52,7 @@ const formSchema = z.object({
   description: z
     .string()
     .min(3, { message: 'A descrição do sistema deve conter no mínimo 3 caracteres' }),
-  status: z.string().min(1, { message: 'Selecione uma categoria' })
+  status: z.string().min(1, { message: 'Selecione um status' })
 });
 
 type SystemFormValues = z.infer<typeof formSchema>;
@@ -176,78 +177,88 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               </FormItem>
             )}
           /> */}
-          <div className="gap-x-8 gap-y-4 md:grid md:grid-cols-1 max-w-md">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nome do sistema"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Descrição do sistema"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
+          <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
+            <div className="flex flex-col gap-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Selecione um status"
-                        />
-                      </SelectTrigger>
+                      <Input
+                        disabled={loading}
+                        placeholder="Nome do sistema"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {/* @ts-ignore  */}
-                      {statuses.map((status) => (
-                        <SelectItem key={status._id} value={status._id}>
-                          {status.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Descrição do sistema"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder="Selecione um status"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* @ts-ignore  */}
+                        {statuses.map((status) => (
+                          <SelectItem key={status._id} value={status._id}>
+                            {status.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="hidden lg:block mr-auto mt-6">
+                <Button disabled={loading} className="ml-auto" type="submit">
+                  {action}
+                </Button>
+              </div>
+            </div>
+            <SystemImageUpload />
           </div>
-          <Button disabled={loading} className="ml-auto" type="submit">
-            {action}
-          </Button>
+          <div className="block lg:hidden mt-6">
+            <Button disabled={loading} className="ml-auto" type="submit">
+              {action}
+            </Button>
+          </div>
         </form>
       </Form>
     </>
