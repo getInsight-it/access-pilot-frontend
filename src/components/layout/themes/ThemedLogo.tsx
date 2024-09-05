@@ -18,6 +18,9 @@ function ThemedLogo() {
       case 'tangerine':
         setSrc('/accesspilot-w.svg')
         break
+        case 'rnp':
+        setSrc('/rnp.png')
+        break
       default:
         setSrc('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
         break

@@ -31,6 +31,9 @@ export default function ThemeToggle({}: CompProps) {
         <DropdownMenuItem onClick={() => setTheme('tangerine')}>
           Tangerine
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('rnp')}>
+          RNP
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
           System
         </DropdownMenuItem>

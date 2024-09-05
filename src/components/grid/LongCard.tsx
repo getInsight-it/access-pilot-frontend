@@ -18,7 +18,7 @@ export const LongCard = () => {
           </p> */}
           <ExpandableList />
         </div>
-        <div className="absolute bottom-0 right-0 top-0 z-10 w-48 bg-gradient-to-r from-[var(--gradient-bg-from)] to-[var(--gradient-bg-to)]" />
+        {/* <div className="absolute bottom-0 right-0 top-0 z-10 w-48 bg-gradient-to-r from-[var(--gradient-bg-from)] to-[var(--gradient-bg-to)]" /> */}
         {/* <SpinningLogos /> */}
       </Card>
     </div>

@@ -21,7 +21,7 @@ export const Tower = () => {
           para garantir que os usuários tenham acesso aos sistemas.
         </p>
 
-        <CornerBlur />
+        {/* <CornerBlur /> */}
         <Mockup />
         
       </Card>
@@ -207,7 +207,7 @@ const MockupMain = () => {
           </motion.div>
         ))}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 top-1/4 z-10 bg-gradient-to-b from-[var(--gradient-bg-from)] via-[var(--gradient-bg-via)] to-[var(--gradient-bg-to)]" />
+      {/* <div className="absolute bottom-0 left-0 right-0 top-1/4 z-10 bg-gradient-to-b from-[var(--gradient-bg-from)] via-[var(--gradient-bg-via)] to-[var(--gradient-bg-to)]" /> */}
     </div>
   );
 };

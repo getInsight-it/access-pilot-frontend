@@ -56,6 +56,9 @@ export const Logo = () => {
       case 'tangerine':
         setSrc('/getinsight-light.png')
         break
+        case 'rnp':
+        setSrc('/rnp.png')
+        break
       default:
         setSrc('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
         break

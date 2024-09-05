@@ -28,7 +28,7 @@ export const Stripe = () => {
         </TranslateWrapper>
       </div>
 
-      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-[var(--stripe-gradient-bg-from)] to-[var(--stripe-gradient-bg-to)]" />
+      {/* <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-[var(--stripe-gradient-bg-from)] to-[var(--stripe-gradient-bg-to)]" /> */}
     </section>
   );
 };

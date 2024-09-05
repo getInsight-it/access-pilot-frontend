@@ -160,6 +160,48 @@
     --chart-4: 33 100% 45%;
     --chart-5: 33 100% 50%;
   }
+
+  html[data-theme='rnp'] {
+    --gradient-bg-from: rgba(0, 30, 255, 0); /* Ajustado para a cor azul */
+    --gradient-bg-via: rgba(0, 30, 255, 0.06); /* Ajustado para a cor azul */
+    --gradient-bg-to: hsl(240, 100%, 87%); /* Ajustado para a cor azul em HSL */
+    --blur-bg: hsl(240, 100%, 87%); /* Azul principal */
+    
+    --stripe-gradient-bg-from: rgba(0, 30, 255, 0.25); /* Ajustado para a cor azul */
+    --stripe-gradient-bg-to: rgba(0, 0, 0, 0);
+    --stripe-text: 240 100% 50%; /* Ajustado para azul principal */
+
+    /* --mockup-bg-color: rgba(0, 30, 255, 0.95); */
+    --mockup-bg-color: rgba(0, 30, 25, 0.01); /* Azul principal */
+    --sidebar-mockup-bg: 220.9 39.3% 11%;
+    --list-color: #000000;
+
+    --background: 240 100% 97%; /* Azul claro */
+    --foreground: 240 100% 15%;
+    --card: 240 100% 97%;
+    --card-foreground: 240 100% 15%;
+    --popover: 240 100% 97%;
+    --popover-foreground: 240 100% 15%;
+    --primary: 240 100% 50%; /* Azul principal */
+    --primary-foreground: 240 100% 97%;
+    --secondary: 240 100% 90%;
+    --secondary-foreground: 240 100% 50%;
+    --muted: 240 100% 90%;
+    --muted-foreground: 240 20% 60%;
+    --accent: 240 100% 90%;
+    --accent-foreground: 240 100% 50%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 240 100% 97%;
+    --border: 240 100% 80%;
+    --input: 240 50% 95%;
+    --ring: 240 100% 15%;
+    --radius: 0.5rem;
+    --chart-1: 240 90% 55%;
+    --chart-2: 240 80% 40%;
+    --chart-3: 240 70% 30%;
+    --chart-4: 240 100% 45%;
+    --chart-5: 240 100% 50%;
+  }
 }
 
 /* @layer base {
