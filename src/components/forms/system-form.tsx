@@ -1,16 +1,14 @@
-'use client';
 import * as z from 'zod';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,11 +23,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-// import FileUpload from "@/components/FileUpload";
 import { useToast } from '../ui/use-toast';
 import { SystemImageUpload } from '../SystemImageUpload';
-// import FileUpload from '../file-upload';
+
 const ImgSchema = z.object({
   fileName: z.string(),
   name: z.string(),
@@ -40,7 +36,9 @@ const ImgSchema = z.object({
   fileUrl: z.string(),
   url: z.string()
 });
+
 export const IMG_MAX_LIMIT = 3;
+
 const formSchema = z.object({
   name: z
     .string()
@@ -67,7 +65,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   statuses
 }) => {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -100,8 +98,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
         // const res = await axios.post(`/api/products/create-product`, data);
         // console.log("product", res);
       }
-      router.refresh();
-      router.push(`/dashboard/products`);
+      navigate(`/dashboard/products`);
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
@@ -122,8 +119,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
     try {
       setLoading(true);
       //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      router.push(`/${params.storeId}/products`);
+      navigate(`/${params.storeId}/products`);
     } catch (error: any) {
     } finally {
       setLoading(false);

@@ -1,8 +1,7 @@
-'use client';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -19,7 +18,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -80,7 +79,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
           disabled={loading}
           variant="default"
           // onClick={onConfirm}
-          onClick={() => router.push(`/dashboard/my-access-requests`)}
+          
+          // onClick={() => router.push(`/dashboard/my-access-requests`)}
         >
           Continuar
         </Button>

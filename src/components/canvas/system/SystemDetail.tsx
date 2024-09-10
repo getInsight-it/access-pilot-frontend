@@ -1,8 +1,7 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Html, Environment, useGLTF, ContactShadows, OrbitControls, Loader } from '@react-three/drei'
-import HeroPage from './HeroPage'
 import Hero from './Hero'
 
 function Model(props: JSX.IntrinsicElements['group']) {

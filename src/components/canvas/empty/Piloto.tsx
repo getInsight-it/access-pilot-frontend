@@ -1,13 +1,11 @@
-'use client'
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useGLTF } from '@react-three/drei';
-import { Group } from 'three';
 
 interface ModelProps {
   // Defina quaisquer propriedades que possam ser passadas para o componente
 }
 
-const Piloto: FC<ModelProps> = (props) => {
+const Piloto: FC<ModelProps> = () => {
   const { nodes, materials } = useGLTF('/piloto-transformed.glb') as any;
 
   // Configurações de material

@@ -8,10 +8,10 @@ import {
 } from "framer-motion";
 import { RequestAccessForm } from "../forms/request-access-form";
 import { Button, buttonVariants } from "../ui/button";
-import Link from "next/link";
 import { DoorClosed, Eye, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Supports } from "../supports/Supports";
+import { Link } from "react-router-dom";
 
 export const DetailDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -20,7 +20,7 @@ export const DetailDrawer = () => {
 
       <Link
         onClick={() => setOpen(true)}
-        href={''}
+        to={''}
         className={cn(buttonVariants({ variant: 'link' }))}
       >
         <Eye className="mr-2 h-4 w-4" /> Ver detalhes

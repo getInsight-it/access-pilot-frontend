@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 
@@ -26,7 +26,7 @@ export const Card = ({
       }}
       style={style}
       className={twMerge(
-        "relative h-full w-full overflow-hidden rounded-2xl border bg-gradient-to-br from-gray-100/10 to-gray-200/10 dark:from-zinc-950/50 dark:to-zinc-900/80 p-6",
+        "relative h-full w-full overflow-hidden rounded-2xl border p-6",
         className
       )}
     >

@@ -1,6 +1,5 @@
-'use client';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
-import { useTheme } from 'next-themes';
+import { useTheme } from './theme-provider'; // Usando o contexto que criamos
 
 import { Button } from '@/components/ui/button';
 import {
@@ -9,9 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+
 type CompProps = {};
+
 export default function ThemeToggle({}: CompProps) {
-  const { setTheme } = useTheme();
+  const { setTheme } = useTheme(); // Usando o contexto customizado
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,9 +35,9 @@ export default function ThemeToggle({}: CompProps) {
         <DropdownMenuItem onClick={() => setTheme('rnp')}>
           RNP
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        {/* <DropdownMenuItem onClick={() => setTheme('system')}>
           System
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

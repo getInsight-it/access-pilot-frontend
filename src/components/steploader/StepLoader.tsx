@@ -1,4 +1,4 @@
-// "use client";
+// 
 // import React, { useState } from "react";
 // import { MultiStepLoader as Loader } from "../ui/multi-step-loader";
 // import { IconSquareRoundedX } from "@tabler/icons-react";
@@ -61,7 +61,7 @@
 
 
 // comportamento alterado para fechar o modal automaticamente
-// "use client";
+// 
 // import React, { useState } from "react";
 // import { MultiStepLoader as Loader } from "../ui/multi-step-loader";
 // import { IconSquareRoundedX } from "@tabler/icons-react";

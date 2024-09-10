@@ -1,4 +1,3 @@
-'use client';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -10,13 +9,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-// import GoogleSignInButton from '../github-auth-button';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Enter a valid email address' })
@@ -25,7 +21,8 @@ const formSchema = z.object({
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
-  const searchParams = useSearchParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, setLoading] = useState(false);
   const defaultValues = {
@@ -36,12 +33,11 @@ export default function UserAuthForm() {
     defaultValues
   });
 
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const onSubmit = async () => {
-    router.push('/dashboard');
+    navigate('/dashboard');
   };
-
 
   return (
     <>

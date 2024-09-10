@@ -2,10 +2,9 @@ import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
-import Link from 'next/link';
 import Notifications from '../Notifications';
-import Image from 'next/image';
-import ThemedLogo from './themes/ThemedLogo';
+import ThemedLogo from './ThemedLogo';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
@@ -13,30 +12,10 @@ export default function Header() {
       <nav className="flex h-18 items-center justify-between px-4">
         <div className="hidden lg:block">
           <Link
-            href={'#'}
+            to={'#'} // Alterado de 'href' para 'to'
             target="_blank"
           >
-
-            {/* <Image
-              className="mx-2 h-20 w-60 block dark:hidden"
-              src="/accesspilot.svg"
-              width={500}
-              height={500}
-              alt="Logo accesspilot"
-              priority={true}
-            />
-
-            <Image
-              className="mr-2 h-20 w-60 hidden dark:block"
-              src="/accesspilot-w.svg"
-              width={500}
-              height={500}
-              alt="Logo accesspilot"
-              priority={true}
-            /> */}
-
-            <ThemedLogo />
-            
+            <ThemedLogo /> 
           </Link>
         </div>
         <div className={cn('block lg:!hidden')}>

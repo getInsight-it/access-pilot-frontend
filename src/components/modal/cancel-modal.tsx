@@ -1,8 +1,6 @@
-'use client';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
-import { useRouter } from 'next/navigation';
 import { Textarea } from '../ui/textarea';
 
 interface CancelModalProps {
@@ -19,8 +17,6 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   loading
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-
-  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);

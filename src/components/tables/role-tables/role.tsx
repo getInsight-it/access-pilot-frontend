@@ -1,10 +1,9 @@
-'use client';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Role } from '@/constants/data';
 import { Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { columns } from './columns';
 import { DataTableRole } from '@/components/ui/data-table-role';
 
@@ -13,7 +12,7 @@ interface UserRoleProps {
 }
 
 export const UserRole: React.FC<UserRoleProps> = ({ data }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -24,7 +23,7 @@ export const UserRole: React.FC<UserRoleProps> = ({ data }) => {
         />
         <Button
           className="text-xs md:text-sm"
-          onClick={() => router.push(`/dashboard/roles/new`)}
+          onClick={() => navigate(`/dashboard/roles/new`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Adicionar nova função
         </Button>

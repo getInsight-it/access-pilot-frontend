@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import systems from "@/constants/systems";
+import systems from '../constants/sistemas';
 import { LayoutGrid, List } from "lucide-react";
 import { CardShine } from "./CardShine";
-import Image from "next/image";
 
 const variants = {
   hidden: { opacity: 0, scale: 0.99 },
@@ -36,10 +35,10 @@ function GridList() {
             grid
             items-center
             justify-center
-            bg-black
-            text-white
-            dark:bg-white
-            dark:text-black
+
+            text-primary-foreground
+            bg-primary
+
             rounded-full
             w-10
             h-10
@@ -75,26 +74,33 @@ function GridList() {
             >
               <CardShine>
                 <div className={toggleViewMode ? "p-6" : " p-4"}>
-                  <div className="mt-4 absolute top-0 right-3">
+                  {/* <div className="mt-4 absolute top-0 right-3">
                     <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
                       {system.status}
                     </span>
-                  </div>
+                  </div> */}
                   <div className={toggleViewMode ? " " : "flex gap-4 items-end "}>
                     
                     {/* <img className={toggleViewMode ? "w-12" : "w-6"} src={system.url} alt="" /> */}
-                    <Image
+                    {/* <img
                       className={toggleViewMode ? "w-12" : "w-6"}
                       src={system.url}
-                      width={500}
-                      height={500}
+                      alt="Imagem do sistema"
+                    /> */}
+
+                    <img
+                      className={toggleViewMode ? "w-12" : "w-6"}
+                      src={system.url ? system.url : "/ap.svg"} // Verifica se 'url' existe, senão usa uma imagem padrão
                       alt="Imagem do sistema"
                     />
 
                     <p className={`font-bold text-white ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>{system.name}</p>
-                    <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
+                    {/* <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
                       {system.role}
-                    </p>
+                    </p> */}
+                    <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
+  {system.role ? system.role : "Sem função atribuída"} {/* Verificação condicional para 'role' */}
+</p>
                   </div>
                 </div>
               </CardShine>

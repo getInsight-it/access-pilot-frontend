@@ -17,7 +17,7 @@ build-app:
   artifacts:
     when: on_success
     paths:
-      - ./out
+      - ./dist
   cache:
     when: on_success
     paths:

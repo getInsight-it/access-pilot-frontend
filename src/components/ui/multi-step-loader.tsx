@@ -1,4 +1,4 @@
-// "use client";
+// 
 // import { cn } from "@/lib/utils";
 // import { AnimatePresence, motion } from "framer-motion";
 // import { useState, useEffect } from "react";
@@ -147,7 +147,7 @@
 
 
 // comportamento alterado para fechar a modal automaticamente
-"use client";
+
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";

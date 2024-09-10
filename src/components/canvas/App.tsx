@@ -1,9 +1,9 @@
-'use client'
+// @ts-nocheck
 import * as THREE from 'three'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
-import { BallCollider, CuboidCollider, Physics, RapierRigidBody, RigidBody, RigidBodyOptions, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
+import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
@@ -169,7 +169,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
 
 
 
-// 'use client'
+
 // import * as THREE from 'three'
 // import React, { useEffect, useRef, useState } from 'react'
 // import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'

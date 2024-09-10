@@ -1,6 +1,5 @@
-"use client";
-import Image from "next/image";
-import React, { useEffect, useId, useRef, useState } from "react";
+
+import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { Eye } from "lucide-react";
@@ -72,10 +71,7 @@ export function ExpandableList() {
               className="p-4 w-full max-w-[500px] relative h-full md:h-fit md:max-h-[90%]  flex flex-col bg-secondary sm:rounded-3xl overflow-hidden"
             >
               <motion.div className="absolute right-6 top-6" layoutId={`image-${active.title}-${id}`}>
-                <Image
-                  priority
-                  width={200}
-                  height={200}
+                <img
                   src={active.src}
                   alt={active.title}
                   className="
@@ -146,7 +142,7 @@ export function ExpandableList() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="mt-1 ml-1 text-2xl">Últimas solicitações.</h2>
         </div>
-        {cards.map((card, index) => (
+        {cards.map((card) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
@@ -155,9 +151,7 @@ export function ExpandableList() {
           >
             <div className="flex gap-4  md:flex-row">
               <motion.div className="hidden md:block" layoutId={`image-${card.title}-${id}`}>
-                <Image
-                  width={100}
-                  height={100}
+                <img
                   src={card.src}
                   alt={card.title}
                   className="h-8 w-8 md:h-10 md:w-10 rounded-lg object-cover object-top"

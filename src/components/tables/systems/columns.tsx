@@ -1,4 +1,3 @@
-'use client'
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Systems from '@/constants/systems.json';
@@ -102,7 +101,7 @@ export const columns: ColumnDef<System>[] = [
 
 
 
-// 'use client'
+
 // import { ColumnDef } from '@tanstack/react-table';
 // import { CellAction } from './cell-action';
 // import Systems from '@/constants/systems.json';

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LucideProps, ArrowBigDown, ArrowBigUp, Bell, FolderDot, Home, Notebook, User } from "lucide-react"; // importando os ícones diretamente
+import { LucideProps, ArrowBigDown, ArrowBigUp, FolderDot, Notebook, User } from "lucide-react"; // importando os ícones diretamente
 
 // Atualizando o tipo Icon para LucideProps
 const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; name: string }) => {
@@ -15,7 +15,7 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
 
 export const Stripe = () => {
   return (
-    <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-blur-bg">
+    <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-[var(--blur-bg)]">
       <div className="relative z-0 flex overflow-hidden ">
         <TranslateWrapper>
           <LogoItemsTop />
@@ -27,8 +27,6 @@ export const Stripe = () => {
           <LogoItemsTop />
         </TranslateWrapper>
       </div>
-
-      {/* <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-[var(--stripe-gradient-bg-from)] to-[var(--stripe-gradient-bg-to)]" /> */}
     </section>
   );
 };

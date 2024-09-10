@@ -1,240 +1,4 @@
-// 'use client'
-// import {
-//     OrbitControls,
-//     OrthographicCamera,
-//     useFBO,
-//     useGLTF,
-//   } from "@react-three/drei";
-//   import { Canvas, useFrame } from "@react-three/fiber";
-//   import { wrapEffect, EffectComposer, Bloom } from "@react-three/postprocessing";
-//   import { useControls } from "leva";
-//   import { Effect, KernelSize, Resolution } from "postprocessing";
-//   import { Suspense, useEffect, useRef, useState, forwardRef } from "react";
-//   import * as THREE from "three";
-  
-//   import fragmentShader from "!!raw-loader!./fragmentShader.glsl";
-// import { Character } from "./Character";
-  
-//   class RetroEffectImpl extends Effect {
-//     uniforms: Map<string, THREE.Uniform>;
-  
-//     constructor() {
-//       const uniforms = new Map<string, THREE.Uniform>([
-//         ["colorNum", new THREE.Uniform(8.0)],
-//         ["pixelSize", new THREE.Uniform(2.0)],
-//         ["blending", new THREE.Uniform(true)],
-//         ["curve", new THREE.Uniform(0.25)],
-//       ]);
-  
-//       super("RetroEffect", fragmentShader, {
-//         uniforms,
-//       });
-  
-//       this.uniforms = uniforms;
-//     }
-  
-//     set blending(value: boolean) {
-//       this.uniforms.get("blending")!.value = value;
-//     }
-  
-//     get blending(): boolean {
-//       return this.uniforms.get("blending")!.value as boolean;
-//     }
-  
-//     set curve(value: number) {
-//       this.uniforms.get("curve")!.value = value;
-//     }
-  
-//     get curve(): number {
-//       return this.uniforms.get("curve")!.value as number;
-//     }
-  
-//     set colorNum(value: number) {
-//       this.uniforms.get("colorNum")!.value = value;
-//     }
-  
-//     get colorNum(): number {
-//       return this.uniforms.get("colorNum")!.value as number;
-//     }
-  
-//     set pixelSize(value: number) {
-//       this.uniforms.get("pixelSize")!.value = value;
-//     }
-  
-//     get pixelSize(): number {
-//       return this.uniforms.get("pixelSize")!.value as number;
-//     }
-//   }
-  
-//   const RetroEffect = wrapEffect(RetroEffectImpl);
-  
-//   const Spaceship = forwardRef<THREE.Group>((_, ref) => {
-//     const gltf = useGLTF("https://cdn.maximeheckel.com/models/spaceship-optimized.glb") as any;
-  
-//     useEffect(() => {
-//       if (gltf) {
-//         function alphaFix(material: THREE.Material) {
-//           material.transparent = true;
-//           material.alphaToCoverage = true;
-//           material.depthFunc = THREE.LessEqualDepth;
-//           material.depthTest = true;
-//           material.depthWrite = true;
-//         }
-//         alphaFix(gltf.materials.spaceship_racer);
-//         alphaFix(gltf.materials.cockpit);
-//       }
-//     }, [gltf]);
-  
-//     return (
-//       <group ref={ref}>
-//         <group
-//           scale={0.005}
-//           rotation={[0, -Math.PI * 0.5, 0]}
-//           position={[1.583, 0, -3.725]}
-//         >
-//           <mesh
-//             castShadow
-//             receiveShadow
-//             geometry={gltf.nodes.Cube001_spaceship_racer_0.geometry}
-//             material={gltf.materials.spaceship_racer}
-//             position={[739.26, -64.81, 64.77]}
-//           />
-//           <mesh
-//             castShadow
-//             receiveShadow
-//             geometry={gltf.nodes.Cube005_cockpit_0.geometry}
-//             material={gltf.materials.spaceship_racer}
-//             position={[739.26, 0, 0]}
-//           />
-//         </group>
-//       </group>
-//     );
-//   });
-  
-//   const Piloto = forwardRef<THREE.Group>((_, ref) => {
-//     const { gltf, nodes, materials } = useGLTF("/piloto-transformed.glb") as any;
-  
-//     useEffect(() => {
-//       if (gltf) {
-//         function alphaFix(material: THREE.Material) {
-//           material.transparent = true;
-//           material.alphaToCoverage = true;
-//           material.depthFunc = THREE.LessEqualDepth;
-//           material.depthTest = true;
-//           material.depthWrite = true;
-//         }
-//         alphaFix(gltf.materials.spaceship_racer);
-//         alphaFix(gltf.materials.cockpit);
-//       }
-//     }, [gltf]);
-  
-//     return (
-//       <group ref={ref}>
-//         <group name="Scene">
-//           <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.001} position={[0, -0.86, 0]}>
-//             <primitive object={nodes.mixamorigHips} />
-//           </group>
-//           <skinnedMesh
-//             name="bigode"
-//             geometry={nodes.bigode.geometry}
-//             material={materials['MI_Spongebob_Mustache.001']}
-//             skeleton={nodes.bigode.skeleton}
-//             rotation={[Math.PI / 2, 0, 0]}
-//             scale={0.01}
-//             receiveShadow
-//             castShadow
-//           />
-//           <skinnedMesh
-//             name="Boy"
-//             geometry={nodes.Boy.geometry}
-//             skeleton={nodes.Boy.skeleton}
-//             rotation={[Math.PI / 2, 0, 0]}
-//             scale={0.01}
-//             receiveShadow
-//             castShadow
-//           >
-//             <meshStandardMaterial color={"white"} />
-//           </skinnedMesh>
-//           <skinnedMesh
-//             name="helmet"
-//             geometry={nodes.helmet.geometry}
-//             material={materials.Helmet34}
-//             skeleton={nodes.helmet.skeleton}
-//             rotation={[Math.PI / 2, 0, 0]}
-//             scale={0.01}
-//             receiveShadow
-//             castShadow
-//           />
-//         </group>
-//       </group>
-//     );
-//   });
-  
-//   const Retro: React.FC = () => {
-//     const piloto = useRef<THREE.Group>(null);
-//     const effect = useRef<RetroEffectImpl>(null);
-  
-//     const { colorNum, pixelSize } = useControls({
-//       colorNum: {
-//         value: "16.0",
-//         options: ["2.0", "4.0", "8.0", "16.0"],
-//       },
-//       pixelSize: {
-//         value: "4.0",
-//         options: ["4.0", "8.0", "16.0", "32.0"],
-//       },
-//     });
-  
-//     useFrame((state) => {
-//       if (effect.current && piloto.current) {
-//         const { camera, clock } = state;
-  
-//         effect.current.colorNum = parseInt(colorNum, 10);
-//         effect.current.pixelSize = parseInt(pixelSize, 10);
-  
-//         // piloto.current.rotation.x =
-//         //   Math.cos(clock.getElapsedTime()) *
-//         //   Math.cos(clock.getElapsedTime()) *
-//         //   0.15;
-//         // piloto.current.position.y =
-//         //   Math.sin(clock.getElapsedTime() * 1.0) + 0.5;
-  
-//         camera.lookAt(0, 0, 0);
-//       }
-//     });
-  
-//     return (
-//       <>
-//         <group rotation={[0, 0, 0]}>
-//           {/* <Piloto ref={piloto} /> */}
-//           <Character position={[0, -1, -3]} />
-//         </group>
-//         <EffectComposer>
-//           <RetroEffect ref={effect} />
-//           <Bloom intensity={0.25} luminanceThreshold={0.05} luminanceSmoothing={0.9} />
-//         </EffectComposer>
-//       </>
-//     );
-//   };
-  
-//   const Scene: React.FC = () => {
-//     return (
-//       <Canvas className="sceneCanvas" shadows dpr={[1, 2]}>
-//         <Suspense fallback="Loading">
-//           <color attach="background" args={["#3386E0"]} />
-//           {/* <color attach="background" args={["#ffffff"]} /> */}
-//           <ambientLight intensity={0.25} />
-//           <directionalLight position={[0, 10, 5]} intensity={10.5} />
-//           <Retro />
-//           <OrbitControls />
-//         </Suspense>
-//       </Canvas>
-//     );
-//   };
-  
-//   export default Scene;
-  
-'use client'
+// @ts-nocheck
 import * as THREE from 'three'
 import React from 'react'
 import {
@@ -250,7 +14,7 @@ import {
   import { Effect, KernelSize, Resolution } from "postprocessing";
   import { Suspense, useEffect, useRef, useState, forwardRef } from "react";
   {/* @ts-ignore  */}
-  import fragmentShader from "!!raw-loader!./fragmentShader.glsl";
+  import fragmentShader from "./fragmentShader.glsl";
   
 
 
@@ -261,6 +25,8 @@ import {
 
   import { easing } from 'maath'
 import { Button } from '@/components/ui/button';
+import { useRouter } from '@/routes/hooks';
+
 
 
   type ActionName = 'Around' | 'Behind' | 'Dance' | 'Hiphop' | 'Idle'
@@ -528,6 +294,9 @@ import { Button } from '@/components/ui/button';
   };
   
   const Scene: React.FC = () => {
+    
+    const router = useRouter();
+    
     return (
       <>
         
@@ -537,7 +306,7 @@ import { Button } from '@/components/ui/button';
             <h2 className="text-2xl z-50">
               Algo deu errado.
             </h2>
-            <Button className="pointer-events-auto">
+            <Button className="pointer-events-auto" onClick={() => router.back()}>
               Voltar
             </Button>
           </div>  

@@ -1,4 +1,3 @@
-'use client'
 import React from 'react'
 import { UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider } from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';

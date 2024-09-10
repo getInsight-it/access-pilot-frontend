@@ -1,11 +1,8 @@
-import React from "react";
 import { Card } from "../utils/Card";
 import { CalloutChip } from "../utils/CalloutChip";
 import { motion } from "framer-motion";
 import { Link } from "lucide-react";
-import Button from "../button";
 import { CountUpStats } from "../CountUpStatus";
-import { Stripe } from "../stripe/Stripe";
 
 // export const MiniCard1 = () => {
 //   return (

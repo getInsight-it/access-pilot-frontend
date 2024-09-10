@@ -1,4 +1,3 @@
-'use client'
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import AccessRequests from '@/constants/access-requests.json';
@@ -66,7 +65,7 @@ export const columns: ColumnDef<AccessRequest>[] = [
 
 
 
-// 'use client';
+;
 // import { ColumnDef } from '@tanstack/react-table';
 
 // import { CellAction } from './cell-action';

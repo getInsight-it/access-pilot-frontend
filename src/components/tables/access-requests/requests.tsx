@@ -1,4 +1,3 @@
-'use client';
 import {
   ColumnDef,
   PaginationState,
@@ -32,8 +31,9 @@ import {
   DoubleArrowRightIcon
 } from '@radix-ui/react-icons';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+// import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -57,25 +57,23 @@ export function RequestsTable<TData, TValue>({
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50]
 }: DataTableProps<TData, TValue>) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const { search, pathname } = useLocation();
+  const searchParams = new URLSearchParams(search);
+
   // Search params
-  const page = searchParams?.get('page') ?? '1';
+  const page = searchParams.get('page') ?? '1';
   const pageAsNumber = Number(page);
   const fallbackPage =
     isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const per_page = searchParams?.get('limit') ?? '10';
+  const per_page = searchParams.get('limit') ?? '10';
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
-
-  // Create query string
+  // Função para criar a query string
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(searchParams?.toString());
+      const newSearchParams = new URLSearchParams(search);
 
       for (const [key, value] of Object.entries(params)) {
         if (value === null) {
@@ -87,10 +85,10 @@ export function RequestsTable<TData, TValue>({
 
       return newSearchParams.toString();
     },
-    [searchParams]
+    [search]
   );
 
-  // Handle server-side pagination
+  // Lidar com a paginação no lado do cliente
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: fallbackPage - 1,
@@ -98,15 +96,10 @@ export function RequestsTable<TData, TValue>({
     });
 
   React.useEffect(() => {
-    router.push(
-      `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        limit: pageSize
-      })}`,
-      {
-        scroll: false
-      }
-    );
+    navigate(`${pathname}?${createQueryString({
+      page: pageIndex + 1,
+      limit: pageSize
+    })}`, { replace: true });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
@@ -128,57 +121,19 @@ export function RequestsTable<TData, TValue>({
 
   const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
 
-  // React.useEffect(() => {
-  //   if (debounceValue.length > 0) {
-  //     router.push(
-  //       `${pathname}?${createQueryString({
-  //         [selectedOption.value]: `${debounceValue}${
-  //           debounceValue.length > 0 ? `.${filterVariety}` : ""
-  //         }`,
-  //       })}`,
-  //       {
-  //         scroll: false,
-  //       }
-  //     )
-  //   }
-
-  //   if (debounceValue.length === 0) {
-  //     router.push(
-  //       `${pathname}?${createQueryString({
-  //         [selectedOption.value]: null,
-  //       })}`,
-  //       {
-  //         scroll: false,
-  //       }
-  //     )
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [debounceValue, filterVariety, selectedOption.value])
-
   React.useEffect(() => {
     if (searchValue?.length > 0) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue
-        })}`,
-        {
-          scroll: false
-        }
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      router.push(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null
-        })}`,
-        {
-          scroll: false
-        }
-      );
+      navigate(`${pathname}?${createQueryString({
+        page: null,
+        limit: null,
+        search: searchValue
+      })}`, { replace: true });
+    } else {
+      navigate(`${pathname}?${createQueryString({
+        page: null,
+        limit: null,
+        search: null
+      })}`, { replace: true });
     }
 
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
@@ -212,7 +167,6 @@ export function RequestsTable<TData, TValue>({
             <SelectItem value="rejeitado">Rejeitado</SelectItem>
           </SelectContent>
         </Select>
-        {/* <Input type="email" placeholder="Pesquisar..." /> */}
         <Input
           placeholder={`Pesquisar ${searchKey}...`}
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
@@ -275,14 +229,8 @@ export function RequestsTable<TData, TValue>({
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      
-
       <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
         <div className="flex w-full items-center justify-between">
-          {/* <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} de{' '}
-            {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-          </div> */}
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
             <div className="flex items-center space-x-2">
               <p className="whitespace-nowrap text-sm font-medium">

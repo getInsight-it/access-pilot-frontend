@@ -1,4 +1,3 @@
-'use client';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { System } from '@/constants/data';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CellActionProps {
   data: System;
@@ -20,9 +19,11 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    // Lógica para confirmar a ação, como exclusão
+  };
 
   return (
     <>
@@ -43,7 +44,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/system/${data.id}`)}
+            onClick={() => navigate(`/dashboard/system/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Atualizar
           </DropdownMenuItem>

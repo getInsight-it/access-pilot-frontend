@@ -1,17 +1,17 @@
 import { useGLTF } from '@react-three/drei';
 import { RigidBody } from '@react-three/rapier';
 import { GroupProps } from '@react-three/fiber';
-import { useTheme } from 'next-themes';
+import { useTheme } from '../../layout/ThemeToggle/theme-provider'; // Usando o contexto de tema customizado
 
 interface MapProps extends GroupProps {
   // Defina quaisquer outras propriedades adicionais se necessário
 }
 
 export default function Terreno(props: MapProps) {
-  const { nodes, materials } = useGLTF('/terreno.glb') as any;
+  const { nodes } = useGLTF('/terreno.glb') as any;
 
-  const { theme } = useTheme();
-  const terrainMaterial = theme === 'dark' ? '#333' : '#ffffff';
+  const { theme } = useTheme(); // Usando o contexto de tema customizado
+  const terrainMaterial = theme === 'dark' ? '#333' : theme === 'tangerine' ? '#ff9f40' : '#ffffff'; // Definindo a cor do material baseado no tema
 
   return (
     <RigidBody type="fixed" colliders="trimesh" ccd>
@@ -26,4 +26,4 @@ export default function Terreno(props: MapProps) {
   );
 }
 
-useGLTF.preload('/terreno.glb')
+useGLTF.preload('/terreno.glb');

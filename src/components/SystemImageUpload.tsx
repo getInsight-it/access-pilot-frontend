@@ -1,9 +1,8 @@
-"use client";
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useDropzone } from "react-dropzone";
-import { X, Upload, ImageIcon } from "lucide-react";
-import Image from "next/image";
+import { X, ImageIcon } from "lucide-react";
 
 const mainVariant = {
   initial: {
@@ -122,11 +121,9 @@ export const ImageUpload = ({
                   )}
                 >
                   <div className="mx-auto flex justify-between w-20 items-center gap-4">
-                    <Image
+                    <img
                       src={URL.createObjectURL(file)}
                       alt={file.name}
-                      width={100}
-                      height={100}
                       className="h-16 w-16 object-cover rounded-md"
                     />
                     {/* <motion.p

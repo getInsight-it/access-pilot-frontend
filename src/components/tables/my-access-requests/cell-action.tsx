@@ -1,63 +1,3 @@
-// 'use client';
-// import { AlertModal } from '@/components/modal/alert-modal';
-// import { Button } from '@/components/ui/button';
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuTrigger
-// } from '@/components/ui/dropdown-menu';
-// import AccessRequests from '@/constants/access-requests.json';
-// import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-// import { useParams, useRouter } from 'next/navigation';
-// import { useState } from 'react';
-
-// interface CellActionProps {
-//   data: typeof AccessRequests;
-// }
-
-// export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-//   const [loading, setLoading] = useState(false);
-//   const [open, setOpen] = useState(false);
-//   const router = useRouter();
-
-//   const onConfirm = async () => {};
-
-//   return (
-//     <>
-//       <AlertModal
-//         isOpen={open}
-//         onClose={() => setOpen(false)}
-//         onConfirm={onConfirm}
-//         loading={loading}
-//       />
-//       <DropdownMenu modal={false}>
-//         <DropdownMenuTrigger asChild>
-//           <Button variant="ghost" className="h-8 w-8 p-0">
-//             <span className="sr-only">Abrir menu</span>
-//             <MoreHorizontal className="h-4 w-4" />
-//           </Button>
-//         </DropdownMenuTrigger>
-//         <DropdownMenuContent align="end">
-//           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-
-//           <DropdownMenuItem
-//             onClick={() => router.push(`/dashboard/access-requests/${data.id}`)}
-//           >
-//             <Edit className="mr-2 h-4 w-4" /> Atualizar
-//           </DropdownMenuItem>
-//           <DropdownMenuItem onClick={() => setOpen(true)}>
-//             <Trash className="mr-2 h-4 w-4" /> Apagar
-//           </DropdownMenuItem>
-//         </DropdownMenuContent>
-//       </DropdownMenu>
-//     </>
-//   );
-// };
-
-
-'use client';
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,9 +7,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import AccessRequests from '@/constants/access-requests.json';
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 interface CellActionProps {
@@ -86,9 +25,11 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    // Lógica para confirmação (excluir ou editar)
+  };
 
   return (
     <>
@@ -109,12 +50,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/request-detail/`)}
+            onClick={() => navigate(`/dashboard/request-detail/`)}
           >
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>
           {/* <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/access-requests/${data.id}`)}
+            onClick={() => navigate(`/dashboard/access-requests/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>

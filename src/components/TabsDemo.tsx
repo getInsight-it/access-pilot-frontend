@@ -1,6 +1,3 @@
-"use client";
-
-import Image from "next/image";
 import { Tabs } from "@/components/tabs/tabs";
 
 export function TabsDemo() {
@@ -140,11 +137,9 @@ export function TabsDemo() {
 
 const DummyContent = () => {
   return (
-    <Image
+    <img
       src="/ap.svg"
       alt="dummy image"
-      width="1000"
-      height="1000"
       className=" object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
     />
   );

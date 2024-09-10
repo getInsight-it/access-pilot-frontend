@@ -1,7 +1,5 @@
-import React from "react";
 import { Tower } from "./Tower";
 import { MiniCard1 } from "./MiniCard1";
-import { MiniCard2 } from "./MiniCard2";
 import { LongCard } from "./LongCard";
 
 export const Content = () => {

@@ -1,5 +1,4 @@
-'use client'
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { animate, useInView } from "framer-motion";
 
 export const CountUpStats = () => {
@@ -86,7 +85,7 @@ const Stat = ({ num, suffix, prefix, decimals = 0, prefixColor, suffixColor, sub
 
 
 // com icones lucide react
-// 'use client'
+
 // import React, { useEffect, useRef } from "react";
 // import { animate, useInView } from "framer-motion";
 // import { Check, UserPlus, AlertTriangle } from 'lucide-react';

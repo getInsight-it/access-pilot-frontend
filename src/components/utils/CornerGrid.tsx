@@ -1,5 +1,3 @@
-import React from "react";
-
 export const CornerGrid = () => {
   return (
     <div className="w-full absolute right-0 top-0 z-0 size-[50vw] bg-grid-blue-900/50">

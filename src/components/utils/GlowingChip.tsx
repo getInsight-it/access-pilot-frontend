@@ -1,5 +1,3 @@
-import React from "react";
-
 export const GlowingChip = ({ children }: { children: string }) => {
   return (
     <span className="relative z-10 mb-4 inline-block rounded-full border border-zinc-700 bg-zinc-900/20 px-3 py-1.5 text-xs text-zinc-50 md:mb-0 md:text-sm">

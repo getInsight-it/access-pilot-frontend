@@ -1,11 +1,10 @@
-'use client';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { System } from '@/constants/data';
 import { Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { columns } from './columns';
 
 interface UserSystemProps {
@@ -13,7 +12,7 @@ interface UserSystemProps {
 }
 
 export const UserSystem: React.FC<UserSystemProps> = ({ data }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -24,7 +23,7 @@ export const UserSystem: React.FC<UserSystemProps> = ({ data }) => {
         />
         <Button
           className="text-xs md:text-sm"
-          onClick={() => router.push(`/dashboard/system/new`)}
+          onClick={() => navigate(`/dashboard/system/new`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Adicionar novo
         </Button>

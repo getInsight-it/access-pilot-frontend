@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const HoverEffect = ({
   items,
@@ -30,7 +29,7 @@ export const HoverEffect = ({
     >
       {items.map((item, idx) => (
         <Link
-          href={item?.link}
+          to={item?.link}
           key={item?.link}
           className="relative group  block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
@@ -54,23 +53,14 @@ export const HoverEffect = ({
             )}
           </AnimatePresence>
           <Card>
-            <Image
+            <img
               className={cn(
                 "w-14",
                 className
               )}
               src={item.url}
-              width={500}
-              height={500}
               alt="Imagem do sistema"
             />
-            {/* <img
-              src={item.url}
-              className={cn(
-                "w-14",
-                className
-              )}
-            /> */}
             <CardTitle>{item.title}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
           </Card>

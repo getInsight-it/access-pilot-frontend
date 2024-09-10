@@ -1,6 +1,6 @@
-import { Fragment, useState } from 'react'
-import { Bookmark, Calendar, ChartBarBig, ChevronDown, Home, Menu, Phone, Play, RefreshCcw, Shield, TextCursor, View, X } from 'lucide-react';
-import Image from 'next/image';
+// @ts-nocheck
+import { useState } from 'react'
+import { Bookmark, Calendar, ChartBarBig, Home, Phone, Play, RefreshCcw, Shield, TextCursor, View, X } from 'lucide-react';
 
 type Feature = {
   name: string;
@@ -317,11 +317,9 @@ export default function Example() {
           <div className="px-4">
             <h1 className="tracking-tight font-extrabold text-gray-900 text-5xl">
               {/* <span className="block">Sistema</span> */}
-              <Image
+              <img
                 className="w-32 mx-auto"
                 src="/sistemas/sis01.svg"
-                width={500}
-                height={500}
                 alt="Imagem do sistema"
               />
               <span className="block text-indigo-600 mt-4">CRM</span>

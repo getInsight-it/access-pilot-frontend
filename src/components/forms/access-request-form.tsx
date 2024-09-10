@@ -1,16 +1,14 @@
-'use client';
 import * as z from 'zod';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,26 +16,9 @@ import {
 } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 import { Heading } from '@/components/ui/heading';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '../ui/use-toast';
 import { Textarea } from '../ui/textarea';
-const ImgSchema = z.object({
-  fileName: z.string(),
-  name: z.string(),
-  fileSize: z.number(),
-  size: z.number(),
-  fileKey: z.string(),
-  key: z.string(),
-  fileUrl: z.string(),
-  url: z.string()
-});
+
 export const IMG_MAX_LIMIT = 3;
 const formSchema = z.object({
   name: z
@@ -61,7 +42,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
   statuses
 }) => {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -93,8 +74,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
         // const res = await axios.post(`/api/products/create-product`, data);
         // console.log("product", res);
       }
-      router.refresh();
-      router.push(`/dashboard/products`);
+      navigate(`/dashboard/products`);
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
@@ -115,8 +95,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
     try {
       setLoading(true);
       //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      router.push(`/${params.storeId}/products`);
+      navigate(`/${params.storeId}/products`);
     } catch (error: any) {
     } finally {
       setLoading(false);
@@ -178,7 +157,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Descrição do função"
+                      placeholder="Descrição da função"
                       {...field}
                     />
                   </FormControl>
@@ -194,7 +173,6 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
                 <FormItem>
                   <FormLabel>Motivo</FormLabel>
                   <FormControl>
-                    
                     <Textarea
                       id="description"
                       name="description"
@@ -207,7 +185,6 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
                 </FormItem>
               )}
             />
-
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}

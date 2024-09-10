@@ -9,8 +9,6 @@
 //   );
 // }
 
-
-'use client'
 import { NodeRendererProps, Tree } from "react-arborist";
 import { data } from "./data";
 import { Medal, User, Shield, Crown } from "lucide-react"; // Adicione mais ícones conforme necessário
@@ -68,7 +66,7 @@ export default function App() {
 
 
 
-// 'use client'
+
 // import { NodeRendererProps, Tree } from "react-arborist";
 // import { data } from "./data";
 // import { Medal, User } from "lucide-react";

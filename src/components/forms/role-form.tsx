@@ -1,16 +1,13 @@
-'use client';
 import * as z from 'zod';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Trash } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,10 +22,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '../ui/use-toast';
 import { Textarea } from '../ui/textarea';
+
 export const IMG_MAX_LIMIT = 3;
+
 const formSchema = z.object({
   name: z
     .string()
@@ -55,7 +53,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({
   roles
 }) => {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,8 +86,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({
         // const res = await axios.post(`/api/products/create-product`, data);
         // console.log("product", res);
       }
-      router.refresh();
-      router.push(`/dashboard/products`);
+      navigate(`/dashboard/products`);
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
@@ -209,7 +206,6 @@ export const RoleForm: React.FC<RoleFormProps> = ({
                 <FormItem>
                   <FormLabel>Motivo</FormLabel>
                   <FormControl>
-                    
                     <Textarea
                       id="description"
                       name="description"
