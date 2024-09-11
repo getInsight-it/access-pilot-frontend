@@ -11,11 +11,9 @@ build-app:
   tags:
     - docker
   image: node:latest
-  before_script:
-    - echo $GITLAB_TOKEN
   script:
-    - npm ci --cache .npm --prefer-offline
-    - npm run build
+    - yarn
+    - yarn build
   artifacts:
     when: on_success
     paths:
