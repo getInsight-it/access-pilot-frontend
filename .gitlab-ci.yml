@@ -10,7 +10,10 @@ build-app:
   stage: build
   tags:
     - docker
-  image: node:22-alpine
+  image: node:latest
+  before_script:
+    - echo $CI_JOB_TOKEN
+    - echo $GITLAB_TOKEN
   script:
     - npm ci --cache .npm --prefer-offline
     - npm run build
