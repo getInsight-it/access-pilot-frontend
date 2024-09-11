@@ -12,8 +12,8 @@ build-app:
     - docker
   image: node:22-alpine
   script:
-    - yarn
-    - yarn run build
+    - npm install
+    - npm run build
   artifacts:
     when: on_success
     paths:
