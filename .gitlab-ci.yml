@@ -5,6 +5,7 @@ stages:
 
 variables:
   IMAGE_TAG: ${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}
+  GITLAB_TOKEN: ${CI_JOB_TOKEN}
 
 build-app:
   stage: build
