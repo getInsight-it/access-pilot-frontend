@@ -1,7 +1,3 @@
-
-// import { AreaGraph } from '@/components/charts/area-graph';
-// import { BarGraph } from '@/components/charts/bar-graph';
-// import { PieGraph } from '@/components/charts/pie-graph';
 import { FeatureGrid } from '@/components/grid/FeatureGrid';
 import GridList from '@/components/GridList';
 import GridListNoAccess from '@/components/GridListNoAccess';
@@ -17,8 +13,6 @@ export default function Page() {
   return (
     <ScrollArea className="h-full">
       
-      <Stripe />
-
       {/* admin dashboard */}
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center justify-between space-y-2">
@@ -26,16 +20,7 @@ export default function Page() {
             Olá, bem-vindo de volta
           </h2>
         </div>
-
-        {/* <div className="pb-40 grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
-          <TabsDemo />
-          <PieGraph />
-          <BarGraph />
-          <AreaGraph />
-        </div> */}
-
         <FeatureGrid />
-
       </div>
 
       {/* user dashboard */}
@@ -52,8 +37,7 @@ export default function Page() {
         </div>
       </div>
 
-      
-      
+      <Stripe />
     </ScrollArea>
   );
 }

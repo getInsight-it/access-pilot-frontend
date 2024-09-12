@@ -25,7 +25,6 @@ function AccessRequestsPage() {
   const system = searchParams.get('search') || null;
   const offset = (page - 1) * pageLimit;
 
-  // Filtrar os dados do JSON local de acordo com os parâmetros de pesquisa
   const filteredData = localData.filter(item => !system || item.system.includes(system));
   const totalUsers = filteredData.length;
   const pageCount = Math.ceil(totalUsers / pageLimit);
@@ -67,7 +66,6 @@ function AccessRequestsPage() {
   );
 }
 
-// Usando Suspense para lidar com a renderização do componente
 export default function Page() {
   return (
     <Suspense fallback={<div>Carregando...</div>}>

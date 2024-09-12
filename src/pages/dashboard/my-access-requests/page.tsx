@@ -15,7 +15,6 @@ const breadcrumbItems = [
   { title: 'Minhas solicitações', link: '/dashboard/my-access-requests' },
 ];
 
-// Função auxiliar para usar os parâmetros de busca com React Router
 function useSearchParams() {
   const { search } = useLocation();
   return new URLSearchParams(search);
@@ -28,7 +27,6 @@ function MyAccessRequestsPage() {
   const system = searchParams.get('search') || null;
   const offset = (page - 1) * pageLimit;
 
-  // Filtrar os dados do JSON local de acordo com os parâmetros de pesquisa
   const filteredData = localData.filter(item => !system || item.system.includes(system));
   const totalUsers = filteredData.length;
   const pageCount = Math.ceil(totalUsers / pageLimit);
@@ -67,7 +65,6 @@ function MyAccessRequestsPage() {
   );
 }
 
-// Usando Suspense para lidar com a renderização do componente
 export default function Page() {
   return (
     <Suspense fallback={<div>Carregando...</div>}>

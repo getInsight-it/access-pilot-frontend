@@ -8,13 +8,3 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 )
-
-
-// createRoot(document.getElementById('root')!).render(
-//   <StrictMode>
-//     <BrowserRouter>
-//       <App />
-//     </BrowserRouter>
-//   </StrictMode>
-// )
-

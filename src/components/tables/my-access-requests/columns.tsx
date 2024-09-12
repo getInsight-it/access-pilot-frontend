@@ -63,7 +63,7 @@ export const columns: ColumnDef<AccessRequest>[] = [
 
 
 
-;
+
 // import { ColumnDef } from '@tanstack/react-table';
 
 // import { CellAction } from './cell-action';

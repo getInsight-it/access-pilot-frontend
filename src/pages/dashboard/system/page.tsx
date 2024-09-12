@@ -15,7 +15,6 @@ const breadcrumbItems = [
   { title: 'Gerenciar sistemas', link: '/dashboard/system' }
 ];
 
-// Função auxiliar para obter os parâmetros de busca do React Router DOM
 function useSearchParams() {
   const { search } = useLocation();
   return new URLSearchParams(search);
@@ -28,7 +27,6 @@ function SystemsPage() {
   const name = searchParams.get('search') || null;
   const offset = (page - 1) * pageLimit;
 
-  // Filtrar os dados do JSON local de acordo com os parâmetros de pesquisa
   const filteredData = localData.filter(item => !name || item.name.includes(name));
   const totalUsers = filteredData.length;
   const pageCount = Math.ceil(totalUsers / pageLimit);
@@ -68,7 +66,6 @@ function SystemsPage() {
   );
 }
 
-// Usando Suspense para lidar com a renderização do componente
 export default function Page() {
   return (
     <Suspense fallback={<div>Carregando...</div>}>
