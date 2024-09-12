@@ -2,8 +2,8 @@ import useAuthStore from '../../store/authStore.ts';
 import { authService } from '../../services/auth';
 
 const Dashboard = () => {
-
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   const signOut = async () => {
     await authService.signOut();

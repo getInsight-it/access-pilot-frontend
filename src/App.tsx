@@ -12,7 +12,8 @@ function App() {
 
   const navigate = useNavigate();
 
-  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const setIsAuthenticated = useAuthStore((state: any) => state.setIsAuthenticated);
 
   const init = () => {
     authService.isAuthenticated().subscribe(authenticated => {

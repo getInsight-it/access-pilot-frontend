@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 const Error = () => {
 
-  let { errorCode } = useParams();
+  const { errorCode } = useParams();
 
   return (
     <>
