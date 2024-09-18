@@ -6,8 +6,10 @@ const Error = () => {
 
   return (
     <>
-      <p>Error</p>
-      <p>{ errorCode ? errorCode : 'Erro genérico' }</p>
+      <div className="absolute top-0 pl-10 pt-60">
+        <p>Error</p>
+        <p>{ errorCode ? errorCode : 'Erro genérico' }</p>
+      </div>
     </>
   )
 };

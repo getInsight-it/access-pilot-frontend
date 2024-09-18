@@ -1,13 +1,17 @@
 import { Outlet } from 'react-router-dom';
+import Header from '../components/layout/header';
+import Sidebar from '../components/layout/sidebar';
 
-const DashboardLayout = () => {
-
+export default function DashboardLayout() {
   return (
     <>
-      <p>Sou o DashboardLayout</p>
-      <Outlet/>
+      <Header />
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <main className="flex-1 overflow-hidden pt-16">
+          <Outlet/>
+        </main>
+      </div>
     </>
-  )
-};
-
-export default DashboardLayout;
+  );
+}

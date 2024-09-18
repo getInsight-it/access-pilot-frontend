@@ -1,21 +1,76 @@
+// import useAuthStore from '../../store/authStore.ts';
+// import { authService } from '../../services/auth';
+
+// const Dashboard = () => {
+//   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+//   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+
+//   const signOut = async () => {
+//     await authService.signOut();
+//   };
+
+//   return (
+//     <>
+//       <p>Dashboard</p>
+//       <p>[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
+//       <button type="button" onClick={ signOut }>Sair</button>
+//     </>
+//   )
+// };
+
+// export default Dashboard;
+
+
+
 import useAuthStore from '../../store/authStore.ts';
 import { authService } from '../../services/auth';
+import { FeatureGrid } from '../../components/grid/FeatureGrid';
+import GridList from '../../components/GridList';
+import GridListNoAccess from '../../components/GridListNoAccess';
+import { Stripe } from '../../components/stripe/Stripe';
+import { ScrollArea } from '../../components/ui/scroll-area';
 
-const Dashboard = () => {
+
+export default function Dashboard() {
+
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   const signOut = async () => {
     await authService.signOut();
   };
+  
 
   return (
-    <>
-      <p>Dashboard</p>
-      <p>[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
+    <ScrollArea className="h-full">
+      
+      <p className="mt-10">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
       <button type="button" onClick={ signOut }>Sair</button>
-    </>
-  )
-};
+      {/* admin dashboard */}
+      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+        <div className="flex items-center justify-between space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Olá, bem-vindo de volta
+          </h2>
+        </div>
+        <FeatureGrid />
+      </div>
 
-export default Dashboard;
+      {/* user dashboard */}
+      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+        <div className="flex items-center justify-between space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Olá, bem-vindo de volta
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
+          <GridList />
+          <div></div>
+          <GridListNoAccess />
+        </div>
+      </div>
+
+      <Stripe />
+    </ScrollArea>
+  );
+}

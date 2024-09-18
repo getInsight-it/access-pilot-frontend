@@ -1,7 +1,35 @@
+// import { authService } from '../../services/auth';
+// import useAuthStore from '../../store/authStore.ts';
+
+// const Login = () => {
+//   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+//   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+
+//   const signIn = async () => {
+//     await authService.signIn();
+//   };
+
+//   return (
+//     <>
+//       <p>Login</p>
+//       <p>[Login] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
+//       <button type="button" onClick={ signIn }>Entrar</button>
+//     </>
+//   )
+// };
+
+// export default Login;
+
+
+import { Link } from "react-router-dom";
+import App from "../../components/canvas/App";
+import { Logo } from "../../components/Logo";
+import { Button } from "../../components/ui/button";
 import { authService } from '../../services/auth';
 import useAuthStore from '../../store/authStore.ts';
 
-const Login = () => {
+export default function Login() {
+  
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
@@ -11,11 +39,37 @@ const Login = () => {
 
   return (
     <>
-      <p>Login</p>
-      <p>[Login] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-      <button type="button" onClick={ signIn }>Entrar</button>
-    </>
-  )
-};
+      <div className="relative h-screen flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
 
-export default Login;
+        <div className="w-full lg:w-[50vw] flex justify-between items-center absolute top-0 right-0 p-6 lg:p-10">
+          &nbsp;
+          <Logo />
+        </div>
+        <div className="relative hidden h-full flex-col bg-background text-white lg:flex">
+          <div className="absolute inset-0" />
+          <App />
+        </div>
+        <div className="flex h-full items-center p-4 lg:p-8 bg-secondary">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+            <div className="flex flex-col text-left ">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Acesse sua conta
+              </h1>
+            </div>
+            <Button type="button" onClick={ signIn }>
+              Entrar
+            </Button>
+            
+            <p>[Login] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
+            
+            <Link to="/dashboard">Ir para Dashboard</Link>
+          </div>
+
+        </div>
+
+      </div>
+    </>
+  );
+}
+
+
