@@ -51,12 +51,15 @@ export function DashboardNav({
                     }}
                   >
                     <Icon className={`ml-3 size-5 text-[var(--dashboard-nav-text)]`} />
-
+                    
+                    {/* <hr className="absolute left-0 mt-[42px] h-[1px] w-full bg-red-500" /> */}
+                    
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (
                       <span className="mr-2 truncate">{item.title}</span>
                     ) : (
                       ''
                     )}
+                    
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent

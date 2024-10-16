@@ -29,6 +29,7 @@ import GridList from '../../components/GridList';
 import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
 import { ScrollArea } from '../../components/ui/scroll-area';
+import FooterGovbr from '../../components/layout/footer-govbr.tsx';
 
 
 export default function Dashboard() {
@@ -36,7 +37,7 @@ export default function Dashboard() {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
-  console.log(authService)
+  // console.log(authService)
 
   const signOut = async () => {
     await authService.signOut();
@@ -73,6 +74,8 @@ export default function Dashboard() {
           <GridListNoAccess />
         </div>
       </div>
+
+      <FooterGovbr />
 
       <Stripe />
     </ScrollArea>

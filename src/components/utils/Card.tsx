@@ -26,7 +26,7 @@ export const Card = ({
       }}
       style={style}
       className={twMerge(
-        "relative h-full w-full overflow-hidden rounded-2xl border p-6",
+        "relative h-full w-full overflow-hidden rounded-[var(--rounded-2xl)] border p-6",
         className
       )}
     >
