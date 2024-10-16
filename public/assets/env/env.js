@@ -1,5 +1,5 @@
 window.env = {
-  API_URL: 'https://api.accesspilot.dev.getinsight.tech',
+  API_URL: 'http://localhost:8082',
   FRONTEND_URL: 'http://localhost:5173',
   KEYCLOAK_URL: 'https://keycloak.cloud.getinsight.tech',
   KEYCLOAK_REALM: 'access-pilot',

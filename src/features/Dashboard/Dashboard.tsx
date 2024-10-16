@@ -29,6 +29,8 @@ import GridList from '../../components/GridList';
 import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
 import { ScrollArea } from '../../components/ui/scroll-area';
+import { roleService } from '../../services/role';
+import { useEffect } from 'react';
 
 
 export default function Dashboard() {
@@ -36,16 +38,23 @@ export default function Dashboard() {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
-  console.log(authService)
+  const getRoles = () => {
+    roleService.getRoles();
+  };
 
   const signOut = async () => {
     await authService.signOut();
   };
-  
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getRoles();
+    }
+  }, [isAuthenticated]);
 
   return (
     <ScrollArea className="h-full">
-      
+
       <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
         <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
         <button type="button" onClick={ signOut }>Sair</button>

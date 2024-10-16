@@ -8,7 +8,6 @@ export class AuthService {
   keycloakService: KeycloakService;
 
   private constructor() {
-    console.log('[AuthService] constructor');
     this.keycloakService = new KeycloakService();
   }
 
@@ -36,8 +35,8 @@ export class AuthService {
     return this.keycloakService.isAuthenticated() as BehaviorSubject<boolean>;
   }
 
-  getBearerToken(): string | null {
-    return this.keycloakService.getBearerToken();
+  async getBearerToken(): Promise<string | null> {
+    return await this.keycloakService.getBearerToken();
   }
 
   onInitEvent(): BehaviorSubject<AuthInitEvent> {
