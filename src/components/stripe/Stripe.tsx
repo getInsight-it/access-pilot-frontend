@@ -5,8 +5,8 @@ import { LucideProps, ArrowBigDown, ArrowBigUp, FolderDot, Notebook, User } from
 const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; name: string }) => {
   return (
     <span className="flex items-center justify-center gap-3 px-4 py-2 md:py-0">
-      <Icon className="text-2xl text-red-600 md:text-3xl" />
-      <span className="whitespace-nowrap text-md text-[var(--stripe-text)] font-semibold md:text-lg">
+      <Icon className="text-2xl text-[var(--stripe-iconcolor)] md:text-3xl" />
+      <span className="whitespace-nowrap text-md text-[var(--stripe-text)] font-regular md:text-lg">
         {name}
       </span>
     </span>
@@ -15,7 +15,7 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
 
 export const Stripe = () => {
   return (
-    <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-[var(--blur-bg)]">
+    <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-[var(--stripe-bg)]">
       <div className="relative z-0 flex overflow-hidden ">
         <TranslateWrapper>
           <LogoItemsTop />

@@ -12,7 +12,7 @@ import localData from '../../../constants/systems.json';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Gerenciar sistemas', link: '/dashboard/system' }
+  { title: 'Gerenciar sistemas', link: '/dashboard/systems' }
 ];
 
 function useSearchParams() {
@@ -46,7 +46,7 @@ export default function Systems() {
           />
           <Button
             className={cn(buttonVariants({ variant: 'default' }))}
-            onClick={() => navigate(`/dashboard/system/new`)}
+            onClick={() => navigate(`/dashboard/systems/new/`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Adicionar novo
           </Button>

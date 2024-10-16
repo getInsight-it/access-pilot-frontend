@@ -36,7 +36,7 @@ export default function Sidebar({ className }: SidebarProps) {
       />
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <div className="mt-3 space-y-1">
+          <div className="mt-6 space-y-1">
             <DashboardNav items={navItems} />
           </div>
         </div>

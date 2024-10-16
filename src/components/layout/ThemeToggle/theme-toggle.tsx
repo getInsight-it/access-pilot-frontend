@@ -36,6 +36,9 @@ export default function ThemeToggle({}: CompProps) {
         <DropdownMenuItem onClick={() => setTheme('rnp')}>
           RNP
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('gov')}>
+          Gov BR
+        </DropdownMenuItem>
         {/* <DropdownMenuItem onClick={() => setTheme('system')}>
           System
         </DropdownMenuItem> */}

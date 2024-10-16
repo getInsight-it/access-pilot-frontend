@@ -81,8 +81,8 @@ export const SystemDetailDrawer = () => {
 
           </div>
       
-          {/* <SystemDetail /> */}
-          <SystemPhone />
+          <SystemDetail />
+          {/* <SystemPhone /> */}
       
       
         </div>

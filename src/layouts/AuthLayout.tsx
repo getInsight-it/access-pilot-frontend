@@ -4,10 +4,8 @@ const AuthLayout = () => {
 
   return (
     <>
-      <p className="bg-red-500 text-white p-4 absolute z-10">Sou o AuthLayout</p>
-      {/* <p>Sou o AuthLayout</p> */}
+      {/* <p className="bg-red-500 text-white p-4 absolute z-10">Sou o AuthLayout</p> */}
       <Outlet/>
-      
     </>
   )
 };

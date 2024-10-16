@@ -4,8 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Trash } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,16 +13,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
-import { Heading } from '@/components/ui/heading';
+} from '../../components/ui/form';
+import { Separator } from '../../components/ui/separator';
+import { Heading } from '../../components/ui/heading';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select';
+} from '../../components/ui/select';
 import { useToast } from '../ui/use-toast';
 import { SystemImageUpload } from '../SystemImageUpload';
 

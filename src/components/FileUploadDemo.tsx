@@ -9,7 +9,10 @@ export function FileUploadDemo() {
   };
 
   return (
-    <div className="mt-4 sm:mt-8 w-full max-w-4xl mx-auto border border-dashed bg-white dark:bg-black border-black dark:border-gray-400 rounded-lg">
+    // <div className="mt-4 sm:mt-8 w-full max-w-4xl mx-auto border border-dashed bg-white dark:bg-black border-black dark:border-gray-400 rounded-lg">
+    //   <FileUpload onChange={handleFileUpload} />
+    // </div>
+    <div className="mt-4 sm:mt-8 w-full max-w-4xl mx-auto border border-dashed bg-primary border-black dark:border-gray-400 rounded-lg">
       <FileUpload onChange={handleFileUpload} />
     </div>
   );

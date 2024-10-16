@@ -36,6 +36,8 @@ export default function Dashboard() {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
+  console.log(authService)
+
   const signOut = async () => {
     await authService.signOut();
   };
@@ -44,8 +46,10 @@ export default function Dashboard() {
   return (
     <ScrollArea className="h-full">
       
-      <p className="mt-10">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-      <button type="button" onClick={ signOut }>Sair</button>
+      <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
+        <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
+        <button type="button" onClick={ signOut }>Sair</button>
+      </div>
       {/* admin dashboard */}
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center justify-between space-y-2">

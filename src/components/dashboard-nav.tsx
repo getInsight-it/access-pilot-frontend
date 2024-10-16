@@ -42,15 +42,15 @@ export function DashboardNav({
                   <Link
                     to={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                      path === item.href ? 'bg-accent' : 'transparent',
+                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]',
+                      path === item.href ? 'bg-[var(--dashboard-nav-bg)]' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
                     onClick={() => {
                       if (setOpen) setOpen(false);
                     }}
                   >
-                    <Icon className={`ml-3 size-5`} />
+                    <Icon className={`ml-3 size-5 text-[var(--dashboard-nav-text)]`} />
 
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (
                       <span className="mr-2 truncate">{item.title}</span>
@@ -72,6 +72,14 @@ export function DashboardNav({
           );
         })}
       </TooltipProvider>
+      {isMobileNav || (!isMinimized && !isMobileNav) ? (
+        <div className="absolute bottom-0 p-4 pointer-events-none truncate">
+          <p className="text-xs font-regular">Powered by:</p>
+          <img className="w-36" src="/accesspilot-logo.svg" />
+        </div>
+      ) : (
+        ''
+      )}
     </nav>
   );
 }

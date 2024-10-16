@@ -172,15 +172,9 @@ export const navItems: NavItem[] = [
     icon: 'question',
     label: 'Ajuda e suporte'
   },
-  // {
-  //   title: 'Erro',
-  //   href: '/dashboard/error',
-  //   icon: 'question',
-  //   label: 'Erro'
-  // },
   {
     title: 'Gerenciar sistemas',
-    href: '/dashboard/system',
+    href: '/dashboard/systems',
     icon: 'cog',
     label: 'Gerenciar Sistemas'
   },

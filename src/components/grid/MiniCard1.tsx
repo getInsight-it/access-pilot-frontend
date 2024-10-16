@@ -25,6 +25,9 @@ export const MiniCard1 = () => {
         <div className=" w-fit">
           <CalloutChip>#2</CalloutChip>
         </div>
+
+        {/* <p className="mb-2 text-2xl">Atividades recentes</p> */}
+        
         <CountUpStats />
 
         {/* <Stripe /> */}
@@ -72,7 +75,7 @@ const Band = ({ delay }: { delay: number }) => {
         ease: "linear",
         delay,
       }}
-      className="absolute left-[50%] top-[50%] z-0 size-80 rounded-full border border-red-600 bg-gradient-to-br from-red-600/50 to-red-950/20"
+      className="absolute left-[50%] top-[50%] z-0 size-80 rounded-full border border-primary bg-gradient-to-br from-primary/50 to-primary/20"
     />
   );
 };
