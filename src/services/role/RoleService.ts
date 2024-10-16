@@ -11,7 +11,6 @@ export class RoleService {
   }
 
   async getRoles(): any {
-    console.log(httpClient);
     const response: HttpRequestResponse | HttpRequestError = await this.httpCLient.get(ROLE_API.ROLES);
 
     if (response instanceof HttpRequestResponse) {

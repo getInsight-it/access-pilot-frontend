@@ -8,7 +8,7 @@ import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from './constants/routes.ts
 import './App.scss'
 import { AuthInitEvent } from '@getinsight.it/getinsight-common';
 import { ThemeProvider } from './components/layout/ThemeToggle/theme-provider.tsx';
-import { updateHttpClient } from './config/http/http.ts';
+import { registerHttpAuthorization } from './config/http/http.ts';
 
 function App() {
 
@@ -44,7 +44,7 @@ function App() {
 
   const init = () => {
     authService.isAuthenticated().subscribe(async (authenticated) => {
-      await updateHttpClient(authenticated);
+      await registerHttpAuthorization(authenticated);
 
       setIsAuthenticated(authenticated);
 
