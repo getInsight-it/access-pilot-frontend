@@ -22,7 +22,7 @@ export const CardShine = ({
 
   return (
     <div
-      className="group relative w-full rounded-xl border border-white/10 bg-[var(--system-card)] shadow-lg"
+      className="group relative w-full rounded-xl border border-white/10 bg-[var(--system-card)] text-[var(--system-card-text)] shadow-lg"
       onMouseMove={handleMouseMove}
     >
       <motion.div
@@ -31,7 +31,7 @@ export const CardShine = ({
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${mouseX}px ${mouseY}px,
-              rgba(255, 255, 255, 0.25),
+              var(--card-shine),
               transparent 80%
             )
           `,

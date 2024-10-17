@@ -87,12 +87,12 @@ function GridListNoAccess() {
                       alt="Imagem do sistema"
                     />
 
-                    <p className={`font-bold text-white ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>{system.name}</p>
+                    <p className={`font-bold ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>{system.name}</p>
                     {/* <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
                       {system.role}
                     </p> */}
                   </div>
-                  <Button className={toggleViewMode ? "mt-4 relative bg-white text-black" : "mt-2.5 absolute right-4 top-0 bg-white text-black"}>
+                  <Button className={toggleViewMode ? "mt-4 relative bg-primary text-primary-foreground" : "mt-2.5 absolute right-4 top-0 bg-primary text-primary-foreground"}>
                     Solicitar acesso
                   </Button>
                 </div>

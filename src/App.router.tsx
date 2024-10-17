@@ -38,8 +38,6 @@ const authRoutes = [{
 
 const privateRoutes = [
   {
-    // path: '/dashboard',
-    path: PRIVATE_ROUTES.DASHBOARD,
     element: (
       <Suspense>
         <DashboardLayout />

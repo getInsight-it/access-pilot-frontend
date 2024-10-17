@@ -8,6 +8,7 @@ import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from './constants/routes.ts
 import './App.scss'
 import { AuthInitEvent } from '@getinsight.it/getinsight-common';
 import { ThemeProvider } from './components/layout/ThemeToggle/theme-provider.tsx';
+import { registerHttpAuthorization } from './config/http/http.ts';
 
 function App() {
 
@@ -42,32 +43,34 @@ function App() {
   // };
 
   const init = () => {
-    authService.isAuthenticated().subscribe(authenticated => {
+    authService.isAuthenticated().subscribe(async (authenticated) => {
+      await registerHttpAuthorization(authenticated);
+
       setIsAuthenticated(authenticated);
-      
-      if (authenticated) {
-        // Verifique se a navegação já está em uma rota válida
-        const currentRoute = window.location.pathname;
-        
-        // Evite redirecionar para o dashboard se já estiver em uma página interna
-        if (currentRoute !== PRIVATE_ROUTES.DASHBOARD && currentRoute.startsWith('/dashboard')) {
-          return; // Já está em uma rota válida do dashboard, não redirecionar
-        }
-  
-        navigate(PRIVATE_ROUTES.DASHBOARD);
-      }
+
+      // if (authenticated) {
+      //   // Verifique se a navegação já está em uma rota válida
+      //   const currentRoute = window.location.pathname;
+      //
+      //   // Evite redirecionar para o dashboard se já estiver em uma página interna
+      //   if (currentRoute !== PRIVATE_ROUTES.DASHBOARD && currentRoute.startsWith('/dashboard')) {
+      //     return; // Já está em uma rota válida do dashboard, não redirecionar
+      //   }
+      //
+      //   navigate(PRIVATE_ROUTES.DASHBOARD);
+      // }
     });
-  
+
     authService.onInitEvent().subscribe(event => {
       if (event !== AuthInitEvent.INITIALIZE) {
         // TODO: Esconder loader
       }
-  
+
       if (event === AuthInitEvent.ERROR) {
         navigate(ERROR_ROUTES.ERROR);
       }
     });
-  
+
     authService.onSignOutEvent().subscribe(userSignedOut => {
       if (userSignedOut) {
         navigate(AUTH_ROUTES.LOGIN);
@@ -75,7 +78,7 @@ function App() {
     });
   };
 
-  
+
   useEffect(() => {
     init();
   }, []);

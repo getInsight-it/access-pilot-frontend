@@ -1,27 +1,3 @@
-// import useAuthStore from '../../store/authStore.ts';
-// import { authService } from '../../services/auth';
-
-// const Dashboard = () => {
-//   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-//   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-
-//   const signOut = async () => {
-//     await authService.signOut();
-//   };
-
-//   return (
-//     <>
-//       <p>Dashboard</p>
-//       <p>[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-//       <button type="button" onClick={ signOut }>Sair</button>
-//     </>
-//   )
-// };
-
-// export default Dashboard;
-
-
-
 import useAuthStore from '../../store/authStore.ts';
 import { authService } from '../../services/auth';
 import { FeatureGrid } from '../../components/grid/FeatureGrid';
@@ -30,6 +6,9 @@ import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import FooterGovbr from '../../components/layout/footer-govbr.tsx';
+import { roleService } from '../../services/role';
+import { useEffect } from 'react';
+import { useTheme } from '../../components/layout/ThemeToggle/theme-provider.tsx';
 
 
 export default function Dashboard() {
@@ -37,16 +16,25 @@ export default function Dashboard() {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
-  // console.log(authService)
+  const { theme } = useTheme();
+
+  const getRoles = () => {
+    roleService.getRoles();
+  };
 
   const signOut = async () => {
     await authService.signOut();
   };
-  
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getRoles();
+    }
+  }, [isAuthenticated]);
 
   return (
     <ScrollArea className="h-full">
-      
+
       <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
         <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
         <button type="button" onClick={ signOut }>Sair</button>
@@ -75,9 +63,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <FooterGovbr />
+      {theme === 'gov' && (
+        <div className="mt-20">
+          <FooterGovbr />
+        </div>
+      )}
 
-      <Stripe />
+      {/* <Stripe /> */}
     </ScrollArea>
   );
 }

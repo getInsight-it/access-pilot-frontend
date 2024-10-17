@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from './ui/tooltip';
+import { useTheme } from './layout/ThemeToggle/theme-provider';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -29,6 +30,8 @@ export function DashboardNav({
   if (!items?.length) {
     return null;
   }
+
+  const { theme } = useTheme();
 
   return (
     <nav className="grid items-start gap-2">
@@ -52,8 +55,10 @@ export function DashboardNav({
                   >
                     <Icon className={`ml-3 size-5 text-[var(--dashboard-nav-text)]`} />
                     
-                    {/* <hr className="absolute left-0 mt-[42px] h-[1px] w-full bg-red-500" /> */}
-                    
+                    {theme === 'gov' && (
+                      <hr className="absolute left-0 mt-[42px] h-[1px] w-full bg-red-500" />
+                    )}
+
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (
                       <span className="mr-2 truncate">{item.title}</span>
                     ) : (

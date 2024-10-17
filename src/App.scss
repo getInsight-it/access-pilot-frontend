@@ -35,6 +35,7 @@
     --sidebar-mockup-bg: 220.9 39.3% 11%;
     --list-color: #000000;
     --system-card: hsl(225, 7%, 11%);
+    --system-card-text: #ffffff;
 
     // --dashboard-nav-text: #FFFFFF;
     --dashboard-nav-bg: #f3f3f3;
@@ -45,6 +46,8 @@
     --rounded-2xl: 1rem;
 
     --button-hover: #3f3f3f;
+
+    --card-shine: rgba(255, 255, 255, 30%);
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
@@ -84,6 +87,7 @@
     --list-color: #ffffff;
     /* --system-card: 210 20% 98%; */
     --system-card: hsl(225, 7%, 11%);
+    --system-card-text: #ffffff;
 
     --dashboard-nav-text: #FFFFFF;
     --dashboard-nav-bg: #2f2f2f;
@@ -94,6 +98,8 @@
     --rounded-2xl: 1rem;
 
     --button-hover: #d4d4d4;
+
+    --card-shine: rgba(255, 255, 255, 20%);
 
     --background: 0 0% 0%;
     --foreground: 210 20% 98%;
@@ -130,6 +136,7 @@
     --sidebar-mockup-bg: 220.9 39.3% 11%;
     --list-color: #000000;
     --system-card: hsl(33 100% 15%);
+    --system-card-text: #ffffff;
 
     --dashboard-nav-text: 24 100% 40%;
     --dashboard-nav-bg: #ffe0cc;
@@ -138,6 +145,8 @@
     --callout-chip-text: #ffffff;
 
     --rounded-2xl: 1rem;
+
+    --card-shine: rgba(255, 224, 204, 60%);
 
     --background: 33 100% 97%;
     --foreground: 33 100% 15%;
@@ -176,6 +185,7 @@
     --sidebar-mockup-bg: 220.9 39.3% 11%;
     --list-color: #000000;
     --system-card: rgb(0, 0, 77);
+    --system-card-text: #ffffff;
 
     --dashboard-nav-text: #00004d;
     --dashboard-nav-bg: #ffffff;
@@ -185,6 +195,8 @@
 
     --rounded-2xl: 1rem;
 
+    --card-shine: rgba(255, 255, 255, 60%);
+    
     --background: 240 100% 97%; /* Azul claro */
     --foreground: 240 100% 15%;
     --card: 240 100% 97%;
@@ -227,7 +239,8 @@
     --mockup-bg-color: rgba(249, 250, 251, 0.5); /* bg-gray-50/50 */
     --sidebar-mockup-bg: 220.9 39.3% 11%;
     --list-color: #000000;
-    --system-card: hsl(225, 7%, 11%);
+    --system-card: #ffffff;
+    --system-card-text: #0c326f;
 
     --dashboard-nav-text: #0c326f;
     --dashboard-nav-bg: #D4E5FF;
@@ -238,6 +251,8 @@
     --rounded-2xl: 0.1rem;
 
     --button-hover: #5985ca;
+
+    --card-shine: rgba(89, 133, 202, 28%);
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
