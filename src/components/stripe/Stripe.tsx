@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { LucideProps, ArrowBigDown, ArrowBigUp, FolderDot, Notebook, User } from "lucide-react"; // importando os ícones diretamente
+import {motion} from "framer-motion";
+import {LucideProps, ArrowBigDown, ArrowBigUp, FolderDot, Notebook, User} from "lucide-react";
 
 // Atualizando o tipo Icon para LucideProps
 const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; name: string }) => {
@@ -13,18 +13,46 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
   );
 };
 
-export const Stripe = () => {
+export const Stripe = ({
+                         totalClients,
+                         totalRoles,
+                         totalInactiveUsers,
+                         totalActiveUsers,
+                         totalPendingUsers,
+                         totalRegisteredUsers
+                       }) => {
   return (
     <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-[var(--stripe-bg)]">
       <div className="relative z-0 flex overflow-hidden ">
         <TranslateWrapper>
-          <LogoItemsTop />
+          <LogoItemsTop
+            totalClients={totalClients}
+            totalRoles={totalRoles}
+            totalInactiveUsers={totalInactiveUsers}
+            totalActiveUsers={totalActiveUsers}
+            totalPendingUsers={totalPendingUsers}
+            totalRegisteredUsers={totalRegisteredUsers}
+          />
         </TranslateWrapper>
         <TranslateWrapper>
-          <LogoItemsTop />
+          <LogoItemsTop
+            totalClients={totalClients}
+            totalRoles={totalRoles}
+            totalInactiveUsers={totalInactiveUsers}
+            totalActiveUsers={totalActiveUsers}
+            totalPendingUsers={totalPendingUsers}
+            totalRegisteredUsers={totalRegisteredUsers}
+          />
         </TranslateWrapper>
         <TranslateWrapper>
-          <LogoItemsTop />
+          <LogoItemsTop
+            totalClients={totalClients}
+            totalRoles={totalRoles}
+            totalInactiveUsers={totalInactiveUsers}
+            totalActiveUsers={totalActiveUsers}
+            totalPendingUsers={totalPendingUsers}
+            totalRegisteredUsers={totalRegisteredUsers}
+          />
         </TranslateWrapper>
       </div>
     </section>
@@ -32,17 +60,17 @@ export const Stripe = () => {
 };
 
 const TranslateWrapper = ({
-  children,
-  reverse,
-}: {
+                            children,
+                            reverse,
+                          }: {
   children: JSX.Element;
   reverse?: boolean;
 }) => {
   return (
     <motion.div
-      initial={{ translateX: reverse ? "-100%" : "0%" }}
-      animate={{ translateX: reverse ? "0%" : "-100%" }}
-      transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+      initial={{translateX: reverse ? "-100%" : "0%"}}
+      animate={{translateX: reverse ? "0%" : "-100%"}}
+      transition={{duration: 50, repeat: Infinity, ease: "linear"}}
       className="flex px-2"
     >
       {children}
@@ -50,12 +78,21 @@ const TranslateWrapper = ({
   );
 };
 
-const LogoItemsTop = () => (
+
+const LogoItemsTop = ({
+                        totalClients,
+                        totalRoles,
+                        totalInactiveUsers,
+                        totalActiveUsers,
+                        totalPendingUsers,
+                        totalRegisteredUsers
+                      }) => (
   <>
-    <LogoItem Icon={FolderDot} name="26 sistemas" />
-    <LogoItem Icon={Notebook} name="6 roles" />
-    <LogoItem Icon={ArrowBigDown} name="10 usuários inativos" />
-    <LogoItem Icon={ArrowBigUp} name="5 usuários ativos" />
-    <LogoItem Icon={User} name="Total de 147 usuários registrados" />
+    <LogoItem Icon={FolderDot} name={`${totalClients} sistemas`} />
+    <LogoItem Icon={Notebook} name={`${totalRoles} roles`}/>
+    <LogoItem Icon={ArrowBigDown} name={`${totalInactiveUsers} usuários inativos`}/>
+    <LogoItem Icon={ArrowBigUp} name={`${totalActiveUsers} usuários ativos`}/>
+    <LogoItem Icon={User} name={`Total de ${totalPendingUsers} usuários pendentes`}/>
+    <LogoItem Icon={User} name={`Total de ${totalRegisteredUsers} usuários registrados`}/>
   </>
 );

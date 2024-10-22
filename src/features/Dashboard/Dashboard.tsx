@@ -6,32 +6,41 @@ import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import FooterGovbr from '../../components/layout/footer-govbr.tsx';
-import { roleService } from '../../services/role';
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import { useTheme } from '../../components/layout/ThemeToggle/theme-provider.tsx';
 import { Typewriter } from '../../typewriter/Typewriter.tsx';
-
+import {SummaryDto} from "../../services/summary/summary-dto.ts";
+import {summaryService} from "../../services/summary";
 
 export default function Dashboard() {
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-
   const { theme } = useTheme();
-
-  const getRoles = () => {
-    roleService.getRoles();
-  };
+  const [summary, setSummary] = useState<SummaryDto>(null);
 
   const signOut = async () => {
     await authService.signOut();
   };
 
+  const init = () => {
+    getData();
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
-      getRoles();
+      init()
     }
   }, [isAuthenticated]);
+
+  const getData = async () => {
+    try {
+      const summaries = await summaryService.getSummary();
+      setSummary(summaries);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <ScrollArea className="h-full">
@@ -71,7 +80,13 @@ export default function Dashboard() {
         </div>
       )}
 
-      <Stripe />
+      <div className="mt-20">
+        {(
+          summary ?
+            <Stripe {...summary} />
+            : null
+        )}
+      </div>
     </ScrollArea>
   );
 }
