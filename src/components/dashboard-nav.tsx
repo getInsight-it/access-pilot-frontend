@@ -34,7 +34,7 @@ export function DashboardNav({
   const { theme } = useTheme();
 
   return (
-    <nav className="grid items-start gap-2">
+    <nav className="grid items-start gap-0">
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon || 'arrowRight'];
@@ -45,7 +45,7 @@ export function DashboardNav({
                   <Link
                     to={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]',
+                      'flex items-center gap-2 overflow-hidden py-4 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]',
                       path === item.href ? 'bg-[var(--dashboard-nav-bg)]' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
@@ -56,7 +56,7 @@ export function DashboardNav({
                     <Icon className={`ml-3 size-5 text-[var(--dashboard-nav-text)]`} />
                     
                     {theme === 'gov' && (
-                      <hr className="absolute left-0 mt-[42px] h-[1px] w-full bg-red-500" />
+                      <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100" />
                     )}
 
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (

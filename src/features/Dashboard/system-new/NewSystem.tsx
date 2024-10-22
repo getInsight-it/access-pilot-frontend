@@ -4,8 +4,8 @@ import { ScrollArea } from '../../../components/ui/scroll-area';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Gerenciar Sistemas', link: '/dashboard/system' },
-  { title: 'Criar', link: '/dashboard/system/new' }
+  // { title: 'Gerenciar Sistemas', link: '/dashboard/systems/' },
+  { title: 'Adicionar novo sistema', link: '' }
 ];
 export default function NewSystem() {
   return (

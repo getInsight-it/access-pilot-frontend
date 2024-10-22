@@ -1,3 +1,3 @@
 export const ROLE_API = {
-  ROLES: '/roles'
+  ROLES: '/v1/roles'
 };

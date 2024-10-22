@@ -3,7 +3,7 @@ import { Heading } from '../../../components/ui/heading';
 import { Separator } from '../../../components/ui/separator';
 import { Role } from '../../../constants/data';
 import { Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { columns } from './columns';
 import { DataTableRole } from '../../../components/ui/data-table-role';
 
@@ -22,8 +22,9 @@ export const UserRole: React.FC<UserRoleProps> = ({ data }) => {
           description="Gerenciar funções dos usuários."
         />
         <Button
+          // to={'/dashboard/role-new/'}
           className="text-xs md:text-sm"
-          onClick={() => navigate(`/dashboard/roles/new`)}
+          onClick={() => navigate(`/dashboard/role-new`)}
         >
           <Plus className="mr-2 h-4 w-4" /> Adicionar nova função
         </Button>

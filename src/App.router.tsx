@@ -14,6 +14,7 @@ import RequestAccess from './features/Dashboard/request-access/RequestAccess.tsx
 import Help from './features/Dashboard/help/Help.tsx';
 import Roles from './features/Dashboard/roles/Roles.tsx';
 import Systems from './features/Dashboard/systems/Systems.tsx';
+import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
 
 const publicRoutes = [{
   element: <PublicLayout/>,
@@ -68,6 +69,10 @@ const privateRoutes = [
       {
         path: PRIVATE_ROUTES.SYSTEMS,
         element: <Systems />
+      },
+      {
+        path: PRIVATE_ROUTES.NEW_SYSTEM,
+        element: <NewSystem />
       },
       {
         path: PRIVATE_ROUTES.ROLES,

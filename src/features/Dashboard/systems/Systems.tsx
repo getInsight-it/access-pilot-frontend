@@ -7,8 +7,9 @@ import { Separator } from '../../../components/ui/separator';
 import { cn } from '../../../lib/utils';
 import { Plus } from 'lucide-react';
 import { Suspense } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import localData from '../../../constants/systems.json';
+import { AddSystemDrawer } from '../../../components/drawers/AddSystemDrawer';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -44,12 +45,15 @@ export default function Systems() {
             title={`Sistemas (${totalUsers})`}
             description=""
           />
-          <Button
+          
+          {/* <Link
+            to={'/dashboard/system-new/'}
             className={cn(buttonVariants({ variant: 'default' }))}
-            onClick={() => navigate(`/dashboard/systems/new/`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Adicionar novo
-          </Button>
+          </Link> */}
+
+          <AddSystemDrawer />
         </div>
         <Separator />
 

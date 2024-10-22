@@ -9,6 +9,7 @@ import FooterGovbr from '../../components/layout/footer-govbr.tsx';
 import { roleService } from '../../services/role';
 import { useEffect } from 'react';
 import { useTheme } from '../../components/layout/ThemeToggle/theme-provider.tsx';
+import { Typewriter } from '../../typewriter/Typewriter.tsx';
 
 
 export default function Dashboard() {
@@ -41,16 +42,17 @@ export default function Dashboard() {
       </div>
       {/* admin dashboard */}
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
-        <div className="flex items-center justify-between space-y-2">
+        <div className="flex items-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
           </h2>
+          <Typewriter />
         </div>
         <FeatureGrid />
       </div>
 
       {/* user dashboard */}
-      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+      <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
@@ -69,7 +71,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* <Stripe /> */}
+      <Stripe />
     </ScrollArea>
   );
 }

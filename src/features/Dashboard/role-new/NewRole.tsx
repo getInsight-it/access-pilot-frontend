@@ -1,13 +1,13 @@
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { RoleForm } from '@/components/forms/role-form';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Breadcrumbs } from '../../../components/breadcrumbs';
+import { RoleForm } from '../../../components/forms/role-form';
+import { ScrollArea } from '../../../components/ui/scroll-area';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Gerenciar funções', link: '/dashboard/roles' },
-  { title: 'Criar', link: '/dashboard/roles/create' }
+  { title: 'Criar', link: '/dashboard/roles/role-new' }
 ];
-export default function Page() {
+export default function NewRole() {
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
