@@ -18,7 +18,7 @@ import { CountUpStats } from "../CountUpStatus";
 //   );
 // };
 
-export const MiniCard1 = () => {
+export const MiniCard1 = ({summary}) => {
   return (
     <div className="col-span-2  md:col-span-2">
       <Card>
@@ -27,8 +27,8 @@ export const MiniCard1 = () => {
         </div>
 
         {/* <p className="mb-2 text-2xl">Atividades recentes</p> */}
-        
-        <CountUpStats />
+
+        <CountUpStats summary={summary}/>
 
         {/* <Stripe /> */}
 

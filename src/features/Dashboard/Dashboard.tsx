@@ -4,6 +4,7 @@ import { FeatureGrid } from '../../components/grid/FeatureGrid';
 import GridList from '../../components/GridList';
 import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
+import { from, interval, startWith, switchMap } from 'rxjs';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import FooterGovbr from '../../components/layout/footer-govbr.tsx';
 import {useEffect, useState} from 'react';
@@ -34,12 +35,17 @@ export default function Dashboard() {
   }, [isAuthenticated]);
 
   const getData = async () => {
-    try {
-      const summaries = await summaryService.getSummary();
-      setSummary(summaries);
-    } catch (e) {
-      console.error(e);
-    }
+    const polling$ = interval(window.env.DASHBOARD_REFRESH_INTERVAL || 5000).pipe(
+      startWith(0),
+      switchMap(() => from(summaryService.getSummary()))
+    );
+
+    const subscription = polling$.subscribe({
+      next: (summaries) => setSummary(summaries),
+      error: (err) => console.error(err),
+    });
+
+    return () => subscription.unsubscribe();
   };
 
   return (
@@ -55,9 +61,9 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
           </h2>
-          <Typewriter />
+          {summary && (<Typewriter {...summary}/>)}
         </div>
-        <FeatureGrid />
+        <FeatureGrid summary={summary} />
       </div>
 
       {/* user dashboard */}
@@ -81,11 +87,9 @@ export default function Dashboard() {
       )}
 
       <div className="mt-20">
-        {(
-          summary ?
-            <Stripe {...summary} />
-            : null
-        )}
+        {
+          summary && (<Stripe summary={summary} />)
+        }
       </div>
     </ScrollArea>
   );

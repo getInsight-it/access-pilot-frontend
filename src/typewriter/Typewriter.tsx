@@ -1,7 +1,12 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export const Typewriter = () => {
+export const Typewriter = ({
+                             totalClients,
+                             totalRoles,
+                             totalPendingUsers,
+                             totalRegisteredUsers
+                           }) => {
   return (
     <div className="flex items-center justify-center bg-transparent px-8 text-neutral-800">
       <BlockInTextCard
@@ -12,10 +17,10 @@ export const Typewriter = () => {
           </>
         }
         examples={[
-          "26 Sistemas",
-          "15 Novas solicitações",
-          "45 Usuários",
-          "6 Roles",
+          `${totalClients} Sistemas`,
+          `${totalRoles} Roles`,
+          `${totalPendingUsers} Novas solicitações`,
+          `${totalRegisteredUsers} Usuários`,
         ]}
       />
     </div>

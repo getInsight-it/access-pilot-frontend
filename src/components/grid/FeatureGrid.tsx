@@ -1,9 +1,9 @@
 import { Content } from "./Content";
 
-export const FeatureGrid = () => {
+export const FeatureGrid = ({summary}) => {
   return (
     <div id="features" className="relative overflow-hidden ">
-      <Content />
+      <Content summary={summary}/>
     </div>
   );
 };
