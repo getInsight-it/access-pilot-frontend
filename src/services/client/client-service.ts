@@ -13,7 +13,8 @@ export class ClientService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(CLIENT_API.CLIENTS);
 
     if (response instanceof HttpRequestResponse) {
-      return response.data as ClientDTO[];
+      // return response.data as ClientDTO[];
+      return JSON.parse(response.data) as ClientDTO[];
     } else {
       console.error('Erro ao buscar clients');
     }

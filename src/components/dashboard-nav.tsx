@@ -42,30 +42,36 @@ export function DashboardNav({
             item.href && (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
-                  <Link
-                    to={item.disabled ? '/' : item.href}
+                <Link
+                  to={item.disabled ? '/' : item.href}
+                  className={cn(
+                    'flex items-center gap-2 overflow-hidden py-4 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]',
+                    path === item.href ? 'bg-[var(--dashboard-nav-bg)]' : 'transparent',
+                    item.disabled && 'cursor-not-allowed opacity-80',
+                    isMinimized && 'px-3' // Condiciona a classe px-3 quando não estiver minimizado
+                  )}
+                  onClick={() => {
+                    if (setOpen) setOpen(false);
+                  }}
+                >
+                  
+                  <Icon
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden py-4 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]',
-                      path === item.href ? 'bg-[var(--dashboard-nav-bg)]' : 'transparent',
-                      item.disabled && 'cursor-not-allowed opacity-80'
+                      isMinimized ? 'ml-3' : 'ml-5',
+                      'size-5 text-[var(--dashboard-nav-text)]'
                     )}
-                    onClick={() => {
-                      if (setOpen) setOpen(false);
-                    }}
-                  >
-                    <Icon className={`ml-3 size-5 text-[var(--dashboard-nav-text)]`} />
-                    
-                    {theme === 'gov' && (
-                      <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100" />
-                    )}
+                  />
+                  
+                  {theme === 'gov' && (
+                    <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100" />
+                  )}
 
-                    {isMobileNav || (!isMinimized && !isMobileNav) ? (
-                      <span className="mr-2 truncate">{item.title}</span>
-                    ) : (
-                      ''
-                    )}
-                    
-                  </Link>
+                  {isMobileNav || (!isMinimized && !isMobileNav) ? (
+                    <span className="mr-2 truncate">{item.title}</span>
+                  ) : (
+                    ''
+                  )}
+                </Link>
                 </TooltipTrigger>
                 <TooltipContent
                   align="center"

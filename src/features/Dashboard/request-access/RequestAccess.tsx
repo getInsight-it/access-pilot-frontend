@@ -11,7 +11,7 @@ export default function RequestAccess() {
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         <Breadcrumbs items={breadcrumbItems} />
-        <RequestAccessForm
+        {/* <RequestAccessForm
           systems={[
             { _id: '1', name: 'Sistema ABC' },
             { _id: '2', name: 'Sys XYZ' }
@@ -23,7 +23,8 @@ export default function RequestAccess() {
           ]}
           initialData={null}
           key={null}
-        />
+        /> */}
+        <RequestAccessForm />
       </div>
     </ScrollArea>
   );
