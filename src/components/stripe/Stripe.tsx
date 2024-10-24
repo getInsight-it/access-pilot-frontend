@@ -13,46 +13,18 @@ const LogoItem = ({ Icon, name }: { Icon: React.FunctionComponent<LucideProps>; 
   );
 };
 
-export const Stripe = ({
-                         totalClients,
-                         totalRoles,
-                         totalInactiveUsers,
-                         totalActiveUsers,
-                         totalPendingUsers,
-                         totalRegisteredUsers
-                       }) => {
+export const Stripe = ({summary}) => {
   return (
     <section className="absolute bottom-0 z-10 scale-[1.01] border py-2 bg-[var(--stripe-bg)]">
       <div className="relative z-0 flex overflow-hidden ">
         <TranslateWrapper>
-          <LogoItemsTop
-            totalClients={totalClients}
-            totalRoles={totalRoles}
-            totalInactiveUsers={totalInactiveUsers}
-            totalActiveUsers={totalActiveUsers}
-            totalPendingUsers={totalPendingUsers}
-            totalRegisteredUsers={totalRegisteredUsers}
-          />
+          <LogoItemsTop summary={summary} />
         </TranslateWrapper>
         <TranslateWrapper>
-          <LogoItemsTop
-            totalClients={totalClients}
-            totalRoles={totalRoles}
-            totalInactiveUsers={totalInactiveUsers}
-            totalActiveUsers={totalActiveUsers}
-            totalPendingUsers={totalPendingUsers}
-            totalRegisteredUsers={totalRegisteredUsers}
-          />
+          <LogoItemsTop summary={summary} />
         </TranslateWrapper>
         <TranslateWrapper>
-          <LogoItemsTop
-            totalClients={totalClients}
-            totalRoles={totalRoles}
-            totalInactiveUsers={totalInactiveUsers}
-            totalActiveUsers={totalActiveUsers}
-            totalPendingUsers={totalPendingUsers}
-            totalRegisteredUsers={totalRegisteredUsers}
-          />
+          <LogoItemsTop summary={summary}  />
         </TranslateWrapper>
       </div>
     </section>
@@ -79,20 +51,13 @@ const TranslateWrapper = ({
 };
 
 
-const LogoItemsTop = ({
-                        totalClients,
-                        totalRoles,
-                        totalInactiveUsers,
-                        totalActiveUsers,
-                        totalPendingUsers,
-                        totalRegisteredUsers
-                      }) => (
+const LogoItemsTop = ({summary}) => (
   <>
-    <LogoItem Icon={FolderDot} name={`${totalClients} sistemas`} />
-    <LogoItem Icon={Notebook} name={`${totalRoles} roles`}/>
-    <LogoItem Icon={ArrowBigDown} name={`${totalInactiveUsers} usuários inativos`}/>
-    <LogoItem Icon={ArrowBigUp} name={`${totalActiveUsers} usuários ativos`}/>
-    <LogoItem Icon={User} name={`Total de ${totalPendingUsers} usuários pendentes`}/>
-    <LogoItem Icon={User} name={`Total de ${totalRegisteredUsers} usuários registrados`}/>
+    <LogoItem Icon={FolderDot} name={`${summary?.totalClients} sistemas`} />
+    <LogoItem Icon={Notebook} name={`${summary?.totalRoles} roles`}/>
+    <LogoItem Icon={ArrowBigDown} name={`${summary?.totalInactiveUsers} usuários inativos`}/>
+    <LogoItem Icon={ArrowBigUp} name={`${summary?.totalActiveUsers} usuários ativos`}/>
+    <LogoItem Icon={User} name={`Total de ${summary?.totalPendingUsers} usuários pendentes`}/>
+    <LogoItem Icon={User} name={`Total de ${summary?.totalRegisteredUsers} usuários registrados`}/>
   </>
 );

@@ -1,8 +1,9 @@
-export interface ClientDTO {
+export type ClientDTO = {
   id?: number;
   clientExternalId?: string;
-  name: string;
-  description: string;
-  status: string;
-  idParent?: number;
+  description?: string;
+  name?: string;
+  clientId: string,
+  clientUUID: string,
+  managed: boolean,
 }
