@@ -30,6 +30,7 @@ import { useEffect, useState } from "react"
 import { clientService } from '../../services/client';
 import { roleService } from '../../services/role';
 import useAuthStore from "../../store/authStore"
+import { httpClient } from "../../config/http/http"
 
 interface Client {
   id: number;
@@ -42,10 +43,10 @@ interface Role {
 }
 
 const formSchema = z.object({
-  clientId: z
-    .string({
-      required_error: "Selecione um sistema.",
-    }),
+  // clientId: z
+  //   .string({
+  //     required_error: "Selecione um sistema.",
+  //   }),
   roleId: z
     .string({
       required_error: "Selecione uma função.",
@@ -75,7 +76,7 @@ export function RequestAccessForm() {
     try {
       const fetchedClients = await clientService.getClients(); // faz a requisição
       setClients(fetchedClients); // atualiza o estado com os clients
-      console.log(fetchedClients)
+      // console.log(fetchedClients)
     } catch (error) {
       console.error('Erro ao carregar clients:', error);
     }
@@ -85,7 +86,7 @@ export function RequestAccessForm() {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId); // faz a requisição com clientId
       setRoles(fetchedRoles); // atualiza o estado com as roles
-      console.log(fetchedRoles)
+      // console.log(fetchedRoles)
     } catch (error) {
       console.error('Erro ao carregar roles:', error);
     }
@@ -105,15 +106,67 @@ export function RequestAccessForm() {
     },
   })
 
+  // async function onSubmit(data: z.infer<typeof formSchema>) {
+  //   try {
+  //     const requestService = new RequestService(new HttpClient());
+  
+  //     const response = await requestService.createRequest({
+  //       // clientId: data.clientId,
+  //       roleId: data.roleId,
+  //       description: data.description,
+  //     }, attachments);
+  
+  //     if (response instanceof HttpRequestResponse) {
+  //       toast({
+  //         title: "Solicitação enviada com sucesso!",
+  //         description: "Sua solicitação foi processada.",
+  //       });
+  //     } else {
+  //       toast({
+  //         title: "Erro ao enviar solicitação",
+  //         description: "Por favor, tente novamente.",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: "Erro",
+  //       description: "Ocorreu um erro ao processar sua solicitação.",
+  //     });
+  //   }
+  // }
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const requestService = new RequestService(new HttpClient());
+      const requestService = new RequestService(httpClient);
   
-      const response = await requestService.createRequest({
-        clientId: data.clientId,
-        roleId: data.roleId,
-        description: data.description,
-      }, attachments);
+      // Verifique o conteúdo do data e attachments
+      console.log("Data do formulário:", data);
+      console.log("Attachments:", attachments);
+  
+      // Cria um novo objeto FormData
+      const formData = new FormData();
+      
+      // formData.append("request", JSON.stringify({roleId: data.roleId, description: data.description}));
+
+      formData.append("roleId", data.roleId);
+      formData.append("description", data.description);
+  
+      // Adiciona os arquivos ao FormData
+      if (attachments.length > 0) {
+        attachments.forEach((file) => {
+          formData.append("attachments", file);
+        });
+      }
+  
+      // Verifique o conteúdo do FormData antes de enviar
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+  
+      const headers = new Map<string, string>();
+      headers.set('Content-Type', 'multipart/form-data');
+
+      const response = await requestService.createRequest(formData, headers);
   
       if (response instanceof HttpRequestResponse) {
         toast({
@@ -133,6 +186,7 @@ export function RequestAccessForm() {
       });
     }
   }
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
