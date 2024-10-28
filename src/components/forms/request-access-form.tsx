@@ -146,10 +146,10 @@ export function RequestAccessForm() {
       // Cria um novo objeto FormData
       const formData = new FormData();
       
-      // formData.append("request", JSON.stringify({roleId: data.roleId, description: data.description}));
+      formData.append("request", JSON.stringify({roleId: data.roleId, description: data.description}));
 
-      formData.append("roleId", data.roleId);
-      formData.append("description", data.description);
+      // formData.append("roleId", data.roleId);
+      // formData.append("description", data.description);
   
       // Adiciona os arquivos ao FormData
       if (attachments.length > 0) {
