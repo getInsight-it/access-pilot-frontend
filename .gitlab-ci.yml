@@ -25,11 +25,11 @@ build-app:
       - ./node_modules
   environment: dev
 
-build-docker:    
+build-docker:
   stage: package
   tags:
     - docker
-  dependencies: [build-app]
+  dependencies: [ build-app ]
   image: docker:latest
   services:
     - docker:dind
@@ -50,14 +50,14 @@ build-docker:
     - mkdir ~/.kube || true
     - echo $KUBE_CONFIG | base64 --decode > ~/.kube/config
   script:
-    - envsubst < ./k8s/deployment.yaml | kubectl apply -f - 
+    - envsubst < ./k8s/deployment.yaml | kubectl apply -f -
 
 deploy-dev:
   variables:
     KUBE_CONFIG: ${KUBE_CONFIG_NONPROD}
   extends: .deploy
   environment: dev
-  
+
 deploy-prd:
   variables:
     KUBE_CONFIG: ${KUBE_CONFIG_PROD}

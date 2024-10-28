@@ -1,8 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import AccessRequests from '@/constants/access-requests.json';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DetailDrawer } from '@/components/drawers/DetailDrawer';
+import AccessRequests from '../../../constants/access-requests.json';
+import { Checkbox } from '../../../components/ui/checkbox';
+import { DetailDrawer } from '../../../components/drawers/DetailDrawer';
 
 type AccessRequest = {
   id: number;

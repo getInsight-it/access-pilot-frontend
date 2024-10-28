@@ -19,6 +19,9 @@ function ThemedLogo() {
       case 'rnp':
         setSrc('/rnp.png')
         break
+      case 'gov':
+        setSrc('/govbr/logo.svg')
+        break
       default:
         setSrc('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
         break

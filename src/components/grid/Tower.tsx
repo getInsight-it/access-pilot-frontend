@@ -2,7 +2,7 @@ import { CalloutChip } from "../utils/CalloutChip";
 import { Card } from "../utils/Card";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { PulseLine } from "@/components/utils/PulseLine";
+import { PulseLine } from "../../components/utils/PulseLine";
 import { Grid, Home, Settings, User } from "lucide-react";
 
 export const Tower = () => {
@@ -44,7 +44,7 @@ const MockupSideBar = () => (
       {/* <Bell className="text-blue-500" /> */}
     </div>
     <div className="space-y-2">
-      <div className="flex items-center gap-1 rounded bg-zinc-700 px-1 py-0.5 text-xs text-zinc-200">
+      <div className="flex items-center gap-1 rounded bg-primary px-1 py-0.5 text-xs text-primary-foreground">
         <User />
         Usuários
       </div>
@@ -57,7 +57,7 @@ const MockupSideBar = () => (
         Sistemas
       </div>
       <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
-        <Grid />
+        <Grid className="w-4" />
         Funções
       </div>
       {/* <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
@@ -69,7 +69,7 @@ const MockupSideBar = () => (
 );
 
 const MockupTopBar = () => (
-  <div className="flex gap-1 border-b bg-zinc-950 p-2">
+  <div className="flex gap-1 border-b bg-primary p-2">
     <div className="size-2 rounded-full bg-red-600"></div>
     <div className="size-2 rounded-full bg-yellow-600"></div>
     <div className="size-2 rounded-full bg-green-600"></div>
@@ -199,7 +199,7 @@ const MockupMain = () => {
               alt={`Placeholder image for faux user ${u.name}`}
               className="size-5 rounded-full"
             />
-            <span className={i === 0 ? " dark:text-zinc-200" : "text-zinc-500"}>
+            <span className={i === 0 ? " text-primary" : "text-zinc-500"}>
               {u.name}
             </span>
           </motion.div>

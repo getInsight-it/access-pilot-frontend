@@ -8,11 +8,10 @@ import {
 } from "framer-motion";
 import { RequestAccessForm } from "../forms/request-access-form";
 import { Button, buttonVariants } from "../ui/button";
-import { Clock, DoorClosed, Eye, Plus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Clock, DoorClosed, Eye, Hand, Plus, X } from "lucide-react";
+import { cn } from "../../lib/utils";
 import { Supports } from "../supports/Supports";
 import SystemDetail from "../canvas/system/SystemDetail";
-import { DragHandleHorizontalIcon } from "@radix-ui/react-icons";
 import ToggleButton from "../toggle/ToggleButton";
 import SystemPhone from "../canvas/system/SystemDetailPhone";
 import { Link } from "react-router-dom";
@@ -82,8 +81,8 @@ export const SystemDetailDrawer = () => {
 
           </div>
       
-          {/* <SystemDetail /> */}
-          <SystemPhone />
+          <SystemDetail />
+          {/* <SystemPhone /> */}
       
       
         </div>
@@ -165,7 +164,7 @@ const DragCloseDrawer = ({ open, setOpen, children }: Props) => {
                 }}
                 className="h-6 w-6 cursor-grab touch-none rounded-full  active:cursor-grabbing"
               >
-                <DragHandleHorizontalIcon className="w-6 h-6" />
+                <Hand className="w-6 h-6" />
               </button>
               <button
                 onClick={handleClose}

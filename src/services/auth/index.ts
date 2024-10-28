@@ -1,3 +1,5 @@
 import { AuthService } from './AuthService';
 
-export const authService: AuthService = new AuthService();
+console.log('[AuthService] index');
+
+export const authService: AuthService = AuthService.instance;

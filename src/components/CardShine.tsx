@@ -22,16 +22,16 @@ export const CardShine = ({
 
   return (
     <div
-      className="group relative w-full rounded-xl border border-white/10 bg-[var(--system-card)] shadow-lg"
+      className="group relative w-full rounded-[var(--card-border-radius)] border border-black/10 bg-[var(--system-card)] text-[var(--system-card-text)] shadow-lg"
       onMouseMove={handleMouseMove}
     >
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px rounded-[var(--card-border-radius)] opacity-0 transition duration-300 group-hover:opacity-100"
         style={{
           background: useMotionTemplate`
             radial-gradient(
               650px circle at ${mouseX}px ${mouseY}px,
-              rgba(255, 255, 255, 0.25),
+              var(--card-shine),
               transparent 80%
             )
           `,

@@ -18,14 +18,17 @@ import { CountUpStats } from "../CountUpStatus";
 //   );
 // };
 
-export const MiniCard1 = () => {
+export const MiniCard1 = ({summary}) => {
   return (
     <div className="col-span-2  md:col-span-2">
       <Card>
         <div className=" w-fit">
           <CalloutChip>#2</CalloutChip>
         </div>
-        <CountUpStats />
+
+        {/* <p className="mb-2 text-2xl">Atividades recentes</p> */}
+
+        <CountUpStats summary={summary}/>
 
         {/* <Stripe /> */}
 
@@ -72,7 +75,7 @@ const Band = ({ delay }: { delay: number }) => {
         ease: "linear",
         delay,
       }}
-      className="absolute left-[50%] top-[50%] z-0 size-80 rounded-full border border-red-600 bg-gradient-to-br from-red-600/50 to-red-950/20"
+      className="absolute left-[50%] top-[50%] z-0 size-80 rounded-full border border-primary bg-gradient-to-br from-primary/50 to-primary/20"
     />
   );
 };

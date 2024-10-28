@@ -10,7 +10,9 @@ export const LongCard = () => {
     <div className="col-span-2 h-fit sm:h-[455px]">
       <Card>
         <div className="relative z-20">
-          <CalloutChip>#4</CalloutChip>
+          
+          <CalloutChip>#3</CalloutChip>
+
           {/* <p className="mb-1.5 text-2xl">Talk about integrations</p>
           <p className="max-w-sm text-zinc-400">
             If you connect with tools that people already know and use, show it

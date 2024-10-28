@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Modal } from '@/components/ui/modal';
-// import { useRouter } from 'next/navigation';
+import { Button } from '../../components/ui/button';
+import { Modal } from '../../components/ui/modal';
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -17,8 +16,6 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
   loading
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-
-  // const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);

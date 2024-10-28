@@ -1,5 +1,5 @@
 // 
-// import { cn } from "@/lib/utils";
+// import { cn } from "../../lib/utils";
 // import { AnimatePresence, motion } from "framer-motion";
 // import { useState, useEffect } from "react";
 
@@ -148,7 +148,7 @@
 
 // comportamento alterado para fechar a modal automaticamente
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 

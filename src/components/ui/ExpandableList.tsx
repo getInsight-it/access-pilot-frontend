@@ -1,7 +1,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useOutsideClick } from "@/hooks/use-outside-click";
+import { useOutsideClick } from "../../hooks/use-outside-click";
 import { Eye } from "lucide-react";
 
 export function ExpandableList() {

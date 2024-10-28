@@ -1,5 +1,5 @@
-import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
-import { cn } from '@/lib/utils';
+import ThemeToggle from '../../components/layout/ThemeToggle/theme-toggle';
+import { cn } from '../../lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import Notifications from '../Notifications';
@@ -12,10 +12,11 @@ export default function Header() {
       <nav className="flex h-18 items-center justify-between px-4">
         <div className="hidden lg:block">
           <Link
+            className=""
             to={'#'} // Alterado de 'href' para 'to'
             target="_blank"
           >
-            <ThemedLogo /> 
+            <ThemedLogo />
           </Link>
         </div>
         <div className={cn('block lg:!hidden')}>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { animate, useInView } from "framer-motion";
 
-export const CountUpStats = () => {
+export const CountUpStats = ({summary}) => {
   return (
     <div className="mx-auto max-w-3xl px-0 py-0 md:py-20">
       {/* <h2 className="mb-8 text-center text-base text-indigo-900 sm:text-lg md:mb-16">
@@ -11,7 +11,7 @@ export const CountUpStats = () => {
 
       <div className="flex flex-col items-center justify-center sm:flex-row relative">
         <Stat
-          num={45}
+          num={summary?.totalPendingUsers}
           suffix=""
           prefix="+"
           prefixColor="text-green-600 absolute -ml-8 2xl:-ml-12"
@@ -20,7 +20,7 @@ export const CountUpStats = () => {
         />
         <div className="h-[1px] w-12 bg-indigo-200 sm:h-12 sm:w-[1px]" />
         <Stat
-          num={45}
+          num={summary?.totalRegisteredUsers}
           suffix=""
           prefix="+"
           prefixColor="text-red-500 absolute -ml-8 2xl:-ml-12"
@@ -29,7 +29,7 @@ export const CountUpStats = () => {
         />
         <div className="h-[1px] w-12 bg-indigo-200 sm:h-12 sm:w-[1px]" />
         <Stat
-          num={20}
+          num={summary?.totalPendingUsers}
           suffix=""
           prefix="!"
           prefixColor="text-orange-500 absolute -ml-6"

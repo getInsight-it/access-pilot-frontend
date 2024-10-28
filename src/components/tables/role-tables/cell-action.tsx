@@ -1,13 +1,13 @@
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
+import { AlertModal } from '../../../components/modal/alert-modal';
+import { Button } from '../../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Role } from '@/constants/data';
+} from '../../../components/ui/dropdown-menu';
+import { Role } from '../../../constants/data';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

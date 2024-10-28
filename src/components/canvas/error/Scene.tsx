@@ -16,18 +16,11 @@ import {
   {/* @ts-ignore  */}
   import fragmentShader from "./fragmentShader.glsl";
   
-
-
-
-  
-
   import { GLTF, SkeletonUtils } from 'three-stdlib'
 
   import { easing } from 'maath'
-import { Button } from '@/components/ui/button';
-import { useRouter } from '@/routes/hooks';
-
-
+  import { Button } from '../../../components/ui/button';
+  // import { useRouter } from '@/routes/hooks';
 
   type ActionName = 'Around' | 'Behind' | 'Dance' | 'Hiphop' | 'Idle'
 
@@ -110,51 +103,6 @@ import { useRouter } from '@/routes/hooks';
   
   const RetroEffect = wrapEffect(RetroEffectImpl);
   
-  const Spaceship = forwardRef<THREE.Group>((_, ref) => {
-    const gltf = useGLTF("https://cdn.maximeheckel.com/models/spaceship-optimized.glb") as any;
-  
-    useEffect(() => {
-      if (gltf) {
-        {/* @ts-ignore  */}
-        function alphaFix(material: THREE.Material) {
-          material.transparent = true;
-          material.alphaToCoverage = true;
-          material.depthFunc = THREE.LessEqualDepth;
-          material.depthTest = true;
-          material.depthWrite = true;
-        }
-        alphaFix(gltf.materials.spaceship_racer);
-        alphaFix(gltf.materials.cockpit);
-      }
-    }, [gltf]);
-  
-    return (
-      <group ref={ref}>
-        <group
-          scale={0.005}
-          rotation={[0, -Math.PI * 0.5, 0]}
-          position={[1.583, 0, -3.725]}
-        >
-          <mesh
-            castShadow
-            receiveShadow
-            geometry={gltf.nodes.Cube001_spaceship_racer_0.geometry}
-            material={gltf.materials.spaceship_racer}
-            position={[739.26, -64.81, 64.77]}
-          />
-          <mesh
-            castShadow
-            receiveShadow
-            geometry={gltf.nodes.Cube005_cockpit_0.geometry}
-            material={gltf.materials.spaceship_racer}
-            position={[739.26, 0, 0]}
-          />
-        </group>
-      </group>
-    );
-  });
-
-  Spaceship.displayName = "Spaceship";
   
   const Piloto = forwardRef<THREE.Group>((_, ref, ...props) => {
     const { gltf, nodes, materials, scene, animations } = useGLTF("/character-transformed.glb") as any;
@@ -210,31 +158,31 @@ import { useRouter } from '@/routes/hooks';
                     <primitive object={nodes.mixamorigHips} />
                 </group>
                 <skinnedMesh
-                name="bigode"
-                geometry={nodes.bigode.geometry}
-                material={materials['MI_Spongebob_Mustache.001']}
-                skeleton={nodes.bigode.skeleton}
-                rotation={[Math.PI / 2, 0, 0]}
-                scale={0.01}
-                />
+                  name="bigode"
+                  geometry={nodes.bigode.geometry}
+                  material={materials['MI_Spongebob_Mustache.001']}
+                  skeleton={nodes.bigode.skeleton}
+                  rotation={[Math.PI / 2, 0, 0]}
+                  scale={0.01}
+                  />
                 <skinnedMesh
-                name="Boy"
-                geometry={nodes.Boy.geometry}
-                material={materials['standardSurface1.001']}
-                skeleton={nodes.Boy.skeleton}
-                rotation={[Math.PI / 2, 0, 0]}
-                scale={0.01}
-                >
-                <meshStandardMaterial color={'white'} />
+                  name="Boy"
+                  geometry={nodes.Boy.geometry}
+                  material={materials['standardSurface1.001']}
+                  skeleton={nodes.Boy.skeleton}
+                  rotation={[Math.PI / 2, 0, 0]}
+                  scale={0.01}
+                  >
+                  <meshStandardMaterial color={'white'} />
                 </skinnedMesh>
                 <skinnedMesh
-                name="helmet"
-                geometry={nodes.helmet.geometry}
-                material={materials.Helmet34}
-                skeleton={nodes.helmet.skeleton}
-                rotation={[Math.PI / 2, 0, 0]}
-                scale={0.01}
-                />
+                  name="helmet"
+                  geometry={nodes.helmet.geometry}
+                  material={materials.Helmet34}
+                  skeleton={nodes.helmet.skeleton}
+                  rotation={[Math.PI / 2, 0, 0]}
+                  scale={0.01}
+                  />
             </group>
         </group>
       </group>
@@ -295,28 +243,11 @@ import { useRouter } from '@/routes/hooks';
   
   const Scene: React.FC = () => {
     
-    const router = useRouter();
-    
     return (
       <>
-        
-
-        <div className="pointer-events-none absolute w-full h-full top-0 left-0 z-10 ">
-          <div className="pt-16 pl-10 space-y-6">
-            <h2 className="text-2xl z-50">
-              Algo deu errado.
-            </h2>
-            <Button className="pointer-events-auto" onClick={() => router.back()}>
-              Voltar
-            </Button>
-          </div>  
-          
-        </div>
-
         <Canvas className="sceneCanvas" shadows dpr={[1, 2]}>
           <Leva hidden />
           <Suspense fallback="Loading">
-            {/* <color attach="background" args={["#3386E0"]} /> */}
             <color attach="background" args={["#ffffff"]} />
             <ambientLight intensity={0.25} />
             <directionalLight position={[0, 10, 5]} intensity={10.5} />

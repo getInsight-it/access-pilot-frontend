@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import Systems from '@/constants/systems.json';
-import { Checkbox } from '@/components/ui/checkbox';
-import TrafficLight from '@/components/TrafficLights';
+import Systems from '../../../constants/systems.json';
+import { Checkbox } from '../../../components/ui/checkbox';
+import TrafficLight from '../../../components/TrafficLights';
 import { CircleCheckBig, CircleOff } from 'lucide-react';
-import { SystemDetailDrawer } from '@/components/drawers/SystemDetailDrawer';
+import { SystemDetailDrawer } from '../../../components/drawers/SystemDetailDrawer';
 
 type System = {
   id: number;

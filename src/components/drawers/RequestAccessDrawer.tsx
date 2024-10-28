@@ -9,7 +9,7 @@ import {
 import { RequestAccessForm } from "../forms/request-access-form";
 import { Button, buttonVariants } from "../ui/button";
 import { Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
 
 export const RequestAccessDrawer = () => {

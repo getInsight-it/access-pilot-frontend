@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { DashboardNav } from '@/components/dashboard-nav';
-import { navItems } from '@/constants/data';
-import { cn } from '@/lib/utils';
+import { DashboardNav } from '../../components/dashboard-nav';
+import { navItems } from '../../constants/data';
+import { cn } from '../../lib/utils';
 import { ChevronLeft } from 'lucide-react';
-import { useSidebar } from '@/hooks/useSidebar';
+import { useSidebar } from '../../hooks/useSidebar';
 
 type SidebarProps = {
   className?: string;
@@ -35,8 +35,10 @@ export default function Sidebar({ className }: SidebarProps) {
         onClick={handleToggle}
       />
       <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <div className="mt-3 space-y-1">
+        <div
+          className="px-0 py-2"
+        >
+          <div className="mt-6 space-y-1">
             <DashboardNav items={navItems} />
           </div>
         </div>

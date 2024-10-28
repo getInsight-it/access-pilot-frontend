@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { Role } from '@/constants/data';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Role } from '../../../constants/data';
+import { Checkbox } from '../../../components/ui/checkbox';
 
 export const columns: ColumnDef<Role>[] = [
   // {

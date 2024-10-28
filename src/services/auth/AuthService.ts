@@ -1,38 +1,49 @@
-import { KeycloakService } from '@getinsight.it/getinsight-common';
+import { AuthInitEvent, KeycloakService } from '@getinsight.it/getinsight-common';
 import { BehaviorSubject } from 'rxjs';
 
 export class AuthService {
 
-    keycloakService: KeycloakService = new KeycloakService();
+  static #instance: AuthService;
 
-    constructor() {
+  keycloakService: KeycloakService;
+
+  private constructor() {
+    this.keycloakService = new KeycloakService();
+  }
+
+  public static get instance(): AuthService {
+    if (!AuthService.#instance) {
+      AuthService.#instance = new AuthService();
     }
 
-    async signIn(redirectUri?: string): Promise<void> {
-        await this.keycloakService.signIn(redirectUri);
-    }
+    return AuthService.#instance;
+  }
 
-    async signOut(redirectUri?: string): Promise<void> {
-        await this.keycloakService.signOut(redirectUri);
-    }
+  async signIn(redirectUri?: string): Promise<void> {
+    await this.keycloakService.signIn(redirectUri);
+  }
 
-    async register(redirectUri?: string): Promise<void> {
-        await this.keycloakService.register(redirectUri);
-    }
+  async signOut(redirectUri?: string): Promise<void> {
+    await this.keycloakService.signOut(redirectUri);
+  }
 
-    isAuthenticated(): BehaviorSubject<boolean> {
-        return this.keycloakService.isAuthenticated();
-    }
+  async register(redirectUri?: string): Promise<void> {
+    await this.keycloakService.register(redirectUri);
+  }
 
-    getBearerToken(): string | null {
-        return this.keycloakService.getBearerToken();
-    }
+  isAuthenticated(): BehaviorSubject<boolean> {
+    return this.keycloakService.isAuthenticated() as BehaviorSubject<boolean>;
+  }
 
-    onInitEvent(): BehaviorSubject<boolean> {
-        return this.keycloakService.onInitEvent();
-    }
+  async getBearerToken(): Promise<string | null> {
+    return await this.keycloakService.getBearerToken();
+  }
 
-    onSignOutEvent(): BehaviorSubject<boolean> {
-        return this.keycloakService.onSignOutEvent();
-    }
+  onInitEvent(): BehaviorSubject<AuthInitEvent> {
+    return this.keycloakService.onInitEvent() as BehaviorSubject<AuthInitEvent>;
+  }
+
+  onSignOutEvent(): BehaviorSubject<boolean> {
+    return this.keycloakService.onSignOutEvent() as BehaviorSubject<boolean>;
+  }
 }

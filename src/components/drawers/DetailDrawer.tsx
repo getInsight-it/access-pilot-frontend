@@ -9,7 +9,7 @@ import {
 import { RequestAccessForm } from "../forms/request-access-form";
 import { Button, buttonVariants } from "../ui/button";
 import { DoorClosed, Eye, Plus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { Supports } from "../supports/Supports";
 import { Link } from "react-router-dom";
 

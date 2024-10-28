@@ -50,8 +50,8 @@
 //   );
 // }
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Button } from '../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,7 +61,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuShortcut // Certifique-se de que está utilizando
-} from '@/components/ui/dropdown-menu';
+} from '../../components/ui/dropdown-menu';
 
 export function UserNav() {
   return (

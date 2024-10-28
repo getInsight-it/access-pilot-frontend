@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import AccessRequests from '@/constants/access-requests.json';
-import { Checkbox } from '@/components/ui/checkbox';
+import AccessRequests from '../../../constants/access-requests.json';
+// import { Checkbox } from '@/components/ui/checkbox';
 
 type AccessRequest = {
   id: number;

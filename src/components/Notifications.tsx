@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { Bell } from 'lucide-react'
-import { useOutsideClick } from '@/hooks/use-outside-click' // Ajuste o caminho do import do seu hook
+import { useOutsideClick } from '../hooks/use-outside-click' // Ajuste o caminho do import do seu hook
 
 export default function Notifications() {
     const [isOpen, setIsOpen] = useState(false)
