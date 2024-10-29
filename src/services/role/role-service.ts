@@ -9,7 +9,7 @@ export class RoleService {
     this.httpClient = httpClient;
   }
 
-  async getRoles(): Promise<RoleDTO | null> {
+  async getRoles(): Promise<RoleDTO[] | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(ROLE_API.ROLES);
 
     if (response instanceof HttpRequestResponse) {
@@ -32,7 +32,7 @@ export class RoleService {
 
     try {
         const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
-        
+
         if (response instanceof HttpRequestResponse) {
             const data = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
             return data as RoleDTO[];

@@ -1,12 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Systems from '../../../constants/systems.json';
-import { Checkbox } from '../../../components/ui/checkbox';
 import TrafficLight from '../../../components/TrafficLights';
-import { CircleCheckBig, CircleOff } from 'lucide-react';
 import { SystemDetailDrawer } from '../../../components/drawers/SystemDetailDrawer';
 
-type System = {
+type ClientDTO = {
   id: number;
   name: string;
   description: string;
@@ -15,7 +13,7 @@ type System = {
   published: boolean;
 };
 
-const systems: System[] = Systems as System[];
+const clientDTOS: ClientDTO[] = [];
 
 const statusColors: Record<string, string> = {
   gerenciado: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
@@ -24,7 +22,7 @@ const statusColors: Record<string, string> = {
   'em progresso': 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
 };
 
-export const columns: ColumnDef<System>[] = [
+export const columns: ColumnDef<ClientDTO>[] = [
   // {
   //   id: 'select',
   //   header: ({ table }) => (
@@ -49,7 +47,7 @@ export const columns: ColumnDef<System>[] = [
   //   header: 'ID DA SOLICITAÇÃO'
   // },
   {
-    accessorKey: 'name',
+    accessorKey: 'clientId',
     header: 'SISTEMA'
   },
   {
@@ -79,10 +77,10 @@ export const columns: ColumnDef<System>[] = [
       <div className="flex gap-x-2 items-center">
         <TrafficLight managed={row.original.managed} published={row.original.published} />
         <p>
-          {row.original.managed 
-            ? row.original.published 
-              ? 'Publicado' 
-              : 'Gerenciado' 
+          {row.original.managed
+            ? row.original.published
+              ? 'Publicado'
+              : 'Gerenciado'
             : 'Não gerenciado'}
         </p>
       </div>
@@ -104,7 +102,7 @@ export const columns: ColumnDef<System>[] = [
 
 // import { ColumnDef } from '@tanstack/react-table';
 // import { CellAction } from './cell-action';
-// import Systems from '@/constants/systems.json';
+// import Systems from '@/constants/clientDTOS.json';
 // import { Checkbox } from '@/components/ui/checkbox';
 // import TrafficLight from '@/components/TrafficLights';
 // import { CircleCheckBig, CircleOff } from 'lucide-react';
@@ -117,7 +115,7 @@ export const columns: ColumnDef<System>[] = [
 //   managed: boolean;
 // };
 
-// const systems: System[] = Systems as System[];
+// const clientDTOS: System[] = Systems as System[];
 
 // interface StatusColors {
 //   [key: string]: string;

@@ -63,7 +63,7 @@ const Stat = ({ num, suffix, prefix, decimals = 0, prefixColor, suffixColor, sub
       onUpdate(value) {
         if (!ref.current) return;
 
-        ref.current.textContent = value.toFixed(decimals);
+        ref.current.textContent = value?.toFixed(decimals);
       },
     });
   }, [num, decimals, isInView]);

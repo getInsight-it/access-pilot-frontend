@@ -1,59 +1,48 @@
 import {
   ColumnDef,
-  PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  PaginationState,
   useReactTable
 } from '@tanstack/react-table';
 import React from 'react';
 
-import { Button } from '../../../components/ui/button';
-import { Input } from '../../../components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '../../../components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '../../../components/ui/table';
-import { ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ScrollArea, ScrollBar } from '../../../components/ui/scroll-area';
+import {Button} from '../../../components/ui/button';
+import {Input} from '../../../components/ui/input';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../../components/ui/select';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '../../../components/ui/table';
+import {ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {ScrollArea, ScrollBar} from '../../../components/ui/scroll-area';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  searchKey: string;
-  pageNo: number;
-  totalUsers: number;
-  pageSizeOptions?: number[];
-  pageCount: number;
+  columns: ColumnDef<TData, TValue>[],
+  data: TData[],
+  searchKey: string,
+  pageNo: number,
+  totalUsers: number,
+  pageSizeOptions?: number[],
+  pageCount: number,
   searchParams?: {
     [key: string]: string | string[] | undefined;
-  };
+  },
+  onPageChange?: (pageIndex, pageSize) => void
 }
 
 export function SystemsTable<TData, TValue>({
-  columns,
-  data,
-  pageNo,
-  searchKey,
-  totalUsers,
-  pageCount,
-  pageSizeOptions = [10, 20, 30, 40, 50]
-}: DataTableProps<TData, TValue>) {
+                                              columns,
+                                              data,
+                                              pageNo,
+                                              searchKey,
+                                              totalUsers,
+                                              pageCount,
+                                              pageSizeOptions = [10, 20, 30, 40, 50],
+                                              onPageChange
+                                            }: DataTableProps<TData, TValue>) {
   const navigate = useNavigate();
-  const { search, pathname } = useLocation();
+  const {search, pathname} = useLocation();
   const searchParams = new URLSearchParams(search);
 
   // Search params
@@ -64,7 +53,7 @@ export function SystemsTable<TData, TValue>({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  /* this can be used to get the selectedrows 
+  /* this can be used to get the selectedrows
   console.log("value", table.getFilteredSelectedRowModel()); */
 
   // Create query string
@@ -83,12 +72,11 @@ export function SystemsTable<TData, TValue>({
     [search]
   );
 
-  // Handle server-side pagination
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: fallbackPage - 1,
-      pageSize: fallbackPerPage
-    });
+  const [{pageIndex, pageSize}, setPagination] = React.useState<PaginationState>({
+    pageIndex: fallbackPage - 1,
+    pageSize: fallbackPerPage
+  });
+
 
   React.useEffect(() => {
     navigate(
@@ -96,7 +84,7 @@ export function SystemsTable<TData, TValue>({
         page: pageIndex + 1,
         limit: pageSize
       })}`,
-      { replace: true }
+      {replace: true}
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,9 +97,18 @@ export function SystemsTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      pagination: { pageIndex, pageSize }
+      pagination: {pageIndex, pageSize}
     },
-    onPaginationChange: setPagination,
+    onPaginationChange: (updater) => {
+      setPagination(old => {
+          const newPaginationValue = updater instanceof Function ? updater(old) : updater;
+          if ('pageIndex' in newPaginationValue) {
+            onPageChange?.(newPaginationValue?.pageIndex, newPaginationValue?.pageSize);
+            return newPaginationValue;
+          }
+        }
+      );
+    },
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     manualFiltering: true
@@ -127,7 +124,7 @@ export function SystemsTable<TData, TValue>({
           limit: null,
           search: searchValue
         })}`,
-        { replace: true }
+        {replace: true}
       );
     }
     if (searchValue?.length === 0 || searchValue === undefined) {
@@ -137,11 +134,11 @@ export function SystemsTable<TData, TValue>({
           limit: null,
           search: null
         })}`,
-        { replace: true }
+        {replace: true}
       );
     }
 
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    setPagination((prev) => ({...prev, pageIndex: 0}));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
@@ -194,9 +191,9 @@ export function SystemsTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
@@ -232,7 +229,7 @@ export function SystemsTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <ScrollBar orientation="horizontal" />
+        <ScrollBar orientation="horizontal"/>
       </ScrollArea>
 
       <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
@@ -281,7 +278,7 @@ export function SystemsTable<TData, TValue>({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <ArrowLeft className="h-4 w-4" aria-hidden="true"/>
             </Button>
             <Button
               aria-label="Go to previous page"
@@ -290,7 +287,7 @@ export function SystemsTable<TData, TValue>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true"/>
             </Button>
             <Button
               aria-label="Go to next page"
@@ -299,7 +296,7 @@ export function SystemsTable<TData, TValue>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronRightIcon className="h-4 w-4" aria-hidden="true"/>
             </Button>
             <Button
               aria-label="Go to last page"
@@ -308,7 +305,7 @@ export function SystemsTable<TData, TValue>({
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <ArrowRight className="h-4 w-4" aria-hidden="true"/>
             </Button>
           </div>
         </div>

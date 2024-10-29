@@ -1,15 +1,15 @@
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { SystemsTable } from '../../../components/tables/systems/systems';
 import { columns } from '../../../components/tables/systems/columns';
-import { Button, buttonVariants } from '../../../components/ui/button';
 import { Heading } from '../../../components/ui/heading';
 import { Separator } from '../../../components/ui/separator';
-import { cn } from '../../../lib/utils';
-import { Plus } from 'lucide-react';
-import { Suspense } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import localData from '../../../constants/systems.json';
+import {useEffect, useState} from 'react';
+import { useNavigate, useLocation} from 'react-router-dom';
 import { AddSystemDrawer } from '../../../components/drawers/AddSystemDrawer';
+import useAuthStore from "../../../store/authStore.ts";
+import {ClientDTO} from "../../../services/client/client-dto.ts";
+import {clientService} from "../../../services/client";
+import {PaginatedResponse} from "../../../lib/paginated-response.ts";
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -22,16 +22,44 @@ function useSearchParams() {
 }
 
 export default function Systems() {
-  const searchParams = useSearchParams();
-  const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1;
-  const pageLimit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
-  const name = searchParams.get('search') || null;
-  const offset = (page - 1) * pageLimit;
 
-  const filteredData = localData.filter(item => !name || item.name.includes(name));
-  const totalUsers = filteredData.length;
-  const pageCount = Math.ceil(totalUsers / pageLimit);
-  const systems = filteredData.slice(offset, offset + pageLimit);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const [clients, setClients] = useState<ClientDTO[]>([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [pageCount, setPageCount] = useState(10);
+  const [page, setPage] = useState(0);
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState('');
+
+  const init = () => {
+    getData(page,pageCount);
+  };
+
+  const getData = async (page, pageCount) => {
+    const pageResponse = await clientService.getClientsPaginated(page, pageCount, 'id', 'asc');
+    setClients(pageResponse?.items || []);
+    setTotalUsers(pageResponse?.total || 0);
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      init()
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (clients !== null && clients.length > 0) {
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : 0;
+      setPage(page)
+      const pageLimit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
+      const name = searchParams.get('search') || null;
+      setSearch(search || '');
+      setPageCount(Math.ceil(totalUsers / pageLimit));
+
+    }
+  }, [getData]);
 
   const navigate = useNavigate();
 
@@ -45,7 +73,7 @@ export default function Systems() {
             title={`Sistemas (${totalUsers})`}
             description=""
           />
-          
+
           {/* <Link
             to={'/dashboard/system-new/'}
             className={cn(buttonVariants({ variant: 'default' }))}
@@ -58,12 +86,13 @@ export default function Systems() {
         <Separator />
 
         <SystemsTable
-          searchKey="name"
+          searchKey="clientId"
           pageNo={page}
           columns={columns}
           totalUsers={totalUsers}
-          data={systems}
+          data={clients}
           pageCount={pageCount}
+          onPageChange={getData}
         />
       </div>
     </>
