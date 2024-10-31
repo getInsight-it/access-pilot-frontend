@@ -6,7 +6,7 @@ import {
   useAnimate,
   motion,
 } from "framer-motion";
-import { RequestAccessForm } from "../forms/request-access-form";
+// import { RequestAccessForm } from "../forms/request-access-form";
 import { Button, buttonVariants } from "../ui/button";
 import { Plus } from "lucide-react";
 import { cn } from "../../lib/utils";
@@ -24,25 +24,10 @@ export const RequestAccessDrawer = () => {
       >
         <Plus className="mr-2 h-4 w-4" /> Adicionar novo
       </Link>
-      {/* <Button
-        onClick={() => setOpen(true)}
-        className=""
-      >
-        Adicionar nova
-      </Button> */}
 
       <DragCloseDrawer open={open} setOpen={setOpen}>
         <div className="mx-auto  space-y-4 text-neutral-400">
-          {/* <h2 className="text-4xl font-bold text-neutral-200">
-            Drag the handle at the top of this modal downwards 100px to close it
-          </h2>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Minima
-            laboriosam quos deleniti veniam est culpa quis nihil enim suscipit
-            nulla aliquid iure optio quaerat deserunt, molestias quasi facere
-            aut quidem reprehenderit maiores.
-          </p> */}
-          <RequestAccessForm
+          {/* <RequestAccessForm
             systems={[
               { _id: '1', name: 'Sistema ABC' },
               { _id: '2', name: 'Sys XYZ' }
@@ -54,7 +39,7 @@ export const RequestAccessDrawer = () => {
             ]}
             initialData={null}
             key={null}
-          />
+          /> */}
         </div>
       </DragCloseDrawer>
     </div>

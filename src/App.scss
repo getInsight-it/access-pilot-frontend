@@ -46,9 +46,12 @@
     --rounded-2xl: 1rem;
 
     --button-hover: #3f3f3f;
+    --button-hover-text: #ffffff;
 
     --card-shine: rgba(255, 255, 255, 30%);
     --card-border-radius: 0.75rem;
+
+    --steploader-bg: #ffffff;
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
@@ -99,9 +102,12 @@
     --rounded-2xl: 1rem;
 
     --button-hover: #d4d4d4;
+    --button-hover-text: #000000;
 
     --card-shine: rgba(255, 255, 255, 20%);
     --card-border-radius: 0.75rem;
+
+    --steploader-bg: #000000;
 
     --background: 0 0% 0%;
     --foreground: 210 20% 98%;
@@ -148,8 +154,13 @@
 
     --rounded-2xl: 1rem;
 
+    --button-hover: #d4d4d4;
+    --button-hover-text: #000000;
+
     --card-shine: rgba(255, 224, 204, 60%);
     --card-border-radius: 0.75rem;
+
+    --steploader-bg: #ffe0cc;
 
     --background: 33 100% 97%;
     --foreground: 33 100% 15%;
@@ -198,8 +209,13 @@
 
     --rounded-2xl: 1rem;
 
+    --button-hover: #d4d4d4;
+    --button-hover-text: #000000;
+
     --card-shine: rgba(255, 255, 255, 60%);
     --card-border-radius: 0.75rem;
+
+    --steploader-bg: #0000ff;
     
     --background: 240 100% 97%; /* Azul claro */
     --foreground: 240 100% 15%;
@@ -255,9 +271,12 @@
     --rounded-2xl: 0.1rem;
 
     --button-hover: #5985ca;
+    --button-hover-text: #ffffff;
 
     --card-shine: rgba(89, 133, 202, 28%);
     --card-border-radius: 0.1rem;
+
+    --steploader-bg: #ffffff;
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
