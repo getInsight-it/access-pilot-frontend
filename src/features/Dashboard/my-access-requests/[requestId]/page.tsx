@@ -1,6 +1,6 @@
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { AccessRequestForm } from '@/components/forms/access-request-form';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import {Breadcrumbs} from '@/components/breadcrumbs';
+import {AccessRequestForm} from '@/components/forms/access-request-form';
+import {ScrollArea} from '@/components/ui/scroll-area';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -14,8 +14,8 @@ export default function Page() {
         <Breadcrumbs items={breadcrumbItems} />
         <AccessRequestForm
           statuses={[
-            { _id: 'Gerenciado', name: 'Gerenciado' },
-            { _id: 'Não gerenciado', name: 'Não gerenciado' }
+            { _id: 'PUBLISHED', name: 'Publicado' },
+            { _id: 'UNPUBLISHED', name: 'Não Publicado' }
           ]}
           initialData={null}
           key={null}
@@ -23,19 +23,4 @@ export default function Page() {
       </div>
     </ScrollArea>
   );
-}
-
-
-// Esta função gera os parâmetros estáticos para cada solicitação de acesso
-export async function generateStaticParams() {
-  // Simula a busca de solicitações de acesso da sua API ou base de dados
-  const accessRequests = [
-    { _id: '1', requester: 'Carlos', system: 'Sistema ABC', role: 'Administrador', status: 'Gerenciado' },
-    { _id: '2', requester: 'Ana', system: 'Sys XYZ', role: 'Usuário', status: 'Não gerenciado' }
-  ];
-
-  // Mapeia as solicitações para gerar os parâmetros de rota estática
-  return accessRequests.map((request) => ({
-    requestId: request._id,
-  }));
 }

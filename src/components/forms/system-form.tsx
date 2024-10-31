@@ -1,30 +1,17 @@
 import * as z from 'zod';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Trash } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '../../components/ui/form';
-import { Separator } from '../../components/ui/separator';
-import { Heading } from '../../components/ui/heading';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '../../components/ui/select';
-import { useToast } from '../ui/use-toast';
-import { SystemImageUpload } from '../SystemImageUpload';
+import {useState} from 'react';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {FormProvider, useForm} from 'react-hook-form';
+import {Trash} from 'lucide-react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Input} from '../../components/ui/input';
+import {Button} from '../../components/ui/button';
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '../../components/ui/form';
+import {Separator} from '../../components/ui/separator';
+import {Heading} from '../../components/ui/heading';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../components/ui/select';
+import {useToast} from '../ui/use-toast';
+import {clientService} from "../../services/client";
 
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -43,26 +30,20 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, { message: 'O nome do sistema deve conter no mínimo 3 caracteres' }),
-  imgUrl: z
-    .array(ImgSchema)
-    .max(IMG_MAX_LIMIT, { message: 'Você pode adicionar somente 3 imagens' })
-    .min(1, { message: 'Ao menos uma imagem deve ser adicionada.' }),
+  clientId: z.string().min(3, { message: 'O client Id do sistema deve conter no mínimo 3 caracteres' }).regex(/^[a-z][a-z0-9-]*$/, { message: 'client Id deve ser separado por hífen' }),
   description: z
     .string()
     .min(3, { message: 'A descrição do sistema deve conter no mínimo 3 caracteres' }),
-  status: z.string().min(1, { message: 'Selecione um status' })
+  status: z.string().min(1, { message: 'Selecione um status' }),
+  managed: z.boolean().default(false)
 });
-
-type SystemFormValues = z.infer<typeof formSchema>;
 
 interface SystemFormProps {
   initialData: any | null;
-  statuses: any;
 }
 
 export const SystemForm: React.FC<SystemFormProps> = ({
-  initialData,
-  statuses
+  initialData
 }) => {
   const params = useParams();
   const navigate = useNavigate();
@@ -75,44 +56,37 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   const toastMessage = initialData ? 'Sistema atualizado.' : 'Sistema criado.';
   const action = initialData ? 'Salvar alterações' : 'Adicionar sistema';
 
-  const defaultValues = initialData
-    ? initialData
-    : {
-        name: '',
-        description: '',
-        imgUrl: [],
-        status: ''
-      };
+  const status= [
+      { _id: 'PUBLISHED', name: 'Publicado' },
+      { _id: 'UNPUBLISHED', name: 'Não Publicado' } ]
 
-  const form = useForm<SystemFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues
-  });
+  const defaultValues = initialData || {
+    name: '',
+    clientId: '',
+    description: '',
+    managed: false,
+    imgUrl: [],
+    status: ''
+  };
 
-  const onSubmit = async (data: SystemFormValues) => {
-    try {
-      setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
-      } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
-        // console.log("product", res);
+  const onSubmit = async (form) => {
+      try {
+        setLoading(true);
+        if (initialData?.id) {
+          await clientService.updateClient(initialData.id,form);
+        } else {
+          await clientService.createClient(form);
+        }
+      } catch (error: any) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! Something went wrong.',
+          description: 'There was a problem with your request.'
+        });
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      navigate(`/dashboard/products`);
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.'
-      });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.'
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   const onDelete = async () => {
@@ -126,17 +100,12 @@ export const SystemForm: React.FC<SystemFormProps> = ({
       setOpen(false);
     }
   };
-
-  const triggerImgUrlValidation = () => form.trigger('imgUrl');
-
+  const methods = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues : defaultValues
+  });
   return (
     <>
-      {/* <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      /> */}
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -150,35 +119,15 @@ export const SystemForm: React.FC<SystemFormProps> = ({
           </Button>
         )}
       </div>
+
       <Separator />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-8"
-        >
-          {/* <FormField
-            control={form.control}
-            name="imgUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Images</FormLabel>
-                <FormControl>
-                  <FileUpload
-                    onChange={field.onChange}
-                    value={field.value}
-                    onRemove={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
             <div className="flex flex-col gap-y-4">
               <FormField
-                control={form.control}
                 name="name"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Nome</FormLabel>
                     <FormControl>
@@ -188,14 +137,29 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
               <FormField
-                control={form.control}
+                name="clientId"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Client Id</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="ClientId do IDP"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+              <FormField
                 name="description"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
@@ -205,14 +169,28 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="managed"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gerenciado</FormLabel>
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
-                control={form.control}
                 name="status"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
                     <Select
@@ -231,32 +209,28 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                       </FormControl>
                       <SelectContent>
                         {/* @ts-ignore  */}
-                        {statuses.map((status) => (
+                        {status.map((status) => (
                           <SelectItem key={status._id} value={status._id}>
                             {status.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
-              <div className="hidden lg:block mr-auto mt-6">
-                <Button disabled={loading} className="ml-auto" type="submit">
-                  {action}
-                </Button>
-              </div>
             </div>
-            <SystemImageUpload />
+            {/*<SystemImageUpload />*/}
           </div>
-          <div className="block lg:hidden mt-6">
+          <div className="hidden lg:block mr-auto mt-6">
             <Button disabled={loading} className="ml-auto" type="submit">
               {action}
             </Button>
           </div>
         </form>
-      </Form>
+      </FormProvider>
+      <Separator/>
     </>
   );
 };

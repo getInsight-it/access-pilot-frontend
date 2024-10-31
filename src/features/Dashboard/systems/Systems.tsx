@@ -1,15 +1,14 @@
-import { Breadcrumbs } from '../../../components/breadcrumbs';
-import { SystemsTable } from '../../../components/tables/systems/systems';
-import { columns } from '../../../components/tables/systems/columns';
-import { Heading } from '../../../components/ui/heading';
-import { Separator } from '../../../components/ui/separator';
+import {Breadcrumbs} from '../../../components/breadcrumbs';
+import {SystemsTable} from '../../../components/tables/systems/systems';
+import {columns} from '../../../components/tables/systems/columns';
+import {Heading} from '../../../components/ui/heading';
+import {Separator} from '../../../components/ui/separator';
 import {useEffect, useState} from 'react';
-import { useNavigate, useLocation} from 'react-router-dom';
-import { AddSystemDrawer } from '../../../components/drawers/AddSystemDrawer';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {AddSystemDrawer} from '../../../components/drawers/AddSystemDrawer';
 import useAuthStore from "../../../store/authStore.ts";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {clientService} from "../../../services/client";
-import {PaginatedResponse} from "../../../lib/paginated-response.ts";
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -38,7 +37,7 @@ export default function Systems() {
   const getData = async (page, pageCount) => {
     const pageResponse = await clientService.getClientsPaginated(page, pageCount, 'id', 'asc');
     setClients(pageResponse?.items || []);
-    setTotalUsers(pageResponse?.total || 0);
+    setTotalUsers(pageResponse?.total ?? 0);
   }
 
   useEffect(() => {

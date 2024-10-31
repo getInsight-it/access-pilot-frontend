@@ -1,5 +1,5 @@
-import { AlertModal } from '../../../components/modal/alert-modal';
-import { Button } from '../../../components/ui/button';
+import {AlertModal} from '../../../components/modal/alert-modal';
+import {Button} from '../../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,9 +7,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '../../../components/ui/dropdown-menu';
-import { Cog, Eye, FileKey, FileKey2, MoreHorizontal } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Cog, Eye, MoreHorizontal} from 'lucide-react';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
 
 interface CellActionProps {
   data: {
@@ -25,6 +26,7 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [modal, setModal] = useState('');
   const navigate = useNavigate();
 
   const onConfirm = async () => {
@@ -33,6 +35,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
+      {modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)} /> : null}
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -48,36 +51,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/request-detail/`)}
+            onClick={() => setModal('EDIT_SYSTEM')}
           >
-            <Eye className="mr-2 h-4 w-4" /> Detalhar
+            <Eye className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
 
           {!data.managed && (
             <DropdownMenuItem
               onClick={() => navigate(`/dashboard/request-detail/`)}
             >
-              <Cog className="mr-2 h-4 w-4" /> Gerenciar
+              <Cog className="mr-2 h-4 w-4" /> Sincronizar
             </DropdownMenuItem>
           )}
 
-          {data.managed && !data.published && (
-            <DropdownMenuItem
-              onClick={() => navigate(`/dashboard/request-detail/`)}
-            >
-              <FileKey2 className="mr-2 h-4 w-4" /> Publicar
-            </DropdownMenuItem>
-          )}
-
-          {data.managed && data.published && (
-            <DropdownMenuItem
-              onClick={() => navigate(`/dashboard/request-detail/`)}
-            >
-              <FileKey className="mr-2 h-4 w-4" /> Despublicar
-            </DropdownMenuItem>
-          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

@@ -1,4 +1,4 @@
-import { NavItem } from '@/types';
+import {NavItem} from '@/types';
 
 export type System = {
   id: number;
@@ -15,7 +15,7 @@ export const systems: System[] = [
     description: 'Sistema de Gestão de Recursos Humanos',
     role: 'Desenvolvedor Frontend',
     verified: false,
-    status: 'Gerenciado'
+    status: 'PUBLISHED'
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ export const systems: System[] = [
     description: 'Sistema de gerenciamento de relacionamento com o cliente',
     role: 'Desenvolvedor Backend',
     verified: true,
-    status: 'Gerenciado'
+    status: 'PUBLISHED'
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ export const systems: System[] = [
     description: 'Plataforma de Business Intelligence e Analytics',
     role: 'UI Designer',
     verified: true,
-    status: 'Não gerenciado'
+    status: 'UNPUBLISHED'
   },
 ];
 
@@ -119,7 +119,7 @@ export const roles: Role[] = [
     parentRole: 'Administrador',
     verified: false
   },
-  
+
 ];
 
 export type AccessRequests = {
@@ -139,7 +139,7 @@ export type AccessRequests = {
   latitude?: number; // Optional field
   job: string;
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
-  
+
   system: string;
   role: string;
   requester: string;
