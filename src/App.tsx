@@ -9,6 +9,7 @@ import { ThemeProvider } from './components/layout/ThemeToggle/theme-provider.ts
 import { registerHttpAuthorization } from './config/http/http.ts';
 import { motion } from 'framer-motion';
 import './App.scss';
+import HighlightLoader from './components/highlightloader/HighLightLoader.tsx';
 
 function App() {
   const navigate = useNavigate();
@@ -63,11 +64,12 @@ function App() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <motion.div
+        <HighlightLoader />
+        {/* <motion.div
           className="w-16 h-16 border-4 border-t-4 border-gray-200 rounded-full animate-spin"
           style={{ borderTopColor: '#3498db' }}
           transition={{ duration: 0.5 }}
-        />
+        /> */}
       </motion.div>
     );
   }
