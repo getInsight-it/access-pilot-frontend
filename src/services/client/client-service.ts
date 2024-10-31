@@ -1,6 +1,6 @@
-import { HttpClient, HttpRequestError, HttpRequestResponse } from '@getinsight.it/getinsight-common';
-import { CLIENT_API } from './client-api.ts';
-import { ClientDTO } from './client-dto.ts';
+import {HttpClient, HttpRequestError, HttpRequestResponse} from '@getinsight.it/getinsight-common';
+import {CLIENT_API} from './client-api.ts';
+import {ClientDTO} from './client-dto.ts';
 import {PaginatedResponse} from "../../lib/paginated-response.ts";
 
 export class ClientService {
@@ -45,6 +45,32 @@ export class ClientService {
 
     return null;
   }
+
+  async createClient(clientData: ClientDTO): Promise<ClientDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(CLIENT_API.CLIENTS, clientData);
+
+    if (response instanceof HttpRequestResponse) {
+      return response.data as ClientDTO;
+    } else {
+      console.error('Erro ao criar client');
+    }
+
+    return null;
+  }
+
+  async updateClient(clientId: number, clientData: ClientDTO): Promise<ClientDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${CLIENT_API.CLIENTS}/${clientId}`, clientData);
+
+    if (response instanceof HttpRequestResponse) {
+      return response.data as ClientDTO;
+    } else {
+      console.error(`Erro ao atualizar o client com id ${clientId}`);
+    }
+
+    return null;
+  }
+
+
 
 
 }
