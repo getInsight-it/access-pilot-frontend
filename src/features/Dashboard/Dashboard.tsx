@@ -51,10 +51,11 @@ export default function Dashboard() {
   return (
     <ScrollArea className="h-full">
 
-      <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
+      {/* <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
         <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
         <button type="button" onClick={ signOut }>Sair</button>
-      </div>
+      </div> */}
+
       {/* admin dashboard */}
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center space-y-2">

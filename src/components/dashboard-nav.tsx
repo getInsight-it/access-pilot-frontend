@@ -11,6 +11,8 @@ import {
   TooltipTrigger
 } from './ui/tooltip';
 import { useTheme } from './layout/ThemeToggle/theme-provider';
+import useAuthStore from '../store/authStore';
+import { authService } from '../services/auth';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -32,6 +34,13 @@ export function DashboardNav({
   }
 
   const { theme } = useTheme();
+
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+
+  const signOut = async () => {
+    await authService.signOut();
+  };
 
   return (
     <nav className="grid items-start gap-0">
@@ -86,6 +95,12 @@ export function DashboardNav({
           );
         })}
       </TooltipProvider>
+      
+      <div className="absolute bottom-32 w-full bg-black z-50 text-white p-6">
+        <p className="">Está autenticado? <strong>{ isAuthenticated ? 'Sim' : 'Não' }</strong></p>
+        <button type="button" onClick={ signOut }>Sair</button>
+      </div>
+
       {isMobileNav || (!isMinimized && !isMobileNav) ? (
         <div className="absolute bottom-0 p-4 pointer-events-none truncate">
           <p className="text-xs font-regular">Powered by:</p>
