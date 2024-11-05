@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx'
 
 import './index.scss'
+import { Toaster } from "./components/ui/toaster.tsx";
 
 Sentry.init({
   dsn: "https://fa440b0816d325d4fce8e3fcf80098de@sentry.getinsight.tech/5",
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <App/>
+      <Toaster />
     </BrowserRouter>
   </StrictMode>,
 )
