@@ -380,10 +380,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.8.tgz#21a907684723bbbaa5f0974cf7730bd797eb8e62"
   integrity sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==
 
-"@getinsight.it/getinsight-common@^1.9.0":
-  version "1.9.0"
-  resolved "https://gitlab.com/api/v4/projects/61385044/packages/npm/@getinsight.it/getinsight-common/-/@getinsight.it/getinsight-common-1.9.0.tgz#417101a823a7f0c201f9444c4ff91092246c25dc"
-  integrity sha1-QXEBqCOn8MIB+URMT/kQkiRsJdw=
+"@getinsight.it/getinsight-common@^1.10.0":
+  version "1.10.0"
+  resolved "https://gitlab.com/api/v4/projects/61385044/packages/npm/@getinsight.it/getinsight-common/-/@getinsight.it/getinsight-common-1.10.0.tgz#67a3428b718d90aa210c6685bac81e075e8674a8"
+  integrity sha1-Z6NCi3GNkKohDGaFusgeB16GdKg=
   dependencies:
     keycloak-js "^25.0.4"
     rxjs "^7.8.1"
@@ -843,6 +843,24 @@
   integrity sha512-FUCf5XMfmW4dtYl69pdS4DbxKy8nj4M7SafBgPllysxmdachynNflAdp/gCsnYWNDnge6tI9onzMp5ARYc1KNw==
   dependencies:
     "@radix-ui/react-compose-refs" "1.1.0"
+
+"@radix-ui/react-toast@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-toast/-/react-toast-1.2.2.tgz#fdd8ed0b80f47d6631dfd90278fee6debc06bf33"
+  integrity sha512-Z6pqSzmAP/bFJoqMAston4eSNa+ud44NSZTiZUmUen+IOZ5nBY8kzuU5WDBVyFXPtcW6yUalOHsxM/BP6Sv8ww==
+  dependencies:
+    "@radix-ui/primitive" "1.1.0"
+    "@radix-ui/react-collection" "1.1.0"
+    "@radix-ui/react-compose-refs" "1.1.0"
+    "@radix-ui/react-context" "1.1.1"
+    "@radix-ui/react-dismissable-layer" "1.1.1"
+    "@radix-ui/react-portal" "1.1.2"
+    "@radix-ui/react-presence" "1.1.1"
+    "@radix-ui/react-primitive" "2.0.0"
+    "@radix-ui/react-use-callback-ref" "1.1.0"
+    "@radix-ui/react-use-controllable-state" "1.1.0"
+    "@radix-ui/react-use-layout-effect" "1.1.0"
+    "@radix-ui/react-visually-hidden" "1.1.0"
 
 "@radix-ui/react-tooltip@^1.0.5":
   version "1.1.3"
