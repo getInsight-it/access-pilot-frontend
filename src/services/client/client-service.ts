@@ -6,7 +6,7 @@ import {PaginatedResponse} from "../../lib/paginated-response.ts";
 export class ClientService {
   httpClient: HttpClient;
 
-  private constructor(httpClient: HttpClient) {
+  constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
   }
 
@@ -50,7 +50,7 @@ export class ClientService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(CLIENT_API.CLIENTS, clientData);
 
     if (response instanceof HttpRequestResponse) {
-      return response.data as ClientDTO;
+      return JSON.parse(response.data) as ClientDTO;
     } else {
       console.error('Erro ao criar client');
     }
@@ -58,19 +58,38 @@ export class ClientService {
     return null;
   }
 
-  async updateClient(clientId: number, clientData: ClientDTO): Promise<ClientDTO | null> {
+  async updateClient(clientId: number, clientData: ClientDTO): Promise<void> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${CLIENT_API.CLIENTS}/${clientId}`, clientData);
 
+    if (!(response instanceof HttpRequestResponse)) {
+      console.error('Erro ao atualizar client');
+    }
+
+  }
+
+  async publish(id: number): Promise<ClientDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, {"status": "PUBLISHED"});
+
     if (response instanceof HttpRequestResponse) {
-      return response.data as ClientDTO;
+      return JSON.parse(response.data) as ClientDTO;
     } else {
-      console.error(`Erro ao atualizar o client com id ${clientId}`);
+      console.error('Erro ao publicar client');
     }
 
     return null;
   }
 
+  async unpublish(id: number): Promise<ClientDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, {"status": "UNPUBLISHED"});
 
+    if (response instanceof HttpRequestResponse) {
+      return response.data as ClientDTO;
+    } else {
+      console.error('Erro ao publicar client');
+    }
+
+    return null;
+  }
 
 
 }

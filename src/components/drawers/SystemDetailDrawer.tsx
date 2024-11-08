@@ -6,23 +6,77 @@ import {Eye, Hand, X} from "lucide-react";
 import {cn} from "../../lib/utils";
 import SystemDetail from "../canvas/system/SystemDetail";
 import {Link} from "react-router-dom";
-import NewSystem from "../../features/Dashboard/system-new/NewSystem.tsx";
+import {clientService} from "../../services/client";
+import {StepLoader} from "../steploader/StepLoader.tsx";
+import {toast} from "../ui/use-toast.ts";
+import {from, catchError, finalize, tap} from "rxjs";
 
 export const SystemDetailDrawer = ({data}) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  //criar funcao de publicar e despublicar com as respetivas implementacoes
-  //criar funcao de editar com as respetivas implementacoes
-  const handlePublish = () => {
-    //TODO: implementar publicação
-  }
-  const handleUnpublish = () => {
-    //TODO: implementar despublicação
-  }
 
-  const handleEdit = async () => {
-    return <NewSystem />
+  const handlePublish = () => {
+    setLoading(true);
+    from(clientService.publish(data.id)).pipe(
+      tap((response) => {
+        if (response) {
+          toast({
+            title: "Sistema publicado",
+            description: "O sistema foi publicado com sucesso",
+          });
+        }
+      }),
+      catchError((error) => {
+        toast({
+          title: "Erro ao publicar sistema",
+          description: "O sistema não foi publicado",
+          variant: "destructive",
+        });
+        console.error(error);
+        return [];
+      }),
+      finalize(() => setLoading(false))
+    ).subscribe();
+  };
+
+  const handleUnpublish = () => {
+    setLoading(true);
+    from(clientService.unpublish(data.id)).pipe(
+      tap((response) => {
+        if (response) {
+          toast({
+            title: "Sistema despublicado",
+            description: "O sistema foi despublicado com sucesso",
+          });
+        }
+      }),
+      catchError((error) => {
+        toast({
+          title: "Erro ao despublicar sistema",
+          description: "O sistema não foi despublicado",
+          variant: "destructive",
+        });
+        console.error(error);
+        return [];
+      }),
+      finalize(() => setLoading(false))
+    ).subscribe();
+  };
+
+  const formatStatus = (status: string) => {
+    switch (status) {
+      case 'PUBLISHED':
+        return 'Publicado';
+      case 'UNPUBLISHED':
+        return 'Não Publicado';
+      default:
+        return status;
+    }
+  };
+
+  function handleLoaderClose() {
+    setLoading(false);
   }
 
   return (
@@ -58,7 +112,7 @@ export const SystemDetailDrawer = ({data}) => {
                 <p><span className="font-bold">Client Id:</span><br/>{data?.clientId}</p>
                 <p><span className="font-bold">Descrição:</span><br/> {data?.description}</p>
                 <p><span className="font-bold">Gerenciado:</span><br/> {data?.managed ? 'Sim' : 'Não'}</p>
-                <p><span className="font-bold">Status:</span><br/> {data?.status}</p>
+                <p><span className="font-bold">Status:</span><br/> {formatStatus(data?.status)}</p>
               </div>
             </div>
 
@@ -69,7 +123,6 @@ export const SystemDetailDrawer = ({data}) => {
               className="ml-6"
             >
               <div className="flex gap-x-2">
-                {/* <Clock className="w-5 h-5 text-red-500" /> */}
                 <h2 className="text-lg font-bold mb-6">
                   Ações:
                 </h2>
@@ -77,32 +130,20 @@ export const SystemDetailDrawer = ({data}) => {
               <div className="w-full flex gap-4 pointer-events-auto">
                 {data.status === 'PUBLISHED' ?
                   <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
-                        type="submit" onClick={handlePublish}>
-                  Publicar
-                </Button> :
-                <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
-                        type="submit" onClick={handleUnpublish}>
-                  Despublicar
-                </Button>}
-                <Button className="w-40 bg-blue-200 text-blue-800 hover:bg-blue-800 hover:text-blue-200" type="submit"
-                        onClick={handleEdit}>
-                  Editar
-                </Button>
+                          type="submit" onClick={handleUnpublish}>Despublicar
+
+                  </Button> :
+                  <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
+                          type="submit" onClick={handlePublish}>
+                    Publicar
+                  </Button>}
               </div>
-
-              {/* <ToggleButton /> */}
-
             </motion.div>
-
-
           </div>
-
           <SystemDetail/>
-          {/* <SystemPhone /> */}
-
-
         </div>
       </DragCloseDrawer>
+      <StepLoader loading={loading} onClose={handleLoaderClose}/>
     </div>
   );
 };
@@ -186,19 +227,6 @@ const DragCloseDrawer = ({open, setOpen, children}: Props) => {
                 onClick={handleClose}
                 className=" cursor-pointer touch-none rounded-full  active:cursor-grabbing"
               >
-                {/* <span className="
-                  h-2 w-8
-                  bg-red-700
-                  absolute
-                ">
-                </span>
-                <span className="
-                  h-2 w-8
-                  bg-red-700
-                  rotate-90
-                  absolute
-                ">
-                </span> */}
                 <X className="h-8 w-8"/>
               </button>
             </div>
@@ -212,5 +240,3 @@ const DragCloseDrawer = ({open, setOpen, children}: Props) => {
     </>
   );
 };
-
-

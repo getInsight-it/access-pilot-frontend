@@ -11,10 +11,14 @@ import {Cog, Eye, MoreHorizontal} from 'lucide-react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
+import {clientService} from "../../../services/client";
+import {catchError, finalize, from, tap} from "rxjs";
+import {toast} from "../../ui/use-toast.ts";
 
 interface CellActionProps {
   data: {
     id: number;
+    clientId: string;
     name: string;
     description: string;
     status: string;
@@ -33,6 +37,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     // Lógica de confirmação
   };
 
+
   return (
     <>
       {modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)} /> : null}
@@ -42,6 +47,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
       />
+
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -57,13 +63,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Eye className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
 
-          {!data.managed && (
-            <DropdownMenuItem
-              onClick={() => navigate(`/dashboard/request-detail/`)}
-            >
-              <Cog className="mr-2 h-4 w-4" /> Sincronizar
-            </DropdownMenuItem>
-          )}
 
         </DropdownMenuContent>
       </DropdownMenu>
