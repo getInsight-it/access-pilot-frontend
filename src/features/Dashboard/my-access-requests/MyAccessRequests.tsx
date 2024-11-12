@@ -89,24 +89,20 @@ export default function MyAccessRequests() {
         </div>
         <Separator />
 
-        {requests.length <= 0 &&
-          <EmptyState />
-        }
-
-        {requests.length > 0 &&
-          <RequestsTable
-            searchKey="system"
-            pageNo={page} // Passa o valor da página que começa em 1
-            columns={columns}
-            totalUsers={totalUsers}
-            data={requests}
-            pageCount={pageCount}
-            onPageChange={(newPage, pageSize) => {
-              setPage(newPage); // Atualiza o estado local da página com a contagem começando em 1
-              getData(newPage, pageSize); // Chama a API com a nova página
-            }}
-          />
-        }
+        
+        <RequestsTable
+          searchKey="system"
+          pageNo={page} // Passa o valor da página que começa em 1
+          columns={columns}
+          totalUsers={totalUsers}
+          data={requests}
+          pageCount={pageCount}
+          onPageChange={(newPage, pageSize) => {
+            setPage(newPage); // Atualiza o estado local da página com a contagem começando em 1
+            getData(newPage, pageSize); // Chama a API com a nova página
+          }}
+        />
+        
         
       </div>
     </>
