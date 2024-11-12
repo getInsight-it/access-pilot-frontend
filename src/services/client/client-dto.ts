@@ -6,4 +6,5 @@ export type ClientDTO = {
   clientId: string,
   clientUUID: string,
   managed: boolean,
+  status?: string;
 }

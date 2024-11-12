@@ -10,7 +10,7 @@ import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '../../co
 import {Separator} from '../../components/ui/separator';
 import {Heading} from '../../components/ui/heading';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../components/ui/select';
-import {useToast} from '../ui/use-toast';
+import {toast, useToast} from '../ui/use-toast';
 import {clientService} from "../../services/client";
 
 const ImgSchema = z.object({
@@ -29,25 +29,27 @@ export const IMG_MAX_LIMIT = 3;
 const formSchema = z.object({
   name: z
     .string()
-    .min(3, { message: 'O nome do sistema deve conter no mínimo 3 caracteres' }),
-  clientId: z.string().min(3, { message: 'O client Id do sistema deve conter no mínimo 3 caracteres' }).regex(/^[a-z][a-z0-9-]*$/, { message: 'client Id deve ser separado por hífen' }),
+    .min(3, {message: 'O nome do sistema deve conter no mínimo 3 caracteres'}),
+  clientId: z.string().min(3, {message: 'O client Id do sistema deve conter no mínimo 3 caracteres'}).regex(/^[a-z][a-z0-9-]*$/, {message: 'client Id deve ser separado por hífen'}),
   description: z
     .string()
-    .min(3, { message: 'A descrição do sistema deve conter no mínimo 3 caracteres' }),
-  status: z.string().min(1, { message: 'Selecione um status' }),
+    .min(3, {message: 'A descrição do sistema deve conter no mínimo 3 caracteres'}),
+  status: z.string().min(1, {message: 'Selecione um status'}),
   managed: z.boolean().default(false)
 });
 
 interface SystemFormProps {
-  initialData: any | null;
+  initialData: any | null,
+  onSuccessSubmit: () => any
 }
 
 export const SystemForm: React.FC<SystemFormProps> = ({
-  initialData
-}) => {
+                                                        initialData,
+                                                        onSuccessSubmit
+                                                      }) => {
   const params = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {toast} = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(false);
@@ -56,11 +58,12 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   const toastMessage = initialData ? 'Sistema atualizado.' : 'Sistema criado.';
   const action = initialData ? 'Salvar alterações' : 'Adicionar sistema';
 
-  const status= [
-      { _id: 'PUBLISHED', name: 'Publicado' },
-      { _id: 'UNPUBLISHED', name: 'Não Publicado' } ]
+  const status = [
+    {_id: 'PUBLISHED', name: 'Publicado'},
+    {_id: 'UNPUBLISHED', name: 'Não Publicado'}]
 
   const defaultValues = initialData || {
+    id: '',
     name: '',
     clientId: '',
     description: '',
@@ -70,23 +73,38 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   };
 
   const onSubmit = async (form) => {
-      try {
-        setLoading(true);
-        if (initialData?.id) {
-          await clientService.updateClient(initialData.id,form);
-        } else {
-          await clientService.createClient(form);
-        }
-      } catch (error: any) {
-        toast({
-          variant: 'destructive',
-          title: 'Uh oh! Something went wrong.',
-          description: 'There was a problem with your request.'
+    try {
+      setLoading(true);
+      if (initialData?.id) {
+        form = {...form, id: initialData.id};
+        await clientService.updateClient(initialData.id, form).then(() => {
+          toast({
+            title: "Sistema atualizado",
+            description: 'O sistema foi atualizado com sucesso',
+          });
+          onSuccessSubmit();
         });
-        console.error(error);
-      } finally {
-        setLoading(false);
+      } else {
+        await clientService.createClient(form).then(() => {
+          toast({
+            title: "Sistema criado",
+            description: 'O sistema foi criado com sucesso',
+          });
+          onSuccessSubmit();
+        });
       }
+    } catch (error: any) {
+      if (error.response) {
+        toast({
+          title: 'Erro ao realizar operação sistema',
+          description: error.response.data.message,
+          variant: 'destructive',
+        });
+      }
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onDelete = async () => {
@@ -102,12 +120,12 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   };
   const methods = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues : defaultValues
+    defaultValues: defaultValues
   });
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
+        <Heading title={title} description={description}/>
         {initialData && (
           <Button
             disabled={loading}
@@ -115,12 +133,12 @@ export const SystemForm: React.FC<SystemFormProps> = ({
             size="sm"
             onClick={() => setOpen(true)}
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="h-4 w-4"/>
           </Button>
         )}
       </div>
 
-      <Separator />
+      <Separator/>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
@@ -175,16 +193,16 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               />
               <FormField
                 name="managed"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Gerenciado</FormLabel>
                     <FormControl>
-                      <input
-                        type="checkbox"
-                        {...field}
-                      />
+                      <Input {...field}
+                              type="checkbox"
+                             placeholder="Gerenciado"
+                             disabled={loading}/>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />

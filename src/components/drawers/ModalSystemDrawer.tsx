@@ -9,7 +9,7 @@ export const ModalSystemDrawer = ({data,open,setOpen}) => {
       <DragCloseDrawer open={open} setOpen={setOpen}>
         <div className="mx-auto  space-y-4 text-neutral-400">
           <SystemForm
-            initialData={data || null}
+            initialData={data || null} onSuccessSubmit={() => setOpen(false)}
           />
         </div>
       </DragCloseDrawer>
