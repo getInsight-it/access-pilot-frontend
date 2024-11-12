@@ -14,7 +14,7 @@ import { useState } from 'react';
 interface CellActionProps {
   data: {
     id: number;
-    system: string;
+    // system: string;
     role: string;
     requester: string;
     date_submission: string;

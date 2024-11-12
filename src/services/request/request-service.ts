@@ -2,7 +2,6 @@ import { HttpClient, HttpRequestError, HttpRequestResponse } from '@getinsight.i
 import { REQUEST_API } from './request-api.ts';
 import { RequestDTO } from "./request-dto.ts";
 import { PaginatedResponse } from '../../lib/paginated-response.ts';
-import { ClientDTO } from '../client/client-dto.ts';
 
 export class RequestService {
   httpClient: HttpClient;

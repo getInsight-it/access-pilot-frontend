@@ -1,3 +1,5 @@
+import { ClientDTO } from "../client/client-dto";
+
 export interface RoleDTO {
   id?: number;
   roleExternalId?: string;
@@ -6,4 +8,5 @@ export interface RoleDTO {
   idRoleParent?: number;
   idClient?: number;
   clientName?: string;
+  client?: ClientDTO;
 }

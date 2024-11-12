@@ -1,46 +1,18 @@
-import { MotionConfig, motion } from "framer-motion";
+import { motion } from 'framer-motion'
+import { format } from 'date-fns';
 
-const Testimonial = ({
-  imgSrc,
-  name,
-  status,
-  role,
-  date,
-  content,
-}: {
-  imgSrc: string;
-  name: string;
-  status: string;
-  role: string;
-  date: string;
-  content: string;
-}) => (
-  <MotionConfig
-    transition={{
-      duration: 0.2,
-      ease: "easeInOut",
-    }}
-  >
-    <motion.div
-      initial={{
-        y: 0,
-      }}
-      animate={{
-        // y: -8,
-        y: 0,
-      }}
-      exit={{
-        y: 0,
-      }}
-      className="overflow-hidden grid lg:justify-center"
-    >
+export const Tag = ({ data }: { data: any }) => {
 
-      <div className="badge-container border-t lg:border-none rounded-xl max-w-full lg:max-w-[300px] ">
+  const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
+
+  return (
+    <div className="w-full mt-10 lg:-mt-[16px]">
+
+      <div className="badge-container mx-auto border-t lg:border-none rounded-xl max-w-full lg:max-w-[300px] ">
         <div className="event-badge mx-auto">
           
-          {/* <img className="absolute ml-20 -mt-16 block mx-auto w-60 " src="/arte.svg" /> */}
           
-          <div className="mx-auto -mt-20">
+          <div className="mx-auto mt-0 lg:-mt-20">
             
             <svg viewBox="0 0 260 533">
               <clipPath id="mask">
@@ -112,7 +84,7 @@ const Testimonial = ({
                     rotate: "0deg",
                     opacity: 0,
                   }}
-                  src={imgSrc}
+                  src="/accesspilot-w.svg"
                   alt="logo-accesspilot"
                   className="size-40 h-10"
                 />
@@ -134,17 +106,17 @@ const Testimonial = ({
             >
               <div className="text content">
                 <h1 className="font-bold text-xl text-gray-50 relative">
-                  {name}
+                  {data?.requestingUser.firstName}
                 </h1>
                 <p className="font-normal text-sm text-gray-50 relative z-10 mt-1 mb-4">
-                  {role}
+                  {data?.role.name}
                 </p>
                 {/* <h2 className="font-medium rounded text-center bg-blue-200 text-blue-800 text-md relative z-10">
-                  {status}
-                </h2> */}
+                  {data?.status}
+                </h2>
                 <p className="font-normal text-sm text-gray-50 relative z-10 mt-2">
-                  {date}
-                </p>
+                  {formattedDate}
+                </p> */}
               </div>
             </motion.div>
           </div>
@@ -152,62 +124,7 @@ const Testimonial = ({
         </div>
       </div>
 
-    </motion.div>
 
-  </MotionConfig>
-);
-
-export const OPTIONS = [
-  {
-    title: "Criado",
-    Content: () => (
-      <Testimonial
-        imgSrc="/accesspilot-w.svg"
-        name="José Maria"
-        status="Solicitação criada"
-        role="Administrador"
-        date="24/07/2024"
-        content="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, assumenda."
-      />
-    ),
-  },
-  {
-    title: "Recebido",
-    Content: () => (
-      <Testimonial
-        imgSrc="/accesspilot-w.svg"
-        name="josé maria"
-        status="Solicitação recebida"
-        role="Administrador"
-        date="29/07/2024"
-        content="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, assumenda."
-      />
-    ),
-  },
-  {
-    title: "Em análise",
-    Content: () => (
-      <Testimonial
-        imgSrc="/accesspilot-w.svg"
-        name="José Maria"
-        status="Em análise"
-        role="Administrador"
-        date="01/08/2024"
-        content="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, assumenda."
-      />
-    ),
-  },
-  {
-    title: "Finalizado",
-    Content: () => (
-      <Testimonial
-        imgSrc="/accesspilot-w.svg"
-        name="José Maria"
-        status="Finalizado"
-        role="Administrador"
-        date="04/08/2024"
-        content="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, assumenda."
-      />
-    ),
-  },
-];
+    </div>
+  );
+};

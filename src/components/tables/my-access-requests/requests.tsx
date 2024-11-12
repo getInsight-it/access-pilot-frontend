@@ -7,7 +7,7 @@ import {
   getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -30,18 +30,6 @@ import { ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon } from 'lucide
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ScrollArea, ScrollBar } from '../../../components/ui/scroll-area';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  searchKey: string;
-  pageNo: number;
-  totalUsers: number;
-  pageSizeOptions?: number[];
-  pageCount: number;
-  searchParams?: {
-    [key: string]: string | string[] | undefined;
-  };
-}
 
 export function RequestsTable<TData, TValue>({
   columns,
@@ -50,13 +38,14 @@ export function RequestsTable<TData, TValue>({
   searchKey,
   totalUsers,
   pageCount,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  onPageChange
 }: DataTableProps<TData, TValue>) {
   const navigate = useNavigate();
   const { search, pathname } = useLocation();
   const searchParams = new URLSearchParams(search);
-  
-  // Search params
+
+  // Obtenha os valores iniciais de página e limite dos parâmetros de busca
   const page = searchParams?.get('page') ?? '1';
   const pageAsNumber = Number(page);
   const fallbackPage = isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
@@ -64,7 +53,7 @@ export function RequestsTable<TData, TValue>({
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  // Função para criar query string
+  // Criação de query string
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
       const newSearchParams = new URLSearchParams(search);
@@ -80,17 +69,17 @@ export function RequestsTable<TData, TValue>({
     [search]
   );
 
-  // Handle server-side pagination
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: fallbackPage - 1,
-      pageSize: fallbackPerPage
-    });
+  // Estado de paginação ajustado para o índice da tabela
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: fallbackPage - 1, // Ajuste para o índice zero
+    pageSize: fallbackPerPage
+  });
 
-  React.useEffect(() => {
+  // Navegar na tabela e criar a query string para refletir o estado da URL
+  useEffect(() => {
     navigate(
       `${pathname}?${createQueryString({
-        page: pageIndex + 1,
+        page: pageIndex + 1, // Incrementa para refletir a contagem da API
         limit: pageSize
       })}`,
       { replace: true }
@@ -98,6 +87,7 @@ export function RequestsTable<TData, TValue>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
 
+  // Configuração da tabela
   const table = useReactTable({
     data,
     columns,
@@ -107,45 +97,55 @@ export function RequestsTable<TData, TValue>({
     state: {
       pagination: { pageIndex, pageSize }
     },
-    onPaginationChange: setPagination,
+    onPaginationChange: (updater) => {
+      setPagination((old) => {
+        const newPaginationValue = updater instanceof Function ? updater(old) : updater;
+        if ('pageIndex' in newPaginationValue) {
+          // Ajuste a página de forma que a API receba a contagem a partir de 1
+          onPageChange?.(newPaginationValue.pageIndex + 1, newPaginationValue.pageSize);
+          return newPaginationValue;
+        }
+      });
+    },
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     manualFiltering: true
   });
 
-  const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
+  // const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
 
-  React.useEffect(() => {
-    if (searchValue?.length > 0) {
-      navigate(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue
-        })}`,
-        { replace: true }
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      navigate(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null
-        })}`,
-        { replace: true }
-      );
-    }
+  // useEffect(() => {
+  //   if (searchValue?.length > 0) {
+  //     navigate(
+  //       `${pathname}?${createQueryString({
+  //         page: null,
+  //         limit: null,
+  //         search: searchValue
+  //       })}`,
+  //       { replace: true }
+  //     );
+  //   }
+  //   if (searchValue?.length === 0 || searchValue === undefined) {
+  //     navigate(
+  //       `${pathname}?${createQueryString({
+  //         page: null,
+  //         limit: null,
+  //         search: null
+  //       })}`,
+  //       { replace: true }
+  //     );
+  //   }
 
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  //   setPagination((prev) => ({ ...prev, pageIndex: 0 }));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchValue]);
 
   return (
     <>
-      {/* <h2 className="text-2xl font-bold pt-4 pb-1">Histórico</h2> */}
-      <div className="flex gap-4 pt-1 pb-2">
+    {/* <h2 className="text-2xl font-bold pt-4 pb-1">Histórico</h2> */}
+      
+      {/* <div className="flex gap-4 pt-1 pb-2">
         <Input
           placeholder={`Pesquisar ${searchKey}...`}
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
@@ -154,9 +154,12 @@ export function RequestsTable<TData, TValue>({
           }
           className="w-full md:max-w-sm"
         />
-      </div>
+      </div> */}
 
+
+      
       <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
+
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -198,6 +201,7 @@ export function RequestsTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   Sem resultados.
+                  
                 </TableCell>
               </TableRow>
             )}
@@ -236,7 +240,7 @@ export function RequestsTable<TData, TValue>({
           </div>
         </div>
         <div className="flex w-full items-center justify-between gap-2 sm:justify-end">
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          <div className="flex w-[110px] items-center justify-center text-sm font-medium">
             Página {table.getState().pagination.pageIndex + 1} de{' '}
             {table.getPageCount()}
           </div>
@@ -283,3 +287,4 @@ export function RequestsTable<TData, TValue>({
     </>
   );
 }
+

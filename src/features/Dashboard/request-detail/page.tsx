@@ -1,8 +1,8 @@
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { Supports } from '@/components/supports/Supports';
-import { Heading } from '@/components/ui/heading';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import { Breadcrumbs } from '../../../components/breadcrumbs';
+import { Heading } from '../../../components/ui/heading';
+import { ScrollArea } from '../../../components/ui/scroll-area';
+import { Separator } from '../../../components/ui/separator';
+import { RequestDetail } from '../../../components/request-detail/RequestDetail';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -32,7 +32,7 @@ export default function Page() {
       
       <Separator />
       
-      <Supports />
+      <RequestDetail />
       
       </div>
     </ScrollArea>
