@@ -135,17 +135,7 @@ items:
     metadata:
       annotations:
         cert-manager.io/cluster-issuer: ${CLUSTER_ISSUER}
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          more_set_headers -a "X-Robots-Tag: noai";
-          more_set_headers -a "X-Robots-Tag: Google-Extended: none";
-          more_set_headers -a "X-Robots-Tag: GPTBot: none";
-          more_set_headers -a "X-Robots-Tag: ChatGPT-User: none";
-          more_set_headers -a "X-Robots-Tag: anthropic-ai: none";
-          more_set_headers -a "X-Robots-Tag: CCBot: none";
-        nginx.ingress.kubernetes.io/server-snippet: |
-          if ($http_user_agent ~* "(?<!(?i)uptimero)bot"){
-            return 403;
-          }
+        nginx.ingress.kubernetes.io/whitelist-source-range: ${WHITELIST_SOURCE_RANGE}
       name: ${CI_PROJECT_NAME}
       namespace: ${NAMESPACE}-${CI_ENVIRONMENT_NAME}
     spec:
