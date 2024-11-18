@@ -37,6 +37,27 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     // Lógica de confirmação
   };
 
+  const handleSync = (clientId: string) => {
+    setLoading(true);
+    from(clientService.synchronousByClientId(clientId)).pipe(
+      tap((response) => {
+          toast({
+            title: "Sistema sincronizado",
+            description: "O sistema foi sincronizado com sucesso",
+          });
+      }),
+      catchError((error) => {
+        toast({
+          title: "Erro ao sincronizar sistema",
+          description: "O sistema não foi sincronizado",
+          variant: "destructive",
+        });
+        console.error(error);
+        return [];
+      }),
+      finalize(() => setLoading(false))
+    ).subscribe();
+  }
 
   return (
     <>
@@ -63,7 +84,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Eye className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
 
-
+          {data.managed && (
+            <DropdownMenuItem
+              onClick={() => handleSync(data.clientId)}
+            >
+              <Cog className="mr-2 h-4 w-4" /> Sincronizar
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
