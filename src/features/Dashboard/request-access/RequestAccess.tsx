@@ -1,6 +1,7 @@
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { RequestAccessForm } from '../../../components/forms/request-access-form';
 import { StepForm } from '../../../components/forms/step-form';
+import { StepFormHor } from '../../../components/forms/step-form-hor';
 import { StepFormVert } from '../../../components/forms/step-form-vert';
 import { StepForm3 } from '../../../components/forms/step-form3';
 import { StepForm4 } from '../../../components/forms/step-form4';
@@ -19,9 +20,10 @@ export default function RequestAccess() {
         {/* <RequestAccessForm /> */}
         {/* <StepFormVert /> */}
         {/* <StepForm /> */}
+        {/* <StepFormHor /> */}
         {/* <StepForm3 /> */}
-        {/* <StepForm4 /> */}
-        <Stepper />
+        <StepForm4 />
+        {/* <Stepper /> */}
       </div>
     </ScrollArea>
   );
