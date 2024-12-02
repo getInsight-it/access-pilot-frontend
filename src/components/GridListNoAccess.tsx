@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import systems from "../constants/sistemas";
 import { LayoutGrid, List } from "lucide-react";
 import { CardShine } from "./CardShine";
 import { Button } from "./ui/button";
+import { clientService } from "../services/client";
+import useAuthStore from "../store/authStore";
+
+interface Client {
+  id: number;
+  clientId: string;
+}
 
 const variants = {
   hidden: { opacity: 0, scale: 0.99 },
@@ -17,14 +24,35 @@ const transition = {
 };
 
 function GridListNoAccess() {
+
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+
   const [toggleViewMode, setToggleViewMode] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const [clients, setClients] = useState<Client[]>([]);
 
   const handleToggleViewMode = () => {
     if (!isAnimating) {
       setToggleViewMode(!toggleViewMode);
     }
   };
+
+  const getClients = async () => {
+    try {
+      const fetchedClients = await clientService.getClients();
+      setClients(fetchedClients);
+      // console.log(fetchedClients)
+    } catch (error) {
+      console.error("Erro ao carregar clients:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getClients();
+    }
+  }, [isAuthenticated]);
 
   return (
     <div>
@@ -57,13 +85,13 @@ function GridListNoAccess() {
           exit="exit"
           variants={variants}
           transition={transition}
-          className={toggleViewMode ? "grid-container lg:h-[343px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4" : "list-container list-none w-full lg:h-[343px] flex flex-col gap-2"}
+          className={toggleViewMode ? "grid-container lg:h-[343px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4" : "list-container overflow-hidden overflow-y-auto list-none w-full lg:h-[343px] flex flex-col gap-2"}
           onAnimationStart={() => setIsAnimating(true)}
           onAnimationComplete={() => setIsAnimating(false)}
         >
-          {systems.map((system) => (
+          {clients.map((client, index) => (
             <motion.div
-              key={system.id}
+              key={index}
               className={toggleViewMode ? "grid-item flex-[1_1_30%]" : "list-item"}
               initial="hidden"
               animate="visible"
@@ -71,32 +99,40 @@ function GridListNoAccess() {
               variants={variants}
               transition={transition}
             >
+
               <CardShine>
                 <div className={toggleViewMode ? "p-6" : " p-4"}>
-                  {/* <div className="mt-4 absolute top-0 right-3">
-                    <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
-                      {system.status}
-                    </span>
-                  </div> */}
                   <div className={toggleViewMode ? " " : "flex gap-4 items-end "}>
-                    
-                    {/* <img className={toggleViewMode ? "w-12" : "w-6"} src={system.url} alt="" /> */}
-                    <img
+                    {/* <img
                       className={toggleViewMode ? "w-12" : "w-6"}
                       src={system.url}
                       alt="Imagem do sistema"
+                    /> */}
+
+                    <img
+                      className={toggleViewMode ? "w-12" : "w-6"}
+                      src="/sistemas/sis01.svg"
+                      alt="Imagem do sistema"
                     />
 
-                    <p className={`font-bold ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>{system.name}</p>
-                    {/* <p className={`font-normal text-base text-neutral-200 ${toggleViewMode ? "mt-1" : " "}`}>
-                      {system.role}
-                    </p> */}
+                    <p className={`font-bold ${toggleViewMode ? "text-lg mt-3" : "text-md"}`}>
+                      {client.clientId}
+                    </p>
                   </div>
                   <Button className={toggleViewMode ? "mt-4 relative bg-primary text-primary-foreground" : "mt-2.5 absolute right-4 top-0 bg-primary text-primary-foreground"}>
                     Solicitar acesso
                   </Button>
                 </div>
               </CardShine>
+
+             
+
+                {/* {clients.map((client, index) => (
+                  <div key={index}>
+                    {client.clientId}
+                  </div>
+                ))} */}
+
             </motion.div>
           ))}
         </motion.div>

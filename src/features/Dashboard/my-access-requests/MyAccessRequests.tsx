@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import EmptyState from '../../../components/canvas/empty/EmptyState.tsx';
 import { RequestAccessDrawer } from '../../../components/drawers/RequestAccessDrawer.tsx';
 
+
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Minhas solicitações', link: '/dashboard/my-access-requests' },
@@ -39,7 +40,7 @@ export default function MyAccessRequests() {
 
   const getData = async (page, pageCount) => {
     // Chamando a API com a página e contagem conforme esperado pela API (início em 1)
-    const pageResponse = await requestService.getRequestsPaginated(page, pageCount, 'id', 'asc');
+    const pageResponse = await requestService.getRequestsPaginated(page, pageCount, 'id', 'desc');
     setRequests(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
     // setRequests([]);
@@ -89,20 +90,24 @@ export default function MyAccessRequests() {
         </div>
         <Separator />
 
-        
-        <RequestsTable
-          searchKey="system"
-          pageNo={page} // Passa o valor da página que começa em 1
-          columns={columns}
-          totalUsers={totalUsers}
-          data={requests}
-          pageCount={pageCount}
-          onPageChange={(newPage, pageSize) => {
-            setPage(newPage); // Atualiza o estado local da página com a contagem começando em 1
-            getData(newPage, pageSize); // Chama a API com a nova página
-          }}
-        />
-        
+        {/* {requests.length <= 0 &&
+          <EmptyState />
+        } */}
+
+        {/* {requests.length > 0 && */}
+          <RequestsTable
+            searchKey="clientId"
+            pageNo={page} // Passa o valor da página que começa em 1
+            columns={columns}
+            totalUsers={totalUsers}
+            data={requests}
+            pageCount={pageCount}
+            onPageChange={(newPage, pageSize) => {
+              setPage(newPage); // Atualiza o estado local da página com a contagem começando em 1
+              getData(newPage, pageSize); // Chama a API com a nova página
+            }}
+          />
+        {/* } */}
         
       </div>
     </>

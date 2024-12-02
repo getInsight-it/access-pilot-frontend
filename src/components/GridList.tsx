@@ -99,8 +99,8 @@ function GridList() {
                       {system.role}
                     </p> */}
                     <p className={`font-normal text-base ${toggleViewMode ? "mt-1" : " "}`}>
-  {system.role ? system.role : "Sem função atribuída"} {/* Verificação condicional para 'role' */}
-</p>
+                      {system.role ? system.role : "Sem função atribuída"} {/* Verificação condicional para 'role' */}
+                    </p>
                   </div>
                 </div>
               </CardShine>

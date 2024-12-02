@@ -54,7 +54,7 @@ const TranslateWrapper = ({
 const LogoItemsTop = ({summary}) => (
   <>
     <LogoItem Icon={FolderDot} name={`${summary?.totalClients} sistemas`} />
-    <LogoItem Icon={Notebook} name={`${summary?.totalRoles} roles`}/>
+    <LogoItem Icon={Notebook} name={`${summary?.totalRoles} papéis`}/>
     <LogoItem Icon={ArrowBigDown} name={`${summary?.totalInactiveUsers} usuários inativos`}/>
     <LogoItem Icon={ArrowBigUp} name={`${summary?.totalActiveUsers} usuários ativos`}/>
     <LogoItem Icon={User} name={`Total de ${summary?.totalPendingUsers} usuários pendentes`}/>

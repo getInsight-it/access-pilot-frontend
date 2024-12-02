@@ -23,7 +23,7 @@ export function StepLoader({ onClose, loading }: StepLoaderProps) {
         loading={loading}
         duration={2000}
         loop={false}
-        onClose={onClose}
+        onClose={onClose ?? (() => {})}
       />
       {/* {loading && (
         <button

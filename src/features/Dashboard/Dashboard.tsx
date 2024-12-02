@@ -48,6 +48,8 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   };
 
+  
+
   return (
     <ScrollArea className="h-full">
 
@@ -57,7 +59,7 @@ export default function Dashboard() {
       </div> */}
 
       {/* admin dashboard */}
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
@@ -81,11 +83,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {theme === 'gov' && (
+      {/* {theme === 'gov' && (
         <div className="mt-20">
           <FooterGovbr />
         </div>
-      )}
+      )} */}
 
       <div className="mt-20">
         {

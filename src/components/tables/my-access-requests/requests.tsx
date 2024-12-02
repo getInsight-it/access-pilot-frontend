@@ -143,8 +143,7 @@ export function RequestsTable<TData, TValue>({
 
   return (
     <>
-    {/* <h2 className="text-2xl font-bold pt-4 pb-1">Histórico</h2> */}
-      
+    
       {/* <div className="flex gap-4 pt-1 pb-2">
         <Input
           placeholder={`Pesquisar ${searchKey}...`}

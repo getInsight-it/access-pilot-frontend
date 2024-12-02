@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "../ui/button";
 
 const SteppedProgress = () => {
   const [stepsComplete, setStepsComplete] = useState(0);
@@ -17,23 +18,23 @@ const SteppedProgress = () => {
   };
 
   return (
-    <div className="px-4 py-14 bg-white">
+    <div className="px-4 py-14 bg-red-500">
       <div className="p-8 bg-white shadow-lg rounded-md w-full max-w-2xl mx-auto">
         <Steps numSteps={numSteps} stepsComplete={stepsComplete} />
         <div className="p-2 my-6 h-48 bg-gray-100 border-2 border-dashed border-gray-200 rounded-lg"></div>
         <div className="flex items-center justify-end gap-2">
-          <button
-            className="px-4 py-1 rounded hover:bg-gray-100 text-black"
+          <Button
+            className="bg-gray-100 text-primary"
             onClick={() => handleSetStep(-1)}
           >
             Anterior
-          </button>
-          <button
-            className="px-4 py-1 rounded bg-black text-white"
+          </Button>
+          <Button
+            className=""
             onClick={() => handleSetStep(1)}
           >
             Próximo
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -115,7 +116,7 @@ const Step = ({ num, isActive }: { num: number; isActive: boolean }) => {
         </AnimatePresence>
       </div>
       {isActive && (
-        <div className="absolute z-0 -inset-1.5 bg-green-100 rounded-full animate-pulse" />
+        <div className="absolute z-0 -inset-1.5 bg-green-300 rounded-full animate-pulse" />
       )}
     </div>
   );

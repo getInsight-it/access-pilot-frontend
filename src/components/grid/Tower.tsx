@@ -58,12 +58,8 @@ const MockupSideBar = () => (
       </div>
       <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
         <Grid className="w-4" />
-        Funções
+        Papéis
       </div>
-      {/* <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
-        <Award />
-        Configurações
-      </div> */}
     </div>
   </div>
 );
@@ -172,7 +168,7 @@ const MockupMain = () => {
     <div className="relative w-full">
       <div className="relative z-0 w-full p-4">
         <div className="w-full border-b pb-2 mb-3 text-xs font-semibold uppercase text-zinc-500">
-          <span>Role</span>
+          <span>Papel</span>
         </div>
         {users.map((u, i) => (
           <motion.div

@@ -17,7 +17,7 @@ interface StatusColors {
   [key: string]: string;
   created: string;
   aprovado: string;
-  pendente: string;
+  pending: string;
   rejeitado: string;
   'em progresso': string;
 }
@@ -25,7 +25,7 @@ interface StatusColors {
 const statusColors: StatusColors = {
   created: 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
   aprovado: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
-  pendente: 'px-3 py-1 rounded font-normal bg-slate-200 text-slate-800 block text-center w-32 text-sm',
+  pending: 'px-3 py-1 rounded font-normal bg-slate-200 text-slate-800 block text-center w-32 text-sm',
   rejeitado: 'px-3 py-1 rounded font-normal bg-yellow-200 text-yellow-800 block text-center w-32 text-sm',
   'em progresso': 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
 };
