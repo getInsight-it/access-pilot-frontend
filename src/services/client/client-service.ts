@@ -92,4 +92,13 @@ export class ClientService {
   }
 
 
+  async synchronousByClientId(clientId: string): Promise<void> {
+    const data = [clientId];
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`,  data);
+
+    if (!(response instanceof HttpRequestResponse)) {
+      console.error('Erro ao sincronizar client');
+    }
+
+  }
 }
