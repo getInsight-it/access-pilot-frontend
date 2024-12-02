@@ -1,230 +1,136 @@
 import * as z from 'zod';
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Trash } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
-import { Heading } from '@/components/ui/heading';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { useToast } from '../ui/use-toast';
-import { Textarea } from '../ui/textarea';
-
-export const IMG_MAX_LIMIT = 3;
+import {useState} from 'react';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {FormProvider, useForm} from 'react-hook-form';
+import {Trash} from 'lucide-react';
+import {useToast} from '../ui/use-toast';
+import {Heading} from "../ui/heading.tsx";
+import {Button} from "../ui/button.tsx";
+import {Separator} from "../ui/separator.tsx";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
+import {Input} from "../ui/input.tsx";
+import {RoleDTO} from "../../services/role/role-dto.ts";
+import {roleService} from "../../services/role";
+import {catchError, finalize, from, tap} from "rxjs";
+import {ClientDTO} from "../../services/client/client-dto.ts";
 
 const formSchema = z.object({
   name: z
     .string()
-    .min(3, { message: 'O nome do sistema deve conter no mínimo 3 caracteres' }),
+    .min(3, {message: 'O nome do sistema deve conter no mínimo 3 caracteres'}),
   description: z
     .string()
-    .min(3, { message: 'A descrição do motivo deve conter no mínimo 3 caracteres' }),
-  status: z.string().min(1, { message: 'Selecione uma opção' }),
-  systems: z.string().min(1, { message: 'Selecione uma opção' }),
-  roles: z.string().min(1, { message: 'Selecione uma opção' })
+    .min(3, {message: 'A descrição do sistema deve conter no mínimo 3 caracteres'}),
 });
 
-type RoleFormValues = z.infer<typeof formSchema>;
+//type RoleFormValues = z.infer<typeof formSchema>;
 
 interface RoleFormProps {
-  initialData: any | null;
-  systems: any;
-  roles: any;
+  client?: ClientDTO,
+  onSuccessSubmit?: () => any,
+  initialData: RoleDTO | null,
 }
 
-export const RoleForm: React.FC<RoleFormProps> = ({
-  initialData,
-  systems,
-  roles
-}) => {
-  const params = useParams();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, onSuccessSubmit}) => {
+  const {toast} = useToast();
   const [loading, setLoading] = useState(false);
   const title = initialData ? 'Editar função' : 'Criar nova função';
   const description = initialData ? 'Editar uma função.' : 'Adicionar uma nova função.';
   const toastMessage = initialData ? 'Função atualizada.' : 'Função criada.';
   const action = initialData ? 'Salvar alterações' : 'Criar função';
+  const defaultValues = initialData || {name: '', description: ''};
 
-  const defaultValues = initialData
-    ? initialData
-    : {
-        name: '',
-        description: '',
-        status: '',
-        systems: '',
-        roles: '',
-      };
-
-  const form = useForm<RoleFormValues>({
+  const methods = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues
+    defaultValues: defaultValues
   });
 
-  const onSubmit = async (data: RoleFormValues) => {
-    try {
-      setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
-      } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
-        // console.log("product", res);
-      }
-      navigate(`/dashboard/products`);
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.'
-      });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem with your request.'
-      });
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = async (form) => {
+    const role = {
+      ...form,
+    } as RoleDTO;
+    role.client = client;
+    from(initialData ? roleService.updateRole(initialData.id,role) : roleService.createRole(role) ).pipe(
+      tap(() => {
+        toast({
+          title: toastMessage,
+          description: `A função ${role.name} foi ${initialData ? 'atualizada' : 'criada'} com sucesso.`,
+        });
+        onSuccessSubmit?.();
+      }),
+      catchError((error) => {
+        toast({
+          title: `Erro ao ${toastMessage}`,
+          description: `A função ${role.name} não foi ${initialData ? 'atualizada' : 'criada'}.`,
+          variant: 'destructive',
+        });
+        console.error(error);
+        return [];
+      }), finalize(() => setLoading(false))
+    ).subscribe();
   };
 
   return (
     <>
-      {/* <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      /> */}
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
+        <Heading title={title} description={description}/>
         {initialData && (
           <Button
             disabled={loading}
             variant="destructive"
             size="sm"
-            onClick={() => setOpen(true)}
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="h-4 w-4"/>
           </Button>
         )}
       </div>
-      <Separator />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-8"
-        >
-          <div className="gap-x-8 gap-y-4 md:grid md:grid-cols-1 max-w-md">
-            
-            <FormField
-              control={form.control}
-              name="roles"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Função</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
+      <Separator/>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
+            <div className="flex flex-col gap-y-4">
+              <FormField
+                name="name"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Selecione uma função"
-                        />
-                      </SelectTrigger>
+                      <Input
+                        disabled={loading}
+                        placeholder="Nome do sistema"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {/* @ts-ignore  */}
-                      {roles.map((role) => (
-                        <SelectItem key={role._id} value={role._id}>
-                          {role.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="systems"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sistema</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="description"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Selecione um sistema"
-                        />
-                      </SelectTrigger>
+                      <Input
+                        disabled={loading}
+                        placeholder="Descrição do sistema"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {/* @ts-ignore  */}
-                      {systems.map((system) => (
-                        <SelectItem key={system._id} value={system._id}>
-                          {system.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Motivo</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      placeholder="Descreva o motivo de sua solicitação."
-                      className="col-span-4"
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-          <Button disabled={loading} className="ml-auto" type="submit">
-            {action}
-          </Button>
+          <div className="hidden lg:block mr-auto mt-6">
+            <Button disabled={loading} className="ml-auto" type="submit">
+              {action}
+            </Button>
+          </div>
         </form>
-      </Form>
+      </FormProvider>
+      <Separator/>
     </>
   );
 };

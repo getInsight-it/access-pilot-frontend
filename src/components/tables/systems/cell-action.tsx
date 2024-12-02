@@ -14,6 +14,7 @@ import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
 import {clientService} from "../../../services/client";
 import {catchError, finalize, from, tap} from "rxjs";
 import {toast} from "../../ui/use-toast.ts";
+import {PRIVATE_ROUTES} from "../../../constants/routes.ts";
 
 interface CellActionProps {
   data: {
@@ -91,7 +92,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Cog className="mr-2 h-4 w-4" /> Sincronizar
             </DropdownMenuItem>
           )}
+          {data.managed && (
+            <DropdownMenuItem
+              onClick={() => navigate(`/dashboard/systems/${data.clientId}/roles`)}
+            >
+              <Cog className="mr-2 h-4 w-4" /> Gerenciar roles
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
+
+
       </DropdownMenu>
     </>
   );

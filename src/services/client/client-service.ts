@@ -94,11 +94,40 @@ export class ClientService {
 
   async synchronousByClientId(clientId: string): Promise<void> {
     const data = [clientId];
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`,  data);
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`, data);
 
     if (!(response instanceof HttpRequestResponse)) {
       console.error('Erro ao sincronizar client');
     }
 
   }
+
+  async fetchByFilter(filters: {
+    clientId?: string,
+    name?: string,
+    description?: string,
+    status?: string,
+    manager?: boolean,
+  }): Promise<ClientDTO | undefined> {
+    const queryParams = new Map<string, string>();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.set(key, value.toString());
+      }
+    })
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS}`, queryParams);
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as ClientDTO;
+    }
+  }
+
+  async fetchByClientId(clientId?: string): Promise<ClientDTO | undefined> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_BY_CLIENT_ID}/${clientId}`);
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as ClientDTO;
+    }
+  }
+
 }

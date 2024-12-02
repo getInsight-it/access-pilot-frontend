@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Trash} from 'lucide-react';
@@ -55,7 +55,6 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   const [imgLoading, setImgLoading] = useState(false);
   const title = initialData ? 'Editar sistema' : 'Adicionar sistema';
   const description = initialData ? 'Editar um sistema.' : 'Adicionar um novo sistema.';
-  const toastMessage = initialData ? 'Sistema atualizado.' : 'Sistema criado.';
   const action = initialData ? 'Salvar alterações' : 'Adicionar sistema';
 
   const status = [

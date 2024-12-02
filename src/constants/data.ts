@@ -179,12 +179,6 @@ export const navItems: NavItem[] = [
     label: 'Gerenciar Sistemas'
   },
   {
-    title: 'Gerenciar funções',
-    href: '/dashboard/roles',
-    icon: 'user',
-    label: 'Gerenciar funções'
-  },
-  {
     title: 'Solicitações de acesso',
     href: '/dashboard/access-requests',
     icon: 'bookuser',
