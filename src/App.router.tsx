@@ -12,8 +12,8 @@ import { Suspense } from 'react';
 import AccessRequests from './features/Dashboard/access-requests/AccessRequests.tsx';
 import RequestAccess from './features/Dashboard/request-access/RequestAccess.tsx';
 import Help from './features/Dashboard/help/Help.tsx';
-import Roles from './features/Dashboard/roles/Roles.tsx';
-import Systems from './features/Dashboard/systems/Systems.tsx';
+import RolesPage from './features/Dashboard/roles/RolesPage.tsx';
+import SystemsPage from './features/Dashboard/systems/SystemsPage.tsx';
 import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
 
 const publicRoutes = [{
@@ -68,7 +68,7 @@ const privateRoutes = [
       // },
       {
         path: PRIVATE_ROUTES.SYSTEMS,
-        element: <Systems />
+        element: <SystemsPage />
       },
       {
         path: PRIVATE_ROUTES.NEW_SYSTEM,
@@ -76,7 +76,7 @@ const privateRoutes = [
       },
       {
         path: PRIVATE_ROUTES.ROLES,
-        element: <Roles />
+        element: <RolesPage />
       },
       {
         path: PRIVATE_ROUTES.ACCESS_REQUESTS,

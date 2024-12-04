@@ -1,4 +1,4 @@
-import React, {Dispatch, ReactNode, SetStateAction, useState} from "react";
+import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 import useMeasure from "react-use-measure";
 import {motion, useAnimate, useDragControls, useMotionValue,} from "framer-motion";
 import {Button, buttonVariants} from "../ui/button";
@@ -10,59 +10,15 @@ import {clientService} from "../../services/client";
 import {StepLoader} from "../steploader/StepLoader.tsx";
 import {toast} from "../ui/use-toast.ts";
 import {from, catchError, finalize, tap} from "rxjs";
+import {ClientDTO} from "../../services/client/client-dto.ts";
 
-export const SystemDetailDrawer = ({data}) => {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+type SystemDetailDrawerProps = {
+  data?: ClientDTO;
+}
 
-
-  const handlePublish = () => {
-    setLoading(true);
-    from(clientService.publish(data.id)).pipe(
-      tap((response) => {
-        if (response) {
-          toast({
-            title: "Sistema publicado",
-            description: "O sistema foi publicado com sucesso",
-          });
-        }
-      }),
-      catchError((error) => {
-        toast({
-          title: "Erro ao publicar sistema",
-          description: "O sistema não foi publicado",
-          variant: "destructive",
-        });
-        console.error(error);
-        return [];
-      }),
-      finalize(() => setLoading(false))
-    ).subscribe();
-  };
-
-  const handleUnpublish = () => {
-    setLoading(true);
-    from(clientService.unpublish(data.id)).pipe(
-      tap((response) => {
-        if (response) {
-          toast({
-            title: "Sistema despublicado",
-            description: "O sistema foi despublicado com sucesso",
-          });
-        }
-      }),
-      catchError((error) => {
-        toast({
-          title: "Erro ao despublicar sistema",
-          description: "O sistema não foi despublicado",
-          variant: "destructive",
-        });
-        console.error(error);
-        return [];
-      }),
-      finalize(() => setLoading(false))
-    ).subscribe();
-  };
+export const SystemDetailDrawer: React.FC<SystemDetailDrawerProps> = ({data}) => {
+ const [open, setOpen] = useState(true);
+ const [loading, setLoading] = useState(false);
 
   const formatStatus = (status: string) => {
     switch (status) {
@@ -79,16 +35,17 @@ export const SystemDetailDrawer = ({data}) => {
     setLoading(false);
   }
 
+
   return (
     <div className="grid place-content-center">
 
-      <Link
-        onClick={() => setOpen(true)}
-        to={''}
-        className={cn(buttonVariants({variant: 'link'}))}
-      >
-        <Eye className="mr-2 h-4 w-4"/> Ver detalhes
-      </Link>
+      {/*<Link*/}
+      {/*  onClick={() => setOpen(true)}*/}
+      {/*  to={''}*/}
+      {/*  className={cn(buttonVariants({variant: 'link'}))}*/}
+      {/*>*/}
+      {/*  <Eye className="mr-2 h-4 w-4"/> Ver detalhes*/}
+      {/*</Link>*/}
       {/* <Button
         onClick={() => setOpen(true)}
         className=""
@@ -116,29 +73,29 @@ export const SystemDetailDrawer = ({data}) => {
               </div>
             </div>
 
-            <motion.div
-              initial={{y: 12, opacity: 0}}
-              animate={{y: 0, opacity: 1}}
-              exit={{y: -12, opacity: 0}}
-              className="ml-6"
-            >
-              <div className="flex gap-x-2">
-                <h2 className="text-lg font-bold mb-6">
-                  Ações:
-                </h2>
-              </div>
-              <div className="w-full flex gap-4 pointer-events-auto">
-                {data.status === 'PUBLISHED' ?
-                  <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
-                          type="submit" onClick={handleUnpublish}>Despublicar
+            {/*<motion.div*/}
+            {/*  initial={{y: 12, opacity: 0}}*/}
+            {/*  animate={{y: 0, opacity: 1}}*/}
+            {/*  exit={{y: -12, opacity: 0}}*/}
+            {/*  className="ml-6"*/}
+            {/*>*/}
+            {/*  <div className="flex gap-x-2">*/}
+            {/*    <h2 className="text-lg font-bold mb-6">*/}
+            {/*      Ações:*/}
+            {/*    </h2>*/}
+            {/*  </div>*/}
+            {/*  <div className="w-full flex gap-4 pointer-events-auto">*/}
+            {/*    {data?.status === 'PUBLISHED' ?*/}
+            {/*      <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"*/}
+            {/*              type="submit" onClick={handleUnpublish}>Despublicar*/}
 
-                  </Button> :
-                  <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
-                          type="submit" onClick={handlePublish}>
-                    Publicar
-                  </Button>}
-              </div>
-            </motion.div>
+            {/*      </Button> :*/}
+            {/*      <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"*/}
+            {/*              type="submit" onClick={handlePublish}>*/}
+            {/*        Publicar*/}
+            {/*      </Button>}*/}
+            {/*  </div>*/}
+            {/*</motion.div>*/}
           </div>
           <SystemDetail/>
         </div>

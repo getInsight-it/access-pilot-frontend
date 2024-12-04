@@ -9,6 +9,7 @@ import {AddSystemDrawer} from '../../../components/drawers/AddSystemDrawer';
 import useAuthStore from "../../../store/authStore.ts";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {clientService} from "../../../services/client";
+import {SystemDetailDrawer} from "../../../components/drawers/SystemDetailDrawer.tsx";
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -20,7 +21,7 @@ function useSearchParams() {
   return new URLSearchParams(search);
 }
 
-export default function Systems() {
+export default function SystemsPage() {
 
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const [clients, setClients] = useState<ClientDTO[]>([]);
@@ -29,6 +30,8 @@ export default function Systems() {
   const [page, setPage] = useState(0);
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
+  const [dataUpdated, setDataUpdated] = useState(true);
+  const [selectedClient, setSelectedClient] = useState<ClientDTO>();
 
   const init = () => {
     getData(page,pageCount);
@@ -41,12 +44,21 @@ export default function Systems() {
   }
 
   useEffect(() => {
+    if (!dataUpdated) {
+      updatePageInfo();
+      init();
+      setDataUpdated(true);
+      setSelectedClient(undefined);
+    }
+  }, [dataUpdated]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       init()
     }
   }, [isAuthenticated]);
 
-  useEffect(() => {
+  function updatePageInfo() {
     if (clients !== null && clients.length > 0) {
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -55,9 +67,13 @@ export default function Systems() {
       const pageLimit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
       const name = searchParams.get('search') || null;
       setSearch(search || '');
-      setPageCount(Math.ceil(totalUsers / pageLimit));
+      setPageCount(Math.ceil(pageLimit));
 
     }
+  }
+
+  useEffect(() => {
+    updatePageInfo();
   }, [getData]);
 
   const navigate = useNavigate();
@@ -72,14 +88,6 @@ export default function Systems() {
             title={`Sistemas (${totalUsers})`}
             description=""
           />
-
-          {/* <Link
-            to={'/dashboard/system-new/'}
-            className={cn(buttonVariants({ variant: 'default' }))}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Adicionar novo
-          </Link> */}
-
           <AddSystemDrawer />
         </div>
         <Separator />
@@ -87,7 +95,7 @@ export default function Systems() {
         <SystemsTable
           searchKey="clientId"
           pageNo={page}
-          columns={columns}
+          columns={columns(setDataUpdated, selectedClient, setSelectedClient)}
           totalUsers={totalUsers}
           data={clients}
           pageCount={pageCount}
@@ -97,11 +105,3 @@ export default function Systems() {
     </>
   );
 }
-
-// export default function Page() {
-//   return (
-//     <Suspense fallback={<div>Carregando...</div>}>
-//       <Systems />
-//     </Suspense>
-//   );
-// }

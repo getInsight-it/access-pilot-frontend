@@ -15,7 +15,7 @@ const breadcrumbItems = [
   { title: 'Gerenciar Sistemas', link: '/dashboard/systems' },
   { title: 'Gerenciar funções', link: '/dashboard/:client' }
 ];
-export default function Roles() {
+export default function RolesPage() {
   const { clientId } = useParams<{ clientId: string }>();
   const [roles, setRoles] = useState<RoleDTO[]>([]);
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);

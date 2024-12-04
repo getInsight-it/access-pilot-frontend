@@ -7,14 +7,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '../../../components/ui/dropdown-menu';
-import {Role} from '../../../constants/data';
 import {Edit, MoreHorizontal, Trash} from 'lucide-react';
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import {catchError, finalize, from, tap} from "rxjs";
 import {roleService} from "../../../services/role";
 import {toast} from "../../ui/use-toast.ts";
-import {ModalRoleDrawer} from "../../drawers/ModalRoleDrawer.tsx";
 import {RoleDTO} from "../../../services/role/role-dto.ts";
 
 interface CellActionProps {
@@ -25,7 +22,6 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({data, onEdit}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  // const [modal, setModal] = useState('');
 
   const onConfirm = async () => {
     setLoading(true);
@@ -51,8 +47,6 @@ export const CellAction: React.FC<CellActionProps> = ({data, onEdit}) => {
 
   return (
     <>
-      {/*{modal === 'EDIT_MODAL' ? <ModalRoleDrawer client={data.client} roleData={data} open={modal === 'EDIT_MODAL'}*/}
-      {/*                                           setOpen={() => setModal('')}/> : null}*/}
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
