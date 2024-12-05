@@ -2,17 +2,12 @@ import {ColumnDef} from '@tanstack/react-table';
 import {CellAction} from './cell-action';
 import TrafficLight from '../../../components/TrafficLights';
 import {SystemDetailDrawer} from '../../../components/drawers/SystemDetailDrawer';
-
-type ClientDTO = {
-  id: number;
-  name: string;
-  description: string;
-  status: string;
-  managed: boolean;
-  published: boolean;
-};
-
-const clientDTOS: ClientDTO[] = [];
+import React, {Dispatch, SetStateAction} from "react";
+import {ClientDTO} from "../../../services/client/client-dto.ts";
+import {Link} from "react-router-dom";
+import {cn} from "../../../lib/utils.ts";
+import {buttonVariants} from "../../ui/button.tsx";
+import {Eye} from "lucide-react";
 
 const statusColors: Record<string, string> = {
   gerenciado: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
@@ -21,7 +16,10 @@ const statusColors: Record<string, string> = {
   'em progresso': 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
 };
 
-export const columns: ColumnDef<ClientDTO>[] = [
+export const columns = (
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  selectedClient: ClientDTO | undefined,
+  setSelectedClient: React.Dispatch<React.SetStateAction<ClientDTO | undefined>>): ColumnDef<ClientDTO>[] => [
   {
     accessorKey: 'clientId',
     header: 'SISTEMA'
@@ -47,10 +45,20 @@ export const columns: ColumnDef<ClientDTO>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <CellAction data={row.original}  updateState={setLoading} />
   },
   {
     id: 'details',
-    cell: ({ row }) => <SystemDetailDrawer data={row.original} />
+    cell: ({ row }) =>
+      <>
+        <Link
+          onClick={() => setSelectedClient(row.original)}
+          to={''}
+          className={cn(buttonVariants({variant: 'link'}))}
+        >
+          <Eye className="mr-2 h-4 w-4"/> Ver detalhes
+        </Link>
+        {(selectedClient === row.original && <SystemDetailDrawer data={selectedClient} />)}
+      </>
   }
 ];

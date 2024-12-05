@@ -40,4 +40,21 @@ export class StorageService {
     return null;
   }
 
+  async downloadFile(fileId: string): Promise<HttpRequestResponse | HttpRequestError> {
+    const headers = new Map<string, string>([
+      ['responseType', 'blob'],
+    ]);
+    const queryParams = new Map<string, string>([
+      ['registerDownload', 'true'],
+    ]);
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${STORAGE_API.DOWNLOAD}/${fileId}` ,queryParams, headers);
+
+    if (response instanceof HttpRequestError) {
+      console.error('Erro ao baixar arquivo');
+    }
+
+    return response;
+  }
+
 }

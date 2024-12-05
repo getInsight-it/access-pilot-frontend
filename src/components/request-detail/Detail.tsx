@@ -1,69 +1,89 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { CheckPill } from "./CheckPill";
-import { OPTIONS } from "./options";
-import { Button } from "../ui/button";
-import { Clock, Download } from "lucide-react";
-import { motion } from "framer-motion";
-import { format } from 'date-fns';
-import { StorageDTO } from "../../services/storage/storage-dto";
-import { STORAGE_API } from "../../services/storage/storage-api";
+import React, {Dispatch, SetStateAction} from "react";
+import {CheckPill} from "./CheckPill";
+import {OPTIONS} from "./options";
+import {Button} from "../ui/button";
+import {Clock, Download} from "lucide-react";
+import {motion} from "framer-motion";
+import {format} from 'date-fns';
+import {StorageDTO} from "../../services/storage/storage-dto";
+import {storageService} from "../../services/storage";
+import {HttpRequestError, HttpRequestResponse} from "@getinsight.it/getinsight-common";
+import axios from "axios";
+import {authService} from "../../services/auth";
+import {STORAGE_API} from "../../services/storage/storage-api.ts";
+import {from} from "rxjs";
+import {requestService} from "../../services/request";
 
 export const Detail = ({
-  selected,
-  setSelected,
-  data,
-  attachments
-}: {
+                         selected,
+                         setSelected,
+                         data,
+                         attachments
+                       }: {
   selected: number;
   setSelected: Dispatch<SetStateAction<number>>;
   data: any;
   attachments: StorageDTO[]
 }) => {
-  const isLastSelected = selected === OPTIONS.length - 1;
 
+  const isLastSelected = OPTIONS.filter((o) => o.id === selected);
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
 
   const handleDownload = async (fileId: string) => {
-    const downloadUrl = STORAGE_API.DOWNLOAD.replace('{id}', fileId);
-  
-    try {
-      const response = await fetch(downloadUrl, {
-        method: 'GET',
+    const token = await authService.getBearerToken()
+    const apiClient = axios.create({
+      baseURL: window.env.API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${token}`
+    }})
+      await apiClient.get(`${STORAGE_API.DOWNLOAD}/${fileId}?registerDownload=true`, {
+         responseType: 'blob',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Substitua conforme necessário
+          'Content-Type': 'application/json',
         },
-      });
-  
-      if (!response.ok) {
-        throw new Error('Erro ao baixar o arquivo');
-      }
-  
-      // Verifica e extrai o nome do arquivo do cabeçalho `Content-Disposition`
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
-      const fileName = fileNameMatch ? fileNameMatch[1] : `arquivo_desconhecido`;
-  
-      // Cria um Blob para o arquivo e força o download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName; // Usa o nome extraído do cabeçalho
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Erro ao baixar o arquivo:', error);
-    }
-  };
-  
-  
+      }).then((response) => {
+        const url = window.URL.createObjectURL(response.data as Blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = response.headers['content-disposition']?.match(/filename="(.+)"/)[1];
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+    //TODO: analisar possivel bug no download de arquivos relacionado com biblioteca de http
+/*      const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
+      if (response instanceof HttpRequestResponse){
+        const contentDisposition = response.headers.get("content-disposition")
+        const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
+        const fileName = fileNameMatch ? fileNameMatch[1] : `arquivo_desconhecido`;
 
+      //const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
+        const blob = new Blob([response.data], { type: 'image/png' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }*/
+  };
+
+
+  const handleReject = (request) => {
+    console.log('Rejeitar', request.id);
+    from(requestService)
+  }
+
+  const handleApprove = (request) => {
+    console.log('Aprovar', request.id);
+  }
 
   return (
     <div className="w-full max-w-xl mt-6">
-      
+
       <h2 className="mb-3 text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
         Acompanhar solicitação
       </h2>
@@ -90,7 +110,7 @@ export const Detail = ({
           <p>{data?.description}</p>
         </div>
       </div>
-      
+
       <p className="text-md font-bold mt-4 mb-1">Anexos:</p>
 
       <div className="max-w-md mx-auto mb-6">
@@ -102,7 +122,7 @@ export const Detail = ({
                 className="flex items-center justify-between pr-3 py-3 rounded-md shadow-sm hover:shadow-lg transition"
               >
                 <div className="flex items-center">
-                  <Download className="w-4 h-4 mr-3" />
+                  <Download className="w-4 h-4 mr-3"/>
                   <p className="text-xs">{file.originalFilename}</p>
                 </div>
                 <button
@@ -119,7 +139,7 @@ export const Detail = ({
         </div>
       </div>
 
-      <hr className="mb-6" />
+      <hr className="mb-6"/>
 
 
       <p className="text-md font-bold mb-4">Status:</p>
@@ -140,21 +160,24 @@ export const Detail = ({
       {isLastSelected && (
         <motion.div
           className="absolute"
-          initial={{ y: 12, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -12, opacity: 0 }}
+          initial={{y: 12, opacity: 0}}
+          animate={{y: 0, opacity: 1}}
+          exit={{y: -12, opacity: 0}}
         >
           <div className="flex gap-x-2">
-            <Clock className="w-5 h-5 text-red-500 mt-1" />
+            <Clock className="w-5 h-5 text-red-500 mt-1"/>
             <h2 className="text-lg mb-6">
               Essa solicitação foi <span className="font-bold">finalizada</span> e aguarda definição.
             </h2>
           </div>
           <div className="w-full flex gap-4">
-            <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200" type="submit">
+            <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
+                    type="submit"
+                    onClick={() => handleReject(data)}>
               Rejeitar
             </Button>
-            <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200" type="submit">
+            <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200" type="submit"
+                    onClick={() => handleApprove(data)}>
               Aprovar
             </Button>
           </div>

@@ -14,8 +14,6 @@ import {
   TableHeader,
   TableRow
 } from './table';
-import { Input } from './input';
-import { Button } from './button';
 import { ScrollArea, ScrollBar } from './scroll-area';
 
 interface DataTableRoleProps<TData, TValue> {
@@ -36,7 +34,7 @@ export function DataTableRole<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel()
   });
 
-  /* this can be used to get the selectedrows 
+  /* this can be used to get the selectedrows
   console.log("value", table.getFilteredSelectedRowModel()); */
 
   return (

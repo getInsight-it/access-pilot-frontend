@@ -5,7 +5,7 @@ import { RoleDTO } from "./role-dto.ts";
 export class RoleService {
   httpClient: HttpClient;
 
-  private constructor(httpClient: HttpClient) {
+  constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
   }
 
@@ -21,8 +21,8 @@ export class RoleService {
     return null;
   }
 
-  async getRolesByClientId(clientId: number): Promise<RoleDTO[] | null> {
-    console.log("clientId:", clientId);  // Adicione isso para verificar o valor
+  async getRolesByClientId(clientId: string): Promise<RoleDTO[] | null> {
+    console.log("clientId:", clientId);
     if (!clientId) {
         console.error("clientId está undefined ou null");
         return null;
@@ -45,6 +45,46 @@ export class RoleService {
 
     return null;
 }
+  async update(data: RoleDTO[]): Promise<void> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(ROLE_API.ROLES, data);
+
+    if (!(response instanceof HttpRequestResponse)) {
+      console.error('Erro ao atualizar client');
+    }
+
+  }
+
+  async deleteRole(roleId?: number): Promise<void> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.delete(`${ROLE_API.ROLES}/${roleId}`);
+
+    if (!(response instanceof HttpRequestResponse)) {
+      console.error('Erro ao deletar role');
+    }
+  }
+
+  async createRole(roleData: RoleDTO): Promise<RoleDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(ROLE_API.ROLES, roleData);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as RoleDTO;
+    } else {
+      console.error('Erro ao criar role');
+    }
+
+    return null;
+  }
+
+  async updateRole(id: number,roleData: RoleDTO): Promise<RoleDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${ROLE_API.ROLES}/${id}`, roleData);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as RoleDTO;
+    } else {
+      console.error('Erro ao atualizar role');
+    }
+
+    return null;
+  }
 
 
 

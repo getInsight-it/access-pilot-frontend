@@ -14,20 +14,15 @@ import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
 import {clientService} from "../../../services/client";
 import {catchError, finalize, from, tap} from "rxjs";
 import {toast} from "../../ui/use-toast.ts";
+import {PRIVATE_ROUTES} from "../../../constants/routes.ts";
+import {ClientDTO} from "../../../services/client/client-dto.ts";
 
 interface CellActionProps {
-  data: {
-    id: number;
-    clientId: string;
-    name: string;
-    description: string;
-    status: string;
-    managed: boolean;
-    published: boolean;
-  };
+  data: ClientDTO,
+  updateState?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState('');
@@ -41,10 +36,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     setLoading(true);
     from(clientService.synchronousByClientId(clientId)).pipe(
       tap((response) => {
-          toast({
-            title: "Sistema sincronizado",
-            description: "O sistema foi sincronizado com sucesso",
-          });
+        toast({
+          title: "Sistema sincronizado",
+          description: "O sistema foi sincronizado com sucesso",
+        });
+        updateState?.(false);
       }),
       catchError((error) => {
         toast({
@@ -59,9 +55,60 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     ).subscribe();
   }
 
+
+  const handlePublish = (clientId?: number) => {
+    setLoading(true);
+    from(clientService.publish(clientId)).pipe(
+      tap((response) => {
+        if (response) {
+          toast({
+            title: "Sistema publicado",
+            description: "O sistema foi publicado com sucesso",
+          });
+          updateState?.(false);
+        }
+      }),
+      catchError((error) => {
+        toast({
+          title: "Erro ao publicar sistema",
+          description: "O sistema não foi publicado",
+          variant: "destructive",
+        });
+        console.error(error);
+        return [];
+      }),
+      finalize(() => setLoading(false))
+    ).subscribe();
+  };
+
+  const handleUnpublish = (clientId?: number) => {
+    setLoading(true);
+    from(clientService.unpublish(clientId)).pipe(
+      tap((response) => {
+        if (response) {
+          toast({
+            title: "Sistema despublicado",
+            description: "O sistema foi despublicado com sucesso",
+          });
+          updateState?.(false);
+        }
+      }),
+      catchError((error) => {
+        toast({
+          title: "Erro ao despublicar sistema",
+          description: "O sistema não foi despublicado",
+          variant: "destructive",
+        });
+        console.error(error);
+        return [];
+      }),
+      finalize(() => setLoading(false))
+    ).subscribe();
+  };
+
   return (
     <>
-      {modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)} /> : null}
+      {modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)}/> : null}
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -73,7 +120,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
+            <MoreHorizontal className="h-4 w-4"/>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -81,17 +128,40 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             onClick={() => setModal('EDIT_SYSTEM')}
           >
-            <Eye className="mr-2 h-4 w-4" /> Editar
+            <Eye className="mr-2 h-4 w-4"/> Editar
           </DropdownMenuItem>
 
           {data.managed && (
             <DropdownMenuItem
               onClick={() => handleSync(data.clientId)}
             >
-              <Cog className="mr-2 h-4 w-4" /> Sincronizar
+              <Cog className="mr-2 h-4 w-4"/> Sincronizar
+            </DropdownMenuItem>
+          )}
+          {data.status === 'UNPUBLISHED' && (
+            <DropdownMenuItem
+              onClick={() => handlePublish(data.id)}
+            >
+              <Cog className="mr-2 h-4 w-4"/> Publicar
+            </DropdownMenuItem>
+          )}
+          {data.status === 'PUBLISHED' && (
+            <DropdownMenuItem
+              onClick={() => handleUnpublish(data.id)}
+            >
+              <Cog className="mr-2 h-4 w-4"/> Despublicar
+            </DropdownMenuItem>
+          )}
+          {data.managed && (
+            <DropdownMenuItem
+              onClick={() => navigate(`/dashboard/systems/${data.clientId}/roles`)}
+            >
+              <Cog className="mr-2 h-4 w-4"/> Gerenciar roles
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
+
+
       </DropdownMenu>
     </>
   );

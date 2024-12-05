@@ -1,14 +1,22 @@
 export const OPTIONS = [
   {
+    id: 1,
+    value: "CREATED",
     title: "Criado",
   },
   {
-    title: "Recebido",
-  },
-  {
+    id: 2,
+    value: "PENDING",
     title: "Em análise",
   },
   {
-    title: "Finalizado",
+    id: 3,
+    value: "APPROVED",
+    title: "Aprovado",
+  },
+  {
+    id: 4,
+    value: "REJECTED",
+    title: "Rejeitado",
   },
 ];

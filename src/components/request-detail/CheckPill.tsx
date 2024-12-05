@@ -28,6 +28,7 @@ export const CheckPill = ({
     <div className="rounded-full bg-indigo-600">
       <button
         onClick={() => setSelected(index)}
+        disabled={true}
         className={`
           flex origin-top-left items-center gap-1 rounded-full px-1.5 py-0.5 text-sm transition-all ${getButtonStyle()}
           ${selected ? "-rotate-3 border-indigo-600 text-indigo-600" : "border-zinc-900 dark:text-black"}`}

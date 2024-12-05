@@ -13,7 +13,7 @@ export const PRIVATE_ROUTES = {
   ERROR: '/dashboard/error',
   SYSTEMS: '/dashboard/systems',
   NEW_SYSTEM: '/dashboard/system-new',
-  ROLES: '/dashboard/roles',
+  ROLES: '/dashboard/systems/:clientId/roles',
   NEW_ROLE: '/dashboard/role-new'
 };
 
