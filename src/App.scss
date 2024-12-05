@@ -358,9 +358,17 @@
   display: none;
 }
 
-canvas {
-  /* width: 100%;
-  height: 100vh; */
+// canvas {
+//   width: 100%;
+//   height: 100vh;
+// }
+
+.characterForm {
+  pointer-events: none !important;
+}
+.characterForm canvas {
+  width: 100%;
+  height: 100%;
 }
 .interno canvas {
   width: 100%;

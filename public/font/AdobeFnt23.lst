@@ -1,0 +1,486 @@
+%!Adobe-FontList 1.23
+%Locale:0x416
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\Mulish-VariableFont_wght.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Black
+FamilyName:Mulish
+StyleName:Black
+FullName:Mulish Black
+MenuName:Mulish Black
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Black.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106576
+FileModTime:1730140769
+WeightClass:900
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish Black
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-BlackItalic
+FamilyName:Mulish
+StyleName:Black Italic
+FullName:Mulish Black Italic
+MenuName:Mulish Black
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-BlackItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110200
+FileModTime:1730140769
+WeightClass:900
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish Black
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Bold
+FamilyName:Mulish
+StyleName:Bold
+FullName:Mulish Bold
+MenuName:Mulish
+StyleBits:2
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Bold.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106576
+FileModTime:1730140769
+WeightClass:700
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-BoldItalic
+FamilyName:Mulish
+StyleName:Bold Italic
+FullName:Mulish Bold Italic
+MenuName:Mulish
+StyleBits:3
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-BoldItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110260
+FileModTime:1730140769
+WeightClass:700
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-ExtraBold
+FamilyName:Mulish
+StyleName:ExtraBold
+FullName:Mulish ExtraBold
+MenuName:Mulish ExtraBold
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-ExtraBold.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106536
+FileModTime:1730140769
+WeightClass:800
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish ExtraBold
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-ExtraBoldItalic
+FamilyName:Mulish
+StyleName:ExtraBold Italic
+FullName:Mulish ExtraBold Italic
+MenuName:Mulish ExtraBold
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-ExtraBoldItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110256
+FileModTime:1730140769
+WeightClass:800
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish ExtraBold
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-ExtraLight
+FamilyName:Mulish
+StyleName:ExtraLight
+FullName:Mulish ExtraLight
+MenuName:Mulish ExtraLight
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-ExtraLight.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106380
+FileModTime:1730140769
+WeightClass:250
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish ExtraLight
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-ExtraLightItalic
+FamilyName:Mulish
+StyleName:ExtraLight Italic
+FullName:Mulish ExtraLight Italic
+MenuName:Mulish ExtraLight
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-ExtraLightItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110000
+FileModTime:1730140769
+WeightClass:250
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish ExtraLight
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Italic
+FamilyName:Mulish
+StyleName:Italic
+FullName:Mulish Italic
+MenuName:Mulish
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Italic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110060
+FileModTime:1730140769
+WeightClass:400
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Light
+FamilyName:Mulish
+StyleName:Light
+FullName:Mulish Light
+MenuName:Mulish Light
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Light.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106572
+FileModTime:1730140769
+WeightClass:300
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish Light
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-LightItalic
+FamilyName:Mulish
+StyleName:Light Italic
+FullName:Mulish Light Italic
+MenuName:Mulish Light
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-LightItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110192
+FileModTime:1730140769
+WeightClass:300
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish Light
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Medium
+FamilyName:Mulish
+StyleName:Medium
+FullName:Mulish Medium
+MenuName:Mulish Medium
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Medium.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106568
+FileModTime:1730140769
+WeightClass:500
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish Medium
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-MediumItalic
+FamilyName:Mulish
+StyleName:Medium Italic
+FullName:Mulish Medium Italic
+MenuName:Mulish Medium
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-MediumItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110160
+FileModTime:1730140769
+WeightClass:500
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish Medium
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-Regular
+FamilyName:Mulish
+StyleName:Regular
+FullName:Mulish Regular
+MenuName:Mulish
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-Regular.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106528
+FileModTime:1730140769
+WeightClass:400
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-SemiBold
+FamilyName:Mulish
+StyleName:SemiBold
+FullName:Mulish SemiBold
+MenuName:Mulish SemiBold
+StyleBits:0
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-SemiBold.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:106508
+FileModTime:1730140769
+WeightClass:600
+WidthClass:5
+AngleClass:0
+NameArray:0,Win,1,Mulish SemiBold
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Mulish-SemiBoldItalic
+FamilyName:Mulish
+StyleName:SemiBold Italic
+FullName:Mulish SemiBold Italic
+MenuName:Mulish SemiBold
+StyleBits:1
+WritingScript:Roman
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\ttf\Mulish-SemiBoldItalic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:110120
+FileModTime:1730140769
+WeightClass:600
+WidthClass:5
+AngleClass:1
+NameArray:0,Win,1,Mulish SemiBold
+NameArray:0,Win,16,Mulish
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Black.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-BlackItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Bold.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-BoldItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-ExtraBold.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-ExtraBoldItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-ExtraLight.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-ExtraLightItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Italic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Light.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-LightItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Medium.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-MediumItalic.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-Regular.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-SemiBold.woff2
+FileModTime:1730140769
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:C:\Projetos\accesspilot-frontend\public\Font\mulish\woff2\Mulish-SemiBoldItalic.woff2
+FileModTime:1730140769
+%EndFont
+

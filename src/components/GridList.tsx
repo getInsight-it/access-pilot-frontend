@@ -58,7 +58,7 @@ function GridList() {
           exit="exit"
           variants={variants}
           transition={transition}
-          className={toggleViewMode ? "grid-container lg:h-[343px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4" : "list-container list-none w-full lg:h-[343px] flex flex-col gap-2"}
+          className={toggleViewMode ? "grid-container lg:h-[343px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-4" : "list-container list-none w-full lg:h-[343px] flex flex-col gap-2"}
           onAnimationStart={() => setIsAnimating(true)}
           onAnimationComplete={() => setIsAnimating(false)}
         >

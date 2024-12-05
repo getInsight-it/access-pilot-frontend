@@ -76,11 +76,19 @@ export default function Dashboard() {
             Olá, bem-vindo de volta
           </h2>
         </div>
-        <div className="grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
+        
+        {/* <div className="grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
+          <GridList />
+          <div></div>
+          <GridListNoAccess />
+        </div> */}
+
+        <div className="">
           <GridList />
           <div></div>
           <GridListNoAccess />
         </div>
+
       </div>
 
       {/* {theme === 'gov' && (

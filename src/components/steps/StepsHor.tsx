@@ -80,7 +80,7 @@ export default function Steps({
         duration: 0.3
       }}
       layout
-      className="bg-white rounded-xl text-black w-full "
+      className="bg-white border-2 border-primary rounded-xl text-black w-full "
     >
 
       <div className="flex justify-center gap-5 mt-10 mb-6">
@@ -95,7 +95,7 @@ export default function Steps({
             animate={progressBarAnimControls}
             variants={progressBarVariants}
             initial="initial"
-            className="absolute rounded-full top-0 left-0 h-full w-full bg-green-300"
+            className="absolute rounded-full top-0 left-0 h-full w-full bg-gray-300"
           />
           {steps.map((_, index) => (
             <button
@@ -104,9 +104,10 @@ export default function Steps({
                 e.preventDefault();
                 handleStepClick(index);
               }}
-              className={`h-12 w-12 mr-10 rounded-full mx-1 z-10 flex items-center justify-center 
+              className={`h-12 w-12 rounded-full mx-14 z-10 flex items-center justify-center 
                 ${index <= currentStep ? "bg-white" : "bg-gray-300"}
                 ${invalidSteps[index] ? "border-2 border-red-500" : ""}
+                ${completedSteps[index] ? "border-2 border-green-500" : ""}
                 cursor-pointer hover:bg-gray-100
                 transition-colors duration-200
               `}
