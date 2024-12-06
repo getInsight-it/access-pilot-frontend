@@ -64,6 +64,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   const defaultValues = initialData || {
     id: '',
     name: '',
+    label: '',
     clientId: '',
     description: '',
     managed: false,
