@@ -11,7 +11,7 @@ export class ClientService {
   }
 
   async getClients(): Promise<ClientDTO[] | null> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(CLIENT_API.CLIENTS);
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(CLIENT_API.CLIENTS_PUBLISHES);
 
     if (response instanceof HttpRequestResponse) {
       // return response.data as ClientDTO[];

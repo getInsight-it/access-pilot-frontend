@@ -4,13 +4,11 @@ import React, { Dispatch, SetStateAction } from "react";
 export const CheckPill = ({
   children,
   selected,
-  setSelected,
   index,
   currentIndex,
 }: {
   children: string;
-  selected: boolean;
-  setSelected: Dispatch<SetStateAction<number>>;
+  selected: string;
   index: number;
   currentIndex: number;
 }) => {
@@ -27,7 +25,6 @@ export const CheckPill = ({
   return (
     <div className="rounded-full bg-indigo-600">
       <button
-        onClick={() => setSelected(index)}
         disabled={true}
         className={`
           flex origin-top-left items-center gap-1 rounded-full px-1.5 py-0.5 text-sm transition-all ${getButtonStyle()}

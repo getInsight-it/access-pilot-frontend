@@ -49,8 +49,8 @@ export function SystemsTable<TData, TValue>({
   const page = searchParams?.get('page') ?? '1';
   const pageAsNumber = Number(page);
   const fallbackPage = isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const per_page = searchParams?.get('limit') ?? '10';
-  const perPageAsNumber = Number(per_page);
+  const per_page =  Math.ceil(Number(searchParams?.get('limit') ?? 10) / totalUsers);
+  const perPageAsNumber = pageSizeOptions.filter(o => o >= per_page)[0] ?? 10;
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
   /* this can be used to get the selectedrows

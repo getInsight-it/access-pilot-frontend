@@ -1,18 +1,18 @@
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { RequestsTable } from '../../../components/tables/my-access-requests/requests';
-import { columns } from '../../../components/tables/my-access-requests/columns';
-import { buttonVariants } from '../../../components/ui/button';
 import { Heading } from '../../../components/ui/heading';
 import { Separator } from '../../../components/ui/separator';
-import { cn } from '../../../lib/utils';
-import { Plus } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import useAuthStore from "../../../store/authStore.ts";
-import { RequestDTO } from "../../../services/request/request-dto.ts";
+import { RequestDTO } from "../../../services/request/request-d-t-o.ts";
 import { requestService } from "../../../services/request";
-import { useEffect, useState } from 'react';
-import EmptyState from '../../../components/canvas/empty/EmptyState.tsx';
+import React, { useEffect, useState } from 'react';
 import { RequestAccessDrawer } from '../../../components/drawers/RequestAccessDrawer.tsx';
+import {columns} from "../../../components/tables/my-access-requests/columns.tsx";
+import {buttonVariants} from "../../../components/ui/button.tsx";
+import {cn} from "../../../lib/utils.ts";
+import {Plus} from "lucide-react";
+import {PRIVATE_ROUTES} from "../../../constants/routes.ts";
 
 
 const breadcrumbItems = [
@@ -33,19 +33,23 @@ export default function MyAccessRequests() {
   const [page, setPage] = useState(1); // Ajustado para começar em 1, conforme esperado pela API
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
+  const [selectedRequest, setSelectedRequest] = useState<RequestDTO>();
 
   const init = () => {
     getData(page, pageCount);
   };
 
   const getData = async (page, pageCount) => {
-    // Chamando a API com a página e contagem conforme esperado pela API (início em 1)
     const pageResponse = await requestService.getRequestsPaginated(page, pageCount, 'id', 'desc');
     setRequests(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
-    // setRequests([]);
-    // setTotalUsers(0);
   };
+
+  const updateTable = () => {
+      init();
+  }
+
+
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -77,17 +81,14 @@ export default function MyAccessRequests() {
             title={`Minhas solicitações (${totalUsers})`}
             description=""
           />
-
-          {/* <Link
-            to={'/dashboard/request-access/'}
-            className={cn(buttonVariants({ variant: 'default' }))}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Adicionar novo
-          </Link> */}
-          
-          <RequestAccessDrawer />
-
+        <Link
+          to={PRIVATE_ROUTES.REQUEST_ACCESS}
+          className={cn(buttonVariants({variant: 'default'}))}
+        >
+          <Plus className="mr-2 h-4 w-4"/> Solicitar novo acesso
+        </Link>
         </div>
+
         <Separator />
 
         {/* {requests.length <= 0 &&
@@ -98,17 +99,17 @@ export default function MyAccessRequests() {
           <RequestsTable
             searchKey="clientId"
             pageNo={page} // Passa o valor da página que começa em 1
-            columns={columns}
+            columns={columns(selectedRequest, setSelectedRequest, updateTable)}
             totalUsers={totalUsers}
             data={requests}
             pageCount={pageCount}
             onPageChange={(newPage, pageSize) => {
-              setPage(newPage); // Atualiza o estado local da página com a contagem começando em 1
-              getData(newPage, pageSize); // Chama a API com a nova página
+              setPage(newPage);
+              getData(newPage, pageSize);
             }}
           />
         {/* } */}
-        
+
       </div>
     </>
   );

@@ -6,27 +6,24 @@ import {Clock, Download} from "lucide-react";
 import {motion} from "framer-motion";
 import {format} from 'date-fns';
 import {StorageDTO} from "../../services/storage/storage-dto";
-import {storageService} from "../../services/storage";
-import {HttpRequestError, HttpRequestResponse} from "@getinsight.it/getinsight-common";
 import axios from "axios";
 import {authService} from "../../services/auth";
 import {STORAGE_API} from "../../services/storage/storage-api.ts";
-import {from} from "rxjs";
+import {catchError, from, tap} from "rxjs";
 import {requestService} from "../../services/request";
+import {toast} from "../ui/use-toast.ts";
 
 export const Detail = ({
-                         selected,
-                         setSelected,
                          data,
-                         attachments
+                         attachments,
+                         onUpdate
                        }: {
-  selected: number;
-  setSelected: Dispatch<SetStateAction<number>>;
-  data: any;
-  attachments: StorageDTO[]
+  data: any,
+  attachments: StorageDTO[],
+  onUpdate?: () => void
 }) => {
 
-  const isLastSelected = OPTIONS.filter((o) => o.id === selected);
+  const selected = OPTIONS.filter((o) => o.value === data.status).map((o) => o.value)[0];
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
 
   const handleDownload = async (fileId: string) => {
@@ -72,13 +69,51 @@ export const Detail = ({
   };
 
 
-  const handleReject = (request) => {
-    console.log('Rejeitar', request.id);
-    from(requestService)
+  const handleReject = (request: {id: number, description: string}) => {
+
+    const formData = new FormData();
+    formData.append("request", JSON.stringify({status: 'REJECTED', description: request.description }));
+
+    from(requestService.updateRequest(request.id, formData)).pipe(
+      tap(() => {
+        toast({
+          title: 'Sucesso!',
+          description: `Solicitação rejeitada com sucesso.`,
+        });
+        onUpdate?.();
+      }
+    ), catchError((error) => {
+        toast({
+          title: 'Erro!',
+          description: `Erro ao rejeitar solicitação.`,
+          variant: "destructive",
+        });
+        console.error('Erro ao rejeitar solicitação', error);
+        return [];
+      })).subscribe();
   }
 
-  const handleApprove = (request) => {
-    console.log('Aprovar', request.id);
+  const handleApprove = (request: {id: number, description: string}) => {
+    const formData = new FormData();
+    formData.append("request", JSON.stringify({status: 'APPROVED', description: request.description }));
+
+    from(requestService.updateRequest(request.id, formData)).pipe(
+      tap(() => {
+        toast({
+          title: 'Sucesso!',
+          description: `Solicitação aprovada com sucesso.`,
+        });
+        onUpdate?.();
+      }
+    ), catchError((error) => {
+        toast({
+          title: 'Erro!',
+          description: `Erro ao aprovar solicitação.`,
+          variant: "destructive",
+        });
+        console.error('Erro ao aprovar solicitação', error);
+        return [];
+      })).subscribe();
   }
 
   const isFinished = ['APPROVED', 'REJECTED'].includes(data.status);
@@ -88,7 +123,10 @@ export const Detail = ({
       <h2 className="mb-3 text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
         Acompanhar solicitação
       </h2>
-
+      <div className="w-full">
+        <p className="font-bold mb-3">Protocolo:</p>
+        <p>{data?.protocolCode}</p>
+      </div>
       <div className="mt-6 w-full grid grid-cols-2 gap-y-4">
         <div>
           <p className="font-bold mb-1">Sistema:</p>
@@ -149,9 +187,8 @@ export const Detail = ({
           <CheckPill
             key={o.title}
             index={i}
-            selected={i === selected}
-            setSelected={setSelected}
-            currentIndex={selected}
+            selected={selected}
+            currentIndex={OPTIONS.findIndex((o) => o.value === selected).valueOf()}
           >
             {o.title}
           </CheckPill>
