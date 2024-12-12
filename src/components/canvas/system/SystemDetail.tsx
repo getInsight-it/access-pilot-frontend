@@ -6,7 +6,7 @@ import Hero from './Hero'
 
 function Model(props: JSX.IntrinsicElements['group']) {
   const group = useRef<THREE.Group>(null)
-  const { nodes, materials } = useGLTF('/mac-draco.glb') as unknown as any
+  const { nodes, materials } = useGLTF('/models/mac-draco.glb') as unknown as any
   
   const lidRef = useRef<THREE.Group>(null)
   const [isOpen, setIsOpen] = useState(true)

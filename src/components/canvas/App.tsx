@@ -7,8 +7,8 @@ import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphe
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
-useGLTF.preload('/card.glb')
-useTexture.preload('/band.jpg')
+useGLTF.preload('/models/card.glb')
+useTexture.preload('/img/band.jpg')
 
 // interface RigidBodyRef extends React.MutableRefObject<any> {
 //   lerped?: THREE.Vector3
@@ -59,8 +59,8 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
   const dir = new THREE.Vector3()
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   // const segmentProps = { type: 'dynamic', canSleep: true, angularDamping: 2, linearDamping: 2 }
-  const { nodes, materials } = useGLTF('/card.glb') as any
-  const texture = useTexture('/band.jpg')
+  const { nodes, materials } = useGLTF('/models/card.glb') as any
+  const texture = useTexture('/img/band.jpg')
   const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState<THREE.Vector3 | boolean>(false)
@@ -179,7 +179,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
 
 // extend({ MeshLineGeometry, MeshLineMaterial })
 // useGLTF.preload('/card.glb')
-// useTexture.preload('/band.jpg')
+// useTexture.preload('/img/band.jpg')
 
 // interface RigidBodyRef extends React.MutableRefObject<any> {
 //   lerped?: THREE.Vector3

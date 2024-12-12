@@ -1,11 +1,10 @@
-// // @ts-nocheck
 // import * as THREE from 'three'
 // import React from 'react'
-// import { useGraph, Canvas } from '@react-three/fiber'
-// import { useGLTF, useAnimations, Environment, Lightformer } from '@react-three/drei'
+// import { useGraph } from '@react-three/fiber'
+// import { useGLTF, useAnimations } from '@react-three/drei'
 // import { GLTF, SkeletonUtils } from 'three-stdlib'
 
-// type ActionName = 'arm' | 'dance' | 'headno' | 'headshake' | 'idle'
+// type ActionName = 'headshake' | 'hiphop' | 'idle'
 
 // interface GLTFAction extends THREE.AnimationClip {
 //   name: ActionName
@@ -26,9 +25,9 @@
 //   animations: GLTFAction[]
 // }
 
-// function Character(props: JSX.IntrinsicElements['group']) {
+// export function Model(props: JSX.IntrinsicElements['group']) {
 //   const group = React.useRef<THREE.Group>()
-//   const { scene, animations } = useGLTF('/personagem-transformed.glb')
+//   const { scene, animations } = useGLTF('/piloto-form-transformed.glb')
 //   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
 //   const { nodes, materials } = useGraph(clone) as GLTFResult
 //   const { actions } = useAnimations(animations, group)
@@ -39,43 +38,14 @@
 //           <primitive object={nodes.mixamorigHips} />
 //         </group>
 //         <skinnedMesh name="bigode" geometry={nodes.bigode.geometry} material={materials['MI_Spongebob_Mustache.001']} skeleton={nodes.bigode.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01} />
-//         <skinnedMesh
-//           name="Boy"
-//           geometry={nodes.Boy.geometry}
-//           material={materials['standardSurface1.001']}
-//           skeleton={nodes.Boy.skeleton}
-//           rotation={[Math.PI / 2, 0, 0]}
-//           scale={0.01}
-//         >
-//           <meshStandardMaterial color={'gray'} />
-//         </skinnedMesh>
+//         <skinnedMesh name="Boy" geometry={nodes.Boy.geometry} material={materials['standardSurface1.001']} skeleton={nodes.Boy.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01} />
 //         <skinnedMesh name="helmet" geometry={nodes.helmet.geometry} material={materials.Helmet34} skeleton={nodes.helmet.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01} />
 //       </group>
 //     </group>
 //   )
 // }
 
-
-// export function Personagem(props: JSX.IntrinsicElements['group']) {
-//   return (
-//     <Canvas className="characterForm" camera={{ position: [0, 0, 10], fov: 25 }}>
-//       <ambientLight intensity={Math.PI} />
-//       <Character
-//         scale={[0.1, 0.1, 0.1]}
-//         position={[0, -1, 0]}
-//       />
-//       <Environment background blur={0.75}>
-//         <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-//         <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-//         <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-//         <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-//       </Environment>
-//     </Canvas>
-//   )
-// }
-
-// useGLTF.preload('/personagem-transformed.glb')
-
+// useGLTF.preload('/piloto-form-transformed.glb')
 
 
 
@@ -86,26 +56,26 @@ import { useGraph, Canvas } from '@react-three/fiber'
 import { useGLTF, useAnimations, Environment, Lightformer, ContactShadows, OrbitControls } from '@react-three/drei'
 import { GLTF, SkeletonUtils } from 'three-stdlib'
 
-type ActionName = 'arm' | 'dance' | 'headno' | 'headshake' | 'idle'
+type ActionName = 'headshake' | 'hiphop' | 'idle'
 
 interface GLTFAction extends THREE.AnimationClip {
   name: ActionName
 }
 
 type GLTFResult = GLTF & {
-  nodes: {
-    bigode: THREE.SkinnedMesh
-    Boy: THREE.SkinnedMesh
-    helmet: THREE.SkinnedMesh
-    mixamorigHips: THREE.Bone
+    nodes: {
+      bigode: THREE.SkinnedMesh
+      Boy: THREE.SkinnedMesh
+      helmet: THREE.SkinnedMesh
+      mixamorigHips: THREE.Bone
+    }
+    materials: {
+      ['MI_Spongebob_Mustache.001']: THREE.MeshStandardMaterial
+      ['standardSurface1.001']: THREE.MeshStandardMaterial
+      Helmet34: THREE.MeshStandardMaterial
+    }
+    animations: GLTFAction[]
   }
-  materials: {
-    ['MI_Spongebob_Mustache.001']: THREE.MeshStandardMaterial
-    ['standardSurface1.001']: THREE.MeshStandardMaterial
-    Helmet34: THREE.MeshStandardMaterial
-  }
-  animations: GLTFAction[]
-}
 
 interface CharacterProps extends Omit<JSX.IntrinsicElements['group'], 'ref'> {
   currentAnimation: ActionName
@@ -113,7 +83,7 @@ interface CharacterProps extends Omit<JSX.IntrinsicElements['group'], 'ref'> {
 
 function Character({ currentAnimation, ...props }: CharacterProps) {
   const group = React.useRef<THREE.Group>()
-  const { scene, animations } = useGLTF('/personagem-transformed.glb')
+  const { scene, animations } = useGLTF('/models/piloto-form-transformed.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone) as GLTFResult
   const { actions } = useAnimations(animations, group)
@@ -133,15 +103,8 @@ function Character({ currentAnimation, ...props }: CharacterProps) {
           <primitive object={nodes.mixamorigHips} />
         </group>
         <skinnedMesh name="bigode" geometry={nodes.bigode.geometry} material={materials['MI_Spongebob_Mustache.001']} skeleton={nodes.bigode.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01} />
-        <skinnedMesh
-          name="Boy"
-          geometry={nodes.Boy.geometry}
-          material={materials['standardSurface1.001']}
-          skeleton={nodes.Boy.skeleton}
-          rotation={[Math.PI / 2, 0, 0]}
-          scale={0.01}
-        >
-          <meshStandardMaterial color={'gray'} />
+        <skinnedMesh name="Boy" geometry={nodes.Boy.geometry} material={materials['standardSurface1.001']} skeleton={nodes.Boy.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+            <meshStandardMaterial color={'gray'} />
         </skinnedMesh>
         <skinnedMesh name="helmet" geometry={nodes.helmet.geometry} material={materials.Helmet34} skeleton={nodes.helmet.skeleton} rotation={[Math.PI / 2, 0, 0]} scale={0.01} />
       </group>
@@ -153,7 +116,7 @@ interface PersonagemProps {
   currentAnimation: ActionName
 }
 
-export function Personagem({ currentAnimation }: PersonagemProps) {
+export function PilotoForm({ currentAnimation }: PersonagemProps) {
   return (
     <Canvas className="characterForm" camera={{ position: [-1, 2, 10], fov: 25 }}>
       <ambientLight intensity={Math.PI} />
@@ -174,5 +137,5 @@ export function Personagem({ currentAnimation }: PersonagemProps) {
   )
 }
 
-useGLTF.preload('/personagem-transformed.glb')
+useGLTF.preload('/models/piloto-form-transformed.glb')
 

@@ -6,7 +6,7 @@ import HeroPhone from './HeroPhone'
 
 function Model(props: JSX.IntrinsicElements['group']) {
   const group = useRef<THREE.Group>(null)
-  const { nodes, materials } = useGLTF('/phone-transformed.glb') as unknown as any
+  const { nodes, materials } = useGLTF('/models/phone-transformed.glb') as unknown as any
 
   useFrame((state) => {
     if (group.current) {

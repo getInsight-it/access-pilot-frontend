@@ -84,7 +84,7 @@ export const Tag = ({ data }: { data: any }) => {
                     rotate: "0deg",
                     opacity: 0,
                   }}
-                  src="/accesspilot-w.svg"
+                  src="/img/accesspilot-w.svg"
                   alt="logo-accesspilot"
                   className="size-40 h-10"
                 />

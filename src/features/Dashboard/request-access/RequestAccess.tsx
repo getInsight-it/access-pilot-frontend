@@ -3,9 +3,7 @@ import { MultiStepForm } from '../../../components/forms/multi-step-form';
 import { MultiStepForm3d } from '../../../components/forms/multi-step-form-3d';
 import { RequestAccessForm } from '../../../components/forms/request-access-form';
 import { StepForm } from '../../../components/forms/step-form';
-import { StepFormHor } from '../../../components/forms/step-form-hor';
 import { StepFormVert } from '../../../components/forms/step-form-vert';
-import { StepForm4 } from '../../../components/forms/step-form4';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 
 const breadcrumbItems = [
@@ -22,8 +20,6 @@ export default function RequestAccess() {
         <MultiStepForm3d />
         {/* <StepFormVert /> */}
         {/* <StepForm /> */}
-        {/* <StepFormHor /> */}
-        {/* <StepForm4 /> */}
         
       </div>
     </ScrollArea>

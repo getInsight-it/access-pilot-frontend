@@ -68,7 +68,7 @@ const EmptyState: React.FC = () => {
     { name: 'action4', keys: ['KeyF'] }
   ];
 
-  const characterURL = '/piloto-transformed.glb';
+  const characterURL = '/models/piloto-transformed.glb';
 
   const animationSet: AnimationSet = {
     idle: 'Idle',

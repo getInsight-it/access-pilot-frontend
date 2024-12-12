@@ -6,7 +6,7 @@ interface ModelProps {
 }
 
 const Piloto: FC<ModelProps> = () => {
-  const { nodes, materials } = useGLTF('/piloto-transformed.glb') as any;
+  const { nodes, materials } = useGLTF('/models/piloto-transformed.glb') as any;
 
   // Configurações de material
   for (const material in materials) {
@@ -61,6 +61,6 @@ const Piloto: FC<ModelProps> = () => {
   );
 };
 
-useGLTF.preload('/piloto-transformed.glb')
+useGLTF.preload('/models/piloto-transformed.glb')
 
 export default Piloto;

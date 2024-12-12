@@ -17,7 +17,7 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { Check, CheckCircle2, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Crown, Pencil, Glasses, Search } from 'lucide-react';
+import { Check, CheckCircle2, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Crown, Pencil, Glasses, Search, CheckCircle, ClipboardList, User } from 'lucide-react';
 import { ScrollArea, ScrollBar } from "../../components/ui/scroll-area";
 import {
   Dialog,
@@ -48,9 +48,10 @@ import {
 import { X } from 'lucide-react';
 import { BackgroundBeamsWithCollision } from "../ui/background-beams-with-collision";
 import { BackgroundLines } from "../ui/background-lines";
-import { Personagem } from "../canvas/Personagem";
 import { Canvas } from "@react-three/fiber";
 import IconRenderer from "../icons/IconRenderer";
+import { PilotoForm } from "../canvas/PilotoForm";
+import Eyes from "../Eyes";
 
 interface Client {
   id: number;
@@ -63,7 +64,7 @@ interface Role {
   name: string;
 }
 
-type ActionName = 'idle' | 'headshake' | 'headno' | 'dance' | 'arm';
+type ActionName = 'idle' | 'headshake' | 'hiphop';
 
 const formSchema = z.object({
   clientId: z.string({
@@ -131,6 +132,31 @@ export function MultiStepForm3d() {
     if (isAuthenticated) getClients();
   }, [isAuthenticated]);
 
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+      case 'doc':
+      case 'docx':
+      case 'txt':
+        return <FileText className="w-5 h-5" />;
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'gif':
+        return <Image className="w-5 h-5" />;
+      case 'mp3':
+      case 'wav':
+        return <FileAudio className="w-5 h-5" />;
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return <FileVideo className="w-5 h-5" />;
+      default:
+        return <FileIcon className="w-5 h-5" />;
+    }
+  };
+
   const steps = [
     {
       id: 1,
@@ -148,15 +174,19 @@ export function MultiStepForm3d() {
                 <Popover>
                   <PopoverTrigger asChild>
                     <div
-                      className={`border border-dashed text-sm max-w-96 w-full cursor-pointer ${selectedClient ? 'border border-primary border-double text-primary ' : ''}`}
+                      className={`max-w-96 w-full cursor-pointer ${selectedClient ? ' text-primary ' : ''}`}
                     >
                       <CardShine>
                         <div
-                          className="p-4 grid items-center min-h-[160px] h-auto "
+                          // className="p-4 grid items-center min-h-[160px] h-auto "
+                          className={cn(
+                            "border border-dashed p-4 grid items-center min-h-[160px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
+                            selectedClient && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                          )}
                         >
                           {!selectedClient && <Plus className="w-8 h-8 mt-8 mx-auto text-gray-400" />}
                           {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
-                          <p className="text-sm font-semibold">
+                          <p className="font-semibold">
                             {selectedClient && <MonitorCog className="w-8 h-8 mb-2" />}
                             <span className="text-lg">{selectedClient}</span>
                           </p>
@@ -192,8 +222,8 @@ export function MultiStepForm3d() {
                             <CardShine key={client.id}>
                               <div
                                 className={cn(
-                                  "flex flex-col  justify-between p-4 cursor-pointer transition-all",
-                                  selectedClient === client.clientId && "border border-primary "
+                                  "border p-4 min-h-[160px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
+                                  selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                                 )}
                                 onClick={() => {
                                   field.onChange(client.clientId);
@@ -201,10 +231,14 @@ export function MultiStepForm3d() {
                                   getRolesByClientId(client.clientId);
                                 }}
                               >
-                                <MonitorCog className="w-5 h-5 mb-2" />
-                                <span className="text-sm font-semibold">{client.clientId}</span>
-                                {selectedClient === client.clientId && <Check className="absolute top-3 right-3 flex-shrink-0" />}
-                                <p className="mt-4 text-sm">
+                                <MonitorCog className="w-8 h-8 mb-2" />
+                                {selectedClient === client.clientId && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                                
+                                <p>
+                                  <span className="font-semibold text-lg">{client.clientId}</span>
+                                </p>
+
+                                <p className="text-sm mt-2">
                                   {/* Descricao lorem ipsum dolor sit amet. Dolor sit emat ipsum dolor sit. */}
                                   {client.description}
                                 </p>
@@ -235,7 +269,7 @@ export function MultiStepForm3d() {
             <FormItem>
               <h4 className="text-lg font-semibold mb-4">Selecione seu papel no sistema</h4>
               <FormControl>
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 max-w-xl md:flex-row gap-4">
                   {roles.map((role) => (
                     <div className="max-w-96" key={role.id}>
 
@@ -250,11 +284,11 @@ export function MultiStepForm3d() {
                             setSelectedRole(role.name);
                           }}
                         >
-                          <IconRenderer className="icon-glasses w-8 h-8 mb-2" />
+                          <IconRenderer className={`${role?.icon} w-8 h-8 mb-2`} />
                           <span className="font-semibold text-lg capitalize">{role.name}</span>
                           {selectedRole === role.name && <Check className="absolute top-4 right-4" />}
                           <p className="mt-2 text-sm">
-                            Descricao lorem ipsum dolor sit amet. Dolor sit ipsum dolor sit.
+                            {role.label}
                           </p>
                         </div>
                         
@@ -280,7 +314,7 @@ export function MultiStepForm3d() {
             control={form.control}
             name="description"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="max-w-xl">
                 <h4 className="text-lg font-semibold mb-4">Conte-nos o motivo para solicitar este acesso</h4>
                 <FormControl>
                   <Textarea
@@ -304,7 +338,7 @@ export function MultiStepForm3d() {
             control={form.control}
             name="attachments"
             render={({ field }) => (
-              <FormItem className="mt-4">
+              <FormItem className="mt-4 max-w-xl">
                 <h4 className="text-lg font-semibold mb-4">Adicione arquivos que ajudem a justificar sua solicitação (opcional)</h4>
                 <FormControl>
                   <div className="min-h-[100px]">
@@ -317,10 +351,19 @@ export function MultiStepForm3d() {
                     {attachments.length > 0 && (
                       <div className="mt-3 space-y-2">
                         {attachments.map((file, index) => (
-                          <div key={index} className="border border-primary bg-blue-50 pl-4 pr-2 py-0 rounded flex items-center justify-between">
+                          <div key={index} className=" bg-white pl-4 pr-2 py-0 rounded flex items-center justify-between">
                             <div className="flex items-center">
                               {getFileIcon(file.name)}
-                              <span className="truncate text-sm ml-2">{file.name}</span>
+                              {/* <span className="overflow-hidden truncate w-40 text-sm ml-2">{file.name}</span> */}
+                            
+                              <span
+                                className="overflow-hidden truncate w-40 text-sm ml-2"
+                                title={file.name} // Nome completo exibido no tooltip
+                              >
+                                {file.name.length > 16
+                                  ? `${file.name.slice(0, 16)}...${file.name.slice(-4)}`
+                                  : file.name}
+                              </span>
                             </div>
                             <Button
                               type="button"
@@ -350,23 +393,93 @@ export function MultiStepForm3d() {
       number: 4,
       description: "Certifique-se de que está tudo certo antes de enviar.",
       content: (
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Resumo da solicitação</h3>
-          <p className="text-gray-900">Revise suas escolhas antes de enviar:</p>
-          <ul className="space-y-2 text-gray-700">
-            <li><strong>Sistema:</strong> {form.getValues("clientId")}</li>
-            <li><strong>Papel:</strong> {roles.find(role => role.id.toString() === form.getValues("roleId"))?.name || form.getValues("roleId")}</li>
-            <li><strong>Motivo:</strong> {form.getValues("description")}</li>
-            {attachments.length > 0 && (
+        <div className=" max-w-md bg-background shadow-lg rounded-[var(--card-border-radius)] p-6">
+          <h3 className="text-lg font-semibold">Resumo da solicitação</h3>
+          <p className="mt-1 mb-4 text-gray-900">Revise suas escolhas antes de enviar:</p>
+          <ul className="space-y-4">
+            <li className="flex items-center gap-3">
+              <ClipboardList className="text-blue-500 w-5 h-5 " />
+              <div>
+                <strong>Sistema</strong>
+                {selectedClient ? (
+                  <p>
+                    {form.getValues("clientId")}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">
+                    Sistema não selecionado.
+                  </p>
+                )}
+              </div>
+            </li>
+            <li className="flex items-center gap-3">
+              <User className="text-blue-500 w-5 h-5" />
+              <div>
+                <strong>Papel</strong>
+                {selectedRole ? (
+                  <p>
+                    {roles.find(role => role.id.toString() === form.getValues("roleId"))?.name || form.getValues("roleId")}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">
+                    Nenhum papel foi selecionado.
+                  </p>
+                )}
+              </div>
+            </li>
+            <li className="flex items-center gap-3">
+              <FileText className="text-blue-500 w-5 h-5" />
+              <div>
+                <strong>Motivo</strong>
+                {description ? (
+                  <p>
+                    {form.getValues("description")}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">
+                    Sem descrição.
+                  </p>
+                )}
+              </div>
+            </li>
+            {/* {attachments.length > 0 && (
               <li>
                 <strong>Anexos:</strong>
                 <ul className="">
                   {attachments.map((file, index) => (
-                    <li className="" key={index}>- {file.name}</li>
+                    <li className="text-sm" key={index}>- {file.name}</li>
+                  ))}
+                </ul>
+              </li>
+            )} */}
+
+            {attachments.length > 0 && (
+              <li className="">
+                <strong>Anexos:</strong>
+                <ul className="space-y-2 mt-4">
+                  {attachments.map((file, index) => (
+                    
+                    <li key={index} className=" bg-white pl-0 pr-2 py-0 rounded flex items-center justify-between">
+                      <div className="flex items-center">
+                        
+                        {getFileIcon(file.name)}
+                        
+                        <span
+                          className="overflow-hidden truncate w-40 text-sm ml-2"
+                          title={file.name} // Nome completo exibido no tooltip
+                        >
+                          {file.name.length > 16
+                            ? `${file.name.slice(0, 16)}...${file.name.slice(-4)}`
+                            : file.name}
+                        </span>
+                      </div>
+                    </li>
+
                   ))}
                 </ul>
               </li>
             )}
+
           </ul>
         </div>
       ),
@@ -395,7 +508,7 @@ export function MultiStepForm3d() {
     if (form.getValues("clientId") && 
         form.getValues("roleId") && 
         form.getValues("description").length >= 10) {
-      setCurrentAnimation('dance');
+      setCurrentAnimation('hiphop');
     } else {
       setCurrentAnimation('idle');
     }
@@ -444,33 +557,8 @@ export function MultiStepForm3d() {
       return;
     }
 
-    setCurrentAnimation('dance');
+    setCurrentAnimation('hiphop');
     setIsConfirmModalOpen(true);
-  };
-
-  const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    switch (extension) {
-      case 'pdf':
-      case 'doc':
-      case 'docx':
-      case 'txt':
-        return <FileText className="w-5 h-5" />;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-        return <Image className="w-5 h-5" />;
-      case 'mp3':
-      case 'wav':
-        return <FileAudio className="w-5 h-5" />;
-      case 'mp4':
-      case 'avi':
-      case 'mov':
-        return <FileVideo className="w-5 h-5" />;
-      default:
-        return <FileIcon className="w-5 h-5" />;
-    }
   };
 
   async function handleConfirmSubmit() {
@@ -625,18 +713,19 @@ export function MultiStepForm3d() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 relative">
 
+          
+
           <div
-            className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-24 lg:-left-72 z-10 pointer-events-none ${hasError ? 'hidden lg:-bottom-60 lg:-left-32' : ''} ${!showContent && !hasError ? '-bottom-80 -left-96 lg:-bottom-48 lg:left-2' : ''}`}
-            // className="absolute h-[500px] bottom-0 -left-60 lg:-bottom-24 lg:-left-72 z-10 pointer-events-none"
+            className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-20 lg:-left-72 z-10 pointer-events-none ${hasError ? 'hidden lg:-bottom-60 lg:-left-32' : ''} ${!showContent && !hasError ? '-bottom-80 -left-96 lg:-bottom-40 lg:left-2' : ''}`}
           >
-            <Personagem currentAnimation={currentAnimation} />
+            <PilotoForm currentAnimation={currentAnimation} />
           </div>
 
           {showContent && !hasError && (
-            <div className="  grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-4 ">
+            <div className="  grid grid-cols-1 lg:grid-cols-[360px,1fr] xl:grid-cols-[400px,1fr] gap-4 ">
 
 
-              <div className="relative bg-white py-8 rounded-xl space-y-10 sm:space-y-12 min-h-[280px] sm:min-h-[340px]">
+              <div className="relative py-8 rounded-xl space-y-10 sm:space-y-12 min-h-[280px] sm:min-h-[340px]">
                 {steps.map((step, index) => (
                   <motion.div
                     key={step.id}
@@ -644,25 +733,25 @@ export function MultiStepForm3d() {
                     initial={false}
                     animate={{
                       opacity: step.id <= currentStep ? 1 : 0.5,
-                      transition: { duration: 0.3 }
+                      transition: { duration: 0.3, ease: "easeInOut" }
                     }}
                   >
 
                     <motion.div
                       className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center z-10 cursor-pointer",
+                        "w-10 h-10 hover:bg-gray-200 rounded-full flex items-center justify-center z-10 cursor-pointer",
                         step.id === currentStep
-                          ? "bg-primary text-primary-foreground"
+                          ? "hover:bg-primary bg-primary text-primary-foreground"
                           : stepsState[step.id] === 'completed'
-                          ? "bg-green-500 text-white"
+                          ? "bg-green-500 hover:bg-green-600 text-white"
                           : stepsState[step.id] === 'error'
-                          ? "bg-red-500 text-white"
-                          : "bg-gray-300"
+                          ? "bg-red-500 hover:bg-red-700 text-white"
+                          : "bg-[var(--bg-indicator)]"
                       )}
                       initial={false}
                       animate={{
                         scale: step.id === currentStep ? 1.1 : 1,
-                        transition: { duration: 0.3 }
+                        transition: { duration: 0.3, ease: "easeInOut" }
                       }}
                       onClick={() => handleStepClick(step.id)}
                     >
@@ -685,20 +774,20 @@ export function MultiStepForm3d() {
 
                     <div className="ml-14 sm:mt-0 sm:ml-4">
                       <h3
-                        className={`text-sm sm:text-lg -mt-8 sm:mt-2 ${step.id === currentStep ? 'font-bold' : ''}`}
+                        className={`text-md xl:text-lg -mt-8 sm:mt-2 ${step.id === currentStep ? 'font-bold' : ''}`}
                       >
                         {step.title}
                       </h3>
                     </div>
 
-                    <div className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"></div>
+                    <div className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-400"></div>
 
                     {index < steps.length - 1 && (
                       <motion.div
                         className="absolute left-5 top-10 w-[2px] h-[calc(100%+24px)]"
                         initial={{ backgroundColor: "#374151" }}
                         animate={{
-                          backgroundColor: stepsState[step.id] === 'completed' && stepsState[step.id + 1] === 'completed' ? "#22c55e" : "#4B5563",
+                          backgroundColor: stepsState[step.id] === 'completed' && stepsState[step.id + 1] === 'completed' ? "#22c55e" : "#b2b2b2",
                           opacity: step.id < currentStep ? 1 : 0
                         }}
                         transition={{ duration: 0.3 }}
@@ -714,16 +803,16 @@ export function MultiStepForm3d() {
 
 
 
-              <div className="bg-gray-50 p-8 rounded-xl">
+              <div className="bg-secondary p-6 rounded-xl">
                 <div className="mb-8 min-h-[480px]">
-                  <p className="text-gray-400 mb-2">Passo {currentStep}/{steps.length}</p>
+                  <p className="text-gray-600 mb-2">Passo {currentStep}/{steps.length}</p>
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStep}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
                     >
                       {steps[currentStep - 1].content}
                     </motion.div>
@@ -735,7 +824,7 @@ export function MultiStepForm3d() {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="bg-gray-200 text-primary hover:text-white hover:bg-[#000044]"
+                    className="bg-secondary text-primary "
                     onClick={handleBack}
                     disabled={currentStep === 1}
                   >
@@ -743,14 +832,14 @@ export function MultiStepForm3d() {
                   </Button>
                   {currentStep < steps.length ? (
                     <Button
-                      className="bg-primary hover:bg-accent text-white"
+                      className="w-40 bg-primary text-primary-foreground"
                       onClick={goToNextStep}
                     >
                       Próximo
                     </Button>
                   ) : (
                     <Button
-                      className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                      className="w-40 bg-emerald-500 text-primary-foreground"
                       onClick={handleFinalSubmit}
                     >
                       Enviar
@@ -823,6 +912,10 @@ export function MultiStepForm3d() {
           )}
 
           <StepLoader loading={loading} onClose={handleLoaderClose} />
+
+
+
+
         </form>
       </Form>
 
