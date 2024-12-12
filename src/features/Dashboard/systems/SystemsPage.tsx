@@ -9,7 +9,6 @@ import {AddSystemDrawer} from '../../../components/drawers/AddSystemDrawer';
 import useAuthStore from "../../../store/authStore.ts";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {clientService} from "../../../services/client";
-import {SystemDetailDrawer} from "../../../components/drawers/SystemDetailDrawer.tsx";
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -88,7 +87,7 @@ export default function SystemsPage() {
             title={`Sistemas (${totalUsers})`}
             description=""
           />
-          <AddSystemDrawer />
+          <AddSystemDrawer onClick={() => setSelectedClient(undefined)} />
         </div>
         <Separator />
 

@@ -81,6 +81,7 @@ export const Detail = ({
     console.log('Aprovar', request.id);
   }
 
+  const isFinished = ['APPROVED', 'REJECTED'].includes(data.status);
   return (
     <div className="w-full max-w-xl mt-6">
 
@@ -157,7 +158,7 @@ export const Detail = ({
         ))}
       </div>
 
-      {isLastSelected && (
+      {!isFinished && (
         <motion.div
           className="absolute"
           initial={{y: 12, opacity: 0}}

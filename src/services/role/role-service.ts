@@ -74,7 +74,7 @@ export class RoleService {
     return null;
   }
 
-  async updateRole(id: number,roleData: RoleDTO): Promise<RoleDTO | null> {
+  async updateRole(id?: number,roleData?: RoleDTO): Promise<RoleDTO | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${ROLE_API.ROLES}/${id}`, roleData);
 
     if (response instanceof HttpRequestResponse) {

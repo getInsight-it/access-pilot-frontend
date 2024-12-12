@@ -4,6 +4,8 @@ export interface RoleDTO {
   id?: number;
   roleExternalId?: string;
   name?: string;
+  label?: string;
+  icon?: string;
   description?: string;
   icon?: string;
   label?: string;

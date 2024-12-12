@@ -21,9 +21,9 @@ const formSchema = z.object({
   description: z
     .string()
     .min(3, {message: 'A descrição do sistema deve conter no mínimo 3 caracteres'}),
+  label: z.string().min(3, {message: 'O label do sistema deve conter no mínimo 3 caracteres'}),
+  icon: z.string().min(3, {message: 'O icon do sistema deve conter no mínimo 3 caracteres'}),
 });
-
-//type RoleFormValues = z.infer<typeof formSchema>;
 
 interface RoleFormProps {
   client?: ClientDTO,
@@ -31,7 +31,7 @@ interface RoleFormProps {
   initialData: RoleDTO | null,
 }
 
-export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, onSuccessSubmit}) => {
+export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSuccessSubmit}) => {
   const {toast} = useToast();
   const [loading, setLoading] = useState(false);
   const title = initialData ? 'Editar função' : 'Criar nova função';
@@ -45,12 +45,12 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, onSucce
     defaultValues: defaultValues
   });
 
-  const onSubmit = async (form) => {
+  const onSubmit = async (form: RoleDTO) => {
     const role = {
       ...form,
     } as RoleDTO;
     role.client = client;
-    from(initialData ? roleService.updateRole(initialData.id,role) : roleService.createRole(role) ).pipe(
+    from(initialData ? roleService.updateRole(initialData?.id, role) : roleService.createRole(role)).pipe(
       tap(() => {
         toast({
           title: toastMessage,
@@ -114,6 +114,38 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, onSucce
                       <Input
                         disabled={loading}
                         placeholder="Descrição do sistema"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="label"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Label</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Label do sistema"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="icon"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Icon</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Icon do sistema"
                         {...field}
                       />
                     </FormControl>
