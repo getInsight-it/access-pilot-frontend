@@ -8,16 +8,16 @@ export const Logo = () => {
   useEffect(() => {
     switch (theme) {
       case 'light':
-        setSrc('/getinsight-light.png')
+        setSrc('/img/getinsight-light.png')
         break
       case 'dark':
-        setSrc('/logo-getinsight.png')
+        setSrc('/img/logo-getinsight.png')
         break
       case 'tangerine':
-        setSrc('/getinsight-light.png')
+        setSrc('/img/getinsight-light.png')
         break
       case 'rnp':
-        setSrc('/rnp.png')
+        setSrc('/img/rnp.png')
         break
       case 'gov':
         setSrc('/govbr/logo.svg')

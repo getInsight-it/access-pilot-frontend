@@ -191,7 +191,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
     {
       content: (
         <>
-        {/* <img className="w-24" src="/helmet3d.png" /> */}
           <p>
             <span className="text-black dark:text-white">Tempo médio de resposta para aprovações de acesso. 👋</span>{" "}
             {/* <a href="#" className="text-emerald-300 hover:underline">

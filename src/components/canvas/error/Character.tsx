@@ -27,7 +27,7 @@ type GLTFResult = GLTF & {
 
 export function Character(props: JSX.IntrinsicElements['group']) {
   const group = React.useRef<THREE.Group>(null)
-  const { scene, animations } = useGLTF('/character-transformed.glb')
+  const { scene, animations } = useGLTF('/models/character-transformed.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone) as GLTFResult
   const { actions } = useAnimations(animations, group)
@@ -85,4 +85,4 @@ export function Character(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('/character-transformed.glb')
+useGLTF.preload('/models/character-transformed.glb')

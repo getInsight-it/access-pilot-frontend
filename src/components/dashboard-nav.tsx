@@ -96,19 +96,28 @@ export function DashboardNav({
         })}
       </TooltipProvider>
       
-      <div className="absolute bottom-32 w-full bg-black z-50 text-white p-6">
-        <p className="">Está autenticado? <strong>{ isAuthenticated ? 'Sim' : 'Não' }</strong></p>
-        <button type="button" onClick={ signOut }>Sair</button>
+      <div className="flex flex-col absolute bottom-32 w-full z-50 text-gray-500 p-6">
+        <p className="ml-1">Está autenticado?</p>
+        <strong className="ml-1">{ isAuthenticated ? 'Sim' : 'Não' }</strong>
+        <button className="bg-gray-300 text-black px-6 py-1 rounded-full mt-2" type="button" onClick={ signOut }>Sair</button>
       </div>
 
-      {isMobileNav || (!isMinimized && !isMobileNav) ? (
+      {theme === 'gov' && (isMobileNav || (!isMinimized && !isMobileNav)) && (
         <div className="absolute bottom-0 p-4 pointer-events-none truncate">
           <p className="text-xs font-regular">Powered by:</p>
-          <img className="w-36" src="/accesspilot-logo.svg" />
+          <img className="w-36" src="/img/accesspilot-logo.svg" />
+        </div>
+      )}
+
+      {/* {theme === 'gov' && (isMobileNav || (!isMinimized && !isMobileNav)) ? (
+        <div className="absolute bottom-0 p-4 pointer-events-none truncate">
+          <p className="text-xs font-regular">Powered by:</p>
+          <img className="w-36" src="/img/accesspilot-logo.svg" />
         </div>
       ) : (
         ''
-      )}
+      )} */}
+
     </nav>
   );
 }

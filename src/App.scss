@@ -56,8 +56,9 @@
     --mockup-bg-color: rgba(249, 250, 251, 0.5); /* bg-gray-50/50 */
     --sidebar-mockup-bg: 220.9 39.3% 11%;
     --list-color: #000000;
-    --system-card: hsl(225, 7%, 11%);
-    --system-card-text: #ffffff;
+    // --system-card: hsl(225, 7%, 11%);
+    --system-card: hsl(0, 0%, 100%);
+    --system-card-text: #000000;
 
     // --dashboard-nav-text: #FFFFFF;
     --dashboard-nav-bg: #f3f3f3;
@@ -70,10 +71,12 @@
     --button-hover: #3f3f3f;
     --button-hover-text: #ffffff;
 
-    --card-shine: rgba(255, 255, 255, 30%);
+    --card-shine: rgba(0, 0, 0, 20%);
     --card-border-radius: 0.75rem;
 
     --steploader-bg: #ffffff;
+
+    --bg-indicator: rgba(209, 213, 219, 1.0);
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
@@ -112,7 +115,7 @@
     --sidebar-mockup-bg: #1f1f1f;
     --list-color: #ffffff;
     /* --system-card: 210 20% 98%; */
-    --system-card: hsl(225, 7%, 11%);
+    --system-card: hsl(0, 0%, 0%);
     --system-card-text: #ffffff;
 
     --dashboard-nav-text: #FFFFFF;
@@ -126,10 +129,12 @@
     --button-hover: #d4d4d4;
     --button-hover-text: #000000;
 
-    --card-shine: rgba(255, 255, 255, 20%);
+    --card-shine: rgba(255, 255, 255, 40%);
     --card-border-radius: 0.75rem;
 
     --steploader-bg: #000000;
+
+    --bg-indicator: rgb(126, 126, 126);
 
     --background: 0 0% 0%;
     --foreground: 210 20% 98%;
@@ -183,6 +188,8 @@
     --card-border-radius: 0.75rem;
 
     --steploader-bg: #ffe0cc;
+
+    --bg-indicator: rgba(209, 213, 219, 1.0);
 
     --background: 33 100% 97%;
     --foreground: 33 100% 15%;
@@ -238,6 +245,8 @@
     --card-border-radius: 0.75rem;
 
     --steploader-bg: #0000ff;
+
+    --bg-indicator: rgba(209, 213, 219, 1.0);
     
     --background: 240 100% 97%; /* Azul claro */
     --foreground: 240 100% 15%;
@@ -299,6 +308,8 @@
     --card-border-radius: 0.1rem;
 
     --steploader-bg: #ffffff;
+
+    --bg-indicator: rgba(209, 213, 219, 1.0);
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;

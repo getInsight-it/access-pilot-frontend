@@ -90,7 +90,7 @@ function GridList() {
 
                     <img
                       className={toggleViewMode ? "w-12" : "w-6"}
-                      src={system.url ? system.url : "/ap.svg"} // Verifica se 'url' existe, senão usa uma imagem padrão
+                      src={system.url ? system.url : "/img/ap.svg"} // Verifica se 'url' existe, senão usa uma imagem padrão
                       alt="Imagem do sistema"
                     />
 

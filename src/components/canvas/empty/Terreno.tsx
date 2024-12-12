@@ -8,7 +8,7 @@ interface MapProps extends GroupProps {
 }
 
 export default function Terreno(props: MapProps) {
-  const { nodes } = useGLTF('/terreno.glb') as any;
+  const { nodes } = useGLTF('/models/terreno.glb') as any;
 
   const { theme } = useTheme(); // Usando o contexto de tema customizado
   const terrainMaterial = theme === 'dark' ? '#333' : theme === 'tangerine' ? '#ff9f40' : '#ffffff'; // Definindo a cor do material baseado no tema
@@ -26,4 +26,4 @@ export default function Terreno(props: MapProps) {
   );
 }
 
-useGLTF.preload('/terreno.glb');
+useGLTF.preload('/models/terreno.glb');

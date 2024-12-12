@@ -33,7 +33,7 @@ export default function HighlightLoader() {
     <div ref={containerRef} className="container relative w-32 grid items-center justify-center"> {/* Associa ref ao container */}
       <motion.div ref={scope} className="loader absolute h-32 bg-black" />
       <h1 className="text m-4 text-white whitespace-nowrap mix-blend-difference">
-        <img className="w-14" src="/ap-full-w.svg" />
+        <img className="w-14" src="/img/ap-white.svg" />
       </h1>
     </div>
   );

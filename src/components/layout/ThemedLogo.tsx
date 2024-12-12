@@ -8,16 +8,16 @@ function ThemedLogo() {
   useEffect(() => {
     switch (theme) {
       case 'light':
-        setSrc('/accesspilot.svg')
+        setSrc('/img/accesspilot.svg')
         break
       case 'dark':
-        setSrc('/accesspilot-w.svg')
+        setSrc('/img/accesspilot-w.svg')
         break
       case 'tangerine':
-        setSrc('/accesspilot.svg')
+        setSrc('/img/accesspilot.svg')
         break
       case 'rnp':
-        setSrc('/rnp.png')
+        setSrc('/img/rnp.png')
         break
       case 'gov':
         setSrc('/govbr/logo.svg')
