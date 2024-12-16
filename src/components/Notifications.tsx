@@ -180,7 +180,7 @@ export default function Notifications() {
                                     </div>
                                 ))}
 
-                                <div className="mt-6 text-center">
+                                <div className="mt-6 text-right">
                                     <button 
                                         className="
                                         font-medium

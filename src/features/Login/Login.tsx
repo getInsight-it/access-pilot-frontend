@@ -37,7 +37,7 @@ export default function Login() {
               Entrar
             </Button>
             
-            <p>Está autenticado? { isAuthenticated ? <strong className="text-green-600">Sim</strong> : <strong className="text-red-600">Não</strong> }</p>
+            {/* <p>Está autenticado? { isAuthenticated ? <strong className="text-green-600">Sim</strong> : <strong className="text-red-600">Não</strong> }</p> */}
           </div>
 
         </div>

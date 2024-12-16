@@ -14,7 +14,8 @@ export const PRIVATE_ROUTES = {
   SYSTEMS: '/dashboard/systems',
   NEW_SYSTEM: '/dashboard/system-new',
   ROLES: '/dashboard/systems/:clientId/roles',
-  NEW_ROLE: '/dashboard/role-new'
+  NEW_ROLE: '/dashboard/role-new',
+  NOTIFICATIONS: '/dashboard/notifications'
 };
 
 export const ERROR_ROUTES = {

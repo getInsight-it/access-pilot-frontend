@@ -136,6 +136,7 @@ import RolesPage from './features/Dashboard/roles/RolesPage.tsx';
 import SystemsPage from './features/Dashboard/systems/SystemsPage.tsx';
 import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
 import PrivateRoute from './components/PrivateRoute';
+import NotificationsPage from './features/Dashboard/notifications/NotificationsPage.tsx';
 
 const publicRoutes = [{
   element: <PublicLayout/>,
@@ -193,6 +194,10 @@ const privateRoutes = [
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
             element: <AccessRequests />
+          },
+          {
+            path: PRIVATE_ROUTES.NOTIFICATIONS,
+            element: <NotificationsPage />
           },
         ]
       }
