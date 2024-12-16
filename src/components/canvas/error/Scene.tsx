@@ -43,13 +43,6 @@ import {
     animations: GLTFAction[]
   }
 
-
-
-
-
-
-
-
   class RetroEffectImpl extends Effect {
     uniforms: Map<string, THREE.Uniform>;
   
@@ -105,7 +98,7 @@ import {
   
   
   const Piloto = forwardRef<THREE.Group>((_, ref, ...props) => {
-    const { gltf, nodes, materials, scene, animations } = useGLTF("/character-transformed.glb") as any;
+    const { gltf, nodes, materials, scene, animations } = useGLTF("/models/character-transformed.glb") as any;
   
     const group = React.useRef<THREE.Group>(null)
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])

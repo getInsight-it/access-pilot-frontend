@@ -14,7 +14,7 @@ export default function Header() {
           <Link
             className=""
             to={'#'} // Alterado de 'href' para 'to'
-            target="_blank"
+            // target="_blank"
           >
             <ThemedLogo />
           </Link>

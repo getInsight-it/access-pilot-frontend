@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Bell, X } from 'lucide-react'
+import { Link } from 'react-router-dom';
 
 // Custom hook for handling outside clicks
 function useOutsideClick(ref: React.RefObject<HTMLElement>, buttonRef: React.RefObject<HTMLElement>, callback: () => void) {
@@ -198,6 +199,7 @@ export default function Notifications() {
                                     >
                                         Ver todas
                                     </button>
+                                    <Link to="/dashboard/notifications" className="">Ver todas</Link>
                                 </div>
                             </div>
                         </motion.div>
