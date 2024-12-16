@@ -26,7 +26,8 @@ export default function SystemsPage() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const [clients, setClients] = useState<ClientDTO[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [pageCount, setPageCount] = useState(10);
+  const [pageCount, setPageCount] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
   const [page, setPage] = useState(0);
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
@@ -34,11 +35,11 @@ export default function SystemsPage() {
   const [selectedClient, setSelectedClient] = useState<ClientDTO>();
 
   const init = () => {
-    getData(page,pageCount);
+    getData(page,pageLimit);
   };
 
-  const getData = async (page, pageCount) => {
-    const pageResponse = await clientService.getClientsPaginated(page, pageCount, 'id', 'asc');
+  const getData = async (page, pageSize) => {
+    const pageResponse = await clientService.getClientsPaginated(page, pageSize, 'id', 'asc');
     setClients(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
   }
@@ -60,14 +61,16 @@ export default function SystemsPage() {
 
   function updatePageInfo() {
     if (clients !== null && clients.length > 0) {
-
+      const pageSizeOptions = [10, 20, 30, 40, 50]
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : 0;
       setPage(page)
-      const pageLimit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
+      const pageLimitReal = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
+      const pageCount = pageSizeOptions.filter(o => o >= pageLimitReal)[0] ?? 10;
       const name = searchParams.get('search') || null;
       setSearch(search || '');
-      setPageCount(Math.ceil(pageLimit));
+      setPageCount(Math.ceil(totalUsers / pageCount));
+      setPageLimit(pageSizeOptions.filter(o => o >= pageLimitReal)[0] ?? 10);
 
     }
   }

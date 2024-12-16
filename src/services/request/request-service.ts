@@ -1,6 +1,6 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from '@getinsight.it/getinsight-common';
 import { REQUEST_API } from './request-api.ts';
-import { RequestDTO } from "./request-dto.ts";
+import { RequestDTO } from "./request-d-t-o.ts";
 import { PaginatedResponse } from '../../lib/paginated-response.ts';
 
 export class RequestService {
@@ -45,18 +45,17 @@ export class RequestService {
     return null;
   }
 
-  // Ajustei o método para aceitar FormData
   async createRequest(formData: FormData, headers?: Map<string, string>): Promise<HttpRequestResponse | HttpRequestError> {
     try {
       console.log("enviando requisição para:", REQUEST_API.REQUESTS);
 
       // Remove o JSON.stringify e envia o FormData diretamente
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(
-        REQUEST_API.REQUESTS, 
+        REQUEST_API.REQUESTS,
         formData, // FormData sendo passado diretamente
         headers
       );
-      
+
       if (response instanceof HttpRequestResponse) {
         return response;
       } else {
@@ -68,4 +67,19 @@ export class RequestService {
       throw error;
     }
   }
+
+  async updateRequest(id: number, formData: FormData): Promise<void> {
+      const headers = new Map<string, string>();
+      headers.set("Content-Type", "multipart/form-data");
+      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(
+        `${REQUEST_API.REQUESTS}/${id}`,
+        formData,
+        headers
+      );
+
+      if (response instanceof HttpRequestError) {
+        console.error('Erro ao atualizar solicitação');
+      }
+  }
+
 }

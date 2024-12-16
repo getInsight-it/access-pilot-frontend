@@ -1,37 +1,37 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import { DetailDrawer } from '../../drawers/DetailDrawer';
-import { RoleDTO } from '../../../services/role/role-dto';
+import {ColumnDef} from '@tanstack/react-table';
+import {DetailDrawer} from '../../drawers/DetailDrawer';
+import React from "react";
+import {Link} from "react-router-dom";
+import {cn} from "../../../lib/utils.ts";
+import {buttonVariants} from "../../ui/button.tsx";
+import {Eye} from "lucide-react";
+import {RequestDTO} from "../../../services/request/request-d-t-o.ts";
 
-type AccessRequest = {
-  id: number;
-  clientId: string;
-  role: RoleDTO;
-  criacao: string;
-  status: string;
-};
-
-const accessRequests: AccessRequest[] = [];
 
 interface StatusColors {
   [key: string]: string;
   created: string;
-  aprovado: string;
+  approved: string;
   pending: string;
-  rejeitado: string;
-  'em progresso': string;
+  rejected: string;
 }
 
 const statusColors: StatusColors = {
   created: 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
-  aprovado: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
+  approved: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
   pending: 'px-3 py-1 rounded font-normal bg-slate-200 text-slate-800 block text-center w-32 text-sm',
-  rejeitado: 'px-3 py-1 rounded font-normal bg-yellow-200 text-yellow-800 block text-center w-32 text-sm',
-  'em progresso': 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
+  rejected: 'px-3 py-1 rounded font-normal bg-yellow-200 text-yellow-800 block text-center w-32 text-sm',
 };
 
 
-export const columns: ColumnDef<AccessRequest>[] = [
+export const columns = (selectedClient: RequestDTO | undefined,
+                        setSelectedClient: React.Dispatch<React.SetStateAction<RequestDTO | undefined>>,
+                        updateTable?: () => void
+): ColumnDef<RequestDTO>[] => [
+  {
+    accessorKey: 'protocolCode',
+    header: 'PROTOCOLO'
+  },
   {
     accessorKey: 'role.client.name',
     header: 'SISTEMA'
@@ -64,6 +64,16 @@ export const columns: ColumnDef<AccessRequest>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <DetailDrawer data={row.original} />
+    cell: ({ row }) =>
+    <>
+      <Link
+        onClick={() => setSelectedClient(row.original)}
+        to={''}
+        className={cn(buttonVariants({variant: 'link'}))}
+      >
+        <Eye className="mr-2 h-4 w-4"/> Ver detalhes
+      </Link>
+      {(selectedClient === row.original && <DetailDrawer data={selectedClient} onUpdate={updateTable}/>)}
+    </>
   }
 ];

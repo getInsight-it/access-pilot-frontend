@@ -8,6 +8,7 @@ type AccessRequest = {
   id: number;
   system: string;
   role: string;
+  protocolCode: string;
   requester: string;
   date_submission: string;
   status: string;
@@ -31,6 +32,10 @@ const statusColors: StatusColors = {
 };
 
 export const columns: ColumnDef<AccessRequest>[] = [
+  {
+    accessorKey: 'protocolCode',
+    header: 'PROTOCOLO'
+  },
   {
     accessorKey: 'system',
     header: 'SISTEMA'
