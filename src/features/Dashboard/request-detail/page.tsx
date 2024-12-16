@@ -6,13 +6,13 @@ import { RequestDetail } from '../../../components/request-detail/RequestDetail'
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'Solicitações de acesso', link: '/dashboard/access-requests' },
+  { title: 'Minhas solicitações', link: '/dashboard/access-requests' },
   { title: 'Detalhe da solicitação', link: '/dashboard/request-access/create' }
 ];
 export default function Page() {
   return (
     <ScrollArea className="h-full">
-        
+
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         <Breadcrumbs items={breadcrumbItems} />
 
@@ -29,11 +29,11 @@ export default function Page() {
           <Plus className="mr-2 h-4 w-4" /> Adicionar novo
         </Link> */}
       </div>
-      
+
       <Separator />
-      
+
       <RequestDetail />
-      
+
       </div>
     </ScrollArea>
   );
