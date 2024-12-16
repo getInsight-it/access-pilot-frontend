@@ -12,6 +12,7 @@ import { useTheme } from '../../components/layout/ThemeToggle/theme-provider.tsx
 import { Typewriter } from '../../typewriter/Typewriter.tsx';
 import {SummaryDto} from "../../services/summary/summary-dto.ts";
 import {summaryService} from "../../services/summary";
+import { motion } from 'framer-motion';
 
 export default function Dashboard() {
 
@@ -59,7 +60,16 @@ export default function Dashboard() {
       </div> */}
 
       {/* admin dashboard */}
-      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+      <motion.div
+        initial={{
+          opacity: 0
+        }}
+        animate={{
+          opacity: 1,
+          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+        }}
+        className=" flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8"
+      >
         <div className="flex items-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
@@ -67,10 +77,10 @@ export default function Dashboard() {
           {summary && (<Typewriter {...summary}/>)}
         </div>
         <FeatureGrid summary={summary} />
-      </div>
+      </motion.div>
 
       {/* user dashboard */}
-      <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta

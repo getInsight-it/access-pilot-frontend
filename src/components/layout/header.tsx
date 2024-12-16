@@ -23,7 +23,7 @@ export default function Header() {
           <MobileSidebar />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Notifications />
           <UserNav />
           <ThemeToggle />

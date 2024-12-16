@@ -1,124 +1,210 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRef, useState } from 'react'
-import { Bell } from 'lucide-react'
-import { useOutsideClick } from '../hooks/use-outside-click' // Ajuste o caminho do import do seu hook
+import { useEffect, useRef, useState } from 'react'
+import { Bell, X } from 'lucide-react'
+
+// Custom hook for handling outside clicks
+function useOutsideClick(ref: React.RefObject<HTMLElement>, buttonRef: React.RefObject<HTMLElement>, callback: () => void) {
+  const handleClick = (e: MouseEvent) => {
+    if (ref.current && !ref.current.contains(e.target as Node) &&
+        buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
+      callback();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [ref, buttonRef, callback]);
+}
 
 export default function Notifications() {
     const [isOpen, setIsOpen] = useState(false)
-    const dropdownRef = useRef<HTMLDivElement>(null) // Defina o tipo da referência como HTMLDivElement
-    const buttonRef = useRef<HTMLDivElement>(null) // Defina o tipo da referência como HTMLDivElement
+    const [currentImage, setCurrentImage] = useState('front')
+    const [unreadCount, setUnreadCount] = useState(3) // Contador de notificações não lidas
+    const dropdownRef = useRef<HTMLDivElement>(null)
+    const buttonRef = useRef<HTMLButtonElement>(null)
+    const imageRef = useRef<HTMLDivElement>(null)
 
-    useOutsideClick(dropdownRef, (event: MouseEvent) => {
-        if (buttonRef.current && buttonRef.current.contains(event.target as Node)) {
-            // Se o clique for no botão, não fechar o dropdown
-            return;
-        }
-        setIsOpen(false)
+    useOutsideClick(dropdownRef, buttonRef, () => {
+        setIsOpen(false);
     })
 
+    const handleOpenNotifications = () => {
+        setIsOpen((prevState) => !prevState);
+        if (unreadCount > 0) {
+            setUnreadCount(0); // Zera o contador ao abrir as notificações
+        }
+    }
+
+    const handleImageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!imageRef.current) return;
+        
+        const rect = imageRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        
+        const position = (x / width) * 100;
+        
+        if (position < 33) {
+            setCurrentImage('left');
+        } else if (position > 66) {
+            setCurrentImage('right');
+        } else {
+            setCurrentImage('front');
+        }
+    }
+
+    const handleImageMouseLeave = () => {
+        setCurrentImage('front');
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            handleOpenNotifications();
+        }
+    }
+
     return (
-        <>
-            <div className="relative mr-2">
-                <motion.div
-                    ref={buttonRef} // Adicionei a referência ao botão
-                    whileTap={{ opacity: 0.5 }}
-                    onClick={() => setIsOpen(!isOpen)}
+        <div className="flex items-center space-x-4">
+            <div 
+                ref={imageRef}
+                className="w-[60px] h-[60px] bg-red-500 absolute -ml-10 mt-16 cursor-pointer overflow-hidden rounded-full border-2 border-black shadow-xl"
+                onMouseMove={handleImageMouseMove}
+                onMouseLeave={handleImageMouseLeave}
+            >
+                <img
+                    src={`/render/${currentImage}.jpg`}
+                    alt="Profile avatar"
+                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out"
+                    style={{ transform: `translateX(${currentImage === 'left' ? '10%' : currentImage === 'right' ? '-10%' : '0'})` }}
+                />
+            </div>
+            <div className="relative">
+                <motion.button
+                    ref={buttonRef}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleOpenNotifications}
+                    onKeyDown={handleKeyDown}
                     className="
-                    bg-black
+                    relative
+                    bg-gray-800
                     text-white
                     dark:bg-white
-                    dark:text-black
+                    dark:text-gray-800
                     rounded-full
-                    w-8
-                    h-8
-                    grid
+                    w-10
+                    h-10
+                    flex
                     items-center
                     justify-center
-                    text-center
-                    text-gray500
-                    hover:text-gray400
-                    cursor-pointer duration-100 ease-in-out
-                    ">
-                    <a className="leading-6 font-medium">
+                    cursor-pointer
+                    transition-colors
+                    duration-200
+                    hover:bg-gray-700
+                    dark:hover:bg-gray-200
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-offset-2
+                    focus:ring-blue-500
+                    "
+                    aria-label={`Notificações${unreadCount > 0 ? `, ${unreadCount} não lidas` : ''}`}
+                    aria-haspopup="true"
+                    aria-expanded={isOpen}
+                >
+                    {isOpen ? (
+                        <X className="h-5 w-5" />
+                    ) : (
                         <Bell className="h-5 w-5" />
-                    </a>
-                </motion.div>
+                    )}
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs font-bold text-white">
+                            {unreadCount}
+                        </span>
+                    )}
+                </motion.button>
 
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
-                            ref={dropdownRef} // Adicionei a referência ao dropdown
-                            initial={{ opacity: 0, scale: 1 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1 }}
-                            transition={{ type: 'spring' }}
+                            ref={dropdownRef}
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                             className="
-                                        z-10
-                                        py-4
-                                        px-6
-                                        w-80
-                                        bg-white
-                                        dark:bg-black
-                                        border
-                                        shadow-lg
-                                        rounded-xl
-                                        absolute
-                                        top-12
-                                        right-0
-                                        flex
-                                        flex-col
-                                        ">
+                            z-50
+                            py-4
+                            px-6
+                            w-80
+                            bg-white
+                            dark:bg-gray-800
+                            border
+                            border-gray-200
+                            dark:border-gray-700
+                            shadow-lg
+                            rounded-xl
+                            absolute
+                            top-12
+                            right-0
+                            flex
+                            flex-col
+                            "
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="notifications-menu"
+                        >
                             <div className="text-left">
-                                <div className="flex items-center">
-                                    <p className="mr-3 text-md font-medium text-gray-600 dark:text-gray-400">
+                                <div className="flex items-center mb-4">
+                                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                         Notificações
-                                    </p>
+                                    </h3>
                                 </div>
 
-                                <div className="mt-6 flex justify-between items-center">
-                                    <div className="">
-                                        <p className="font-medium text-sm">
-                                            Nova solicitação de acesso.
+                                {[
+                                    { text: "Nova solicitação de acesso.", date: "22/06/2024" },
+                                    { text: "Solicitação XYZ123456 atualizada.", date: "21/06/2024" },
+                                    { text: "Nova solicitação.", date: "20/06/2024" },
+                                ].map((notification, index) => (
+                                    <div 
+                                        key={index} 
+                                        className={`flex justify-between items-center ${index !== 0 ? 'mt-4' : ''} pb-4 ${index !== 2 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
+                                        role="menuitem"
+                                        tabIndex={0}
+                                    >
+                                        <p className="font-medium text-sm text-gray-700 dark:text-gray-300">
+                                            {notification.text}
                                         </p>
+                                        <small className="text-gray-500 dark:text-gray-400 font-normal text-xs">{notification.date}</small>
                                     </div>
-                                    <small className="text-gray500 font-normal text-xs">22/06/2024</small>
-                                </div>
+                                ))}
 
-                                <div className="flex justify-between my-6 items-center">
-                                    <div className="">
-                                        <p className="font-medium text-sm">
-                                            Solicitação XYZ123456 atualizada.
-                                        </p>
-                                    </div>
-                                    <small className="text-gray500 font-normal text-xs">22/06/2024</small>
-                                </div>
-
-                                <div className="flex justify-between mt-4 items-center">
-                                    <div className="">
-                                        <p className="font-medium text-sm">
-                                            Nova solicitação.
-                                        </p>
-                                    </div>
-                                    <small className="text-gray500 font-normal text-xs">22/06/2024</small>
-                                </div>
-
-                                <div className="flex justify-between mt-8 mb-4 items-center">
-                                    <button className="
-                                                      font-medium
-                                                      text-sm
-                                                      text-blue
-                                                      hover:text-gray500
-                                                      absolute
-                                                      ">
+                                <div className="mt-6 text-center">
+                                    <button 
+                                        className="
+                                        font-medium
+                                        text-sm
+                                        text-blue-600
+                                        hover:text-blue-800
+                                        dark:text-blue-400
+                                        dark:hover:text-blue-300
+                                        transition-colors
+                                        duration-200
+                                        focus:outline-none
+                                        focus:underline
+                                        "
+                                        role="menuitem"
+                                    >
                                         Ver todas
                                     </button>
                                 </div>
-
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-        </>
+        </div>
     )
 }
+

@@ -14,6 +14,7 @@ import HighlightLoader from './components/highlightloader/HighLightLoader.tsx';
 function App() {
   const navigate = useNavigate();
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  const setUserRoles = useAuthStore((state) => state.setRoles);
   const [isInitialized, setIsInitialized] = useState(false); // Estado de inicialização
 
   const init = () => {
@@ -22,6 +23,10 @@ function App() {
       setIsAuthenticated(authenticated);
 
       if (authenticated) {
+
+        setUserRoles(authService.getRoles());
+        console.log(useAuthStore.getState().roles);
+
         const currentRoute = window.location.pathname;
 
         if (currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute.startsWith('/dashboard')) {

@@ -1,26 +1,3 @@
-// import { authService } from '../../services/auth';
-// import useAuthStore from '../../store/authStore.ts';
-
-// const Login = () => {
-//   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-//   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-
-//   const signIn = async () => {
-//     await authService.signIn();
-//   };
-
-//   return (
-//     <>
-//       <p>Login</p>
-//       <p>[Login] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-//       <button type="button" onClick={ signIn }>Entrar</button>
-//     </>
-//   )
-// };
-
-// export default Login;
-
-
 import { Link } from "react-router-dom";
 import App from "../../components/canvas/App";
 import { Logo } from "../../components/Logo";
@@ -60,9 +37,7 @@ export default function Login() {
               Entrar
             </Button>
             
-            <p>[Login] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-            
-            <Link to="/dashboard">Ir para Dashboard</Link>
+            <p>Está autenticado? { isAuthenticated ? <strong className="text-green-600">Sim</strong> : <strong className="text-red-600">Não</strong> }</p>
           </div>
 
         </div>

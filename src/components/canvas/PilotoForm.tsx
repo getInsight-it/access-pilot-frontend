@@ -138,4 +138,3 @@ export function PilotoForm({ currentAnimation }: PersonagemProps) {
 }
 
 useGLTF.preload('/models/piloto-form-transformed.glb')
-

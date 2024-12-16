@@ -713,16 +713,33 @@ export function RequestAccessForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 relative">
 
-          
-
-          <div
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: -500
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              transition: { duration: 0.8, delay: 0.3, ease: "easeOut" }
+            }}
             className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-20 lg:-left-72 z-10 pointer-events-none ${hasError ? 'hidden lg:-bottom-60 lg:-left-32' : ''} ${!showContent && !hasError ? '-bottom-80 -left-96 lg:-bottom-40 lg:left-2' : ''}`}
           >
             <PilotoForm currentAnimation={currentAnimation} />
-          </div>
+          </motion.div>
 
           {showContent && !hasError && (
-            <div className="  grid grid-cols-1 lg:grid-cols-[360px,1fr] xl:grid-cols-[400px,1fr] gap-4 ">
+            
+            <motion.div
+              initial={{
+                opacity: 0
+              }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
+              }}
+              className="  grid grid-cols-1 lg:grid-cols-[360px,1fr] xl:grid-cols-[400px,1fr] gap-4 "
+            >
 
 
               <div className="relative py-8 rounded-xl space-y-10 sm:space-y-12 min-h-[280px] sm:min-h-[340px]">
@@ -748,19 +765,21 @@ export function RequestAccessForm() {
                           ? "bg-red-500 hover:bg-red-700 text-white"
                           : "bg-[var(--bg-indicator)]"
                       )}
-                      initial={false}
+                      // initial={false}
+                      initial={{ opacity: 0, x: -500 }}
                       animate={{
                         scale: step.id === currentStep ? 1.1 : 1,
-                        transition: { duration: 0.3, ease: "easeInOut" }
+                        transition: { duration: 0.3, ease: "easeOut", delay: 0.3 },
+                        opacity: 1, x: 0
                       }}
                       onClick={() => handleStepClick(step.id)}
                     >
 
                       <motion.span
                         key={step.number}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                       >
                         {stepsState[step.id] === 'completed' ? (
@@ -780,30 +799,38 @@ export function RequestAccessForm() {
                       </h3>
                     </div>
 
-                    <div className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-400"></div>
+                    <motion.div
+                      initial={{ opacity: 0, y: -100 }}  
+                      animate={{
+                        opacity: 1,
+                        y: 0
+                      }}
+                      transition={{ duration: 0.8 }}
+
+                      className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"
+                    >
+                      </motion.div>
 
                     {index < steps.length - 1 && (
                       <motion.div
                         className="absolute left-5 top-10 w-[2px] h-[calc(100%+24px)]"
-                        initial={{ backgroundColor: "#374151" }}
+                        initial={{ backgroundColor: "#b2b2b2", y: -500 }}
+                        
                         animate={{
                           backgroundColor: stepsState[step.id] === 'completed' && stepsState[step.id + 1] === 'completed' ? "#22c55e" : "#b2b2b2",
-                          opacity: step.id < currentStep ? 1 : 0
+                          opacity: step.id < currentStep ? 1 : 0,
+                          y: 0,
                         }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.3, delay: 0.5 }}
                       />
                     )}
 
                   </motion.div>
                 ))}
 
-
-
               </div>
 
-
-
-              <div className="bg-secondary p-6 rounded-xl">
+              <div className="bg-secondary p-6 rounded-xl min-h-[640px] relative">
                 <div className="mb-8 min-h-[480px]">
                   <p className="text-gray-600 mb-2">Passo {currentStep}/{steps.length}</p>
                   <AnimatePresence mode="wait">
@@ -820,7 +847,7 @@ export function RequestAccessForm() {
                 </div>
 
 
-                <div className=" flex gap-x-4 mt-4">
+                <div className=" absolute bottom-6 flex gap-x-4 mt-4">
                   <Button
                     type="button"
                     variant="ghost"
@@ -850,7 +877,7 @@ export function RequestAccessForm() {
               </div>
 
 
-            </div>
+            </motion.div>
           )}
 
           {hasError && (
@@ -912,9 +939,6 @@ export function RequestAccessForm() {
           )}
 
           <StepLoader loading={loading} onClose={handleLoaderClose} />
-
-
-
 
         </form>
       </Form>

@@ -1,5 +1,7 @@
 import { AuthInitEvent, KeycloakService } from '@getinsight.it/getinsight-common';
 import { BehaviorSubject } from 'rxjs';
+import JWTUtils from '../../utils/JWTUtils';
+import { KeycloakRoles } from '@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles';
 
 export class AuthService {
 
@@ -46,4 +48,9 @@ export class AuthService {
   onSignOutEvent(): BehaviorSubject<boolean> {
     return this.keycloakService.onSignOutEvent() as BehaviorSubject<boolean>;
   }
+
+  getRoles(): KeycloakRoles | undefined {
+    return this.keycloakService.getRoles();
+  }
+
 }

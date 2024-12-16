@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import localData from '../../../constants/access-requests.json';
 import { Suspense } from 'react';
 import { RequestAccessDrawer } from '../../../components/drawers/RequestAccessDrawer';
+import { motion } from 'framer-motion';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -32,7 +33,16 @@ function Page() {
 
   return (
     <>
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+      <motion.div
+        initial={{
+          opacity: 0
+        }}
+        animate={{
+          opacity: 1,
+          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+        }}
+        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
+      >
         <Breadcrumbs items={breadcrumbItems} />
 
         <div className="flex items-start justify-between">
@@ -61,7 +71,7 @@ function Page() {
           data={requests}
           pageCount={pageCount}
         />
-      </div>
+      </motion.div>
     </>
   );
 }
