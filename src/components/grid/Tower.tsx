@@ -7,7 +7,7 @@ import { Grid, Home, Settings, User } from "lucide-react";
 
 export const Tower = () => {
   return (
-    <div className="col-span-1 h-[600px] lg:col-span-4 lg:h-[818px] 2xl:h-[842px]">
+    <div className="col-span-1 h-[600px] lg:col-span-4 lg:h-[842px] 2xl:h-[842px]">
       <Card>
         <PulseLine />
 

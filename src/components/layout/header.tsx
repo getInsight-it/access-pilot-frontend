@@ -2,9 +2,10 @@ import ThemeToggle from '../../components/layout/ThemeToggle/theme-toggle';
 import { cn } from '../../lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
-import Notifications from '../Notifications';
 import ThemedLogo from './ThemedLogo';
 import { Link } from 'react-router-dom';
+import Notifications from '../notifications/Notifications';
+import Scene from '../canvas/Head';
 
 export default function Header() {
   return (
@@ -27,6 +28,7 @@ export default function Header() {
           <Notifications />
           <UserNav />
           <ThemeToggle />
+          {/* <Scene /> */}
         </div>
       </nav>
     </div>

@@ -18,6 +18,7 @@ export interface NavItem {
   icon?: keyof typeof Icons;
   label?: string;
   description?: string;
+  approver?: boolean;
 }
 
 export interface NavItemWithChildren extends NavItem {

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Bell, X } from 'lucide-react'
 import { Link } from 'react-router-dom';
+import { PilotMessages } from './PilotMessages';
 
 // Custom hook for handling outside clicks
 function useOutsideClick(ref: React.RefObject<HTMLElement>, buttonRef: React.RefObject<HTMLElement>, callback: () => void) {
@@ -69,19 +70,24 @@ export default function Notifications() {
 
     return (
         <div className="flex items-center space-x-4">
-            <div 
-                ref={imageRef}
-                className="w-[60px] h-[60px] bg-red-500 absolute -ml-10 mt-16 cursor-pointer overflow-hidden rounded-full border-2 border-black shadow-xl"
-                onMouseMove={handleImageMouseMove}
-                onMouseLeave={handleImageMouseLeave}
-            >
-                <img
-                    src={`/render/${currentImage}.jpg`}
-                    alt="Profile avatar"
-                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out"
-                    style={{ transform: `translateX(${currentImage === 'left' ? '10%' : currentImage === 'right' ? '-10%' : '0'})` }}
-                />
-            </div>
+            {/* {unreadCount > 0 && (
+            <>
+                <div 
+                    ref={imageRef}
+                    className="w-[60px] h-[60px] bg-red-500 absolute -ml-10 mt-16 cursor-pointer overflow-hidden rounded-full border-2 border-black shadow-xl"
+                    onMouseMove={handleImageMouseMove}
+                    onMouseLeave={handleImageMouseLeave}
+                >
+                    <img
+                        src={`/render/${currentImage}.jpg`}
+                        alt="Profile avatar"
+                        className="w-full h-full object-cover transition-transform duration-300 ease-in-out"
+                        style={{ transform: `translateX(${currentImage === 'left' ? '10%' : currentImage === 'right' ? '-10%' : '0'})` }}
+                    />
+                </div>
+                <PilotMessages />
+            </>
+            )} */}
             <div className="relative">
                 <motion.button
                     ref={buttonRef}
@@ -182,24 +188,24 @@ export default function Notifications() {
                                 ))}
 
                                 <div className="mt-6 text-right">
-                                    <button 
-                                        className="
-                                        font-medium
-                                        text-sm
-                                        text-blue-600
-                                        hover:text-blue-800
-                                        dark:text-blue-400
-                                        dark:hover:text-blue-300
-                                        transition-colors
-                                        duration-200
-                                        focus:outline-none
-                                        focus:underline
-                                        "
-                                        role="menuitem"
-                                    >
+                                    <Link
+                                      onClick={handleOpenNotifications}
+                                      to="/dashboard/notifications"
+                                      className="
+                                      font-medium
+                                      text-sm
+                                      text-blue-600
+                                      hover:text-blue-800
+                                      dark:text-blue-400
+                                      dark:hover:text-blue-300
+                                      transition-colors
+                                      duration-200
+                                      focus:outline-none
+                                      focus:underline
+                                      "
+                                      role="menuitem">
                                         Ver todas
-                                    </button>
-                                    <Link to="/dashboard/notifications" className="">Ver todas</Link>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>

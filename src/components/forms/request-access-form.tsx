@@ -77,7 +77,12 @@ const formSchema = z.object({
     .string()
     .min(10, { message: "Deve conter ao menos 10 caracteres." })
     .max(160, { message: "Não deve exceder 160 caracteres." }),
-  attachments: z.array(z.instanceof(File)).optional(),
+  attachments: z
+    .array(z.instanceof(File))
+    .optional()
+    .refine((val) => !val || val.length > 0, {
+      message: "Se fornecido, deve conter pelo menos um arquivo.",
+    }),
 });
 
 export function RequestAccessForm() {
@@ -620,6 +625,7 @@ export function RequestAccessForm() {
         toast({
           title: "Arquivo muito grande",
           description: `${file.name} excede o tamanho máximo de 5MB.`,
+          variant: "destructive",
         });
         return false;
       }
@@ -630,6 +636,7 @@ export function RequestAccessForm() {
       toast({
         title: "Limite de arquivos excedido",
         description: "O número máximo de arquivos permitidos é 3.",
+        variant: "destructive",
       });
       return;
     }
@@ -805,7 +812,7 @@ export function RequestAccessForm() {
                         opacity: 1,
                         y: 0
                       }}
-                      transition={{ duration: 0.8 }}
+                      transition={{ duration: 2.8 }}
 
                       className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"
                     >

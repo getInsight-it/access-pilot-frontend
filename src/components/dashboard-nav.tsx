@@ -48,7 +48,7 @@ export function DashboardNav({
         {items.map((item, index) => {
           const Icon = Icons[item.icon || 'arrowRight'];
           return (
-            item.href && (
+            (item.href) && (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                 <Link

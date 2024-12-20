@@ -3,8 +3,12 @@ import { create } from 'zustand'
 
 interface UserInfo {
   id: string;
-  name: string;
-  email: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  isApprover?: boolean;
+  externalId?: string;
 }
 
 interface AuthState {

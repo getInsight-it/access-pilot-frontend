@@ -1,4 +1,4 @@
-import {NavItem} from '@/types';
+import { NavItem } from '@/types';
 
 export type System = {
   id: number;
@@ -147,13 +147,21 @@ export type AccessRequests = {
   status: string;
 };
 
-export const navItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: 'dashboard',
-    label: 'Dashboard'
-  },
+const exitNavItem: NavItem = {
+  title: 'Sair',
+  href: '/',
+  icon: 'login',
+  label: 'login'
+};
+
+const helpNavItem: NavItem = {
+  title: 'Ajuda e suporte',
+  href: '/dashboard/help',
+  icon: 'question',
+  label: 'Ajuda e suporte'
+};
+
+const requestNavItems: NavItem[] = [
   {
     title: 'Minhas solicitações',
     href: '/dashboard/my-access-requests',
@@ -165,13 +173,23 @@ export const navItems: NavItem[] = [
     href: '/dashboard/request-access',
     icon: 'key',
     label: 'Solicitar acesso'
-  },
+  }
+];
+
+export const commonNavItems: NavItem[] = [
+  ...requestNavItems,
+  helpNavItem,
+  exitNavItem,
+];
+
+export const navItems: NavItem[] = [
   {
-    title: 'Ajuda e suporte',
-    href: '/dashboard/help',
-    icon: 'question',
-    label: 'Ajuda e suporte'
+    title: 'Dashboard',
+    href: '/dashboard',
+    icon: 'dashboard',
+    label: 'Dashboard'
   },
+  ...requestNavItems,
   {
     title: 'Gerenciar sistemas',
     href: '/dashboard/systems',
@@ -184,10 +202,6 @@ export const navItems: NavItem[] = [
     icon: 'bookuser',
     label: 'Solicitações de acesso'
   },
-  {
-    title: 'Sair',
-    href: '/',
-    icon: 'login',
-    label: 'login'
-  }
+  helpNavItem,
+  exitNavItem
 ];

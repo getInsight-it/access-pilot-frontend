@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { DashboardNav } from '../../components/dashboard-nav';
-import { navItems } from '../../constants/data';
+import { navItems, commonNavItems } from '../../constants/data';
 import { cn } from '../../lib/utils';
 import { ChevronLeft } from 'lucide-react';
 import { useSidebar } from '../../hooks/useSidebar';
+import useAuthStore from '../../store/authStore';
 
 type SidebarProps = {
   className?: string;
@@ -12,6 +13,7 @@ type SidebarProps = {
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
   const [status, setStatus] = useState(false);
+  const user = useAuthStore((state: any) => state.user);
 
   const handleToggle = () => {
     setStatus(true);
@@ -39,7 +41,7 @@ export default function Sidebar({ className }: SidebarProps) {
           className="px-0 py-2"
         >
           <div className="mt-6 space-y-1">
-            <DashboardNav items={navItems} />
+            <DashboardNav items={user?.isApprover ? navItems : commonNavItems } />
           </div>
         </div>
       </div>
