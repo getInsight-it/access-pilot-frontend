@@ -12,6 +12,7 @@ import {Heading} from '../../components/ui/heading';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../components/ui/select';
 import {toast, useToast} from '../ui/use-toast';
 import {clientService} from "../../services/client";
+import { Checkbox } from '../ui/checkbox';
 
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -124,8 +125,16 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   });
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Heading title={title} description={description}/>
+      <div className="flex items-center justify-between pt-6">
+        {/* <Heading title={title} description={description}/> */}
+        <div className="flex flex-col">
+          <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
+            {title}
+          </h2>
+          {/* <p>
+            {description}
+          </p> */}
+        </div>
         {initialData && (
           <Button
             disabled={loading}
@@ -138,10 +147,10 @@ export const SystemForm: React.FC<SystemFormProps> = ({
         )}
       </div>
 
-      <Separator/>
+      {/* <Separator/> */}
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
+          <div className="">
             <div className="flex flex-col gap-y-4">
               <FormField
                 name="name"
@@ -196,11 +205,16 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                 render={({field}) => (
                   <FormItem>
                     <FormLabel>Gerenciado</FormLabel>
-                    <FormControl>
-                      <Input {...field}
-                              type="checkbox"
-                             placeholder="Gerenciado"
-                             disabled={loading}/>
+                    <FormControl className="flex flex-col">
+                      <Checkbox
+                        className="w-10 h-10 grid items-center"
+                        {...field}
+                        disabled={loading}
+                      />
+                      {/* <Input {...field}
+                        type="checkbox"
+                        placeholder="Gerenciado"
+                        disabled={loading}/> */}
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
@@ -240,15 +254,17 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               />
             </div>
             {/*<SystemImageUpload />*/}
+            
           </div>
-          <div className="hidden lg:block mr-auto mt-6">
-            <Button disabled={loading} className="ml-auto" type="submit">
+          <div className="mt-10">
+            <Button disabled={loading} className="" type="submit">
               {action}
             </Button>
           </div>
         </form>
       </FormProvider>
-      <Separator/>
+      {/* <Separator /> */}
+      
     </>
   );
 };

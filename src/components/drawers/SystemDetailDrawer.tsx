@@ -61,7 +61,7 @@ export const SystemDetailDrawer: React.FC<SystemDetailDrawerProps> = ({data}) =>
             <div className="w-full max-w-[340px] mt-6 ml-6">
 
               <h2 className="mb-3 text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
-                Detlahes do sistema
+                Detalhes do sistema
               </h2>
 
               <div className="mt-6 mb-8 w-full grid grid-cols-1 gap-y-2">
@@ -176,7 +176,7 @@ const DragCloseDrawer = ({open, setOpen, children}: Props) => {
                 onPointerDown={(e) => {
                   controls.start(e);
                 }}
-                className="h-6 w-6 cursor-grab touch-none rounded-full  active:cursor-grabbing"
+                className="block md:hidden h-6 w-6 cursor-grab touch-none rounded-full  active:cursor-grabbing"
               >
                 <Hand className="w-6 h-6"/>
               </button>

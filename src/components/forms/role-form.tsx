@@ -72,8 +72,16 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Heading title={title} description={description}/>
+      <div className="flex items-center justify-between pt-6">
+        {/* <Heading title={title} description={description}/> */}
+        <div className="flex flex-col">
+          <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
+            {title}
+          </h2>
+          {/* <p>
+            {description}
+          </p> */}
+        </div>
         {initialData && (
           <Button
             disabled={loading}
@@ -84,10 +92,10 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
           </Button>
         )}
       </div>
-      <Separator/>
+
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="gap-x-8 gap-y-4 md:grid grid-cols-1 lg:grid-cols-2 max-w-5xl">
+          <div className="">
             <div className="flex flex-col gap-y-4">
               <FormField
                 name="name"
@@ -155,14 +163,13 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
               />
             </div>
           </div>
-          <div className="hidden lg:block mr-auto mt-6">
-            <Button disabled={loading} className="ml-auto" type="submit">
+          <div className="mt-10">
+            <Button disabled={loading} className="" type="submit">
               {action}
             </Button>
           </div>
         </form>
       </FormProvider>
-      <Separator/>
     </>
   );
 };

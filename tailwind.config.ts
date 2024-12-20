@@ -103,7 +103,12 @@ const config = {
   		},
   		transitionDuration: {
   			'1500': '1500ms'
-  		}
+  		},
+
+		width: {
+			'112': '28rem', // 448px
+			'128': '32rem', // 512px
+		},
   	}
   },
   plugins: [require("tailwindcss-animate"), addVariablesForColors],
