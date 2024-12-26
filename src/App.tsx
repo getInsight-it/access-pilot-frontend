@@ -120,8 +120,8 @@ function App() {
       const user = {
         id: fetchedUserData.externalId,
         email: fetchedUserData.email,
-        isApprover: fetchedUserData.isApprover,
-        // isApprover: true,
+        // isApprover: fetchedUserData.isApprover,
+        isApprover: true,
       }
       if (user) {
         setUserInfo(user)
@@ -140,7 +140,7 @@ function App() {
         setUserRoles(authService.getRoles());
         console.log(useAuthStore.getState().roles);
 
-        const currentRoute = window.location.pathname;
+        // const currentRoute = window.location.pathname;
 
         // if (currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute.startsWith('/dashboard')) {
         //   return;
