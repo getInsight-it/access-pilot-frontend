@@ -80,9 +80,9 @@ const formSchema = z.object({
   attachments: z
     .array(z.instanceof(File))
     .optional()
-    .refine((val) => !val || val.length > 0, {
-      message: "Se fornecido, deve conter pelo menos um arquivo.",
-    }),
+    // .refine((val) => !val || val.length > 0, {
+    //   message: "Se fornecido, deve conter pelo menos um arquivo.",
+    // }),
 });
 
 export function RequestAccessForm() {

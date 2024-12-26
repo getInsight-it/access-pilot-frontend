@@ -16,7 +16,7 @@ export default function NotificationDetails({ notification }: NotificationDetail
   if (!notification) {
     return (
       <Card>
-        <CardContent>
+        <CardContent className='flex items-center justify-center h-96'>
           <p className="text-center text-gray-500">Selecione uma notificação para ver os detalhes</p>
         </CardContent>
       </Card>
