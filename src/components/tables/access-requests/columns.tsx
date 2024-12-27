@@ -3,18 +3,13 @@ import { CellAction } from './cell-action';
 import AccessRequests from '../../../constants/access-requests.json';
 import { Checkbox } from '../../../components/ui/checkbox';
 import { DetailDrawer } from '../../../components/drawers/DetailDrawer';
+import {Link} from "react-router-dom";
+import {cn} from "../../../lib/utils.ts";
+import {buttonVariants} from "../../ui/button.tsx";
+import {Eye} from "lucide-react";
+import React from "react";
+import {RequestDTO} from "../../../services/request/request-d-t-o.ts";
 
-type AccessRequest = {
-  id: number;
-  system: string;
-  role: string;
-  protocolCode: string;
-  requester: string;
-  date_submission: string;
-  status: string;
-};
-
-const accessRequests: AccessRequest[] = AccessRequests as AccessRequest[];
 
 interface StatusColors {
   [key: string]: string;
@@ -31,7 +26,10 @@ const statusColors: StatusColors = {
   'em progresso': 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
 };
 
-export const columns: ColumnDef<AccessRequest>[] = [
+export const columns = (selectedClient: RequestDTO | undefined,
+                        setSelectedClient: React.Dispatch<React.SetStateAction<RequestDTO | undefined>>,
+                        updateTable?: () => void
+): ColumnDef<RequestDTO>[] => [
   {
     accessorKey: 'protocolCode',
     header: 'PROTOCOLO'
@@ -63,8 +61,17 @@ export const columns: ColumnDef<AccessRequest>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <DetailDrawer />
-    // cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) =>
+      <>
+        <Link
+          onClick={() => setSelectedClient(row.original)}
+          to={''}
+          className={cn(buttonVariants({variant: 'link'}))}
+        >
+          <Eye className="mr-2 h-4 w-4"/> Ver detalhes
+        </Link>
+        {(selectedClient === row.original && <DetailDrawer data={selectedClient} onUpdate={updateTable}/>)}
+      </>
   }
 ];
 

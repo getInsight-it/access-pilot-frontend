@@ -12,19 +12,23 @@ import {STORAGE_API} from "../../services/storage/storage-api.ts";
 import {catchError, from, tap} from "rxjs";
 import {requestService} from "../../services/request";
 import {toast} from "../ui/use-toast.ts";
+import useAuthStore from "../../store/authStore.ts";
 
 export const Detail = ({
                          data,
                          attachments,
-                         onUpdate
+                         onUpdate,
+                         origin
                        }: {
-  data: any,
-  attachments: StorageDTO[],
-  onUpdate?: () => void
+  data?: any,
+  attachments?: StorageDTO[],
+  onUpdate?: () => void,
+  origin?: string
 }) => {
 
   const selected = OPTIONS.filter((o) => o.value === data.status).map((o) => o.value)[0];
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
+  const userInfo = useAuthStore((state) => state.user);
 
   const handleDownload = async (fileId: string) => {
     const token = await authService.getBearerToken()
@@ -33,56 +37,80 @@ export const Detail = ({
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `${token}`
-    }})
-      await apiClient.get(`${STORAGE_API.DOWNLOAD}/${fileId}?registerDownload=true`, {
-         responseType: 'blob',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((response) => {
-        const url = window.URL.createObjectURL(response.data as Blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = response.headers['content-disposition']?.match(/filename="(.+)"/)[1];
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
+      }
+    })
+    await apiClient.get(`${STORAGE_API.DOWNLOAD}/${fileId}?registerDownload=true`, {
+      responseType: 'blob',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(response.data as Blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = response.headers['content-disposition']?.match(/filename="(.+)"/)[1];
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
     //TODO: analisar possivel bug no download de arquivos relacionado com biblioteca de http
-/*      const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
-      if (response instanceof HttpRequestResponse){
-        const contentDisposition = response.headers.get("content-disposition")
-        const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
-        const fileName = fileNameMatch ? fileNameMatch[1] : `arquivo_desconhecido`;
+    /*      const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
+          if (response instanceof HttpRequestResponse){
+            const contentDisposition = response.headers.get("content-disposition")
+            const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
+            const fileName = fileNameMatch ? fileNameMatch[1] : `arquivo_desconhecido`;
 
-      //const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
-        const blob = new Blob([response.data], { type: 'image/png' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }*/
+          //const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
+            const blob = new Blob([response.data], { type: 'image/png' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }*/
   };
 
-
-  const handleReject = (request: {id: number, description: string}) => {
+  const handleCancel = (request: { id: number, description: string }) => {
 
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'REJECTED', description: request.description }));
+    formData.append("request", JSON.stringify({status: 'CANCELED', description: request.description}));
 
     from(requestService.updateRequest(request.id, formData)).pipe(
       tap(() => {
+          toast({
+            title: 'Sucesso!',
+            description: `Solicitação cancelada com sucesso.`,
+          });
+          onUpdate?.();
+        }
+      ), catchError((error) => {
         toast({
-          title: 'Sucesso!',
-          description: `Solicitação rejeitada com sucesso.`,
+          title: 'Erro!',
+          description: `Erro ao cancelar solicitação.`,
+          variant: "destructive",
         });
-        onUpdate?.();
-      }
-    ), catchError((error) => {
+        console.error('Erro ao cancelar solicitação', error);
+        return [];
+      })).subscribe();
+  }
+
+  const handleReject = (request: { id: number, description: string }) => {
+
+    const formData = new FormData();
+    formData.append("request", JSON.stringify({status: 'REJECTED', description: request.description}));
+
+    from(requestService.updateRequest(request.id, formData)).pipe(
+      tap(() => {
+          toast({
+            title: 'Sucesso!',
+            description: `Solicitação rejeitada com sucesso.`,
+          });
+          onUpdate?.();
+        }
+      ), catchError((error) => {
         toast({
           title: 'Erro!',
           description: `Erro ao rejeitar solicitação.`,
@@ -93,19 +121,19 @@ export const Detail = ({
       })).subscribe();
   }
 
-  const handleApprove = (request: {id: number, description: string}) => {
+  const handleApprove = (request: { id: number, description: string }) => {
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'APPROVED', description: request.description }));
+    formData.append("request", JSON.stringify({status: 'APPROVED', description: request.description}));
 
     from(requestService.updateRequest(request.id, formData)).pipe(
       tap(() => {
-        toast({
-          title: 'Sucesso!',
-          description: `Solicitação aprovada com sucesso.`,
-        });
-        onUpdate?.();
-      }
-    ), catchError((error) => {
+          toast({
+            title: 'Sucesso!',
+            description: `Solicitação aprovada com sucesso.`,
+          });
+          onUpdate?.();
+        }
+      ), catchError((error) => {
         toast({
           title: 'Erro!',
           description: `Erro ao aprovar solicitação.`,
@@ -117,14 +145,15 @@ export const Detail = ({
   }
 
   const isFinished = ['APPROVED', 'REJECTED'].includes(data.status);
+  const canCancel = ['CREATED', 'PENDING' ].includes(data.status);
   return (
     <div className="w-full max-w-xl mt-6">
 
       <h2 className="mb-3 text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
-        Acompanhar solicitação
+        Acompanhar solicitação {userInfo?.id === data?.requestingUser?.externalId ? 'criada por você ' : ''}
       </h2>
       <div className="w-full">
-        <p className="font-bold mb-3">Protocolo:</p>
+        <p className="font-bold mb-1">Protocolo:</p>
         <p>{data?.protocolCode}</p>
       </div>
       <div className="mt-6 w-full grid grid-cols-2 gap-y-4">
@@ -194,33 +223,43 @@ export const Detail = ({
           </CheckPill>
         ))}
       </div>
-
-      {!isFinished && (
-        <motion.div
-          className="absolute"
-          initial={{y: 12, opacity: 0}}
-          animate={{y: 0, opacity: 1}}
-          exit={{y: -12, opacity: 0}}
-        >
-          <div className="flex gap-x-2">
-            <Clock className="w-5 h-5 text-red-500 mt-1"/>
-            <h2 className="text-lg mb-6">
-              Essa solicitação foi <span className="font-bold">finalizada</span> e aguarda definição.
-            </h2>
-          </div>
-          <div className="w-full flex gap-4">
-            <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
-                    type="submit"
-                    onClick={() => handleReject(data)}>
-              Rejeitar
-            </Button>
-            <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200" type="submit"
-                    onClick={() => handleApprove(data)}>
-              Aprovar
-            </Button>
-          </div>
-        </motion.div>
-      )}
+      {
+          <motion.div
+            className="absolute"
+            initial={{y: 12, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
+            exit={{y: -12, opacity: 0}}
+          >
+            {canCancel && !isFinished && (
+              <div className="flex gap-x-2">
+                <Clock className="w-5 h-5 text-red-500 mt-1"/>
+                <h2 className="text-lg mb-6">
+                  Essa solicitação está aguarda definição.
+                </h2>
+              </div>
+            )}
+            <div className="w-full flex gap-4">
+              {(userInfo?.id === data?.requestingUser?.externalId && origin === 'created' && canCancel) && (
+                <Button className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
+                        type="submit"
+                        onClick={() => handleCancel(data)}>
+                  Cancelar
+                </Button>
+              )}
+              {(!isFinished && origin === 'assigned') && (<>
+                <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
+                        type="submit"
+                        onClick={() => handleReject(data)}>
+                  Rejeitar
+                </Button>
+                <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200" type="submit"
+                        onClick={() => handleApprove(data)}>
+                  Aprovar
+                </Button>
+              </>)}
+            </div>
+          </motion.div>
+      }
     </div>
   );
 };

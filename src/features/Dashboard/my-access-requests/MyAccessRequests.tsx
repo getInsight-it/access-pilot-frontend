@@ -41,7 +41,7 @@ export default function MyAccessRequests() {
   };
 
   const getData = async (page, pageCount) => {
-    const pageResponse = await requestService.getRequestsPaginated(page, pageCount, 'id', 'desc');
+    const pageResponse = await requestService.getRequestsMePaginated(page, pageCount, 'id', 'desc', 'created');
     setRequests(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
   };
@@ -100,7 +100,7 @@ export default function MyAccessRequests() {
           <RequestsTable
             searchKey="clientId"
             pageNo={page} // Passa o valor da página que começa em 1
-            columns={columns(selectedRequest, setSelectedRequest, updateTable)}
+            columns={columns(selectedRequest, setSelectedRequest, updateTable, 'created')}
             totalUsers={totalUsers}
             data={requests}
             pageCount={pageCount}

@@ -32,7 +32,7 @@ export default function Page() {
 
       <Separator />
 
-      <RequestDetail />
+      <RequestDetail origin={origin} />
 
       </div>
     </ScrollArea>

@@ -138,7 +138,7 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
               <Cog className="mr-2 h-4 w-4"/> Sincronizar
             </DropdownMenuItem>
           )}
-          {data.status === 'UNPUBLISHED' && (
+          {data.status !== 'PUBLISHED' && (
             <DropdownMenuItem
               onClick={() => handlePublish(data.id)}
             >

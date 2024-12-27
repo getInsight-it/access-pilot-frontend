@@ -338,6 +338,8 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.ROLES,
             element: <RolesPage />
+            //rota privada
+
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
@@ -387,7 +389,7 @@ export const AppRouter = () => {
 
   if (isAuthenticated) {
     currentRoute = privateCommonRoutes;
-    
+
     if (user?.isApprover) {
       currentRoute = privateApproverRoutes
     }

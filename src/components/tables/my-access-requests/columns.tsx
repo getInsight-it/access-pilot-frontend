@@ -12,6 +12,7 @@ interface StatusColors {
   [key: string]: string;
   created: string;
   approved: string;
+  canceled: string;
   pending: string;
   rejected: string;
 }
@@ -19,6 +20,7 @@ interface StatusColors {
 const statusColors: StatusColors = {
   created: 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
   approved: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
+  canceled: 'px-3 py-1 rounded font-normal bg-red-200 text-red-800 block text-center w-32 text-sm',
   pending: 'px-3 py-1 rounded font-normal bg-slate-200 text-slate-800 block text-center w-32 text-sm',
   rejected: 'px-3 py-1 rounded font-normal bg-yellow-200 text-yellow-800 block text-center w-32 text-sm',
 };
@@ -26,7 +28,8 @@ const statusColors: StatusColors = {
 
 export const columns = (selectedClient: RequestDTO | undefined,
                         setSelectedClient: React.Dispatch<React.SetStateAction<RequestDTO | undefined>>,
-                        updateTable?: () => void
+                        updateTable?: () => void,
+                        origin?: string
 ): ColumnDef<RequestDTO>[] => [
   {
     accessorKey: 'protocolCode',
@@ -73,7 +76,7 @@ export const columns = (selectedClient: RequestDTO | undefined,
       >
         <Eye className="mr-2 h-4 w-4"/> Ver detalhes
       </Link>
-      {(selectedClient === row.original && <DetailDrawer data={selectedClient} onUpdate={updateTable}/>)}
+      {(selectedClient === row.original && <DetailDrawer data={selectedClient} onUpdate={updateTable} origin={origin}/>)}
     </>
   }
 ];

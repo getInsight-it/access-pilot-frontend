@@ -45,6 +45,29 @@ export class RequestService {
     return null;
   }
 
+  async getRequestsMePaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, type?: string): Promise<PaginatedResponse<RequestDTO> | null> {
+    const queryParams = new URLSearchParams({
+      pageIndex: pageIndex.toString(),
+      pageSize: pageSize.toString(),
+      sortField: sortField,
+      sortType: sortType
+    });
+
+    if (type) {
+      queryParams.append('type', type);
+    }
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.ME_REQUESTS}?${queryParams.toString()}`);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as PaginatedResponse<RequestDTO>;
+    } else {
+      console.error('Erro ao buscar clients paginados');
+    }
+
+    return null;
+  }
+
   async createRequest(formData: FormData, headers?: Map<string, string>): Promise<HttpRequestResponse | HttpRequestError> {
     try {
       console.log("enviando requisição para:", REQUEST_API.REQUESTS);

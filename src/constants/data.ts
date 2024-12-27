@@ -197,10 +197,10 @@ export const navItems: NavItem[] = [
     label: 'Gerenciar Sistemas'
   },
   {
-    title: 'Solicitações de acesso',
+    title: 'Gerenciar solicitações',
     href: '/dashboard/access-requests',
     icon: 'bookuser',
-    label: 'Solicitações de acesso'
+    label: 'Gerenciar solicitações'
   },
   helpNavItem,
   exitNavItem

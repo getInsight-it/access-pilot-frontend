@@ -11,9 +11,10 @@ import {StorageDTO} from "../../services/storage/storage-dto.ts";
 interface DetailDrawerProps {
   onUpdate?: () => void
   data: RequestDTO;
+  origin?: string;
 }
 
-export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate}) => {
+export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate, origin}) => {
 
   const [open, setOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -47,7 +48,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate}) => {
 
       <DragCloseDrawer open={open} setOpen={setOpen}>
 
-        <RequestDetail attachments={storages} data={data} onUpdate={onUpdate}/>
+        <RequestDetail attachments={storages} data={data} onUpdate={onUpdate} origin={origin}/>
 
       </DragCloseDrawer>
     </div>
