@@ -26,7 +26,7 @@ export const Detail = ({
   origin?: string
 }) => {
 
-  const selected = OPTIONS.filter((o) => o.value === data.status).map((o) => o.value)[0];
+  const selected = OPTIONS.filter((o) => o.value === data?.status).map((o) => o.value)[0];
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
   const userInfo = useAuthStore((state) => state.user);
 
@@ -144,8 +144,8 @@ export const Detail = ({
       })).subscribe();
   }
 
-  const isFinished = ['APPROVED', 'REJECTED'].includes(data.status);
-  const canCancel = ['CREATED', 'PENDING' ].includes(data.status);
+  const isFinished = ['APPROVED', 'REJECTED'].includes(data?.status);
+  const canCancel = ['CREATED', 'PENDING' ].includes(data?.status) && userInfo?.id === data?.requestingUser?.externalId;
   return (
     <div className="w-full max-w-xl mt-6">
 
@@ -239,7 +239,7 @@ export const Detail = ({
               </div>
             )}
             <div className="w-full flex gap-4">
-              {(userInfo?.id === data?.requestingUser?.externalId && origin === 'created' && canCancel) && (
+              {canCancel && (
                 <Button className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
                         type="submit"
                         onClick={() => handleCancel(data)}>

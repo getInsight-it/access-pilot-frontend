@@ -8,6 +8,7 @@ export const PRIVATE_ROUTES = {
   DASHBOARD: '/dashboard',
   MY_ACCESS_REQUESTS: '/dashboard/my-access-requests',
   ACCESS_REQUESTS: '/dashboard/access-requests',
+  ACCESS_REQUESTS_WITH_ID: '/dashboard/access-requests/:id',
   REQUEST_ACCESS: '/dashboard/request-access',
   HELP: '/dashboard/help',
   ERROR: '/dashboard/error',

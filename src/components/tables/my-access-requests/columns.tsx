@@ -6,6 +6,7 @@ import {cn} from "../../../lib/utils.ts";
 import {buttonVariants} from "../../ui/button.tsx";
 import {Eye} from "lucide-react";
 import {RequestDTO} from "../../../services/request/request-d-t-o.ts";
+import {CellAction} from "./cell-action";
 
 
 interface StatusColors {
@@ -67,16 +68,6 @@ export const columns = (selectedClient: RequestDTO | undefined,
   },
   {
     id: 'actions',
-    cell: ({ row }) =>
-    <>
-      <Link
-        onClick={() => setSelectedClient(row.original)}
-        to={''}
-        className={cn(buttonVariants({variant: 'link'}))}
-      >
-        <Eye className="mr-2 h-4 w-4"/> Ver detalhes
-      </Link>
-      {(selectedClient === row.original && <DetailDrawer data={selectedClient} onUpdate={updateTable} origin={origin}/>)}
-    </>
+    cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

@@ -12,13 +12,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { Check, CheckCircle2, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Crown, Pencil, Glasses, Search, CheckCircle, ClipboardList, User } from 'lucide-react';
-import { ScrollArea, ScrollBar } from "../../components/ui/scroll-area";
+import { Check, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Search, ClipboardList, User } from 'lucide-react';
+import { ScrollArea } from "../../components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -46,12 +45,8 @@ import {
   PopoverTrigger,
 } from "../../components/ui/popover";
 import { X } from 'lucide-react';
-import { BackgroundBeamsWithCollision } from "../ui/background-beams-with-collision";
-import { BackgroundLines } from "../ui/background-lines";
-import { Canvas } from "@react-three/fiber";
 import IconRenderer from "../icons/IconRenderer";
 import { PilotoForm } from "../canvas/PilotoForm";
-import Eyes from "../Eyes";
 
 interface Client {
   id: number;
@@ -207,9 +202,9 @@ export function RequestAccessForm() {
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="relative w-96  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
-                    
+
                     <Search className="absolute left-6 top-6 text-primary z-10" />
-                    
+
                     <Input
                       type="text"
                       placeholder="Buscar sistema..."
@@ -238,7 +233,7 @@ export function RequestAccessForm() {
                               >
                                 <MonitorCog className="w-8 h-8 mb-2" />
                                 {selectedClient === client.clientId && <Check className="absolute top-4 right-4 flex-shrink-0" />}
-                                
+
                                 <p>
                                   <span className="font-semibold text-lg">{client.clientId}</span>
                                 </p>
@@ -296,7 +291,7 @@ export function RequestAccessForm() {
                             {role.label}
                           </p>
                         </div>
-                        
+
                       </CardShine>
                     </div>
                   ))}
@@ -360,7 +355,7 @@ export function RequestAccessForm() {
                             <div className="flex items-center">
                               {getFileIcon(file.name)}
                               {/* <span className="overflow-hidden truncate w-40 text-sm ml-2">{file.name}</span> */}
-                            
+
                               <span
                                 className="overflow-hidden truncate w-40 text-sm ml-2"
                                 title={file.name} // Nome completo exibido no tooltip
@@ -463,12 +458,12 @@ export function RequestAccessForm() {
                 <strong>Anexos:</strong>
                 <ul className="space-y-2 mt-4">
                   {attachments.map((file, index) => (
-                    
+
                     <li key={index} className=" bg-white pl-0 pr-2 py-0 rounded flex items-center justify-between">
                       <div className="flex items-center">
-                        
+
                         {getFileIcon(file.name)}
-                        
+
                         <span
                           className="overflow-hidden truncate w-40 text-sm ml-2"
                           title={file.name} // Nome completo exibido no tooltip
@@ -502,16 +497,16 @@ export function RequestAccessForm() {
         } else if (i === 3) {
           newState[i] = form.getValues("description").length >= 10 ? 'completed' : (prevState[i] === 'error' ? 'error' : 'pending');
         } else if (i === 4) {
-          newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10) 
-            ? 'completed' 
+          newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10)
+            ? 'completed'
             : (prevState[i] === 'error' ? 'error' : 'pending');
         }
       }
       return newState;
     });
 
-    if (form.getValues("clientId") && 
-        form.getValues("roleId") && 
+    if (form.getValues("clientId") &&
+        form.getValues("roleId") &&
         form.getValues("description").length >= 10) {
       setCurrentAnimation('hiphop');
     } else {
@@ -546,8 +541,8 @@ export function RequestAccessForm() {
           } else if (i === 3) {
             newState[i] = form.getValues("description").length >= 10 ? 'completed' : 'error';
           } else if (i === 4) {
-            newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10) 
-              ? 'completed' 
+            newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10)
+              ? 'completed'
               : 'error';
           }
         }
@@ -736,7 +731,7 @@ export function RequestAccessForm() {
           </motion.div>
 
           {showContent && !hasError && (
-            
+
             <motion.div
               initial={{
                 opacity: 0
@@ -807,7 +802,7 @@ export function RequestAccessForm() {
                     </div>
 
                     <motion.div
-                      initial={{ opacity: 0, y: -100 }}  
+                      initial={{ opacity: 0, y: -100 }}
                       animate={{
                         opacity: 1,
                         y: 0
@@ -822,7 +817,7 @@ export function RequestAccessForm() {
                       <motion.div
                         className="absolute left-5 top-10 w-[2px] h-[calc(100%+24px)]"
                         initial={{ backgroundColor: "#b2b2b2", y: -500 }}
-                        
+
                         animate={{
                           backgroundColor: stepsState[step.id] === 'completed' && stepsState[step.id + 1] === 'completed' ? "#22c55e" : "#b2b2b2",
                           opacity: step.id < currentStep ? 1 : 0,

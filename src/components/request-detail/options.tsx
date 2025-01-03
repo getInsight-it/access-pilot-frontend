@@ -19,4 +19,9 @@ export const OPTIONS = [
     value: "REJECTED",
     title: "Rejeitado",
   },
+  {
+    id: 5,
+    value: "CANCELED",
+    title: "Cancelado",
+  },
 ];

@@ -14,7 +14,6 @@ import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
 import {clientService} from "../../../services/client";
 import {catchError, finalize, from, tap} from "rxjs";
 import {toast} from "../../ui/use-toast.ts";
-import {PRIVATE_ROUTES} from "../../../constants/routes.ts";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 
 interface CellActionProps {

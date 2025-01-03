@@ -260,6 +260,8 @@ import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
 import PrivateRoute from './components/PrivateRoute';
 import NotificationsPage from './features/Dashboard/notifications/NotificationsPage.tsx';
 import useAuthStore from './store/authStore.ts';
+import RequestDetailPage from "./features/Dashboard/request-detail/request-detail-page.tsx";
+import RequestTestePage from "./features/Dashboard/request-detail/requestTeste.tsx";
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -277,6 +279,10 @@ const privateChildrenCommonRoutes = [
   {
     path: PRIVATE_ROUTES.REQUEST_ACCESS,
     element: <RequestAccess />
+  },
+  {
+    path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
+    element: <RequestDetailPage />
   },
   {
     path: PRIVATE_ROUTES.HELP,
@@ -338,12 +344,14 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.ROLES,
             element: <RolesPage />
-            //rota privada
-
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
             element: <AccessRequests />
+          },
+          {
+            path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
+            element: <RequestDetailPage />
           },
           {
             path: '*',

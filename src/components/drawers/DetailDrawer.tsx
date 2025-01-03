@@ -48,7 +48,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate, origi
 
       <DragCloseDrawer open={open} setOpen={setOpen}>
 
-        <RequestDetail attachments={storages} data={data} onUpdate={onUpdate} origin={origin}/>
+        <RequestDetail attachments={storages} origin={origin}/>
 
       </DragCloseDrawer>
     </div>

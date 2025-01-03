@@ -140,11 +140,11 @@ function App() {
         setUserRoles(authService.getRoles());
         console.log(useAuthStore.getState().roles);
 
-        // const currentRoute = window.location.pathname;
+        const currentRoute = window.location.pathname;
 
-        // if (currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute.startsWith('/dashboard')) {
-        //   return;
-        // }
+        if (currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute.startsWith('/dashboard')) {
+          return;
+        }
 
         // Redirecionar para solicitar acesso
         navigate(PRIVATE_ROUTES.REQUEST_ACCESS);

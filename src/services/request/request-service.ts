@@ -105,4 +105,16 @@ export class RequestService {
       }
   }
 
+  async findRequestById(id: string): Promise<RequestDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}`);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as RequestDTO;
+    } else {
+      console.error('Erro ao buscar solicitação');
+    }
+
+    return null;
+  }
+
 }
