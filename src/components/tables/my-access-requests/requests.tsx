@@ -31,6 +31,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ScrollArea, ScrollBar } from '../../../components/ui/scroll-area';
 
 
+import { Card, CardContent } from '../../../components/ui/card';
+import { RequestDTO } from '../../../services/request/request-d-t-o';
+import { CellAction } from './cell-action';
+import { useMediaQuery } from '../../../hooks/use-media-query';
+
+
 export function RequestsTable<TData, TValue>({
   columns,
   data,
@@ -85,7 +91,7 @@ export function RequestsTable<TData, TValue>({
       { replace: true }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, navigate, pathname, createQueryString]);
 
   // Configuração da tabela
   const table = useReactTable({
@@ -111,6 +117,8 @@ export function RequestsTable<TData, TValue>({
     manualPagination: true,
     manualFiltering: true
   });
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
 
@@ -157,57 +165,81 @@ export function RequestsTable<TData, TValue>({
 
 
       
-      <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
-
-        <Table className="relative">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+      {isMobile ? (
+        <div className="space-y-4">
+          {table.getRowModel().rows.map((row) => (
+            <Card key={row.id}>
+              <CardContent className="p-4">
+                {row.getVisibleCells().map((cell) => {
+                  if (cell.column.id === 'actions') {
+                    return (
+                      <div key={cell.id} className="mt-2">
+                        <CellAction data={row.original as RequestDTO} />
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={cell.id} className="mb-2">
+                      <strong className="">{cell.column.columnDef.header as React.ReactNode}: </strong>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
+          <Table className="relative">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead className="uppercase" key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Sem resultados.
-                  
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    Sem resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      )}
 
       <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
         <div className="flex w-full items-center justify-between">

@@ -68,7 +68,7 @@ export default function Dashboard() {
           opacity: 1,
           transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
         }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8"
+        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
       >
         <div className="flex items-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -80,7 +80,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* user dashboard */}
-      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8 mt-8">
+      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
