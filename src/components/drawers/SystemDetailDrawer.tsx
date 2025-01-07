@@ -39,20 +39,6 @@ export const SystemDetailDrawer: React.FC<SystemDetailDrawerProps> = ({data}) =>
   return (
     <div className="grid place-content-center">
 
-      {/*<Link*/}
-      {/*  onClick={() => setOpen(true)}*/}
-      {/*  to={''}*/}
-      {/*  className={cn(buttonVariants({variant: 'link'}))}*/}
-      {/*>*/}
-      {/*  <Eye className="mr-2 h-4 w-4"/> Ver detalhes*/}
-      {/*</Link>*/}
-      {/* <Button
-        onClick={() => setOpen(true)}
-        className=""
-      >
-        Adicionar nova
-      </Button> */}
-
       <DragCloseDrawer open={open} setOpen={setOpen}>
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2">
 
@@ -73,29 +59,6 @@ export const SystemDetailDrawer: React.FC<SystemDetailDrawerProps> = ({data}) =>
               </div>
             </div>
 
-            {/*<motion.div*/}
-            {/*  initial={{y: 12, opacity: 0}}*/}
-            {/*  animate={{y: 0, opacity: 1}}*/}
-            {/*  exit={{y: -12, opacity: 0}}*/}
-            {/*  className="ml-6"*/}
-            {/*>*/}
-            {/*  <div className="flex gap-x-2">*/}
-            {/*    <h2 className="text-lg font-bold mb-6">*/}
-            {/*      Ações:*/}
-            {/*    </h2>*/}
-            {/*  </div>*/}
-            {/*  <div className="w-full flex gap-4 pointer-events-auto">*/}
-            {/*    {data?.status === 'PUBLISHED' ?*/}
-            {/*      <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"*/}
-            {/*              type="submit" onClick={handleUnpublish}>Despublicar*/}
-
-            {/*      </Button> :*/}
-            {/*      <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"*/}
-            {/*              type="submit" onClick={handlePublish}>*/}
-            {/*        Publicar*/}
-            {/*      </Button>}*/}
-            {/*  </div>*/}
-            {/*</motion.div>*/}
           </div>
           <SystemDetail/>
         </div>

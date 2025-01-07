@@ -46,19 +46,5 @@ export const columns = (
   {
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original}  updateState={setLoading} />
-  },
-  {
-    id: 'details',
-    cell: ({ row }) =>
-      <>
-        <Link
-          onClick={() => setSelectedClient(row.original)}
-          to={''}
-          className={cn(buttonVariants({variant: 'link'}))}
-        >
-          <Eye className="mr-2 h-4 w-4"/> Ver detalhes
-        </Link>
-        {(selectedClient === row.original && <SystemDetailDrawer data={selectedClient} />)}
-      </>
   }
 ];

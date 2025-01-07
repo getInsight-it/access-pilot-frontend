@@ -24,7 +24,7 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [modal, setModal] = useState('');
+  // const [modal, setModal] = useState('');
   const navigate = useNavigate();
 
   const onConfirm = async () => {
@@ -107,7 +107,7 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
 
   return (
     <>
-      {modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)}/> : null}
+      {/*{modal === 'EDIT_SYSTEM' ? <ModalSystemDrawer data={data} open={modal} setOpen={() => setModal(null)}/> : null}*/}
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -125,11 +125,15 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => setModal('EDIT_SYSTEM')}
+            onClick={() => navigate(`/dashboard/systems/${data.clientId}/details`)}
+          >
+            <Eye className="mr-2 h-4 w-4"/> Ver detalhes
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => navigate(`/dashboard/systems/${data.clientId}/edit`)}
           >
             <Eye className="mr-2 h-4 w-4"/> Editar
           </DropdownMenuItem>
-
           {data.managed && (
             <DropdownMenuItem
               onClick={() => handleSync(data.clientId)}

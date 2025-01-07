@@ -256,12 +256,14 @@ import RequestAccess from './features/Dashboard/request-access/RequestAccess.tsx
 import Help from './features/Dashboard/help/Help.tsx';
 import RolesPage from './features/Dashboard/roles/RolesPage.tsx';
 import SystemsPage from './features/Dashboard/systems/SystemsPage.tsx';
-import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
+import NewSystem from './features/Dashboard/systems/NewSystem.tsx';
 import PrivateRoute from './components/PrivateRoute';
 import NotificationsPage from './features/Dashboard/notifications/NotificationsPage.tsx';
 import useAuthStore from './store/authStore.ts';
 import RequestDetailPage from "./features/Dashboard/request-detail/request-detail-page.tsx";
 import RequestTestePage from "./features/Dashboard/request-detail/requestTeste.tsx";
+import {SystemEdit} from "./features/Dashboard/systems/SystemEdit.tsx";
+import {SystemDetail} from "./features/Dashboard/systems/SystemDetail.tsx";
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -336,6 +338,14 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.SYSTEMS,
             element: <SystemsPage />
+          },
+          {
+            path: PRIVATE_ROUTES.SYSTEMS_EDIT,
+            element: <SystemEdit />
+          },
+          {
+            path: PRIVATE_ROUTES.SYSTEMS_DETAILS,
+            element: <SystemDetail />
           },
           {
             path: PRIVATE_ROUTES.NEW_SYSTEM,

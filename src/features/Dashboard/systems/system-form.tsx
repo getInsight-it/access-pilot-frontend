@@ -4,15 +4,15 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Trash} from 'lucide-react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {Input} from '../../components/ui/input';
-import {Button} from '../../components/ui/button';
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '../../components/ui/form';
-import {Separator} from '../../components/ui/separator';
-import {Heading} from '../../components/ui/heading';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../components/ui/select';
-import {toast, useToast} from '../ui/use-toast';
-import {clientService} from "../../services/client";
-import { Checkbox } from '../ui/checkbox';
+import {Input} from '../../../components/ui/input.tsx';
+import {Button} from '../../../components/ui/button.tsx';
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '../../../components/ui/form.tsx';
+import {Separator} from '../../../components/ui/separator.tsx';
+import {Heading} from '../../../components/ui/heading.tsx';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../../components/ui/select.tsx';
+import {toast, useToast} from '../../../components/ui/use-toast.ts';
+import {clientService} from "../../../services/client";
+import { Checkbox } from '../../../components/ui/checkbox.tsx';
 
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -41,12 +41,14 @@ const formSchema = z.object({
 
 interface SystemFormProps {
   initialData: any | null,
-  onSuccessSubmit: () => any
+  onSuccessSubmit: () => any,
+  readonly: boolean
 }
 
 export const SystemForm: React.FC<SystemFormProps> = ({
                                                         initialData,
-                                                        onSuccessSubmit
+                                                        onSuccessSubmit,
+                                                        readonly
                                                       }) => {
   const params = useParams();
   const navigate = useNavigate();
@@ -54,9 +56,34 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(false);
-  const title = initialData ? 'Editar sistema' : 'Adicionar sistema';
-  const description = initialData ? 'Editar um sistema.' : 'Adicionar um novo sistema.';
-  const action = initialData ? 'Salvar alterações' : 'Adicionar sistema';
+  //const description = descriptionMap[getActionStyle()];
+
+
+
+
+  function getActionStyle() {
+    if (readonly) {
+      return 'DETAIL';
+    } else if (initialData && !readonly) {
+      return 'EDIT';
+    }else{
+      return 'CREATE';
+    }
+  }
+
+  const titleMap = {
+    DETAIL: 'Detalhes do sistema',
+    EDIT: 'Editar sistema',
+    CREATE: 'Adicionar sistema'
+  }
+
+
+  const actionMap = {
+    DETAIL: '',
+    EDIT: 'Salvar alterações',
+    CREATE: 'Adicionar sistema'
+  }
+
 
   const status = [
     {_id: 'PUBLISHED', name: 'Publicado'},
@@ -126,25 +153,14 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   return (
     <>
       <div className="flex items-center justify-between pt-6">
-        {/* <Heading title={title} description={description}/> */}
         <div className="flex flex-col">
           <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
-            {title}
+            {titleMap[getActionStyle()]}
           </h2>
           {/* <p>
             {description}
           </p> */}
         </div>
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4"/>
-          </Button>
-        )}
       </div>
 
       {/* <Separator/> */}
@@ -240,7 +256,6 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* @ts-ignore  */}
                         {status.map((status) => (
                           <SelectItem key={status._id} value={status._id}>
                             {status.name}
@@ -253,18 +268,21 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                 )}
               />
             </div>
-            {/*<SystemImageUpload />*/}
-            
           </div>
           <div className="mt-10">
-            <Button disabled={loading} className="" type="submit">
-              {action}
-            </Button>
+            { getActionStyle() === 'DETAIL'
+              ? null :
+              <Button disabled={loading} className="" type="submit">
+                {actionMap[getActionStyle()]}
+              </Button>
+            }
+            <Button
+              className=""
+              onClick={() => navigate(-1)}
+              variant="ghost">Voltar</Button>
           </div>
         </form>
       </FormProvider>
-      {/* <Separator /> */}
-      
     </>
   );
 };
