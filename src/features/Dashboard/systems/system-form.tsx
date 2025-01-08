@@ -135,17 +135,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
     }
   };
 
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      navigate(`/${params.storeId}/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
-  };
+
   const methods = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues

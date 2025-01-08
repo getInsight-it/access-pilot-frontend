@@ -1,12 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import {RoleDTO} from "../../../services/role/role-dto.ts";
-import {Dispatch, SetStateAction} from "react";
 
-
-
-
-export const columns = (setSelectedRole: Dispatch<SetStateAction<RoleDTO>>): ColumnDef<RoleDTO>[] => [
+export const columns = (
+): ColumnDef<RoleDTO>[] => [
   {
     accessorKey: 'name',
     header: 'NOME DA FUNÇÃO'
@@ -21,6 +18,6 @@ export const columns = (setSelectedRole: Dispatch<SetStateAction<RoleDTO>>): Col
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} onEdit={() => setSelectedRole(row.original)} />
+    cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

@@ -264,6 +264,9 @@ import RequestDetailPage from "./features/Dashboard/request-detail/request-detai
 import RequestTestePage from "./features/Dashboard/request-detail/requestTeste.tsx";
 import {SystemEdit} from "./features/Dashboard/systems/SystemEdit.tsx";
 import {SystemDetail} from "./features/Dashboard/systems/SystemDetail.tsx";
+import {RoleEdit} from "./features/Dashboard/roles/RoleEdit.tsx";
+import {RoleDetail} from "./features/Dashboard/roles/RoleDetail.tsx";
+import NewRole from "./features/Dashboard/roles/NewRole.tsx";
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -354,6 +357,18 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.ROLES,
             element: <RolesPage />
+          },
+          {
+            path: PRIVATE_ROUTES.ROLES_EDIT,
+            element: <RoleEdit />
+          },
+          {
+            path: PRIVATE_ROUTES.ROLES_DETAILS,
+            element: <RoleDetail />
+          },
+          {
+            path: PRIVATE_ROUTES.NEW_ROLE,
+            element: <NewRole />
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,

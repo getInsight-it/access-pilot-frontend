@@ -1,18 +1,19 @@
 import * as z from 'zod';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Trash} from 'lucide-react';
-import {useToast} from '../ui/use-toast';
-import {Heading} from "../ui/heading.tsx";
-import {Button} from "../ui/button.tsx";
-import {Separator} from "../ui/separator.tsx";
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
-import {Input} from "../ui/input.tsx";
-import {RoleDTO} from "../../services/role/role-dto.ts";
-import {roleService} from "../../services/role";
+import {useToast} from '../../../components/ui/use-toast.ts';
+import {Heading} from "../../../components/ui/heading.tsx";
+import {Button} from "../../../components/ui/button.tsx";
+import {Separator} from "../../../components/ui/separator.tsx";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../../../components/ui/form.tsx";
+import {Input} from "../../../components/ui/input.tsx";
+import {RoleDTO} from "../../../services/role/role-dto.ts";
+import {roleService} from "../../../services/role";
 import {catchError, finalize, from, tap} from "rxjs";
-import {ClientDTO} from "../../services/client/client-dto.ts";
+import {ClientDTO} from "../../../services/client/client-dto.ts";
+import {useNavigate} from "react-router-dom";
 
 const formSchema = z.object({
   name: z
@@ -29,21 +30,47 @@ interface RoleFormProps {
   client?: ClientDTO,
   onSuccessSubmit?: () => any,
   initialData: RoleDTO | null,
+  readonly : boolean,
 }
 
-export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSuccessSubmit}) => {
+export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly , onSuccessSubmit}) => {
   const {toast} = useToast();
   const [loading, setLoading] = useState(false);
-  const title = initialData ? 'Editar função' : 'Criar nova função';
-  const description = initialData ? 'Editar uma função.' : 'Adicionar uma nova função.';
   const toastMessage = initialData ? 'Função atualizada.' : 'Função criada.';
-  const action = initialData ? 'Salvar alterações' : 'Criar função';
+  const navigate = useNavigate();
   const defaultValues = initialData || {name: '', description: ''};
 
   const methods = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues
   });
+
+  function getActionStyle() {
+    if (readonly) {
+      return 'DETAIL';
+    } else if (initialData && !readonly) {
+      return 'EDIT';
+    }else{
+      return 'CREATE';
+    }
+  }
+
+  function isReadOnly() {
+    return getActionStyle() === 'DETAIL';
+  }
+
+  const titleMap = {
+    DETAIL: 'Detalhes da função',
+    EDIT: 'Editar função',
+    CREATE: 'Criar nova função'
+  }
+
+
+  const actionMap = {
+    DETAIL: '',
+    EDIT: 'Salvar alterações',
+    CREATE: 'Adicionar fução'
+  }
 
   const onSubmit = async (form: RoleDTO) => {
     const role = {
@@ -73,28 +100,15 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
   return (
     <>
       <div className="flex items-center justify-between pt-6">
-        {/* <Heading title={title} description={description}/> */}
         <div className="flex flex-col">
           <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
-            {title}
+            {titleMap[getActionStyle()]}
           </h2>
-          {/* <p>
-            {description}
-          </p> */}
         </div>
-        {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-          >
-            <Trash className="h-4 w-4"/>
-          </Button>
-        )}
       </div>
 
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <FormProvider {...methods} >
+        <form onSubmit={methods.handleSubmit(onSubmit)} >
           <div className="">
             <div className="flex flex-col gap-y-4">
               <FormField
@@ -104,7 +118,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
                     <FormLabel>Nome</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={loading}
+                        disabled={loading || isReadOnly()}
                         placeholder="Nome do sistema"
                         {...field}
                       />
@@ -120,7 +134,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={loading}
+                        disabled={loading || isReadOnly()}
                         placeholder="Descrição do sistema"
                         {...field}
                       />
@@ -136,7 +150,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
                     <FormLabel>Label</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={loading}
+                        disabled={loading || isReadOnly()}
                         placeholder="Label do sistema"
                         {...field}
                       />
@@ -152,7 +166,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
                     <FormLabel>Icon</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={loading}
+                        disabled={loading || isReadOnly()}
                         placeholder="Icon do sistema"
                         {...field}
                       />
@@ -164,9 +178,15 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, onSucces
             </div>
           </div>
           <div className="mt-10">
-            <Button disabled={loading} className="" type="submit">
-              {action}
-            </Button>
+            { getActionStyle() === 'DETAIL' ? null :
+              <Button disabled={loading || isReadOnly()} className="" type="submit">
+                {actionMap[getActionStyle()]}
+              </Button>
+            }
+            <Button
+              className=""
+              onClick={() => navigate(-1)}
+              variant="ghost">Voltar</Button>
           </div>
         </form>
       </FormProvider>
