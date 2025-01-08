@@ -44,7 +44,7 @@ export const RequestDetail = ({
   }, [isAuthenticated,id]);
 
   return (
-    <section className="relative grid grid-cols-1 max-w-full lg:max-w-5xl items-start ">
+    <section className="">
       <Detail data={data} attachments={attachments} onUpdate={onUpdate} origin={origin}/>
       {/* <Tag data={data} /> */}
     </section>

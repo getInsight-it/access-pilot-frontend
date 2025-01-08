@@ -13,6 +13,12 @@ import { Typewriter } from '../../typewriter/Typewriter.tsx';
 import {SummaryDto} from "../../services/summary/summary-dto.ts";
 import {summaryService} from "../../services/summary";
 import { motion } from 'framer-motion';
+import { TabsDemo } from '../../components/TabsDemo.tsx';
+import { Separator } from '@radix-ui/react-select';
+import { GridCards } from '../../components/GridCards.tsx';
+import { cn } from '../../lib/utils.ts';
+import { Card } from '../../components/utils/Card.tsx';
+import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
 
 export default function Dashboard() {
 
@@ -60,27 +66,10 @@ export default function Dashboard() {
       </div> */}
 
       {/* admin dashboard */}
-      <motion.div
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
-        }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
-      >
-        <div className="flex items-center space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Olá, bem-vindo de volta
-          </h2>
-          {summary && (<Typewriter {...summary}/>)}
-        </div>
-        <FeatureGrid summary={summary} />
-      </motion.div>
+
 
       {/* user dashboard */}
-      <div className="hidden flex-1 space-y-4 p-4 pt-6 md:p-8">
+      <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
@@ -93,13 +82,53 @@ export default function Dashboard() {
           <GridListNoAccess />
         </div> */}
 
-        <div className="">
-          <GridList />
-          <div></div>
-          <GridListNoAccess />
-        </div>
-
       </div>
+
+      <div className="col-span-2 h-fit px-8">
+        <Card className="bg-primary-foreground">
+          <div className="relative z-20">
+            
+            {/* <CalloutChip>#3</CalloutChip> */}
+  
+            <p className="mb-5 ml-1.5 text-2xl">Sistemas que você tem acesso</p>
+            <GridList />
+          </div>
+        </Card>
+      </div>
+
+      <div className="col-span-2 h-fit px-8 pt-3.5">
+        <Card className="bg-primary-foreground">
+          <div className="relative z-20">
+            
+            {/* <CalloutChip>#3</CalloutChip> */}
+  
+            <p className="mb-5 ml-1.5 text-2xl">Sistemas que você pode solicitar acesso</p>
+            <GridListNoAccess />
+          </div>
+        </Card>
+      </div>
+
+      
+      <motion.div
+        initial={{
+          opacity: 0
+        }}
+        animate={{
+          opacity: 1,
+          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+        }}
+        className="flex-1 space-y-4 px-4 pt-3.5 md:px-8 mt-4"
+      >
+        <div className="flex items-center space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Resumo
+          </h2>
+          {summary && (<Typewriter {...summary}/>)}
+        </div>
+        <FeatureGrid summary={summary} />
+      </motion.div>
+
+      
 
       {/* {theme === 'gov' && (
         <div className="mt-20">

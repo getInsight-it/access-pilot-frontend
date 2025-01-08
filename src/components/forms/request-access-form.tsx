@@ -16,7 +16,7 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { Check, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Search, ClipboardList, User } from 'lucide-react';
+import { Check, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Search, ClipboardList, User, MonitorIcon } from 'lucide-react';
 import { ScrollArea } from "../../components/ui/scroll-area";
 import {
   Dialog,
@@ -157,6 +157,8 @@ export function RequestAccessForm() {
     }
   };
 
+  console.log(clients)
+
   const steps = [
     {
       id: 1,
@@ -176,32 +178,38 @@ export function RequestAccessForm() {
                     <div
                       className={`max-w-96 w-full cursor-pointer ${selectedClient ? ' text-primary ' : ''}`}
                     >
+
                       <CardShine>
+
                         <div
-                          // className="p-4 grid items-center min-h-[160px] h-auto "
                           className={cn(
-                            "border border-dashed p-4 grid items-center min-h-[160px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
+                            "border border-dashed p-5 grid items-center min-h-[106px] h-auto transition-all rounded-[var(--card-border-radius)]",
                             selectedClient && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                           )}
                         >
-                          {!selectedClient && <Plus className="w-8 h-8 mt-8 mx-auto text-gray-400" />}
+                          {!selectedClient && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
                           {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
-                          <p className="font-semibold">
-                            {selectedClient && <MonitorCog className="w-8 h-8 mb-2" />}
-                            <span className="text-lg">{selectedClient}</span>
-                          </p>
 
+                          <div className="flex flex-row items-center">
+                            {selectedClient && <MonitorIcon className="w-6 h-6 mr-4" />}
+                            <p className="font-bold text-lg">
+                              {selectedClient}
+                            </p>
+                          </div>
+                          
                           {selectedClient &&
-                            <p className="text-sm">
-                              Descricao lorem ipsum dolor sit amet. Dolor sit emat ipsum dolor sit.
-                              {/* {selectedClient.description} */}
+                            <p className="mt-1 text-sm">
+                              {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
                             </p>
                           }
+                          
                         </div>
+
                       </CardShine>
+                      
                     </div>
                   </PopoverTrigger>
-                  <PopoverContent className="relative w-96  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
+                  <PopoverContent className="relative w-[26em]  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
 
                     <Search className="absolute left-6 top-6 text-primary z-10" />
 
@@ -220,10 +228,11 @@ export function RequestAccessForm() {
                           )
                           .map((client) => (
                             <CardShine key={client.id}>
+
                               <div
                                 className={cn(
-                                  "border p-4 min-h-[160px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
-                                  selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                                  "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
+                                  selectedClient === client.clientId &&  "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                                 )}
                                 onClick={() => {
                                   field.onChange(client.clientId);
@@ -231,19 +240,24 @@ export function RequestAccessForm() {
                                   getRolesByClientId(client.clientId);
                                 }}
                               >
-                                <MonitorCog className="w-8 h-8 mb-2" />
-                                {selectedClient === client.clientId && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                                {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
-                                <p>
-                                  <span className="font-semibold text-lg">{client.clientId}</span>
-                                </p>
-
-                                <p className="text-sm mt-2">
-                                  {/* Descricao lorem ipsum dolor sit amet. Dolor sit emat ipsum dolor sit. */}
+                                <div className="flex flex-row items-center">
+                                  <MonitorIcon className="w-6 h-6 mr-4" />
+                                  <p className="font-bold text-lg">
+                                    {client.clientId}
+                                  </p>
+                                </div>
+                                
+                                <p className="mt-1 text-sm">
                                   {client.description}
                                 </p>
+                                
+                                
                               </div>
+
                             </CardShine>
+
                           ))}
                       </div>
                     </ScrollArea>
@@ -276,7 +290,7 @@ export function RequestAccessForm() {
                       <CardShine>
                         <div
                           className={cn(
-                            "flex flex-col p-4 cursor-pointer transition-all",
+                            "flex flex-col p-5 cursor-pointer transition-all",
                             selectedRole === role.name && "ring-2 ring-primary rounded-[var(--card-border-radius)]"
                           )}
                           onClick={() => {
@@ -284,8 +298,14 @@ export function RequestAccessForm() {
                             setSelectedRole(role.name);
                           }}
                         >
-                          <IconRenderer className={`${role?.icon} w-8 h-8 mb-2`} />
-                          <span className="font-semibold text-lg capitalize">{role.name}</span>
+                          
+                          <div className="flex flex-row items-center">
+                            <IconRenderer className={`${role?.icon} w-6 h-6 mr-4`} />
+                            <p className="font-bold text-lg capitalize">
+                              {role.name}
+                            </p>
+                          </div>
+
                           {selectedRole === role.name && <Check className="absolute top-4 right-4" />}
                           <p className="mt-2 text-sm">
                             {role.label}

@@ -1,4 +1,5 @@
 ;
+import { HelpCircle, LogOut, User } from 'lucide-react';
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // import { Button } from '@/components/ui/button';
 // import {
@@ -62,6 +63,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuShortcut // Certifique-se de que está utilizando
 } from '../../components/ui/dropdown-menu';
+import { Link } from 'react-router-dom';
 
 export function UserNav() {
   return (
@@ -89,16 +91,18 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Perfil
-            <DropdownMenuShortcut>⌘P</DropdownMenuShortcut> {/* Exemplo de uso */}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard'>
+          <User className="w-4 h-4 mr-2" />
+          Perfil
+        </Link>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard/help'>
+          <HelpCircle className="w-4 h-4 mr-2" />
+          Ajuda e suporte
+        </Link>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/login'>
+          <LogOut className="w-4 h-4 mr-2" />
           Sair
-        </DropdownMenuItem>
+        </Link>
       </DropdownMenuContent>
     </DropdownMenu>
   );
