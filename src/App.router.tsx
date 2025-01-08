@@ -256,12 +256,17 @@ import RequestAccess from './features/Dashboard/request-access/RequestAccess.tsx
 import Help from './features/Dashboard/help/Help.tsx';
 import RolesPage from './features/Dashboard/roles/RolesPage.tsx';
 import SystemsPage from './features/Dashboard/systems/SystemsPage.tsx';
-import NewSystem from './features/Dashboard/system-new/NewSystem.tsx';
+import NewSystem from './features/Dashboard/systems/NewSystem.tsx';
 import PrivateRoute from './components/PrivateRoute';
 import NotificationsPage from './features/Dashboard/notifications/NotificationsPage.tsx';
 import useAuthStore from './store/authStore.ts';
 import RequestDetailPage from "./features/Dashboard/request-detail/request-detail-page.tsx";
 import RequestTestePage from "./features/Dashboard/request-detail/requestTeste.tsx";
+import {SystemEdit} from "./features/Dashboard/systems/SystemEdit.tsx";
+import {SystemDetail} from "./features/Dashboard/systems/SystemDetail.tsx";
+import {RoleEdit} from "./features/Dashboard/roles/RoleEdit.tsx";
+import {RoleDetail} from "./features/Dashboard/roles/RoleDetail.tsx";
+import NewRole from "./features/Dashboard/roles/NewRole.tsx";
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -338,12 +343,32 @@ const privateApproverRoutes = [
             element: <SystemsPage />
           },
           {
+            path: PRIVATE_ROUTES.SYSTEMS_EDIT,
+            element: <SystemEdit />
+          },
+          {
+            path: PRIVATE_ROUTES.SYSTEMS_DETAILS,
+            element: <SystemDetail />
+          },
+          {
             path: PRIVATE_ROUTES.NEW_SYSTEM,
             element: <NewSystem />
           },
           {
             path: PRIVATE_ROUTES.ROLES,
             element: <RolesPage />
+          },
+          {
+            path: PRIVATE_ROUTES.ROLES_EDIT,
+            element: <RoleEdit />
+          },
+          {
+            path: PRIVATE_ROUTES.ROLES_DETAILS,
+            element: <RoleDetail />
+          },
+          {
+            path: PRIVATE_ROUTES.NEW_ROLE,
+            element: <NewRole />
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,

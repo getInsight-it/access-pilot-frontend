@@ -21,6 +21,18 @@ export class RoleService {
     return null;
   }
 
+  async getRoleById(id?: string): Promise<RoleDTO | null> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}/${id}`);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as RoleDTO;
+    } else {
+      console.error('Erro ao buscar role');
+    }
+
+    return null;
+  }
+
   async getRolesByClientId(clientId: string): Promise<RoleDTO[] | null> {
     console.log("clientId:", clientId);
     if (!clientId) {

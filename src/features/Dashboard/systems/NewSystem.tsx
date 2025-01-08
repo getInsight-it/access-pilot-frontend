@@ -1,6 +1,6 @@
-import {Breadcrumbs} from '../../../components/breadcrumbs';
-import {SystemForm} from '../../../components/forms/system-form';
-import {ScrollArea} from '../../../components/ui/scroll-area';
+import {Breadcrumbs} from '../../../components/breadcrumbs.tsx';
+import {SystemForm} from './system-form.tsx';
+import {ScrollArea} from '../../../components/ui/scroll-area.tsx';
 
 const breadcrumbItems = [
   {title: 'Dashboard', link: '/dashboard'},

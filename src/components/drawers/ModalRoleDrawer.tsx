@@ -1,7 +1,7 @@
 import React, {Dispatch, ReactNode, SetStateAction} from "react";
 import {motion, useAnimate, useDragControls, useMotionValue} from "framer-motion";
 import useMeasure from "react-use-measure";
-import {RoleForm} from "../forms/role-form.tsx";
+import {RoleForm} from "../../features/Dashboard/roles/role-form.tsx";
 import {ClientDTO} from "../../services/client/client-dto.ts";
 import { Hand, X } from "lucide-react";
 

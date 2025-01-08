@@ -1,4 +1,4 @@
-import {SystemForm} from "../forms/system-form.tsx";
+import {SystemForm} from "../../features/Dashboard/systems/system-form.tsx";
 import React, {Dispatch, ReactNode, SetStateAction} from "react";
 import {motion, useAnimate, useDragControls, useMotionValue} from "framer-motion";
 import useMeasure from "react-use-measure";

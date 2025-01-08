@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface CellActionProps {
   data: {
@@ -47,26 +47,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/request-detail/`)}
+            onClick={() => navigate(`/dashboard/access-requests/${data.id}`)}
           >
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>
-          {/* <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/request-detail/`)}
-          >
-            <Eye className="mr-2 h-4 w-4" /> Ver detalhes drawer
-          </DropdownMenuItem> */}
-          
-          {/* <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/access-requests/${data.id}`)}
-          >
-            <Edit className="mr-2 h-4 w-4" /> Editar
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Apagar
-          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

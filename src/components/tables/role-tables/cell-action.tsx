@@ -7,32 +7,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '../../../components/ui/dropdown-menu';
-import {Edit, MoreHorizontal, Trash} from 'lucide-react';
+import {Edit, Eye, MoreHorizontal, Trash} from 'lucide-react';
 import {useState} from 'react';
 import {catchError, finalize, from, tap} from "rxjs";
 import {roleService} from "../../../services/role";
 import {toast} from "../../ui/use-toast.ts";
 import {RoleDTO} from "../../../services/role/role-dto.ts";
+import {useNavigate} from "react-router-dom";
 
 interface CellActionProps {
   data: RoleDTO,
   onEdit?: (data: RoleDTO) => void
+  onDetails?: (data: RoleDTO) => void
 }
 
-export const CellAction: React.FC<CellActionProps> = ({data, onEdit}) => {
+export const CellAction: React.FC<CellActionProps> = ({data}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const onConfirm = async () => {
     setLoading(true);
     from(roleService.deleteRole(data.id)).pipe(
-      tap(() => {
-        toast({
-          title: "Função apagada",
-          description: "A função foi apagada com sucesso",
-        });
-        setOpen(false);
-      }),
       catchError((error) => {
         toast({
           title: "Erro ao apagar função",
@@ -42,7 +38,9 @@ export const CellAction: React.FC<CellActionProps> = ({data, onEdit}) => {
         console.error(error);
         return [];
       }), finalize(() => setLoading(false))
-    ).subscribe();
+    ).subscribe(
+      {}
+    );
   };
 
   return (
@@ -62,14 +60,13 @@ export const CellAction: React.FC<CellActionProps> = ({data, onEdit}) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-
           <DropdownMenuItem
-            onClick={() => onEdit?.(data)}
-          >
-            <Edit className="mr-2 h-4 w-4"/> Atualizar
+            onClick={() => navigate(`/dashboard/roles/${data.id}/edit`)}>
+            <Edit className="mr-2 h-4 w-4"/> Editar
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4"/> Apagar
+          <DropdownMenuItem
+            onClick={() => navigate(`/dashboard/roles/${data.id}/details`)}>
+            <Eye className="mr-2 h-4 w-4"/> Ver detalhes
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
