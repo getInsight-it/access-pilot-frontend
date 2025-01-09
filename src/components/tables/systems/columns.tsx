@@ -34,12 +34,12 @@ export const columns = (
     cell: ({ row }) => (
       <div className="flex gap-x-2 items-center">
         <TrafficLight managed={row.original.managed} published={row.original.status === 'PUBLISHED'} />
-        <p>
+        {/* <p>
           {row.original.managed
             ? row.original.status !== 'PUBLISHED' ? 'Não Publicado' : 'Publicado'
             : 'Não Gerenciado'
           }
-        </p>
+        </p> */}
       </div>
     )
   },

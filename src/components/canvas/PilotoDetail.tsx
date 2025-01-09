@@ -80,10 +80,9 @@ export function PilotoDetail({ currentAnimation }: PersonagemProps) {
           <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
           <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
       </Environment>
-      {/* <OrbitControls /> */}
     </Canvas>
-    
   )
 }
 
 useGLTF.preload('/models/piloto-form-transformed.glb')
+

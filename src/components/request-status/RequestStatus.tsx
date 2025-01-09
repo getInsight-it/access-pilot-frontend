@@ -122,9 +122,9 @@ interface RequestStatusProps {
 
 const statusConfig = {
   'CREATED': { icon: FilePlus, color: 'text-blue-500', bgColor: 'bg-blue-100', progress: 25 },
-  'PENDING': { icon: FileSearch, color: 'text-yellow-500', bgColor: 'bg-yellow-100', progress: 50 },
-  'APPROVED': { icon: FileCheck, color: 'text-green-500', bgColor: 'bg-green-100', progress: 100 },
-  'REJECTED': { icon: FileX, color: 'text-red-500', bgColor: 'bg-yellow-100', progress: 100 },
+  'PENDING': { icon: FileSearch, color: 'text-gray-800', bgColor: 'bg-gray-300', progress: 50 },
+  'APPROVED': { icon: FileCheck, color: 'text-green-800', bgColor: 'bg-green-200', progress: 100 },
+  'REJECTED': { icon: FileX, color: 'text-red-800', bgColor: 'bg-yellow-200', progress: 100 },
   'CANCELED': { icon: FileX, color: 'text-red-500', bgColor: 'bg-red-100', progress: 100 },
 }
 

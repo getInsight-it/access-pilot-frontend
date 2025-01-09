@@ -267,6 +267,7 @@ import {SystemDetail} from "./features/Dashboard/systems/SystemDetail.tsx";
 import {RoleEdit} from "./features/Dashboard/roles/RoleEdit.tsx";
 import {RoleDetail} from "./features/Dashboard/roles/RoleDetail.tsx";
 import NewRole from "./features/Dashboard/roles/NewRole.tsx";
+import Profile from './features/Dashboard/profile/Profile.tsx';
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -353,6 +354,10 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.NEW_SYSTEM,
             element: <NewSystem />
+          },
+          {
+            path: PRIVATE_ROUTES.PROFILE,
+            element: <Profile />
           },
           {
             path: PRIVATE_ROUTES.ROLES,

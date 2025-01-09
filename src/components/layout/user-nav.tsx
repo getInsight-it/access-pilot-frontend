@@ -91,7 +91,7 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard'>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard/profile'>
           <User className="w-4 h-4 mr-2" />
           Perfil
         </Link>

@@ -142,16 +142,17 @@ export const SystemForm: React.FC<SystemFormProps> = ({
   });
   return (
     <>
-      <div className="flex items-center justify-between pt-6">
+      {/* <div className="flex items-center justify-between pt-6">
         <div className="flex flex-col">
           <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
             {titleMap[getActionStyle()]}
           </h2>
-          {/* <p>
+          
+          <p>
             {description}
-          </p> */}
+          </p>
         </div>
-      </div>
+      </div> */}
 
       {/* <Separator/> */}
       <FormProvider {...methods}>
@@ -258,18 +259,22 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                 )}
               />
             </div>
+            <div>
+              colcoar card sistema
+            </div>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 flex justify-between">
+            <Button
+              className=""
+              onClick={() => navigate(-1)}
+              variant="ghost">Voltar</Button>
+            
             { getActionStyle() === 'DETAIL'
               ? null :
               <Button disabled={loading} className="" type="submit">
                 {actionMap[getActionStyle()]}
               </Button>
             }
-            <Button
-              className=""
-              onClick={() => navigate(-1)}
-              variant="ghost">Voltar</Button>
           </div>
         </form>
       </FormProvider>

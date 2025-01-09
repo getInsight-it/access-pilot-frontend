@@ -120,8 +120,8 @@ function App() {
       const user = {
         id: fetchedUserData.externalId,
         email: fetchedUserData.email,
-        isApprover: fetchedUserData.isApprover,
-        // isApprover: true,
+        // isApprover: fetchedUserData.isApprover,
+        isApprover: true,
       }
       if (user) {
         setUserInfo(user)

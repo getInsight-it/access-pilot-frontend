@@ -32,7 +32,7 @@ const Legenda: React.FC = () => {
           {lights[activeIndex].text}
         </motion.span>
       </AnimatePresence>
-      <div className="px-2 bg-gray-800 rounded-md flex flex-row items-center justify-around h-8 w-24">
+      <div className="px-2 bg-[#2f2f2f] rounded-md flex flex-row items-center justify-around h-8 w-24">
         {lights.map((light, index) => (
           <motion.div
             key={light.color}

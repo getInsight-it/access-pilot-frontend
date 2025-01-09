@@ -20,7 +20,8 @@ export const PRIVATE_ROUTES = {
   ROLES_EDIT: '/dashboard/roles/:id/edit',
   ROLES_DETAILS: '/dashboard/roles/:id/details',
   NEW_ROLE: '/dashboard/systems/:clientId/role-new',
-  NOTIFICATIONS: '/dashboard/notifications'
+  NOTIFICATIONS: '/dashboard/notifications',
+  PROFILE: '/dashboard/profile'
 };
 
 export const ERROR_ROUTES = {

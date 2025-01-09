@@ -147,7 +147,7 @@ export function SystemsTable<TData, TValue>({
   return (
     <>
       {/* <h2 className="text-2xl font-bold pt-4 pb-1">Histórico</h2> */}
-      <div className="flex items-center justify-between gap-4 pt-1 pb-2">
+      <div className="flex flex-col items-end lg:flex-row lg:items-center justify-between gap-4 pt-1 pb-2">
         {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sistema" />
