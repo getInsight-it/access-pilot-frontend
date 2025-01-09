@@ -13,9 +13,10 @@ import React from "react";
 
 interface CellActionProps {
   data: RequestDTO;
+  origin?: string
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({ data, origin }) => {
   const navigate = useNavigate();
 
   return (
@@ -31,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/access-requests/${data.id}`)}
+            onClick={() => navigate(`/dashboard/access-requests/${data.id}`, { state: { origin: origin } })}
           >
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>

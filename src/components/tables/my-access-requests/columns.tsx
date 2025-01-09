@@ -33,11 +33,7 @@ const statusTranslations: { [key: string]: string } = {
   rejected: 'Rejeitado',
 };
 
-export const columns = (selectedClient: RequestDTO | undefined,
-                        setSelectedClient: React.Dispatch<React.SetStateAction<RequestDTO | undefined>>,
-                        updateTable?: () => void,
-                        origin?: string
-): ColumnDef<RequestDTO>[] => [
+export const columns = (origin?: string): ColumnDef<RequestDTO>[] => [
   {
     accessorKey: 'protocolCode',
     header: 'PROTOCOLO'
@@ -75,7 +71,7 @@ export const columns = (selectedClient: RequestDTO | undefined,
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <CellAction data={row.original} origin={origin} />
   }
 ];
 

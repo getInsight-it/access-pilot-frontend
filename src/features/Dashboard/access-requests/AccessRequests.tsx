@@ -103,7 +103,7 @@ export default function AccessRequests() {
           <RequestsTable
             searchKey="clientId"
             pageNo={page} // Passa o valor da página que começa em 1
-            columns={columns(selectedRequest, setSelectedRequest, updateTable, 'assigned')}
+            columns={columns('assigned')}
             totalUsers={totalUsers}
             data={requests}
             pageCount={pageCount}

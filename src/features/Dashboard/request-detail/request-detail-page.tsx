@@ -4,6 +4,7 @@ import { RequestDetail } from '../../../components/request-detail/RequestDetail'
 import { Heading } from '../../../components/ui/heading';
 import { Separator } from '../../../components/ui/separator';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -11,6 +12,8 @@ const breadcrumbItems = [
   { title: 'Detalhe da solicitação', link: '/dashboard/request-access' }
 ];
 export default function RequestDetailPage() {
+  const location = useLocation();
+  const { origin } = location.state || {};
   return (
     <ScrollArea className="h-full">
       <motion.div
@@ -23,7 +26,7 @@ export default function RequestDetailPage() {
         }}
         className="flex-1 space-y-4 p-4 pt-6 md:p-8"
       >
-          
+
         <Breadcrumbs items={breadcrumbItems} />
 
         <div className="flex items-start justify-between">
