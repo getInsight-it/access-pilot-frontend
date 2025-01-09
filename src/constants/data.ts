@@ -178,8 +178,8 @@ const requestNavItems: NavItem[] = [
 
 export const commonNavItems: NavItem[] = [
   ...requestNavItems,
-  helpNavItem,
-  exitNavItem,
+  // helpNavItem,
+  // exitNavItem,
 ];
 
 export const navItems: NavItem[] = [
