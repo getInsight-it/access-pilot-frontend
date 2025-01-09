@@ -500,6 +500,7 @@ export const Detail = ({
   };
 
   const [pilotoAnimation, setPilotoAnimation] = useState<'idle' | 'headshake' | 'hiphop'>(getInitialAnimation(data?.status));
+  const [action, setAction] = useState<string>('');
 
   const selected: StatusValue = OPTIONS.filter((o) => o.value === data?.status).map((o) => o.value as StatusValue)[0];
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
@@ -595,7 +596,13 @@ export const Detail = ({
         return [];
       })).subscribe();
   }
-
+  const onSubmit = async (data: any, acao: string) => {
+    if (acao === 'REJECTED') {
+      handleReject(data);
+    }else if (acao === 'APPROVED') {
+      handleApprove(data);
+    }
+  }
   const handleApprove = (request: { id: number, description: string }) => {
     const formData = new FormData();
     formData.append("request", JSON.stringify({status: 'APPROVED', description: request.description}));
@@ -888,7 +895,7 @@ export const Detail = ({
                     </div>
                   )}
                   <div className="w-full flex gap-4">
-                    {canCancel &&
+                    {canCancel && origin === 'created'&&
                       <FormProvider {...form}>
                         <form onSubmit={form.handleSubmit(handleCancel)} className="w-full space-y-8 "
                         >
@@ -921,16 +928,52 @@ export const Detail = ({
                       </FormProvider>
                     }
                     {(!isFinished && origin === 'assigned') && (<>
-                      <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
-                              type="submit"
-                              onClick={() => handleReject(data)}>
-                        Rejeitar
-                      </Button>
-                      <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
-                              type="submit"
-                              onClick={() => handleApprove(data)}>
-                        Aprovar
-                      </Button>
+                      <FormProvider {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8 "
+                        >
+                          <div className="gap-x-8 gap-y-4 md:grid md:grid-cols-1 max-w-md">
+                            <FormField
+                              control={form.control}
+                              name="finalReason"
+                              render={({field}) => (
+                                <FormItem>
+                                  <FormLabel>Motivo da conclusão</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="Motivo da conclusão..."
+                                      className="col-span-4"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage/>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <Button
+                            className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
+                            type="submit"
+                            onClick={() => setAction('REJECTED')}
+                          >
+                            Rejeitar
+                          </Button>
+                          <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
+                                  type="submit"
+                                  onClick={() => setAction('APPROVED')}>
+                            Aprovar
+                          </Button>
+                        </form>
+                      </FormProvider>
+                      {/*<Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"*/}
+                      {/*        type="submit"*/}
+                      {/*        onClick={() => handleReject(data)}>*/}
+                      {/*  Rejeitar*/}
+                      {/*</Button>*/}
+                      {/*<Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"*/}
+                      {/*        type="submit"*/}
+                      {/*        onClick={() => handleApprove(data)}>*/}
+                      {/*  Aprovar*/}
+                      {/*</Button>*/}
                     </>)}
 
                   </div>
