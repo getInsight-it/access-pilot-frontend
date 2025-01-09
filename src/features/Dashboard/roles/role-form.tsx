@@ -99,13 +99,13 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
 
   return (
     <>
-      <div className="flex items-center justify-between pt-6">
+      {/* <div className="flex items-center justify-between pt-6">
         <div className="flex flex-col">
           <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
             {titleMap[getActionStyle()]}
           </h2>
         </div>
-      </div>
+      </div> */}
 
       <FormProvider {...methods} >
         <form onSubmit={methods.handleSubmit(onSubmit)} >
@@ -177,16 +177,19 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               />
             </div>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 flex justify-between">
+            <Button
+              className=""
+              onClick={() => navigate(-1)}
+              variant="ghost"
+            >
+              Voltar
+            </Button>
             { getActionStyle() === 'DETAIL' ? null :
               <Button disabled={loading || isReadOnly()} className="" type="submit">
                 {actionMap[getActionStyle()]}
               </Button>
             }
-            <Button
-              className=""
-              onClick={() => navigate(-1)}
-              variant="ghost">Voltar</Button>
           </div>
         </form>
       </FormProvider>

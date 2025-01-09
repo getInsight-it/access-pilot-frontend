@@ -7,7 +7,6 @@ import useAuthStore from "../../../store/authStore.ts";
 import { RequestDTO } from "../../../services/request/request-d-t-o.ts";
 import { requestService } from "../../../services/request";
 import React, { useEffect, useState } from 'react';
-import { RequestAccessDrawer } from '../../../components/drawers/RequestAccessDrawer.tsx';
 import {columns} from "../../../components/tables/my-access-requests/columns.tsx";
 import {buttonVariants} from "../../../components/ui/button.tsx";
 import {cn} from "../../../lib/utils.ts";

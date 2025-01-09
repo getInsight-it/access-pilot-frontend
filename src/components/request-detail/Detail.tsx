@@ -468,6 +468,7 @@ import { PilotoDetail } from '../canvas/PilotoDetail.tsx';
 import CountdownTracker from '../CountdownTracker.tsx';
 import { Card } from '../ui/card.tsx';
 import { PulseLine } from '../utils/PulseLine.tsx';
+import { BackgroundLines } from '../BackgroundLines.tsx';
 
 export const Detail = ({
                          data,
@@ -814,6 +815,11 @@ export const Detail = ({
             <div className="hidden 2xl:block 2xl:absolute right-0 -top-24 w-72 h-72">
               <PilotoDetail currentAnimation={pilotoAnimation} />
             </div>
+              {pilotoAnimation === 'hiphop' &&
+                <BackgroundLines className="absolute flex items-center justify-center w-full flex-col px-4 -mt-20">
+                  &nbsp;
+                </BackgroundLines>
+              }
           </div>
         </div>
 

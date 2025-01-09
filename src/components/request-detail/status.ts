@@ -2,7 +2,7 @@ export const STATUS = [
     {
       id: 1,
       value: "CREATED",
-      title: "Criado",
+      title: "Criada",
     },
     {
       id: 2,
@@ -12,17 +12,17 @@ export const STATUS = [
     {
       id: 3,
       value: "APPROVED",
-      title: "Aprovado",
+      title: "Aprovada",
     },
     {
       id: 4,
       value: "REJECTED",
-      title: "Rejeitado",
+      title: "Rejeitada",
     },
     {
       id: 5,
       value: "CANCELED",
-      title: "Cancelado",
+      title: "Cancelada",
     },
   ];
   
