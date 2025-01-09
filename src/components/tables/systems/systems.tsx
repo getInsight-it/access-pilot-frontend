@@ -16,6 +16,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '../
 import {ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {ScrollArea, ScrollBar} from '../../../components/ui/scroll-area';
+import Legenda from '../../Legenda';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[],
@@ -146,7 +147,7 @@ export function SystemsTable<TData, TValue>({
   return (
     <>
       {/* <h2 className="text-2xl font-bold pt-4 pb-1">Histórico</h2> */}
-      <div className="flex gap-4 pt-1 pb-2">
+      <div className="flex items-center justify-between gap-4 pt-1 pb-2">
         {/* <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sistema" />
@@ -178,6 +179,10 @@ export function SystemsTable<TData, TValue>({
           }
           className="w-full md:max-w-sm"
         />
+        <div className="text-right">
+          
+          <Legenda />
+        </div>
       </div>
 
       <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
