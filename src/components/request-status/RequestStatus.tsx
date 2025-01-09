@@ -171,16 +171,18 @@ export default function RequestStatus({ status }: RequestStatusProps) {
           )}
 
           {status === 'REJECTED' && (
-            <div className={`rounded-full ${config.bgColor} inline-block`}>
-              <h1 className={`my-2 px-4 py-0 text-sm ${config.color}`}>
+            <div className={`rounded-full inline-block `}>
+              <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
+                <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
                 Motivo da rejeição: documento em anexo ilegivel.
               </h1>
             </div>
           )}
 
           {status === 'APPROVED' && (
-            <div className={`rounded-full ${config.bgColor} inline-block`}>
-              <h1 className={`my-2 px-4 py-0 text-sm  text-gray-600`}>
+            <div className={`rounded-full inline-block `}>
+              <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
+                <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
                 Tudo certo!.
                 👍
               </h1>
@@ -188,8 +190,9 @@ export default function RequestStatus({ status }: RequestStatusProps) {
           )}
 
           {status === 'CANCELED' && (
-            <div className={`rounded-full ${config.bgColor} inline-block`}>
-              <h1 className={`my-2 px-4 py-0 text-sm  text-gray-600`}>
+            <div className={`rounded-full inline-block `}>
+              <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
+                <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
                 Essa solicitação foi cancelada.
               </h1>
             </div>

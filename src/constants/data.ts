@@ -202,6 +202,6 @@ export const navItems: NavItem[] = [
     icon: 'bookuser',
     label: 'Gerenciar solicitações'
   },
-  helpNavItem,
-  exitNavItem
+  // helpNavItem,
+  // exitNavItem
 ];
