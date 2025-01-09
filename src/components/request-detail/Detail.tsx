@@ -157,7 +157,7 @@
 //   const canCancel = ['CREATED', 'PENDING' ].includes(data?.status) && userInfo?.id === data?.requestingUser?.externalId;
 //   return (
 //       <>
-        
+
 //         <div className="relative max-w-[1440px]  mx-auto">
 
 
@@ -190,15 +190,15 @@
 //                   {data?.role.name}
 //                 </p>
 //               </div>
-              
+
 //               <img className="w-40 mx-auto" src="/img/cracha.svg" />
 //               {/* <CountdownTracker /> */}
 
 //             </div>
 
 
-            
-            
+
+
 //           </div>
 
 //           <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
@@ -206,11 +206,11 @@
 //             <div className="col-span-8 2xl:col-span-6 w-full ">
 
 //               <div className="mt-4">
-                
+
 //                 <div className="flex gap-6">
 //                   <div className="mt-2 w-full ">
 //                     <p className="font-bold mb-3 text-lg">Sistema:</p>
-                    
+
 //                     <CardShine>
 
 //                       <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
@@ -222,13 +222,13 @@
 //                             {data?.role.client.name}
 //                           </p>
 //                         </div>
-                        
+
 //                         <p className="mt-1 text-sm">
 //                           {data?.role.client.description}
 //                         </p>
 //                       </div>
 //                     </CardShine>
-                    
+
 //                   </div>
 
 //                   <div className="mt-2 w-full max-w-72">
@@ -236,7 +236,7 @@
 //                     <CardShine>
 //                       <div className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)]">
 //                         {/* <Check className="absolute top-6 right-6" /> */}
-                        
+
 //                         <div className="flex flex-row items-center">
 //                           <Pencil className="w-6 h-6 mr-4" />
 //                           <p className="font-bold text-lg capitalize">
@@ -269,12 +269,12 @@
 //                 </div>
 //               </div>
 //             </div>
-            
+
 //           </div>
 
 //           <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
 
-            
+
 //             <div className="col-span-8 2xl:col-span-6 w-full ">
 //               <p className="mt-6 font-bold mb-3 text-lg">Motivo do acesso:</p>
 //               <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
@@ -288,11 +288,11 @@
 //             </div>
 
 //             <div className="col-span-12 lg:col-span-3 w-full">
-              
-              
+
+
 //               <p className="text-md font-bold mt-6 mb-1 text-lg">Anexos:</p>
 //               <div className="mt-3 grid grid-cols-6 gap-2">
-                
+
 //                 <div className="w-16 flex flex-col">
 //                   <div
 //                     className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
@@ -428,7 +428,7 @@
 //                           Aprovar
 //                         </Button>
 //                       </>)}
-                      
+
 //                     </div>
 //                   </motion.div>
 //                 }
@@ -469,6 +469,12 @@ import CountdownTracker from '../CountdownTracker.tsx';
 import { Card } from '../ui/card.tsx';
 import { PulseLine } from '../utils/PulseLine.tsx';
 import { BackgroundLines } from '../BackgroundLines.tsx';
+import {FormProvider, useForm} from 'react-hook-form';
+import {zodResolver} from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
+import {Input} from "../ui/input.tsx";
+import {Textarea} from "../ui/textarea.tsx";
 
 export const Detail = ({
                          data,
@@ -542,12 +548,12 @@ export const Detail = ({
           }*/
   };
 
+  const handleCancel = (request: { finalReason: string}) => {
 
-  const handleCancel = (request: { id: number, description: string }) => {
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'CANCELED', description: request.description}));
+    formData.append("request", JSON.stringify({status: 'CANCELED', description: data.description, finalReason: request?.finalReason}));
 
-    from(requestService.updateRequest(request.id, formData)).pipe(
+    from(requestService.updateRequest(data.id, formData)).pipe(
       tap(() => {
           toast({
             title: 'Sucesso!',
@@ -567,6 +573,7 @@ export const Detail = ({
   }
 
   const handleReject = (request: { id: number, description: string }) => {
+
     const formData = new FormData();
     formData.append("request", JSON.stringify({status: 'REJECTED', description: request.description}));
 
@@ -619,6 +626,23 @@ export const Detail = ({
   const isFinished = ['APPROVED', 'REJECTED'].includes(data?.status);
   const canCancel = ['CREATED', 'PENDING' ].includes(data?.status) && userInfo?.id === data?.requestingUser?.externalId;
 
+  const defaultValues =
+    {
+      finalReason: ''
+    };
+
+  const formSchema = z.object({
+    finalReason: z
+      .string()
+      .min(3, { message: 'O motivo deve conter no mínimo 3 caracteres' }),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues
+  });
+
+  // @ts-ignore
   return (
     <>
       <div className="relative max-w-[1440px] mx-auto">
@@ -626,17 +650,17 @@ export const Detail = ({
           <div className="col-span-5 2xl:col-span-6 w-full ">
             <div className="w-full ">
               <p className="font-bold mb-3 text-lg">Status da solicitação:</p>
-              <RequestStatus status={selected} />
+              <RequestStatus status={selected}/>
             </div>
           </div>
 
           <div className="col-span-5 lg:col-span-4 2xl:col-span-3">
             <div className="">
-              <CopyProtocol protocol={data?.protocolCode} />
+              <CopyProtocol protocol={data?.protocolCode}/>
             </div>
             <div className="mt-4">
               <p className="font-bold mb-3 text-lg">Data de envio:</p>
-              <FlipCalendar initialDate={formattedDate} />
+              <FlipCalendar initialDate={formattedDate}/>
             </div>
           </div>
 
@@ -649,8 +673,8 @@ export const Detail = ({
                 {data?.role.name}
               </p>
             </div>
-            
-            <img className="w-40 mx-auto" src="/img/cracha.svg" />
+
+            <img className="w-40 mx-auto" src="/img/cracha.svg"/>
           </div>
         </div>
 
@@ -660,30 +684,32 @@ export const Detail = ({
               <div className="flex gap-6">
                 <div className="mt-2 w-full ">
                   <p className="font-bold mb-3 text-lg">Sistema:</p>
-                  
+
                   <CardShine>
-                    <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
+                    <div
+                      className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
                       <div className="flex flex-row items-center">
-                        <MonitorCog className="w-6 h-6 mr-4" />
+                        <MonitorCog className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg">
                           {data?.role.client.name}
                         </p>
                       </div>
-                      
+
                       <p className="mt-1 text-sm">
                         {data?.role.client.description}
                       </p>
                     </div>
                   </CardShine>
-                  
+
                 </div>
 
                 <div className="mt-2 w-full max-w-72">
                   <p className="font-bold mb-3 text-lg">Papel:</p>
                   <CardShine>
-                    <div className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)]">
+                    <div
+                      className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)]">
                       <div className="flex flex-row items-center">
-                        <Pencil className="w-6 h-6 mr-4" />
+                        <Pencil className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg capitalize">
                           {data?.role.name}
                         </p>
@@ -704,9 +730,9 @@ export const Detail = ({
             <p className="mt-6 font-bold mb-3 text-lg">Solicitante:</p>
             <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)]">
               <div className="flex flex-row items-center">
-                <User className="w-6 h-6 mr-4" />
+                <User className="w-6 h-6 mr-4"/>
                 <p className="">
-                {data?.requestingUser.firstName}
+                  {data?.requestingUser.firstName}
                 </p>
               </div>
             </div>
@@ -719,7 +745,9 @@ export const Detail = ({
             <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
               <p>
                 {data?.description}
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, enim odit. Voluptates rerum exercitationem consequuntur amet omnis labore ullam, dolorem porro saepe reiciendis fugit quae. Sed porro quae magnam!
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, enim odit. Voluptates rerum
+                exercitationem consequuntur amet omnis labore ullam, dolorem porro saepe reiciendis fugit quae. Sed
+                porro quae magnam!
               </p>
             </div>
           </div>
@@ -789,7 +817,7 @@ export const Detail = ({
                 </div>
               </div>
 
-              
+
               {/* {attachments?.map((attachment) => (
                 <div key={attachment.id} className="w-16 flex flex-col">
                   <div
@@ -813,14 +841,31 @@ export const Detail = ({
 
           <div className="col-span-12 lg:col-span-3 w-full relative">
             <div className="hidden 2xl:block 2xl:absolute right-0 -top-24 w-72 h-72">
-              <PilotoDetail currentAnimation={pilotoAnimation} />
+              <PilotoDetail currentAnimation={pilotoAnimation}/>
             </div>
-              {pilotoAnimation === 'hiphop' &&
-                <BackgroundLines className="absolute flex items-center justify-center w-full flex-col px-4 -mt-20">
-                  &nbsp;
-                </BackgroundLines>
-              }
+            {pilotoAnimation === 'hiphop' &&
+              <BackgroundLines className="absolute flex items-center justify-center w-full flex-col px-4 -mt-20">
+                &nbsp;
+              </BackgroundLines>
+            }
           </div>
+        </div>
+
+        <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
+
+
+          <div className="col-span-8 2xl:col-span-6 w-full ">
+            <p className="mt-6 font-bold mb-3 text-lg">Motivo da conclusão:</p>
+            <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
+              <p>
+                {data?.finalReason}
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, enim odit. Voluptates rerum
+                exercitationem consequuntur amet omnis labore ullam, dolorem porro saepe reiciendis fugit quae. Sed
+                porro quae magnam!
+              </p>
+            </div>
+          </div>
+
         </div>
 
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
@@ -843,25 +888,51 @@ export const Detail = ({
                     </div>
                   )}
                   <div className="w-full flex gap-4">
-                    {canCancel && (
-                      <Button className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
-                              type="submit"
-                              onClick={() => handleCancel(data)}>
-                        Cancelar
-                      </Button>
-                    )}
+                    {canCancel &&
+                      <FormProvider {...form}>
+                        <form onSubmit={form.handleSubmit(handleCancel)} className="w-full space-y-8 "
+                        >
+                          <div className="gap-x-8 gap-y-4 md:grid md:grid-cols-1 max-w-md">
+                            <FormField
+                              control={form.control}
+                              name="finalReason"
+                              render={({field}) => (
+                                <FormItem>
+                                  <FormLabel>Motivo da conclusão</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="Motivo da conclusão..."
+                                      className="col-span-4"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage/>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <Button
+                            className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
+                            type="submit"
+                          >
+                            Cancelar
+                          </Button>
+                        </form>
+                      </FormProvider>
+                    }
                     {(!isFinished && origin === 'assigned') && (<>
                       <Button className="w-40 bg-yellow-200 text-yellow-800 hover:bg-yellow-800 hover:text-yellow-200"
                               type="submit"
                               onClick={() => handleReject(data)}>
                         Rejeitar
                       </Button>
-                      <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200" type="submit"
+                      <Button className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
+                              type="submit"
                               onClick={() => handleApprove(data)}>
                         Aprovar
                       </Button>
                     </>)}
-                    
+
                   </div>
                 </motion.div>
               }
@@ -872,6 +943,3 @@ export const Detail = ({
     </>
   );
 };
-
-
-
