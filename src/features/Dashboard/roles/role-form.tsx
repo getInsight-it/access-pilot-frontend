@@ -111,8 +111,8 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               <FormField
                 name="name"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Nome</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
@@ -127,8 +127,8 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               <FormField
                 name="description"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Descrição</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
@@ -143,8 +143,8 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               <FormField
                 name="label"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Label</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Label</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
@@ -159,8 +159,8 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               <FormField
                 name="icon"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Icon</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Icon</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}

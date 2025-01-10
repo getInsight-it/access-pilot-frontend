@@ -71,7 +71,7 @@ export default function RequestStatus({ status, finalReason }: RequestStatusProp
               <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
                 <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
                 {/* Motivo da rejeição: documento em anexo ilegivel. */}
-                Motivo da rejeição: {finalReason || 'documento em anexo ilegivel.'}
+                Motivo: {finalReason}
               </h1>
             </div>
           )}
@@ -81,7 +81,7 @@ export default function RequestStatus({ status, finalReason }: RequestStatusProp
               <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
                 <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
                 Tudo certo!.
-                👍
+                <span className="ml-2">👍</span>
               </h1>
             </div>
           )}
@@ -90,7 +90,7 @@ export default function RequestStatus({ status, finalReason }: RequestStatusProp
             <div className={`rounded-full inline-block `}>
               <h1 className={`px-0   text-sm text-gray-600 flex items-center`}>
                 <span className={`w-2 h-2 rounded-full mr-2 ${config.bgColor}`}></span>
-                Motivo: {finalReason || 'documento em anexo ilegivel.'}
+                Motivo: {finalReason}
               </h1>
             </div>
           )}

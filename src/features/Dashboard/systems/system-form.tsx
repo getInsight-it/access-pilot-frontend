@@ -6,13 +6,14 @@ import {Trash} from 'lucide-react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Input} from '../../../components/ui/input.tsx';
 import {Button} from '../../../components/ui/button.tsx';
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '../../../components/ui/form.tsx';
+import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from '../../../components/ui/form.tsx';
 import {Separator} from '../../../components/ui/separator.tsx';
 import {Heading} from '../../../components/ui/heading.tsx';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '../../../components/ui/select.tsx';
 import {toast, useToast} from '../../../components/ui/use-toast.ts';
 import {clientService} from "../../../services/client";
 import { Checkbox } from '../../../components/ui/checkbox.tsx';
+import { Switch } from '../../../components/ui/switch.tsx';
 
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -162,8 +163,8 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               <FormField
                 name="name"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Nome</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
@@ -178,8 +179,8 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               <FormField
                 name="clientId"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Client Id</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Client Id</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
@@ -194,8 +195,8 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               <FormField
                 name="description"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Descrição</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
@@ -207,31 +208,54 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                   </FormItem>
                 )}
               />
-              <FormField
+              
+              {/* <FormField
                 name="managed"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Gerenciado</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Gerenciado</FormLabel>
                     <FormControl className="flex flex-col">
                       <Checkbox
                         className="w-10 h-10 grid items-center"
                         {...field}
                         disabled={loading}
                       />
-                      {/* <Input {...field}
-                        type="checkbox"
-                        placeholder="Gerenciado"
-                        disabled={loading}/> */}
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
                 )}
+              /> */}
+              
+              <FormField
+                name="managed"
+                render={({field}) => (
+                  <FormItem className="mb-2">
+                      <FormLabel className="text-lg font-bold">Gerenciado</FormLabel>
+                    <div className="mb-2 flex flex-row items-center justify-between rounded-lg border border-primary p-4">
+
+                      <div className="space-y-0.5">
+                        <FormDescription>
+                          Ative para indicar que o sistema é gerenciado
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          {...field}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={loading}
+                        />
+                      </FormControl>
+                    </div>
+                  </FormItem>
+                )}
               />
+
               <FormField
                 name="status"
                 render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Status</FormLabel>
                     <Select
                       disabled={loading}
                       onValueChange={field.onChange}
@@ -258,9 +282,6 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                   </FormItem>
                 )}
               />
-            </div>
-            <div>
-              colcoar card sistema
             </div>
           </div>
           <div className="mt-10 flex justify-between">

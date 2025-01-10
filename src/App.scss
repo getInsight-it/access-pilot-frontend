@@ -498,8 +498,10 @@
   backface-visibility: inherit;
   transform-origin: center top;
   transform-style: preserve-3d;
-  width: 260px; /* Largura ajustada para 260px */
-  height: 700px;
+  // width: 260px; /* Largura ajustada para 260px */
+  // height: 700px;
+  width: 170px; /* Largura ajustada para 260px */
+  height: 347px;
   will-change: transform;
 }
 
@@ -507,7 +509,7 @@
   animation: light 3s ease-in-out infinite;
   background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(250,250,250,.2) 50%, rgba(255,255,255,0) 70%) no-repeat;
   background-size: 200%;
-  background-position: -700px;
+  background-position: -347px;
   clip-path: url(#mask);
   content: "";
   position: absolute;

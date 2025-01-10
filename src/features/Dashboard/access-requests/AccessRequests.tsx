@@ -82,7 +82,7 @@ export default function AccessRequests() {
 
         <div className="flex items-start justify-between">
           <Heading
-            title={`Minhas solicitações (${totalUsers})`}
+            title={`Solicitações (${totalUsers})`}
             description=""
           />
         <Link
