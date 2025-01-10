@@ -105,7 +105,7 @@ export default function MyAccessRequests() {
         } */}
 
         {/* {requests.length > 0 && */}
-        <h2>criado</h2>
+        
           <RequestsTable
             searchKey="clientId"
             pageNo={page} // Passa o valor da página que começa em 1
