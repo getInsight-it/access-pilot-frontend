@@ -875,7 +875,7 @@ export const Detail = ({
             <p className="text-md font-bold mt-6 mb-1 text-lg">Anexos:</p>
             <div className="mt-3 flex gap-4">
 
-              <div className="w-20 flex flex-col">
+              {/* <div className="w-20 flex flex-col">
                 <div
                   className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
                 >
@@ -889,55 +889,10 @@ export const Detail = ({
                   </button>
                 </div>
 
-              </div>
+              </div> */}
 
-              <div className="w-20 flex flex-col">
-                <div
-                  className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
-                >
-                  <div className="flex flex-col items-center">
-                    <File className="w-8 h-8"/>
-                  </div>
-                  <button
-                    className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
-                  >
-                    Baixar
-                  </button>
-                </div>
-              </div>
-
-              <div className="w-20 flex flex-col">
-                <div
-                  className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
-                >
-                  <div className="flex flex-col items-center">
-                    <File className="w-8 h-8"/>
-                  </div>
-                  <button
-                    className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
-                  >
-                    Baixar
-                  </button>
-                </div>
-              </div>
-
-              <div className="w-20 flex flex-col">
-                <div
-                  className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
-                >
-                  <div className="flex flex-col items-center">
-                    <File className="w-8 h-8"/>
-                  </div>
-                  <button
-                    className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
-                  >
-                    Baixar
-                  </button>
-                </div>
-              </div>
-
-
-              {/* {attachments?.map((attachment) => (
+                
+              {attachments?.map((attachment) => (
                 <div key={attachment.id} className="w-16 flex flex-col">
                   <div
                     className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
@@ -953,7 +908,7 @@ export const Detail = ({
                     </button>
                   </div>
                 </div>
-              ))} */}
+              ))}
 
             </div>
           </div>
