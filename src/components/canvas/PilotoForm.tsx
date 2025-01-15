@@ -55,6 +55,7 @@ import React, { useEffect } from 'react'
 import { useGraph, Canvas } from '@react-three/fiber'
 import { useGLTF, useAnimations, Environment, Lightformer, ContactShadows, OrbitControls } from '@react-three/drei'
 import { GLTF, SkeletonUtils } from 'three-stdlib'
+import { useTheme } from '../layout/ThemeToggle/theme-provider'
 
 type ActionName = 'headshake' | 'hiphop' | 'idle'
 
@@ -117,22 +118,37 @@ interface PersonagemProps {
 }
 
 export function PilotoForm({ currentAnimation }: PersonagemProps) {
+
+  const { theme } = useTheme(); //
+
+  // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
+  const environmentHDR = theme === 'dark'
+    ? '/hdr/warehouse.hdr'
+    : theme === 'tangerine'
+    ? '/hdr/lobby.hdr'  // Caminho para o HDR do tema tangerine
+    : '/hdr/park.hdr';  // Tema claro usa o HDR padrão
+
   return (
     <Canvas className="characterForm" camera={{ position: [-1, 2, 10], fov: 25 }}>
+      
       <ambientLight intensity={Math.PI} />
+      <Environment files={environmentHDR} />
       <Character
         currentAnimation={currentAnimation}
         scale={[0.065, 0.065, 0.065]}
         position={[0, -1, 0]}
       />
       <ContactShadows position={[0, -1.01, 0]} opacity={0.2} scale={10} blur={2} far={10} resolution={256} color="#000000" />
-      <Environment background blur={0.75}>
+
+      {/* <Environment background blur={0.75}>
         <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
         <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
         <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
         <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-      </Environment>
+      </Environment> */}
+      
       <OrbitControls />
+
     </Canvas>
   )
 }

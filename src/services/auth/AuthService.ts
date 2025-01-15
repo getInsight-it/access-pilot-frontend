@@ -45,6 +45,10 @@ export class AuthService {
     return this.keycloakService.onInitEvent() as BehaviorSubject<AuthInitEvent>;
   }
 
+  onRefreshTokenEvent(): BehaviorSubject<boolean> {
+    return this.keycloakService.onRefreshTokenEvent() as BehaviorSubject<boolean>;
+  }
+
   onSignOutEvent(): BehaviorSubject<boolean> {
     return this.keycloakService.onSignOutEvent() as BehaviorSubject<boolean>;
   }

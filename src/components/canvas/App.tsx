@@ -5,6 +5,7 @@ import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
+import { useTheme } from '../layout/ThemeToggle/theme-provider'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
 useGLTF.preload('/models/card.glb')
@@ -15,6 +16,22 @@ useTexture.preload('/img/band.jpg')
 // }
 
 export default function App() {
+
+  const { theme } = useTheme();
+
+  const backgroundColor = theme === 'dark'
+    ? '#1f1f1f'  // Cor de fundo para o tema escuro
+    : theme === 'tangerine'
+    ? '#ffeedb'  // Cor de fundo para o tema tangerine (um tom claro de tangerina)
+    : '#ffffff';  // Cor de fundo para o tema claro
+
+  // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
+  const environmentHDR = theme === 'dark'
+    ? '/hdr/warehouse.hdr'
+    : theme === 'tangerine'
+    ? '/hdr/lobby.hdr'  // Caminho para o HDR do tema tangerine
+    : '/hdr/park.hdr';  // Tema claro usa o HDR padrão
+
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
       <ambientLight intensity={Math.PI} />
@@ -25,8 +42,11 @@ export default function App() {
       >
         <Band />
       </Physics>
-      <Environment background blur={0.75}>
-        {/* <color attach="background" args={['']} /> */}
+      <Environment
+        // files={environmentHDR}
+        background blur={0.75}
+      >
+        <color attach="background" args={[backgroundColor]} />
         <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
         <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
         <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
