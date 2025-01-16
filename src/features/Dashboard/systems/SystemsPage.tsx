@@ -3,13 +3,17 @@ import {SystemsTable} from '../../../components/tables/systems/systems';
 import {columns} from '../../../components/tables/systems/columns';
 import {Heading} from '../../../components/ui/heading';
 import {Separator} from '../../../components/ui/separator';
-import {useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {AddSystemDrawer} from '../../../components/drawers/AddSystemDrawer';
 import useAuthStore from "../../../store/authStore.ts";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {clientService} from "../../../services/client";
 import { motion } from 'framer-motion';
+import {PRIVATE_ROUTES} from "../../../constants/routes.ts";
+import {cn} from "../../../lib/utils.ts";
+import {buttonVariants} from "../../../components/ui/button.tsx";
+import {Plus} from "lucide-react";
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -100,7 +104,12 @@ export default function SystemsPage() {
             title={`Sistemas (${totalUsers})`}
             description=""
           />
-          <AddSystemDrawer onClick={() => setSelectedClient(undefined)} />
+          <Link
+            to={PRIVATE_ROUTES.NEW_SYSTEM}
+            className={cn(buttonVariants({variant: 'default'}))}
+          >
+            <Plus className="mr-2 h-4 w-4"/> Adicionar novo
+          </Link>
         </div>
         <Separator />
 
