@@ -36,7 +36,6 @@ export default function SystemsPage() {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [dataUpdated, setDataUpdated] = useState(true);
-  const [selectedClient, setSelectedClient] = useState<ClientDTO>();
 
   const init = () => {
     getData(page,pageLimit);
@@ -53,7 +52,6 @@ export default function SystemsPage() {
       updatePageInfo();
       init();
       setDataUpdated(true);
-      setSelectedClient(undefined);
     }
   }, [dataUpdated]);
 
@@ -116,7 +114,7 @@ export default function SystemsPage() {
         <SystemsTable
           searchKey="clientId"
           pageNo={page}
-          columns={columns(setDataUpdated, selectedClient, setSelectedClient)}
+          columns={columns(setDataUpdated)}
           totalUsers={totalUsers}
           data={clients}
           pageCount={pageCount}

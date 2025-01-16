@@ -17,9 +17,7 @@ const statusColors: Record<string, string> = {
 };
 
 export const columns = (
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  selectedClient: ClientDTO | undefined,
-  setSelectedClient: React.Dispatch<React.SetStateAction<ClientDTO | undefined>>): ColumnDef<ClientDTO>[] => [
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<ClientDTO>[] => [
   {
     accessorKey: 'clientId',
     header: 'SISTEMA'
