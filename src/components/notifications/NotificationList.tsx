@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 type Notification = {
   id: number
   title: string
-  message: string
+  description: string
   date: string
 }
 

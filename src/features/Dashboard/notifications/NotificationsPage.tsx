@@ -52,7 +52,7 @@ import {useEffect, useState} from "react";
 
 import {useNavigate, useParams} from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
-import {catchError, from, tap} from "rxjs";
+import {catchError, filter, from, interval, startWith, switchMap, tap} from "rxjs";
 
 import { Breadcrumbs } from '../../../components/breadcrumbs';
 import { Heading } from '../../../components/ui/heading';
@@ -63,19 +63,16 @@ import { motion } from 'framer-motion'
 
 import NotificationList from '../../../components/notifications/NotificationList'
 import NotificationDetails from '../../../components/notifications/NotificationDetails'
+import {notificationService} from "../../../services/notification";
+import {NotificationDto} from "../../../services/notification/notification-dto.ts";
+import {ClientDTO} from "../../../services/client/client-dto.ts";
 
 type Notification = {
   id: number
   title: string
-  message: string
+  description: string
   date: string
 }
-
-const notifications: Notification[] = [
-  { id: 1, title: 'Nova mensagem', message: 'Você recebeu uma nova mensagem de João.', date: '2023-05-20' },
-  { id: 2, title: 'Lembrete', message: 'Reunião às 14h hoje.', date: '2023-05-20' },
-  { id: 3, title: 'Atualização', message: 'Nova versão do aplicativo disponível.', date: '2023-05-19' },
-]
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -91,8 +88,42 @@ export default function NotificationsPage() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
+
+  const init = () => {
+    getData();
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      init()
+    }
+  }, [isAuthenticated]);
+
+  const getData = async () => {
+    from(notificationService.getNotifications('WEB', 1, 10000, 'id','DESC', useAuthStore?.getState()?.user?.id)).pipe(
+      tap((response) => {
+        setNotifications(response?.items || [])
+      }),catchError((error) => {
+        console.error(error);
+        return [];
+      }
+    )).subscribe();
+  };
+
+  const handleNotificationClick = (notification) => {
+    from(notificationService.updateOpenNotification(notification.id, true)).pipe(
+      tap((response) => {
+        getData();
+        setSelectedNotification(notification)
+      }),catchError((error) => {
+        console.error(error);
+        return [];
+      }
+    )).subscribe();
+  }
 
   return (
     <ScrollArea className="h-full ">
@@ -129,7 +160,7 @@ export default function NotificationsPage() {
             >
               <NotificationList
                 notifications={notifications}
-                onSelectNotification={setSelectedNotification}
+                onSelectNotification={(notification) => handleNotificationClick(notification)}
                 selectedNotification={selectedNotification}
               />
             </motion.div>
@@ -142,7 +173,7 @@ export default function NotificationsPage() {
             </motion.div>
           </div>
         </div>
-        
+
       </motion.div>
 
     </ScrollArea>
