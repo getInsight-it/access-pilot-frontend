@@ -32,6 +32,8 @@ import {Input} from "../ui/input.tsx";
 import {Textarea} from "../ui/textarea";
 import { ConfirmationModal } from './ConfirmationModal';
 import { Cracha } from './Cracha.tsx';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip.tsx';
+import { TruncatedDescription } from '../TruncateDescription.tsx';
 
 export const Detail = ({
                          data,
@@ -249,36 +251,32 @@ export const Detail = ({
           </div>
         </div>
 
-        <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-x-8">
           <div className="col-span-8 2xl:col-span-6 w-full ">
-            <div className="mt-4">
+            <div className="">
               <div className="flex gap-6">
                 <div className="mt-2 w-full ">
                   <p className="font-bold mb-3 text-lg">Sistema:</p>
 
                   <CardShine>
-                    <div
-                      className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
+                    <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[112px]">
                       <div className="flex flex-row items-center">
                         <MonitorCog className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg">
                           {data?.role.client.name}
                         </p>
                       </div>
-
-                      <p className="mt-1 text-sm">
-                        {data?.role.client.description}
-                      </p>
+                      <TruncatedDescription description={data?.role?.client?.description} maxLength={100} fontSize="text-sm" />
                     </div>
                   </CardShine>
-
+                  
                 </div>
 
                 <div className="mt-2 w-full max-w-72">
                   <p className="font-bold mb-3 text-lg">Papel:</p>
                   <CardShine>
                     <div
-                      className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)]">
+                      className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)] min-h-[112px]">
                       <div className="flex flex-row items-center">
                         <Pencil className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg capitalize">
@@ -287,9 +285,9 @@ export const Detail = ({
                       </div>
 
                       <p className="mt-1 text-sm">
-                        {data?.role.description}
-                        Descrição aluno lorem ipsum dolor.
+                        {data?.role.label}
                       </p>
+
                     </div>
                   </CardShine>
                 </div>
@@ -298,8 +296,8 @@ export const Detail = ({
           </div>
 
           <div className="col-span-3 ">
-            <p className="mt-6 font-bold mb-3 text-lg">Solicitante:</p>
-            <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)]">
+            <p className="mt-2 font-bold mb-3 text-lg">Solicitante:</p>
+            <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[112px]">
               <div className="flex flex-row items-center">
                 <User className="w-6 h-6 mr-4"/>
                 <p className="">
@@ -314,9 +312,10 @@ export const Detail = ({
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <p className="mt-6 font-bold mb-3 text-lg">Motivo do acesso:</p>
             <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
-              <p>
+              {/* <p>
                 {data?.description}
-              </p>
+              </p> */}
+              <TruncatedDescription description={data?.description} maxLength={600} fontSize="" />
             </div>
           </div>
 

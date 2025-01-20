@@ -221,7 +221,7 @@ export const SystemDetail = () => {
                       </p>
                     </div> */}
 
-                    <div className="mt-6 w-full max-w-96">
+                    <div className="mt-4 w-full max-w-96">
                       <p className="font-bold text-lg">Gerenciado:</p>
                       <p>
                         {data?.managed ? 'Sim' : 'Não'}

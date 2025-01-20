@@ -19,6 +19,7 @@ import { GridCards } from '../../components/GridCards.tsx';
 import { cn } from '../../lib/utils.ts';
 import { Card } from '../../components/utils/Card.tsx';
 import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
+import { ShuffleLoader } from '../../components/shuffle-loader/ShuffleLoader.tsx';
 
 export default function Dashboard() {
 
@@ -127,8 +128,6 @@ export default function Dashboard() {
         </div>
         <FeatureGrid summary={summary} />
       </motion.div>
-
-      
 
       {/* {theme === 'gov' && (
         <div className="mt-20">

@@ -111,7 +111,7 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
           </Button>
         </div>
         <div>
-          <UncontrolledTreeEnvironment<string>
+          {/* <UncontrolledTreeEnvironment<string>
             dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
             getItemTitle={item => item.data}
             viewState={{
@@ -121,8 +121,57 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
             canDropOnFolder={true}
             canReorderItems={true}
           >
-            <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" treeLabelledBy="tree-label"/>
+            <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" treeLabelledBy="tree-label" />
+          </UncontrolledTreeEnvironment> */}
+
+          
+
+          <UncontrolledTreeEnvironment<string>
+            canDragAndDrop
+            canDropOnFolder
+            canReorderItems
+            dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
+            getItemTitle={item => item.data}
+            viewState={{
+              'tree-1': {},
+            }}
+            renderItemTitle={({ title }) => <span>{title}</span>}
+            renderItemArrow={({ item, context }) =>
+              item.isFolder ? (
+                context.isExpanded ? (
+                  <span className="">{'>'}</span>
+                ) : (
+                  <span className="">v</span>
+                )
+              ) : null
+            }
+            renderItem={({ title, arrow, context, children }) => {
+              const InteractiveComponent = context.isRenaming ? 'div' : 'button';
+              return (
+                <li {...context.itemContainerWithChildrenProps}>
+                  <InteractiveComponent
+                    type="button"
+                    {...context.itemContainerWithoutChildrenProps}
+                    {...(context.interactiveElementProps as any)}
+                  >
+                    {arrow}
+                    {title}
+                  </InteractiveComponent>
+                  {children}
+                </li>
+              );
+            }}
+            renderTreeContainer={({ children, containerProps }) => (
+              <div {...containerProps}>{children}</div>
+            )}
+            renderItemsContainer={({ children, containerProps }) => (
+              <ul {...containerProps}>{children}</ul>
+            )}
+          >
+            <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
           </UncontrolledTreeEnvironment>
+            
+        
         </div>
       </div>
       <StepLoader loading={loading} onClose={() => setLoading(false)}/>
