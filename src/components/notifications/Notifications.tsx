@@ -3,6 +3,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Bell, X } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import { PilotMessages } from './PilotMessages';
+import {notificationService} from "../../services/notification";
+import {from, interval, startWith, switchMap, filter} from "rxjs";
+import {summaryService} from "../../services/summary";
+import useAuthStore from "../../store/authStore.ts";
+import {NotificationDto} from "../../services/notification/notification-dto.ts";
+import {format} from "date-fns";
 
 // Custom hook for handling outside clicks
 function useOutsideClick(ref: React.RefObject<HTMLElement>, buttonRef: React.RefObject<HTMLElement>, callback: () => void) {
@@ -24,31 +30,43 @@ function useOutsideClick(ref: React.RefObject<HTMLElement>, buttonRef: React.Ref
 export default function Notifications() {
     const [isOpen, setIsOpen] = useState(false)
     const [currentImage, setCurrentImage] = useState('front')
-    const [unreadCount, setUnreadCount] = useState(3) // Contador de notificações não lidas
     const dropdownRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
     const imageRef = useRef<HTMLDivElement>(null)
+    const [notifications, setNotifications]  = useState<NotificationDto[]>([]);
+    const [unreadCount, setUnreadCount]  = useState(0);
+    const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+    const user = useAuthStore((state: any) => state.user);
 
     useOutsideClick(dropdownRef, buttonRef, () => {
         setIsOpen(false);
     })
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      setInterval(() => {
+        setNotifications(useAuthStore?.getState()?.notification?.notifications);
+        setUnreadCount(useAuthStore?.getState()?.notification?.unread);
+      }, 3000);
+    }
+  }, [isAuthenticated]);
+
     const handleOpenNotifications = () => {
         setIsOpen((prevState) => !prevState);
-        if (unreadCount > 0) {
-            setUnreadCount(0); // Zera o contador ao abrir as notificações
+        if (useAuthStore?.getState()?.notification?.unread > 0) {
+            setUnreadCount(useAuthStore?.getState()?.notification?.unread); // Zera o contador ao abrir as notificações
         }
     }
 
     const handleImageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!imageRef.current) return;
-        
+
         const rect = imageRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const width = rect.width;
-        
+
         const position = (x / width) * 100;
-        
+
         if (position < 33) {
             setCurrentImage('left');
         } else if (position > 66) {
@@ -68,11 +86,11 @@ export default function Notifications() {
         }
     }
 
-    return (
-        <div className="flex items-center space-x-4">
-            {/* {unreadCount > 0 && (
+  return (
+    <div className="flex items-center space-x-4">
+            {/* {useAuthStore.getState().notification?.unread > 0 && (
             <>
-                <div 
+                <div
                     ref={imageRef}
                     className="w-[60px] h-[60px] bg-red-500 absolute -ml-10 mt-16 cursor-pointer overflow-hidden rounded-full border-2 border-black shadow-xl"
                     onMouseMove={handleImageMouseMove}
@@ -168,28 +186,24 @@ export default function Notifications() {
                                         Notificações
                                     </h3>
                                 </div>
+                              {notifications?.map((notification, index) => (
+                                <div
+                                  key={index}
+                                  className={`flex justify-between items-center ${index !== 0 ? 'mt-4' : ''} pb-4 ${index !== 2 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
+                                  role="menuitem"
+                                  tabIndex={0}
+                                >
+                                  <p className="font-medium text-sm text-gray-700 dark:text-gray-300" title={notification?.description}>
+                                    {notification?.title}
+                                  </p>
+                                  <small
+                                    className="text-gray-500 dark:text-gray-400 font-normal text-xs">{notification?.ultimaAlteracao ? format(new Date(notification?.ultimaAlteracao), 'dd/MM/yyyy') : ''}</small>
+                                </div>
+                              ))}
 
-                                {[
-                                    { text: "Nova solicitação de acesso.", date: "22/06/2024" },
-                                    { text: "Solicitação XYZ123456 atualizada.", date: "21/06/2024" },
-                                    { text: "Nova solicitação.", date: "20/06/2024" },
-                                ].map((notification, index) => (
-                                    <div 
-                                        key={index} 
-                                        className={`flex justify-between items-center ${index !== 0 ? 'mt-4' : ''} pb-4 ${index !== 2 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
-                                        role="menuitem"
-                                        tabIndex={0}
-                                    >
-                                        <p className="font-medium text-sm text-gray-700 dark:text-gray-300">
-                                            {notification.text}
-                                        </p>
-                                        <small className="text-gray-500 dark:text-gray-400 font-normal text-xs">{notification.date}</small>
-                                    </div>
-                                ))}
-
-                                <div className="mt-6 text-right">
-                                    <Link
-                                      onClick={handleOpenNotifications}
+                              <div className="mt-6 text-right">
+                                <Link
+                                  onClick={handleOpenNotifications}
                                       to="/dashboard/notifications"
                                       className="
                                       font-medium

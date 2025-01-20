@@ -4,8 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 type Notification = {
   id: number
   title: string
-  message: string
-  date: string
+  description: string
+  ultimaAlteracao: string
 }
 
 type NotificationDetailsProps = {
@@ -35,8 +35,8 @@ export default function NotificationDetails({ notification }: NotificationDetail
           <CardTitle className="text-lg">{notification.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="mb-2">{notification.message}</p>
-          <p className="text-sm text-gray-500">Data: {notification.date}</p>
+          <p className="mb-2">{notification.description}</p>
+          <p className="text-sm text-gray-500">Data: {notification.ultimaAlteracao}</p>
         </CardContent>
       </Card>
     </motion.div>

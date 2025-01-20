@@ -11,13 +11,15 @@ import { motion } from 'framer-motion';
 import './App.scss';
 import HighlightLoader from './components/highlightloader/HighLightLoader.tsx';
 import { userService } from './services/user'
+import {filter, from, interval, startWith, mergeMap, map} from "rxjs";
+import {notificationService} from "./services/notification";
 
 function App() {
   const navigate = useNavigate();
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const setUserRoles = useAuthStore((state) => state.setRoles);
-
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
+  const setNotificationInfo = useAuthStore((state) => state.setNotificationInfo);
 
   const [isInitialized, setIsInitialized] = useState(false); // Estado de inicialização
 
@@ -48,6 +50,7 @@ function App() {
         getUserInfo()
         setUserRoles(authService.getRoles());
         console.log(useAuthStore.getState().roles);
+        getNotifications()
 
         const currentRoute = window.location.pathname;
 
@@ -87,6 +90,32 @@ function App() {
     console.log('Inicializando autenticação');
     init();
   }, []);
+
+  const getNotifications = async () => {
+    const polling$ = interval(window.env.NOTIFICATION_REFRESH_INTERVAL || 5000).pipe(
+      startWith(0),
+      filter(() => useAuthStore?.getState()?.user?.id),
+      mergeMap(() => from(notificationService.getNotifications('WEB', 1, 5, 'id', 'DESC', useAuthStore?.getState()?.user?.id))),
+      mergeMap(page =>
+        from(notificationService.getSummaryNotifications(useAuthStore?.getState()?.user?.id, 'WEB')).pipe(
+          map(summary => ({ page, summary }))
+        )
+      )
+    );
+
+    const subscription = polling$.subscribe({
+      next: ({ page, summary }) => {
+        const notification = {
+          notifications: page.items,
+          unread: summary.totalUnread,
+        };
+        setNotificationInfo(notification);
+      },
+      error: (err) => console.error(err),
+    });
+
+    return () => subscription.unsubscribe();
+  };
 
   if (!isInitialized) {
     // Retorno do loader

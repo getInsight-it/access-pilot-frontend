@@ -1,5 +1,6 @@
 import { KeycloakRoles } from '@getinsight.it/getinsight-common';
 import { create } from 'zustand'
+import {NotificationDto} from "../services/notification/notification-dto.ts";
 
 interface UserInfo {
   id: string;
@@ -11,19 +12,27 @@ interface UserInfo {
   externalId?: string;
 }
 
+interface NotificationInfo {
+  unread: number;
+  notifications: NotificationDto[];
+}
+
 interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo | null;
   roles: KeycloakRoles | null;
+  notification: NotificationInfo | null;
   setIsAuthenticated: (authenticated: boolean) => void;
   setUserInfo: (user: UserInfo) => void;
   setRoles: (roles: KeycloakRoles | undefined) => void;
+  setNotificationInfo: (notification: NotificationInfo | undefined) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
   roles: null,
+  notification: null,
   setIsAuthenticated: (authenticated: boolean) => set(() => ({
     isAuthenticated: authenticated
   })),
@@ -32,6 +41,9 @@ const useAuthStore = create<AuthState>((set) => ({
   })),
   setRoles: (roles: KeycloakRoles | undefined) => set(() => ({
     roles
+  })),
+  setNotificationInfo: (notification: NotificationInfo | undefined) => set(() => ({
+    notification
   }))
 }));
 
