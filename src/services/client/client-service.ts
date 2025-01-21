@@ -23,6 +23,23 @@ export class ClientService {
     return null;
   }
 
+  async getClientsAssociates(attached: boolean): Promise<ClientDTO[] | null> {
+    const queryParams = new URLSearchParams({
+      attached: attached?.toString()
+    });
+
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_ME_ASSOCIATIONS}?${queryParams.toString()}`);
+
+    if (response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as ClientDTO[];
+    } else {
+      console.error('Erro ao buscar clients');
+    }
+
+    return null;
+  }
+
   async getClientsPaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, name?: string): Promise<PaginatedResponse<ClientDTO> | null> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),

@@ -84,7 +84,7 @@
 //                       {system.name}
 //                     </p>
 //                   </div>
-                  
+
 //                   <p className="mt-1 text-sm">
 //                     {system.description ? system.description : "Sem função atribuída"}
 //                   </p>
@@ -140,7 +140,7 @@
 //                   </div>
 //                 </div>
 //               </CardShine> */}
-              
+
 //             </motion.div>
 //           ))}
 //         </motion.div>
@@ -196,7 +196,7 @@ function GridList() {
 
   const getClients = async () => {
     try {
-      const fetchedClients = await clientService.getClients();
+      const fetchedClients = await clientService.getClientsAssociates(true);
       setClients(fetchedClients);
       // console.log(fetchedClients)
     } catch (error) {
@@ -246,7 +246,7 @@ function GridList() {
                     {client.clientId}
                   </p>
                 </div>
-                
+
                 <p className="mt-1 text-sm">
                   {client.description ? client.description : "Sem função atribuída"}
                 </p>
