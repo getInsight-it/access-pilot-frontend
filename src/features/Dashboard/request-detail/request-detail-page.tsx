@@ -15,32 +15,30 @@ export default function RequestDetailPage() {
   const location = useLocation();
   const { origin } = location.state || {};
   return (
-    <ScrollArea className="h-full">
-      <motion.div
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
-        }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
-      >
+    <motion.div
+      initial={{
+        opacity: 0
+      }}
+      animate={{
+        opacity: 1,
+        transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+      }}
+      className="flex-1 space-y-4 p-4 pt-6 md:p-8"
+    >
 
-        <Breadcrumbs items={breadcrumbItems} />
+      <Breadcrumbs items={breadcrumbItems} />
 
-        <div className="flex items-start justify-between">
-          <Heading
-            title={`Detalhe da solicitação`}
-            description="Gerenciar solicitações de acesso."
-          />
-        </div>
+      <div className="flex items-start justify-between">
+        <Heading
+          title={`Detalhe da solicitação`}
+          description="Gerenciar solicitações de acesso."
+        />
+      </div>
 
-        <Separator className="" />
+      <Separator className="" />
 
-        <RequestDetail origin={origin} />
+      <RequestDetail origin={origin} />
 
-      </motion.div>
-    </ScrollArea>
+    </motion.div>
   );
 }
