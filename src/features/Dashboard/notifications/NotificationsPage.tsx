@@ -100,9 +100,12 @@ export default function NotificationsPage() {
     if (isAuthenticated) {
       init()
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated], useAuthStore?.getState()?.user?.id);
 
   const getData = async () => {
+    if (!useAuthStore?.getState()?.user?.id) {
+      return;
+    }
     from(notificationService.getNotifications('WEB', 1, 10000, 'id','DESC', useAuthStore?.getState()?.user?.id)).pipe(
       tap((response) => {
         setNotifications(response?.items || [])
