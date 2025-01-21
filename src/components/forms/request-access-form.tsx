@@ -763,7 +763,7 @@ export function RequestAccessForm() {
 
                     <motion.div
                       className={cn(
-                        "w-10 h-10 hover:bg-gray-200 rounded-full flex items-center justify-center z-10 cursor-pointer",
+                        "w-8 h-8 hover:bg-gray-200 rounded-full flex items-center justify-center z-10 cursor-pointer",
                         step.id === currentStep
                           ? "hover:bg-primary bg-primary text-primary-foreground"
                           : stepsState[step.id] === 'completed'
@@ -800,7 +800,7 @@ export function RequestAccessForm() {
 
                     <div className="ml-14 sm:mt-0 sm:ml-4">
                       <h3
-                        className={`text-md xl:text-lg -mt-8 sm:mt-2 ${step.id === currentStep ? 'font-bold' : ''}`}
+                        className={`text-md xl:text-lg -mt-8 sm:mt-1 ${step.id === currentStep ? 'font-bold' : ''}`}
                       >
                         {step.title}
                       </h3>
@@ -814,13 +814,13 @@ export function RequestAccessForm() {
                       }}
                       transition={{ duration: 2.8 }}
 
-                      className="absolute left-5 top-10 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"
+                      className="absolute left-4 top-8 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"
                     >
                       </motion.div>
 
                     {index < steps.length - 1 && (
                       <motion.div
-                        className="absolute left-5 top-10 w-[2px] h-[calc(100%+24px)]"
+                        className="absolute left-4 top-8 w-[2px] h-[calc(100%+24px)]"
                         initial={{ backgroundColor: "#b2b2b2", y: -500 }}
 
                         animate={{
