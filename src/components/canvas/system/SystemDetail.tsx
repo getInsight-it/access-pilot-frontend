@@ -3,6 +3,7 @@ import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Html, Environment, useGLTF, ContactShadows, OrbitControls, Loader } from '@react-three/drei'
 import Hero from './Hero'
+import { useTheme } from '../../layout/ThemeToggle/theme-provider'
 
 function Model(props: JSX.IntrinsicElements['group']) {
   const group = useRef<THREE.Group>(null)
@@ -89,6 +90,15 @@ export default function System() {
     color: 'black'
   }
 
+  const { theme } = useTheme();
+
+  // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
+  const environmentHDR = theme === 'dark'
+    ? '/hdr/warehouse.hdr'
+    : theme === 'tangerine'
+    ? '/hdr/lobby.hdr'  // Caminho para o HDR do tema tangerine
+    : '/hdr/city.hdr';  // Tema claro usa o HDR padrão
+
   return (
     <>
       <Suspense fallback={
@@ -104,7 +114,7 @@ export default function System() {
                 scale={[0.75, 0.75, 0.75]}
               />
             </group>
-            <Environment preset="city" />
+            <Environment files={environmentHDR} />
           <ContactShadows position={[0, -0.8, 0]} opacity={0.5} scale={20} blur={2} far={4.5} />
           <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2.2} maxPolarAngle={Math.PI / 2.2} />
         </Canvas>

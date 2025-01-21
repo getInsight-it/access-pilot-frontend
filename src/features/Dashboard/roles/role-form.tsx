@@ -33,7 +33,7 @@ interface RoleFormProps {
 export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly , onSuccessSubmit}) => {
   const {toast} = useToast();
   const [loading, setLoading] = useState(false);
-  const toastMessage = initialData ? 'Função atualizada.' : 'Função criada.';
+  const toastMessage = initialData ? 'Papel atualizado.' : 'Papel criado.';
   const navigate = useNavigate();
   const defaultValues = initialData || {name: '', description: ''};
 
@@ -57,16 +57,16 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
   }
 
   const titleMap = {
-    DETAIL: 'Detalhes da função',
-    EDIT: 'Editar função',
-    CREATE: 'Criar nova função'
+    DETAIL: 'Detalhes da papel',
+    EDIT: 'Editar papel',
+    CREATE: 'Criar novo papel'
   }
 
 
   const actionMap = {
     DETAIL: '',
     EDIT: 'Salvar alterações',
-    CREATE: 'Adicionar fução'
+    CREATE: 'Adicionar papel'
   }
 
   const onSubmit = async (form: RoleDTO) => {
@@ -78,14 +78,14 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
       tap(() => {
         toast({
           title: toastMessage,
-          description: `A função ${role.name} foi ${initialData ? 'atualizada' : 'criada'} com sucesso.`,
+          description: `O papel ${role.name} foi ${initialData ? 'atualizado' : 'criado'} com sucesso.`,
         });
         onSuccessSubmit?.();
       }),
       catchError((error) => {
         toast({
           title: `Erro ao ${toastMessage}`,
-          description: `A função ${role.name} não foi ${initialData ? 'atualizada' : 'criada'}.`,
+          description: `O papel ${role.name} não foi ${initialData ? 'atualizado' : 'criado'}.`,
           variant: 'destructive',
         });
         console.error(error);
@@ -116,7 +116,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
-                        placeholder="Nome do sistema"
+                        placeholder="Nome do papel"
                         {...field}
                       />
                     </FormControl>
@@ -132,7 +132,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
-                        placeholder="Descrição do sistema"
+                        placeholder="Descrição do papel"
                         {...field}
                       />
                     </FormControl>
@@ -148,7 +148,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
-                        placeholder="Label do sistema"
+                        placeholder="Label do papel"
                         {...field}
                       />
                     </FormControl>
@@ -160,11 +160,11 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                 name="icon"
                 render={({field}) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">Icon</FormLabel>
+                    <FormLabel className="text-lg font-bold">Ícone</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading || isReadOnly()}
-                        placeholder="Icon do sistema"
+                        placeholder="Ícone do papel"
                         {...field}
                       />
                     </FormControl>

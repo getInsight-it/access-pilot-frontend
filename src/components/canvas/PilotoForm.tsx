@@ -135,7 +135,8 @@ export function PilotoForm({ currentAnimation }: PersonagemProps) {
       <Environment files={environmentHDR} />
       <Character
         currentAnimation={currentAnimation}
-        scale={[0.065, 0.065, 0.065]}
+        // scale={[0.065, 0.065, 0.065]}
+        scale={[0.063, 0.063, 0.063]}
         position={[0, -1, 0]}
       />
       <ContactShadows position={[0, -1.01, 0]} opacity={0.2} scale={10} blur={2} far={10} resolution={256} color="#000000" />

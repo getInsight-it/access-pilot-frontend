@@ -104,25 +104,76 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
 
   return (
     <>
-      <div style={{display: 'grid', gridTemplateRows: '1fr auto', height: '100%'}}>
-        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 mt-8 border-2 rounded-[var(--card-border-radius)] py-8 px-8 h-auto min-h-[220px] ">
+        <div className="w-80" >
+          <div>
+            <UncontrolledTreeEnvironment<string>
+              dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
+              getItemTitle={item => item.data}
+              viewState={{
+                'tree-1': {},
+              }}
+              canDragAndDrop={true}
+              canDropOnFolder={true}
+              canReorderItems={true}
+            >
+              <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" treeLabelledBy="tree-label" />
+            </UncontrolledTreeEnvironment>
+
+            
+
+            {/* <UncontrolledTreeEnvironment<string>
+              canDragAndDrop
+              canDropOnFolder
+              canReorderItems
+              dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
+              getItemTitle={item => item.data}
+              viewState={{
+                'tree-1': {},
+              }}
+              renderItemTitle={({ title }) => <span>{title}</span>}
+              renderItemArrow={({ item, context }) =>
+                item.isFolder ? (
+                  context.isExpanded ? (
+                    <span className="">{'>'}</span>
+                  ) : (
+                    <span className="">v</span>
+                  )
+                ) : null
+              }
+              renderItem={({ title, arrow, context, children }) => {
+                const InteractiveComponent = context.isRenaming ? 'div' : 'button';
+                return (
+                  <li {...context.itemContainerWithChildrenProps}>
+                    <InteractiveComponent
+                      type="button"
+                      {...context.itemContainerWithoutChildrenProps}
+                      {...(context.interactiveElementProps as any)}
+                    >
+                      {arrow}
+                      {title}
+                    </InteractiveComponent>
+                    {children}
+                  </li>
+                );
+              }}
+              renderTreeContainer={({ children, containerProps }) => (
+                <div {...containerProps}>{children}</div>
+              )}
+              renderItemsContainer={({ children, containerProps }) => (
+                <ul {...containerProps}>{children}</ul>
+              )}
+            >
+              <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
+            </UncontrolledTreeEnvironment> */}
+              
+          
+          </div>
+        </div>
+        <div className="mt-2">
           <Button onClick={handleSave}>
             Salvar
           </Button>
-        </div>
-        <div>
-          <UncontrolledTreeEnvironment<string>
-            dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
-            getItemTitle={item => item.data}
-            viewState={{
-              'tree-1': {},
-            }}
-            canDragAndDrop={true}
-            canDropOnFolder={true}
-            canReorderItems={true}
-          >
-            <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" treeLabelledBy="tree-label"/>
-          </UncontrolledTreeEnvironment>
         </div>
       </div>
       <StepLoader loading={loading} onClose={() => setLoading(false)}/>

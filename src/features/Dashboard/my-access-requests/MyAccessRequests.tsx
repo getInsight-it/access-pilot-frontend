@@ -106,6 +106,7 @@ export default function MyAccessRequests() {
 
         {/* {requests.length > 0 && */}
         
+          
           <RequestsTable
             searchKey="clientId"
             pageNo={page} // Passa o valor da página que começa em 1
@@ -118,6 +119,8 @@ export default function MyAccessRequests() {
               getData(newPage, pageSize);
             }}
           />
+
+
         {/* } */}
       </motion.div>
     </>
