@@ -197,7 +197,7 @@ import {
 
 const NUM_BLOCKS = 5;
 // const BLOCK_SIZE = 32;
-const BLOCK_SIZE = 14;
+const BLOCK_SIZE = 10;
 
 const DURATION_IN_MS = 175;
 const DURATION_IN_SECS = DURATION_IN_MS * 0.001;
@@ -272,7 +272,7 @@ export const ShuffleLoader = () => {
   };
 
   return (
-    <div className="grid h-18 place-content-center bg-primary p-5">
+    <div className="grid h-[40px] place-content-center p-5">
       <div ref={scope} className="flex divide-x divide-neutral-950">
         {blocks.map((b) => {
           return (
@@ -285,7 +285,7 @@ export const ShuffleLoader = () => {
                 width: BLOCK_SIZE,
                 height: BLOCK_SIZE,
               }}
-              className="bg-white"
+              className="bg-primary"
             />
           );
         })}

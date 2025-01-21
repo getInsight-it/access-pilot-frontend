@@ -34,6 +34,7 @@ import { ConfirmationModal } from './ConfirmationModal';
 import { Cracha } from './Cracha.tsx';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip.tsx';
 import { TruncatedDescription } from '../TruncateDescription.tsx';
+import { ShuffleLoader } from '../shuffle-loader/ShuffleLoader.tsx';
 
 export const Detail = ({
                          data,
@@ -66,6 +67,7 @@ export const Detail = ({
   const selected: StatusValue = OPTIONS.filter((o) => o.value === data?.status).map((o) => o.value as StatusValue)[0];
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
   const userInfo = useAuthStore((state) => state.user);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleDownload = async (fileId: string) => {
     const token = await authService.getBearerToken()
@@ -194,6 +196,13 @@ export const Detail = ({
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulating a 2-second load time
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     setPilotoAnimation(getInitialAnimation(data?.status));
   }, [data?.status]);
 
@@ -266,7 +275,17 @@ export const Detail = ({
                           {data?.role.client.name}
                         </p>
                       </div>
-                      <TruncatedDescription description={data?.role?.client?.description} maxLength={100} fontSize="text-sm" />
+
+
+                      {isLoading ? (
+                        <div className="grid justify-center items-center ">
+                          <ShuffleLoader />
+                        </div>
+                      ) : (
+                        <TruncatedDescription description={data?.role?.client?.description} maxLength={100} fontSize="text-sm" />
+                      )}
+
+
                     </div>
                   </CardShine>
                   
