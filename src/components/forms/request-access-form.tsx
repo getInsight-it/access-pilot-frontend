@@ -47,6 +47,8 @@ import {
 import { X } from 'lucide-react';
 import IconRenderer from "../icons/IconRenderer";
 import { PilotoForm } from "../canvas/PilotoForm";
+import useWindowSize from "../../hooks/use-window-size";
+import { CustomInput } from "../ui/custom-input";
 
 interface Client {
   id: number;
@@ -177,6 +179,9 @@ export function RequestAccessForm() {
     getRolesByClientId(client.clientId);
   }
 
+  const { width } = useWindowSize()
+  const isLargeScreen = width >= 1024 // lg breakpoint
+
   const steps = [
     {
       id: 1,
@@ -227,18 +232,45 @@ export function RequestAccessForm() {
 
                     </div>
                   </PopoverTrigger>
-                  <PopoverContent className="relative w-[26em]  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
-
-                    <Search className="absolute left-6 top-6 text-primary z-10" />
-
-                    <Input
+                  <PopoverContent
+                    side={isLargeScreen ? "right" : "bottom"}
+                    align={isLargeScreen ? "start" : "end"}
+                    className={`
+                      w-[26em]
+                      ${isLargeScreen ? "ml-[20px]" : ""} 
+                      // ${isLargeScreen ? "" : " mb-10"}
+                    `}
+                  >
+                    
+                    {/* <Input
                       type="text"
                       placeholder="Buscar sistema..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="mb-4 pl-10"
-                    /> {/* Added search input */}
-                    <ScrollArea className="h-[340px]">
+                    /> */}
+
+                    {/* <div className="relative">
+                      <CustomInput value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 pr-10" />
+                    </div> */}
+
+                    <div className="relative">
+                      <CustomInput
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Pesquisar..."
+                        className="pl-10 pr-10"
+                      />
+                      {searchTerm && (
+                        <p className="mt-4">
+                          Você está pesquisando por: <strong>{searchTerm}</strong>
+                        </p>
+                      )}
+                    </div>
+
+
+                    
+                    <ScrollArea className="h-[340px] mt-4">
                       <div className="space-y-2 grid grid-cols-1 gap-2">
                         {clients
                           .filter((client) =>
