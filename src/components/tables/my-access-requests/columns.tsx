@@ -20,9 +20,9 @@ interface StatusColors {
 const statusColors: StatusColors = {
   created: 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
   approved: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
-  canceled: 'px-3 py-1 rounded font-normal bg-red-200 text-red-800 block text-center w-32 text-sm',
-  pending: 'px-3 py-1 rounded font-normal bg-gray-200 text-gray-800 block text-center w-32 text-sm',
-  rejected: 'px-3 py-1 rounded font-normal bg-yellow-200 text-red-800 block text-center w-32 text-sm',
+  canceled: 'px-3 py-1 rounded font-normal bg-gray-200 text-gray-800 block text-center w-32 text-sm',
+  pending: 'px-3 py-1 rounded font-normal bg-blue-200 text-blue-800 block text-center w-32 text-sm',
+  rejected: 'px-3 py-1 rounded font-normal bg-red-200 text-red-800 block text-center w-32 text-sm',
 };
 
 const statusTranslations: { [key: string]: string } = {
