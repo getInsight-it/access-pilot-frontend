@@ -1,10 +1,7 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import {catchError, from, tap} from "rxjs";
-import {clientService} from "../../../services/client";
-import {ClientDTO} from "../../../services/client/client-dto.ts";
-import {SystemForm} from "./system-form.tsx";
 import {RoleDTO} from "../../../services/role/role-dto.ts";
 import {RoleForm} from "./role-form.tsx";
 import {roleService} from "../../../services/role";

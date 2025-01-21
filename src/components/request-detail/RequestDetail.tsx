@@ -44,9 +44,6 @@ export const RequestDetail = ({
   }, [isAuthenticated,id]);
 
   return (
-    <section className="">
       <Detail data={data} attachments={attachments} onUpdate={onUpdate} origin={origin}/>
-      {/* <Tag data={data} /> */}
-    </section>
   );
 };
