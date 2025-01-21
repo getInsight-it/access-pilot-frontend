@@ -6,7 +6,7 @@ export const Cracha = ({ data }: { data: any }) => {
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
 
   return (
-    <div className="w-full mt-20 ">
+    <div className="w-full mt-20 h-[300px]">
 
       <div className="badge-container mx-auto  rounded-xl max-w-full lg:max-w-[170px] ">
         <div className="event-badge mx-auto">
