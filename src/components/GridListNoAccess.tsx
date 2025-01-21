@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import systems from "../constants/sistemas";
-import { Check, LayoutGrid, List, MonitorIcon } from "lucide-react";
+import {Check, LayoutGrid, List, MonitorIcon, Plus} from "lucide-react";
 import { CardShine } from "./CardShine";
-import { Button } from "./ui/button";
+import {Button, buttonVariants} from "./ui/button";
 import { clientService } from "../services/client";
 import useAuthStore from "../store/authStore";
+import {Link} from "react-router-dom";
+import {PRIVATE_ROUTES} from "../constants/routes.ts";
+import {cn} from "../lib/utils.ts";
 
 interface Client {
   id: number;
@@ -41,7 +44,7 @@ function GridListNoAccess() {
 
   const getClients = async () => {
     try {
-      const fetchedClients = await clientService.getClients();
+      const fetchedClients = await clientService.getClientsAssociates(false);
       setClients(fetchedClients);
       // console.log(fetchedClients)
     } catch (error) {
@@ -112,15 +115,19 @@ function GridListNoAccess() {
                       {client.clientId}
                     </p>
                   </div>
-                  
+
                   <p className="mt-1 text-sm">
                     {client.description ? client.description : "Sem função atribuída"}
                   </p>
                 </div>
-                <Button className={toggleViewMode ? "mt-0 relative bg-primary text-primary-foreground w-full rounded-[var(--card-border-radius)] rounded-t-none" : "mt-2.5 absolute right-4 top-0 bg-primary text-primary-foreground"}>
-                  Solicitar acesso
-                </Button>
-                
+                <Link
+                  to={PRIVATE_ROUTES.REQUEST_ACCESS}
+                  state={client}>
+                  <Button className={toggleViewMode ? "mt-0 relative bg-primary text-primary-foreground w-full rounded-[var(--card-border-radius)] rounded-t-none" : "mt-2.5 absolute right-4 top-0 bg-primary text-primary-foreground"}>
+                    Solicitar acesso
+                  </Button>
+                </Link >
+
               </CardShine>
 
               {/* <CardShine>
@@ -158,17 +165,17 @@ function GridListNoAccess() {
                     </div>
 
                   </div>
-                  
+
 
                 </div>
-                  
+
                   <Button className={toggleViewMode ? "mt-0 relative bg-primary text-primary-foreground w-full rounded-[var(--card-border-radius)] rounded-t-none" : "mt-2.5 absolute right-4 top-0 bg-primary text-primary-foreground"}>
                     Solicitar acesso
                   </Button>
 
               </CardShine> */}
 
-             
+
 
                 {/* {clients.map((client, index) => (
                   <div key={index}>

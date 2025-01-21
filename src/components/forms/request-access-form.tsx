@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "../../components/ui/use-toast";
 
@@ -105,10 +105,11 @@ export function RequestAccessForm() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { description: "" },
+    defaultValues: { description: "", clientId: location?.state?.clientId },
   });
 
   const getClients = async () => {
@@ -129,8 +130,19 @@ export function RequestAccessForm() {
     }
   };
 
+  function init() {
+    if (isAuthenticated) {
+      getClients();
+      const client = location.state;
+      if(client) {
+        handlerSelectedClient(client);
+      }
+
+    }
+  }
+
   useEffect(() => {
-    if (isAuthenticated) getClients();
+    init();
   }, [isAuthenticated]);
 
   const getFileIcon = (fileName: string) => {
@@ -159,6 +171,11 @@ export function RequestAccessForm() {
   };
 
   console.log(clients)
+
+  function handlerSelectedClient(client: Client) {
+    setSelectedClient(client.clientId);
+    getRolesByClientId(client.clientId);
+  }
 
   const steps = [
     {
@@ -197,17 +214,17 @@ export function RequestAccessForm() {
                               {selectedClient}
                             </p>
                           </div>
-                          
+
                           {selectedClient &&
                             <p className="mt-1 text-sm">
                               {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
                             </p>
                           }
-                          
+
                         </div>
 
                       </CardShine>
-                      
+
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="relative w-[26em]  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
@@ -237,8 +254,7 @@ export function RequestAccessForm() {
                                 )}
                                 onClick={() => {
                                   field.onChange(client.clientId);
-                                  setSelectedClient(client.clientId);
-                                  getRolesByClientId(client.clientId);
+                                  handlerSelectedClient(client);
                                 }}
                               >
                                 {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
@@ -249,12 +265,12 @@ export function RequestAccessForm() {
                                     {client.clientId}
                                   </p>
                                 </div>
-                                
+
                                 <p className="mt-1 text-sm">
                                   {client.description}
                                 </p>
-                                
-                                
+
+
                               </div>
 
                             </CardShine>
@@ -299,7 +315,7 @@ export function RequestAccessForm() {
                             setSelectedRole(role.name);
                           }}
                         >
-                          
+
                           <div className="flex flex-row items-center">
                             <IconRenderer className={`${role?.icon} w-6 h-6 mr-4`} />
                             <p className="font-bold text-lg capitalize">
@@ -1190,17 +1206,17 @@ export function RequestAccessForm() {
 //                               {selectedClient}
 //                             </p>
 //                           </div>
-                          
+
 //                           {selectedClient &&
 //                             <p className="mt-1 text-sm">
 //                               {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
 //                             </p>
 //                           }
-                          
+
 //                         </div>
 
 //                       </CardShine>
-                      
+
 //                     </div>
 //                   </PopoverTrigger>
 //                   <PopoverContent className="relative w-[26em]  ml-0 lg:ml-[400px] -mt-[168px] mb-10" align="start">
@@ -1242,12 +1258,12 @@ export function RequestAccessForm() {
 //                                     {client.clientId}
 //                                   </p>
 //                                 </div>
-                                
+
 //                                 <p className="mt-1 text-sm">
 //                                   {client.description}
 //                                 </p>
-                                
-                                
+
+
 //                               </div>
 
 //                             </CardShine>
@@ -1292,7 +1308,7 @@ export function RequestAccessForm() {
 //                             setSelectedRole(role.name);
 //                           }}
 //                         >
-                          
+
 //                           <div className="flex flex-row items-center">
 //                             <IconRenderer className={`${role?.icon} w-6 h-6 mr-4`} />
 //                             <p className="font-bold text-lg capitalize">
