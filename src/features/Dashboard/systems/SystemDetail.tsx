@@ -167,7 +167,7 @@ export const SystemDetail = () => {
               />
             </div> */}
             
-            <div className="relative max-w-[1070px] grid grid-cols-2 gap-8">
+            <div className="relative max-w-[1070px] grid grid-cols-1 xl:grid-cols-2 gap-8">
 
               <div className="w-full ">
 

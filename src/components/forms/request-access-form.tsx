@@ -49,6 +49,7 @@ import IconRenderer from "../icons/IconRenderer";
 import { PilotoForm } from "../canvas/PilotoForm";
 import useWindowSize from "../../hooks/use-window-size";
 import { CustomInput } from "../ui/custom-input";
+import { TruncatedDescription } from "../TruncateDescription";
 
 interface Client {
   id: number;
@@ -221,9 +222,10 @@ export function RequestAccessForm() {
                           </div>
 
                           {selectedClient &&
-                            <p className="mt-1 text-sm">
-                              {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
-                            </p>
+                          <TruncatedDescription description={clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"} />
+                            // <p className="mt-1 text-sm">
+                            //   {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
+                            // </p>
                           }
 
                         </div>
@@ -238,7 +240,7 @@ export function RequestAccessForm() {
                     className={`
                       w-[26em]
                       ${isLargeScreen ? "ml-[20px]" : ""} 
-                      // ${isLargeScreen ? "" : " mb-10"}
+                      ${isLargeScreen ? "" : " mb-10"}
                     `}
                   >
                     
@@ -298,9 +300,10 @@ export function RequestAccessForm() {
                                   </p>
                                 </div>
 
-                                <p className="mt-1 text-sm">
+                                <TruncatedDescription description={client.description} />
+                                {/* <p className="mt-1 text-sm">
                                   {client.description}
-                                </p>
+                                </p> */}
 
 
                               </div>
