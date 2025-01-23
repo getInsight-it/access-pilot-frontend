@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {FormProvider, useForm} from 'react-hook-form';
 import {Trash} from 'lucide-react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import {Input} from '../../../components/ui/input.tsx';
 import {Button} from '../../../components/ui/button.tsx';
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from '../../../components/ui/form.tsx';
@@ -148,7 +148,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
           <h2 className="text-left text-2xl font-bold leading-tight md:text-2xl md:leading-tight">
             {titleMap[getActionStyle()]}
           </h2>
-          
+
           <p>
             {description}
           </p>
@@ -208,7 +208,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                   </FormItem>
                 )}
               />
-              
+
               {/* <FormField
                 name="managed"
                 render={({field}) => (
@@ -225,7 +225,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                   </FormItem>
                 )}
               /> */}
-              
+
               <FormField
                 name="managed"
                 render={({field}) => (
@@ -285,11 +285,11 @@ export const SystemForm: React.FC<SystemFormProps> = ({
             </div>
           </div>
           <div className="mt-10 flex justify-between">
-            <Button
+            <Link
               className=""
-              onClick={() => navigate(-1)}
-              variant="ghost">Voltar</Button>
-            
+              type="button"
+              onClick={() => navigate(-1)}>Voltar</Link>
+
             { getActionStyle() === 'DETAIL'
               ? null :
               <Button disabled={loading} className="" type="submit">

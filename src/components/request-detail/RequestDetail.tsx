@@ -7,12 +7,11 @@ import {requestService} from "../../services/request";
 import useAuthStore from "../../store/authStore.ts";
 import {RequestDTO} from "../../services/request/request-d-t-o.ts";
 import {catchError, from, tap} from "rxjs";
+import {storageService} from "../../services/storage";
 
 export const RequestDetail = ({
-                                attachments,
                                 origin
                               }: {
-  attachments?: StorageDTO[],
   origin?: string
 }) => {
 
@@ -24,6 +23,24 @@ export const RequestDetail = ({
   const onUpdate = () => {
     getData();
   }
+  const [attachments, setAttachments] = useState<StorageDTO[]>([]);
+  const handleAttachments = (ownerId: string) => {
+    if (isAuthenticated) {
+      getStorageData(ownerId, 1, 1000);
+    }
+  }
+
+  const getStorageData = async (ownerId : string, pageIndex: number, pageCount: number) => {
+    const pageResponse = await storageService.getStoragesPaginated(ownerId, pageIndex, pageCount, "id", "asc");
+    setAttachments(pageResponse?.items || []);
+  };
+
+
+  useEffect(() => {
+    if (data?.uuid) {
+      handleAttachments(data?.uuid);
+    }
+  }, [data, isAuthenticated]);
 
   const getData = async () => {
     if(!id) return;
