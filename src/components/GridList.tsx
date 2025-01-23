@@ -161,6 +161,7 @@ import { CardShine } from "./CardShine";
 import { Button } from "./ui/button";
 import { clientService } from "../services/client";
 import useAuthStore from "../store/authStore";
+import { TruncatedDescription } from "./TruncateDescription";
 
 interface Client {
   id: number;
@@ -247,9 +248,10 @@ function GridList() {
                   </p>
                 </div>
 
-                <p className="mt-1 text-sm">
+                <TruncatedDescription description={client.description ? client.description : "Sem função atribuída"} />
+                {/* <p className="mt-1 text-sm">
                   {client.description ? client.description : "Sem função atribuída"}
-                </p>
+                </p> */}
               </div>
               </CardShine>
 
