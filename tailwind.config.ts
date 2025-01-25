@@ -93,13 +93,19 @@ const config = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			led: {
+			"0%": { fill: "currentColor", brightness: "1" },
+			"50%": { fill: "#00ff00", brightness: "500%" },
+			"100%": { fill: "currentColor", brightness: "1" },
+			},
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			led: "led 100ms ease-in-out",
   		},
   		transitionDuration: {
   			'1500': '1500ms'

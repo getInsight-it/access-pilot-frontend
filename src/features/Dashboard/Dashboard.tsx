@@ -13,13 +13,8 @@ import { Typewriter } from '../../typewriter/Typewriter.tsx';
 import {SummaryDto} from "../../services/summary/summary-dto.ts";
 import {summaryService} from "../../services/summary";
 import { motion } from 'framer-motion';
-import { TabsDemo } from '../../components/TabsDemo.tsx';
-import { Separator } from '@radix-ui/react-select';
 import { GridCards } from '../../components/GridCards.tsx';
-import { cn } from '../../lib/utils.ts';
 import { Card } from '../../components/utils/Card.tsx';
-import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
-import { ShuffleLoader } from '../../components/shuffle-loader/ShuffleLoader.tsx';
 
 export default function Dashboard() {
 
@@ -67,7 +62,6 @@ export default function Dashboard() {
       </div> */}
 
       {/* admin dashboard */}
-
 
       {/* user dashboard */}
       <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8">

@@ -291,7 +291,7 @@ export function RequestAccessForm() {
                                   handlerSelectedClient(client);
                                 }}
                               >
-                                {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                                {selectedClient === client.clientId && <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
                                 <div className="flex flex-row items-center">
                                   <MonitorIcon className="w-6 h-6 mr-4" />

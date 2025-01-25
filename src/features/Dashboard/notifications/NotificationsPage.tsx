@@ -153,8 +153,8 @@ export default function NotificationsPage() {
 
         <Separator className="" />
 
-        <div className="container p-4 mt-8 md:p-8">
-          <h1 className="text-2xl font-bold mb-4">Notificações</h1>
+        <div className="container">
+          {/* <h1 className="text-2xl font-bold mb-4">Notificações</h1> */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <motion.div
               initial={{ opacity: 0, x: -50 }}

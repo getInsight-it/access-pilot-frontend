@@ -284,7 +284,8 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               />
             </div>
           </div>
-          <div className="mt-10 flex justify-between">
+          <Separator className="mt-10" />
+          <div className="mt-6 flex justify-between">
             <Button
               className=""
               onClick={() => navigate(-1)}

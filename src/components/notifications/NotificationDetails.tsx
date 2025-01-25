@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card'
+import { format } from 'date-fns'
 
 type Notification = {
   id: number
@@ -13,6 +14,9 @@ type NotificationDetailsProps = {
 }
 
 export default function NotificationDetails({ notification }: NotificationDetailsProps) {
+
+  const formattedDate = notification ? format(new Date(notification.ultimaAlteracao), 'dd/MM/yyyy - HH:mm') : '';
+
   if (!notification) {
     return (
       <Card>
@@ -36,7 +40,11 @@ export default function NotificationDetails({ notification }: NotificationDetail
         </CardHeader>
         <CardContent>
           <p className="mb-2">{notification.description}</p>
-          <p className="text-sm text-gray-500">Data: {notification.ultimaAlteracao}</p>
+          <p className="text-sm text-gray-500">
+            Data: {formattedDate}
+            {/* Data: {notification.ultimaAlteracao} */}
+          </p>
+          
         </CardContent>
       </Card>
     </motion.div>
