@@ -1,22 +1,22 @@
-import { Tower } from "./Tower";
-import { MiniCard1 } from "./MiniCard1";
-import { LongCard } from "./LongCard";
+import {Tower} from "./Tower";
+import {MiniCard1} from "./MiniCard1";
+import {LongCard} from "./LongCard";
 
-export const Content = ({summary}) => {
+
+export const Content = ({summary, requests}) => {
   return (
     <section>
-      <Grid summary={summary}/>
+      <Grid summary={summary} requests={requests}/>
     </section>
   );
 };
 
-const Grid = ({summary}) => (
+const Grid = ({summary, requests}) => (
   <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 mb-16">
-    <Tower />
+    {/*<Tower/>*/}
     <div className="col-span-1 grid grid-cols-2 gap-4 lg:col-span-8 lg:grid-cols-2">
       <MiniCard1 summary={summary}/>
-      {/* <MiniCard2 /> */}
-      <LongCard />
+      <LongCard requests={requests}/>
     </div>
   </div>
 );

@@ -18,7 +18,6 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate, origi
 
   const [open, setOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [storages, setStorages] = useState<StorageDTO[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [pageCount] = useState(100); // pode alterar a contagem de páginas conforme necessário
   const [page, setPage] = useState(1);
@@ -30,6 +29,7 @@ export const DetailDrawer: React.FC<DetailDrawerProps> = ({data, onUpdate, origi
   };
 
 
+  const [storages, setStorages] = useState<StorageDTO[]>([]);
   const handleAttachments = (ownerId: string) => {
     if (isAuthenticated) {
       getStorageData(ownerId, page, pageCount);

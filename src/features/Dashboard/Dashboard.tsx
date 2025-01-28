@@ -4,7 +4,7 @@ import { FeatureGrid } from '../../components/grid/FeatureGrid';
 import GridList from '../../components/GridList';
 import GridListNoAccess from '../../components/GridListNoAccess';
 import { Stripe } from '../../components/stripe/Stripe';
-import { from, interval, startWith, switchMap } from 'rxjs';
+import { from, interval, startWith, switchMap, combineLatest } from 'rxjs';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import FooterGovbr from '../../components/layout/footer-govbr.tsx';
 import {useEffect, useState} from 'react';
@@ -13,8 +13,15 @@ import { Typewriter } from '../../typewriter/Typewriter.tsx';
 import {SummaryDto} from "../../services/summary/summary-dto.ts";
 import {summaryService} from "../../services/summary";
 import { motion } from 'framer-motion';
+import { TabsDemo } from '../../components/TabsDemo.tsx';
+import { Separator } from '@radix-ui/react-select';
 import { GridCards } from '../../components/GridCards.tsx';
+import { cn } from '../../lib/utils.ts';
 import { Card } from '../../components/utils/Card.tsx';
+import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
+import { ShuffleLoader } from '../../components/shuffle-loader/ShuffleLoader.tsx';
+import {requestService} from "../../services/request";
+import {RequestDTO} from "../../services/request/request-d-t-o.ts";
 
 export default function Dashboard() {
 
@@ -22,6 +29,7 @@ export default function Dashboard() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { theme } = useTheme();
   const [summary, setSummary] = useState<SummaryDto>(null);
+  const [requests, setRequests] = useState<RequestDTO[]>(null);
 
   const signOut = async () => {
     await authService.signOut();
@@ -40,18 +48,25 @@ export default function Dashboard() {
   const getData = async () => {
     const polling$ = interval(window.env.DASHBOARD_REFRESH_INTERVAL || 5000).pipe(
       startWith(0),
-      switchMap(() => from(summaryService.getSummary()))
+      switchMap(() =>
+        combineLatest([
+          from(summaryService.getSummary()),
+          from(requestService.getRequestsMePaginated(1, 3, 'id', 'desc', 'assigned')),
+        ])
+      )
     );
 
     const subscription = polling$.subscribe({
-      next: (summaries) => setSummary(summaries),
+      next: ([summaries, requestsResponse]) => {
+        setSummary(summaries);
+        setRequests(requestsResponse?.items || []);
+      },
       error: (err) => console.error(err),
     });
 
     return () => subscription.unsubscribe();
   };
 
-  
 
   return (
     <ScrollArea className="h-full">
@@ -63,6 +78,7 @@ export default function Dashboard() {
 
       {/* admin dashboard */}
 
+
       {/* user dashboard */}
       <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8">
         <div className="flex items-center justify-between space-y-2">
@@ -70,7 +86,7 @@ export default function Dashboard() {
             Olá, bem-vindo de volta
           </h2>
         </div>
-        
+
         {/* <div className="grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
           <GridList />
           <div></div>
@@ -82,9 +98,9 @@ export default function Dashboard() {
       <div className="col-span-2 h-fit px-8">
         <Card className="bg-primary-foreground">
           <div className="relative z-20">
-            
+
             {/* <CalloutChip>#3</CalloutChip> */}
-  
+
             <p className="mb-5 ml-1.5 text-2xl">Sistemas que você tem acesso</p>
             <GridList />
           </div>
@@ -94,16 +110,16 @@ export default function Dashboard() {
       <div className="col-span-2 h-fit px-8 pt-3.5">
         <Card className="bg-primary-foreground">
           <div className="relative z-20">
-            
+
             {/* <CalloutChip>#3</CalloutChip> */}
-  
+
             <p className="mb-5 ml-1.5 text-2xl">Sistemas que você pode solicitar acesso</p>
             <GridListNoAccess />
           </div>
         </Card>
       </div>
 
-      
+
       <motion.div
         initial={{
           opacity: 0
@@ -120,7 +136,7 @@ export default function Dashboard() {
           </h2>
           {summary && (<Typewriter {...summary}/>)}
         </div>
-        <FeatureGrid summary={summary} />
+        {(summary && requests) && <FeatureGrid summary={summary} requests={requests}/>}
       </motion.div>
 
       {/* {theme === 'gov' && (
