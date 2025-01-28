@@ -5,6 +5,12 @@ export const Cracha = ({ data }: { data: any }) => {
 
   const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
 
+  // Separar o nome completo em primeiro nome e sobrenome. Ta vindo concatenado do servidor.
+  // const fullName = data?.requestingUser.firstName || '';
+  // const [firstName, ...lastName] = fullName.split(' ');
+
+  // console.log(firstName);
+
   return (
     <div className="w-full mt-20 h-[300px]">
 
@@ -55,7 +61,7 @@ export const Cracha = ({ data }: { data: any }) => {
                   }}
                   src="/img/accesspilot-w.svg"
                   alt="logo-accesspilot"
-                  className="size-40 h-10"
+                  className="w-28 h-10"
                 />
             </div>
             <motion.div
@@ -75,6 +81,7 @@ export const Cracha = ({ data }: { data: any }) => {
             >
               <div className="text content">
                 <h1 className="font-bold text-sm text-gray-50 relative">
+                  {/* {firstName} */}
                   {data?.requestingUser.firstName}
                 </h1>
                 <p className="font-normal text-sm capitalize text-gray-50 relative z-10 mt-1 mb-4">

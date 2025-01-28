@@ -11,6 +11,8 @@ import {roleService} from "../../../services/role";
 import {catchError, finalize, from, tap} from "rxjs";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {useNavigate} from "react-router-dom";
+import { IconPicker } from '../../../components/ui/icon-picker';
+import { Separator } from '../../../components/ui/separator.tsx';
 
 const formSchema = z.object({
   name: z
@@ -158,6 +160,20 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
               />
               <FormField
                 name="icon"
+                render={({ field }) => (
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Ícone</FormLabel>
+                    <br />
+                    <FormControl>
+                      {/* <IconPicker value={field.value} onChange={field.onChange} disabled={loading || isReadOnly()} /> */}
+                      <IconPicker />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* <FormField
+                name="icon"
                 render={({field}) => (
                   <FormItem className="mb-2">
                     <FormLabel className="text-lg font-bold">Ícone</FormLabel>
@@ -171,10 +187,11 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                     <FormMessage/>
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
           </div>
-          <div className="mt-10 flex justify-between">
+          <Separator className="mt-10" />
+          <div className="mt-6 flex justify-between">
             <Button
               className=""
               onClick={() => navigate(-1)}

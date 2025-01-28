@@ -284,12 +284,16 @@ export const SystemForm: React.FC<SystemFormProps> = ({
               />
             </div>
           </div>
-          <div className="mt-10 flex justify-between">
-            <Link
+          <Separator className="mt-10" />
+          
+          <div className="mt-6 flex justify-between">
+            <Button
               className=""
-              type="button"
-              onClick={() => navigate(-1)}>Voltar</Link>
-
+              onClick={() => navigate(-1)}
+              variant="ghost"
+            >
+              Voltar
+            </Button>
             { getActionStyle() === 'DETAIL'
               ? null :
               <Button disabled={loading} className="" type="submit">

@@ -227,7 +227,7 @@ export const Detail = ({
   return (
     <FormProvider {...form}>
       <div className="relative max-w-[1440px] mx-auto">
-        
+
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8 mt-6 lg:h-[310px]">
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <div className="w-full ">

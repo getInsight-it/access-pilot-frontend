@@ -9,6 +9,7 @@ import {roleService} from "../../../services/role";
 import {useEffect, useState} from "react";
 import {RoleDTO} from "../../../services/role/role-dto.ts";
 import useAuthStore from "../../../store/authStore.ts";
+import { motion } from 'framer-motion'
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -47,17 +48,28 @@ export default function RolesPage() {
   return (
     <>
       <ScrollArea className="h-screen">
-        <div className="flex-1 space-y-4  p-4 pt-6 md:p-8">
-          <Breadcrumbs items={breadcrumbItems}/>
-          <UserRole data={roles} onSuccess={() => getData()}/>
-        </div>
-        <Separator className="mb-6"/>
-        <div className="px-8">
-          <h2 className="text-xl">Arraste para organizar a hierarquia.</h2>
-          <div className="">
-            {!loading && <TreeRole data={roles} onSuccess={() => getData()}/>}
+        <motion.div
+          initial={{
+            opacity: 0
+          }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+          }}
+          className=""
+        >
+          <div className="flex-1 space-y-4  p-4 pt-6 md:p-8">
+            <Breadcrumbs items={breadcrumbItems}/>
+            <UserRole data={roles} onSuccess={() => getData()}/>
           </div>
-        </div>
+          <Separator className="mb-6"/>
+          <div className="px-8">
+            <h2 className="text-xl">Arraste para organizar a hierarquia.</h2>
+            <div className="">
+              {!loading && <TreeRole data={roles} onSuccess={() => getData()}/>}
+            </div>
+          </div>
+        </motion.div>
       </ScrollArea>
     </>
   );
