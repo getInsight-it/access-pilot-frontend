@@ -1,10 +1,41 @@
+import {useEffect, useId, useRef, useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
+import {useOutsideClick} from "../../hooks/use-outside-click";
+import {Eye} from "lucide-react";
+import {RequestDTO} from "../../services/request/request-d-t-o.ts";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useOutsideClick } from "../../hooks/use-outside-click";
-import { Eye } from "lucide-react";
+interface ExpandableListProps {
+  requests?: RequestDTO[]
+}
+const status = {
+  "CREATED": {
+    color: "bg-blue-500",
+    icon: "FilePlus",
+    description: "Criado"
+  },
+  "APPROVED": {
+    color: "bg-green-200 text-green-800",
+    icon: "Check",
+    description: "Aprovado"
+  },
+  "REJECTED": {
+    color: "bg-red-500",
+    icon: "X",
+    description: "Rejeitado"
+  },
+  "PENDING": {
+    color: "bg-yellow-500",
+    icon: "Clock",
+    description: "Pendente"
+  },
+  "CANCELLED": {
+    color: "bg-blue-500",
+    icon: "Clock",
+    description: "Cancelado"
+  }
+}
 
-export function ExpandableList() {
+export function ExpandableList({requests}: ExpandableListProps) {
   const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
     null
   );
@@ -30,14 +61,49 @@ export function ExpandableList() {
 
   useOutsideClick(ref, () => setActive(null));
 
+  function toCards(requests: RequestDTO[]) {
+    return requests.map((request) => {
+      return {
+        title: request.role.client?.name,
+        description: request.role.description,
+        icon: request.role.icon,
+        status: request.status,
+        content: () => {
+          return (
+            <div className="grid grid-cols-2 gap-5 py-6">
+              <div className="font-bold space-y-3">
+                <p>Sistema:</p>
+                <p>Função solicitada:</p>
+                <p>Status:</p>
+                <p>Data de envio:</p>
+                <p>Solicitante:</p>
+                <p>Aprovador:</p>
+                <p>Motivo do acesso:</p>
+              </div>
+              <div className="space-y-3">
+                <p>{request.role.client?.name ?? 'N/A'}</p>
+                <p>{request.role.name ?? 'N/A'}</p>
+                <p>{status[request?.status]?.description || 'N/A'}</p>
+                <p>{new Date(request.criacao).toLocaleDateString('pt-BR') || 'N/A'}</p>
+                <p>{request.requestingUser?.username || 'N/A'}</p>
+                <p>{request.approvingUser?.username || 'N/A'}</p>
+                <p>{request.description || 'N/A'}</p>
+              </div>
+            </div>
+          );
+        },
+      };
+    });
+  }
+
   return (
     <>
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
             className="fixed inset-0 bg-black/40 dark:bg-black/60 h-full w-full z-10"
           />
         )}
@@ -63,7 +129,7 @@ export function ExpandableList() {
               className="flex absolute  lg:hidden items-center justify-center bg-white rounded-full h-6 w-6"
               onClick={() => setActive(null)}
             >
-              <CloseIcon />
+              <CloseIcon/>
             </motion.button>
             <motion.div
               layoutId={`card-${active.title}-${id}`}
@@ -78,7 +144,7 @@ export function ExpandableList() {
                     w-full
                     h-12
                     sm:rounded-tr-lg sm:rounded-tl-lg
-                    
+
                   "
                 />
               </motion.div>
@@ -102,7 +168,7 @@ export function ExpandableList() {
 
                   <motion.div
                     layoutId={`button-${active.title}-${id}`}
-                    
+
                     onClick={() => setActive(null)}
                     className="z-10 cursor-pointer absolute right-6 bottom-6 px-4 py-3 text-sm rounded-full font-bold bg-primary text-secondary"
                   >
@@ -122,9 +188,9 @@ export function ExpandableList() {
                 <div className="pt-0 relative px-4">
                   <motion.div
                     layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
                     className="text-[var(--list-color)] text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto  [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
                   >
                     {typeof active.content === "function"
@@ -137,12 +203,12 @@ export function ExpandableList() {
           </div>
         ) : null}
       </AnimatePresence>
-      
+
       <ul className="w-full gap-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="mt-1 ml-1 text-2xl">Últimas solicitações.</h2>
         </div>
-        {cards.map((card) => (
+        {requests && toCards(requests)?.map((card) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
             key={`card-${card.title}-${id}`}
@@ -152,9 +218,9 @@ export function ExpandableList() {
             <div className="flex gap-4  md:flex-row">
               <motion.div className="hidden md:block" layoutId={`image-${card.title}-${id}`}>
                 <img
-                  src={card.src}
+                  src={card?.src}
                   alt={card.title}
-                  className="h-8 w-8 md:h-10 md:w-10 rounded-lg object-cover object-top"
+                  className="h-8 w-8 md:h-10 md:w-10 rounded-lg object-cover object-top "
                 />
               </motion.div>
               <div className="leading-snug">
@@ -173,22 +239,22 @@ export function ExpandableList() {
             </div>
             <div
               className={`px-2 py-1 text-xs font-medium rounded text-center w-20 inline-block justify-self-end ${
-                card.status === "Aprovado"
+                card?.status === "APPROVED"
                   ? "bg-green-200 text-green-800"
-                  : card.status === "Rejeitado"
-                  ? "bg-yellow-200 text-yellow-800"
-                  : "bg-slate-200 text-slate-800"
+                  : card.status === "REJECTED"
+                    ? "bg-yellow-200 text-yellow-800"
+                    : "bg-slate-200 text-slate-800"
               }`}
             >
-              {card.status}
+              {status[card?.status].description}
             </div>
-            
+
             <motion.button
               layoutId={`button-${card.title}-${id}`}
               className="grid items-center justify-center w-10 h-10 rounded-full bg-primary text-secondary md:mt-0 justify-self-end text-right"
             >
               {/* {card.ctaText} */}
-              <Eye />
+              <Eye/>
             </motion.button>
 
           </motion.div>
@@ -225,158 +291,9 @@ export const CloseIcon = () => {
       strokeLinejoin="round"
       className="h-4 w-4 text-black"
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M18 6l-12 12" />
-      <path d="M6 6l12 12" />
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M18 6l-12 12"/>
+      <path d="M6 6l12 12"/>
     </motion.svg>
   );
 };
-
-const cards = [
-  {
-    description: "Administrador",
-    title: "CRM",
-    src: "/sistemas/sis01.svg",
-    ctaText: "Detalhes",
-    ctaLink: "#",
-    status: "Pendente",
-    content: () => {
-      return (
-        <div className="grid grid-cols-2 gap-5 py-6">
-          <div className="font-bold space-y-3">
-            {/* <p>Solicitação de acesso:</p> */}
-            <p>Sistema:</p>
-            <p>Função solicitada:</p>
-            <p>Status:</p>
-            <p>Data de envio:</p>
-            <p>Solicitante:</p>
-            <p>Gerente:</p>
-            <p>Motivo do acesso:</p>
-            {/* <p>Duração:</p> */}
-          </div>
-          <div className="space-y-3">
-            {/* <p>REQ-2023-06-15-002</p> */}
-            <p>CRM</p>
-            <p>Administrador</p>
-            <p>Em progresso</p>
-            <p>15 de Junho, 2024</p>
-            <p>José Maria</p>
-            <p>Maria José</p>
-            <p>Gerenciar sistema</p>
-            {/* <p>3 Meses</p> */}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    description: "Gerente",
-    title: "Painel de dados",
-    src: "/sistemas/sis02.svg",
-    ctaText: "Detalhes",
-    ctaLink: "#",
-    status: "Pendente",
-    content: () => {
-      return (
-        <div className="grid grid-cols-2 gap-5 py-6">
-          <div className="font-bold space-y-3">
-            {/* <p>Solicitação de acesso:</p> */}
-            <p>Sistema:</p>
-            <p>Função solicitada:</p>
-            <p>Status:</p>
-            <p>Data de envio:</p>
-            <p>Solicitante:</p>
-            <p>Gerente:</p>
-            <p>Motivo do acesso:</p>
-            {/* <p>Duração:</p> */}
-          </div>
-          <div className="space-y-3">
-            {/* <p>REQ-2023-06-15-002</p> */}
-            <p>CRM</p>
-            <p>Administrador</p>
-            <p>Em progresso</p>
-            <p>15 de Junho, 2024</p>
-            <p>José Maria</p>
-            <p>Maria José</p>
-            <p>Gerenciar sistema</p>
-            {/* <p>3 Meses</p> */}
-          </div>
-        </div>
-      );
-    },
-  },
-
-  {
-    description: "Gerente",
-    title: "Painel de análise",
-    src: "/sistemas/sis03.svg",
-    ctaText: "Detalhes",
-    ctaLink: "#",
-    status: "Aprovado",
-    content: () => {
-      return (
-        <div className="grid grid-cols-2 gap-5 py-6">
-          <div className="font-bold space-y-3">
-            {/* <p>Solicitação de acesso:</p> */}
-            <p>Sistema:</p>
-            <p>Função solicitada:</p>
-            <p>Status:</p>
-            <p>Data de envio:</p>
-            <p>Solicitante:</p>
-            <p>Gerente:</p>
-            <p>Motivo do acesso:</p>
-            {/* <p>Duração:</p> */}
-          </div>
-          <div className="space-y-3">
-            {/* <p>REQ-2023-06-15-002</p> */}
-            <p>CRM</p>
-            <p>Administrador</p>
-            <p>Em progresso</p>
-            <p>15 de Junho, 2024</p>
-            <p>José Maria</p>
-            <p>Maria José</p>
-            <p>Gerenciar sistema</p>
-            {/* <p>3 Meses</p> */}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    description: "Usuário",
-    title: "Portal RH",
-    src: "/sistemas/sis04.svg",
-    ctaText: "Detalhes",
-    ctaLink: "#",
-    status: "Rejeitado",
-    content: () => {
-      return (
-        <div className="grid grid-cols-2 gap-5 py-6">
-          <div className="font-bold space-y-3">
-            {/* <p>Solicitação de acesso:</p> */}
-            <p>Sistema:</p>
-            <p>Função solicitada:</p>
-            <p>Status:</p>
-            <p>Data de envio:</p>
-            <p>Solicitante:</p>
-            <p>Gerente:</p>
-            <p>Motivo do acesso:</p>
-            {/* <p>Duração:</p> */}
-          </div>
-          <div className="space-y-3">
-            {/* <p>REQ-2023-06-15-002</p> */}
-            <p>CRM</p>
-            <p>Administrador</p>
-            <p>Em progresso</p>
-            <p>15 de Junho, 2024</p>
-            <p>José Maria</p>
-            <p>Maria José</p>
-            <p>Gerenciar sistema</p>
-            {/* <p>3 Meses</p> */}
-          </div>
-        </div>
-      );
-    },
-  },
-  
-];

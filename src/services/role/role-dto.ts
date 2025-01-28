@@ -7,8 +7,6 @@ export interface RoleDTO {
   label?: string;
   icon?: string;
   description?: string;
-  icon?: string;
-  label?: string;
   idRoleParent?: number;
   idClient?: number;
   clientName?: string;

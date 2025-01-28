@@ -5,12 +5,12 @@ import { Card } from "../utils/Card";
 // import { Baseline, Building, Home, LogIn, PlaneTakeoff } from "lucide-react";
 import { ExpandableList } from "../ui/ExpandableList";
 
-export const LongCard = () => {
+export const LongCard = ({requests}) => {
   return (
     <div className="col-span-2 h-fit sm:h-[455px]">
       <Card>
         <div className="relative z-20">
-          
+
           <CalloutChip>#3</CalloutChip>
 
           {/* <p className="mb-1.5 text-2xl">Talk about integrations</p>
@@ -18,7 +18,7 @@ export const LongCard = () => {
             If you connect with tools that people already know and use, show it
             off!
           </p> */}
-          <ExpandableList />
+          <ExpandableList requests={requests} />
         </div>
         {/* <SpinningLogos /> */}
       </Card>

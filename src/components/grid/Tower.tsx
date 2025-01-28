@@ -21,7 +21,7 @@ export const Tower = () => {
         </p>
 
         <Mockup />
-        
+
       </Card>
     </div>
   );
@@ -119,7 +119,7 @@ const MockupMain = () => {
     {
       id: 8,
       name: "Usuário",
-      src: "/sistemas/sis04.svg", 
+      src: "/sistemas/sis04.svg",
       // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Frank",
     },
     {
@@ -152,15 +152,15 @@ const MockupMain = () => {
       setUsers((pv) => {
         const copy = [...pv];
         const lastEl = copy.pop();  // Remove o último elemento da lista
-  
+
         if (lastEl) {
           copy.unshift(lastEl);  // Adiciona o último elemento ao início da lista
         }
-  
+
         return copy;
       });
     }, 5000);
-  
+
     return () => clearInterval(intervalRef);
   }, []);
 
