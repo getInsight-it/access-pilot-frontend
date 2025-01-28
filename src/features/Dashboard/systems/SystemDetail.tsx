@@ -166,13 +166,13 @@ export const SystemDetail = () => {
                 initialData={data || null} readonly={true} onSuccessSubmit={() => console.log('success')}
               />
             </div> */}
-            
+
             <div className="relative max-w-[1070px] grid grid-cols-1 xl:grid-cols-2 gap-8">
 
               <div className="w-full ">
 
                 <div className="">
-                  
+
                   <div className="">
                     <div className="w-full max-w-96">
                       <p className="font-bold mb-3 text-lg">Sistema:</p>
@@ -187,17 +187,18 @@ export const SystemDetail = () => {
                             {data?.description ? data?.description : "Sem função atribuída"}
                           </p>
                         </div> */}
-                        
-                        <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
+
+                        <div
+                          className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
                           {/* <Check className="absolute top-6 right-6" /> */}
 
                           <div className="flex flex-row items-center">
-                            <MonitorIcon className="w-6 h-6 mr-4" />
+                            <MonitorIcon className="w-6 h-6 mr-4"/>
                             <p className="font-bold text-lg">
                               {data?.clientId}
                             </p>
                           </div>
-                          
+
                           <p className="mt-1 text-sm">
                             {data?.description ? data?.description : "Sem função atribuída"}
                           </p>
@@ -211,15 +212,22 @@ export const SystemDetail = () => {
                       <p>
                         {data?.name}
                       </p>
-                      
+
                     </div>
 
-                    {/* <div className="mt-6 w-full max-w-96">
+                    <div className="mt-6 w-full max-w-96">
                       <p className="font-bold text-lg">Descrição:</p>
                       <p>
-                        {data?.description ? data?.description : "Sem função atribuída"}
+                        {data?.description ? data?.description : null}
                       </p>
-                    </div> */}
+                    </div>
+
+                    <div className="mt-6 w-full max-w-96">
+                      <p className="font-bold text-lg">URL:</p>
+                      <p>
+                        {data?.baseUrl ? data?.baseUrl : null}
+                      </p>
+                    </div>
 
                     <div className="mt-4 w-full max-w-96">
                       <p className="font-bold text-lg">Gerenciado:</p>
@@ -230,7 +238,7 @@ export const SystemDetail = () => {
 
                     <div className="mt-4 w-full max-w-96">
                       <p className="font-bold mb-2 text-lg">Status:</p>
-                      <TrafficLight managed={data?.managed ?? false} published={data?.status === 'PUBLISHED'} />
+                      <TrafficLight managed={data?.managed ?? false} published={data?.status === 'PUBLISHED'}/>
                     </div>
 
 
@@ -259,7 +267,7 @@ export const SystemDetail = () => {
 
           </div>
         )}
-        
+
       </motion.div>
 
     </ScrollArea>

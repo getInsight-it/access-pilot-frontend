@@ -81,13 +81,13 @@ export function ExpandableList({requests}: ExpandableListProps) {
                 <p>Motivo do acesso:</p>
               </div>
               <div className="space-y-3">
-                <p>{request.role.client?.name ?? 'N/A'}</p>
-                <p>{request.role.name ?? 'N/A'}</p>
+                <p>{request?.role.client?.name ?? 'N/A'}</p>
+                <p>{request?.role.name ?? 'N/A'}</p>
                 <p>{status[request?.status]?.description || 'N/A'}</p>
                 <p>{new Date(request.criacao).toLocaleDateString('pt-BR') || 'N/A'}</p>
-                <p>{request.requestingUser?.username || 'N/A'}</p>
-                <p>{request.approvingUser?.username || 'N/A'}</p>
-                <p>{request.description || 'N/A'}</p>
+                <p>{request?.requestingUser?.username || 'N/A'}</p>
+                <p>{request?.approvingUser?.username || 'N/A'}</p>
+                <p>{request?.description || 'N/A'}</p>
               </div>
             </div>
           );
