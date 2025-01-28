@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { Copy, Check, Barcode } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
@@ -26,8 +24,8 @@ export function CopyProtocol({ protocol }: CopyProtocolProps) {
     <div className="w-full">
       <p className="font-bold mb-3 text-lg">Protocolo:</p>
       
-        <div className="flex flex-col pt-4 pb-4 pl-4 transition-all border rounded-[var(--card-border-radius)]">
-          <div className="flex items-center text-xs xl:text-sm  truncate">
+        <div className="flex flex-col p-4 transition-all border rounded-[var(--card-border-radius)]">
+          <div className="flex items-center lg:justify-between text-xs xl:text-sm  truncate">
             {/* <Barcode className="w-5 h-5 mr-4" /> */}
             {protocol}
             <TooltipProvider>

@@ -11,8 +11,8 @@ import {roleService} from "../../../services/role";
 import {catchError, finalize, from, tap} from "rxjs";
 import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {useNavigate} from "react-router-dom";
-import { IconPicker } from '../../../components/ui/icon-picker';
 import { Separator } from '../../../components/ui/separator.tsx';
+import { IconPicker } from '../../../components/icon-picker/IconPicker.tsx';
 
 const formSchema = z.object({
   name: z

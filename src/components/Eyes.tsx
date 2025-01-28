@@ -93,7 +93,7 @@ export default function Eyes() {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="absolute w-60 h-60 grid items-center right-0 top-0 bg-black/10 text-white rounded-full">
+      className="absolute w-60 h-60 grid items-center right-0 top-0 bg-black/10 text-white rounded-full z-50">
       <div className="container mx-auto p-12">
         <div className="grid items-center justify-center">
           {/* <motion.h2 

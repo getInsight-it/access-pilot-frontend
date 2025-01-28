@@ -255,6 +255,8 @@ export function IconPicker() {
     setTimeout(() => setIsLoading(false), 300) // Simula um breve carregamento
   }, [searchTerm])
 
+  console.log(iconNames)
+
   return (
     <div>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
