@@ -153,20 +153,28 @@
 
 
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import systems from "../constants/sistemas";
-import { Check, ExternalLink, LayoutGrid, List, MonitorIcon } from "lucide-react";
+import {Check, ExternalLink, Eye, LayoutGrid, Link, List, MonitorIcon} from "lucide-react";
 import { CardShine } from "./CardShine";
-import { Button } from "./ui/button";
+import {Button, buttonVariants} from "./ui/button";
 import { clientService } from "../services/client";
 import useAuthStore from "../store/authStore";
 import { TruncatedDescription } from "./TruncateDescription";
+import {PRIVATE_ROUTES} from "../constants/routes.ts";
+import {cn} from "../lib/utils.ts";
 
 interface Client {
   id: number;
   clientId: string;
   description: string;
+  clientExternalId?: string;
+  name?: string;
+  clientUUID: string,
+  managed: boolean,
+  status?: string;
+  baseUrl?: string;
 }
 
 const variants = {
@@ -237,22 +245,28 @@ function GridList() {
             >
 
               <CardShine>
+                <div className=" p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
+                  <a
+                    href={client.baseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:text-blue-700 underline"
+                  >
+                    <ExternalLink className="absolute w-4 h-4 top-5 right-5" />
+                  </a>
 
-              <div className=" p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] ">
-                <ExternalLink className="absolute w-4 h-4 top-5 right-5" />
+                  <div className="flex flex-row items-center">
+                    <MonitorIcon className="w-6 h-6 mr-4"/>
+                    <p className="font-bold text-lg">
+                      {client.clientId}
+                    </p>
+                  </div>
 
-                <div className="flex flex-row items-center">
-                  <MonitorIcon className="w-6 h-6 mr-4" />
-                  <p className="font-bold text-lg">
-                    {client.clientId}
-                  </p>
-                </div>
-
-                <TruncatedDescription description={client.description ? client.description : "Sem função atribuída"} />
-                {/* <p className="mt-1 text-sm">
+                  <TruncatedDescription description={client.description ? client.description : "Sem função atribuída"}/>
+                  {/* <p className="mt-1 text-sm">
                   {client.description ? client.description : "Sem função atribuída"}
                 </p> */}
-              </div>
+                </div>
               </CardShine>
 
 

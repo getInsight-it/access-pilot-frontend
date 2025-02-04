@@ -38,6 +38,8 @@ const formSchema = z.object({
     .string()
     .min(3, {message: 'A descrição do sistema deve conter no mínimo 3 caracteres'}),
   status: z.string().min(1, {message: 'Selecione um status'}),
+  baseUrl: z.string().min(3, {message: 'O baseUrl do sistema deve conter no mínimo 3 caracteres'})
+    .regex(/^(https|http?:\/\/)?([\w.-:?-]+)$/, {message: 'baseUrl inválido'}),
   managed: z.boolean().default(false)
 });
 
@@ -98,7 +100,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
     clientId: '',
     description: '',
     managed: false,
-    imgUrl: [],
+    baseUrl: '',
     status: ''
   };
 
@@ -112,7 +114,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
             title: "Sistema atualizado",
             description: 'O sistema foi atualizado com sucesso',
           });
-          onSuccessSubmit();
+          navigate('/dashboard/systems/' + form.clientId + '/details');
         });
       } else {
         await clientService.createClient(form).then(() => {
@@ -120,7 +122,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
             title: "Sistema criado",
             description: 'O sistema foi criado com sucesso',
           });
-          onSuccessSubmit();
+          navigate('/dashboard/systems/' + form.clientId + '/details');
         });
       }
     } catch (error: any) {
@@ -202,6 +204,23 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                       <Textarea
                         disabled={loading}
                         placeholder="Descrição do sistema"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="baseUrl"
+                render={({field}) => (
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Url</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Url do sistema"
                         {...field}
                       />
                     </FormControl>
@@ -312,7 +331,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
             </div>
           </div>
           <Separator className="mt-10" />
-          
+
           <div className="mt-6 flex justify-between">
             <Button
               className=""

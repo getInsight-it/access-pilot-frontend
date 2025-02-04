@@ -54,7 +54,8 @@ export const SystemDetailDrawer: React.FC<SystemDetailDrawerProps> = ({data}) =>
                 <p><span className="font-bold">Nome do sistema:</span><br/>{data?.name}</p>
                 <p><span className="font-bold">Client Id:</span><br/>{data?.clientId}</p>
                 <p><span className="font-bold">Descrição:</span><br/> {data?.description}</p>
-                <p><span className="font-bold">Gerenciado:</span><br/> {data?.managed ? 'Sim' : 'Não'}</p>
+                <p><span className="font-bold">URL:</span><br/> {data?.description}</p>
+                  <p><span className="font-bold">Gerenciado:</span><br/> {data?.managed ? 'Sim' : 'Não'}</p>
                 <p><span className="font-bold">Status:</span><br/> {formatStatus(data?.status)}</p>
               </div>
             </div>
