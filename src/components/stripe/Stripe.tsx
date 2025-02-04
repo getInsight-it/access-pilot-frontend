@@ -57,7 +57,7 @@ const LogoItemsTop = ({summary}) => (
     <LogoItem Icon={Notebook} name={`${summary?.totalRoles} papéis`}/>
     <LogoItem Icon={ArrowBigDown} name={`${summary?.totalInactiveUsers} usuários inativos`}/>
     <LogoItem Icon={ArrowBigUp} name={`${summary?.totalActiveUsers} usuários ativos`}/>
-    <LogoItem Icon={User} name={`Total de ${summary?.totalPendingUsers} usuários pendentes`}/>
+    <LogoItem Icon={User} name={`Total de ${summary?.totalPendingUsers} solicitações pendentes`}/>
     <LogoItem Icon={User} name={`Total de ${summary?.totalRegisteredUsers} usuários registrados`}/>
   </>
 );

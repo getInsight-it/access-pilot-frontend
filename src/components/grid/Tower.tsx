@@ -4,23 +4,27 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { PulseLine } from "../../components/utils/PulseLine";
 import { Grid, Home, Settings, User } from "lucide-react";
+import Scene from "../canvas/room/Scene";
+import { PilotoDetail } from "../canvas/PilotoDetail";
 
 export const Tower = () => {
   return (
     <div className="col-span-1 h-[600px] lg:col-span-4 lg:h-[842px] 2xl:h-[842px]">
-      <Card>
+      <Card className="p-0">
         <PulseLine />
+        
+        <div className="px-6 pt-6">
+          <CalloutChip>#1</CalloutChip>
+          <p className="mb-2 text-2xl">Gerenciamento de acessos</p>
+          <p className="mb-8 text-zinc-400">
+            Mantenha o controle e a segurança dos acessos em um só lugar. Acompanhe os indicadores e
+            tome decisões estratégicas para garantir a gestão eficiente dos usuários nos sistemas.
+          </p>
+        </div>
 
-        <CalloutChip>#1</CalloutChip>
-        <p className="mb-2 text-2xl">Solicitações pendentes</p>
-        <p className="mb-8 text-zinc-400">
-          {/* Um ótimo lugar para fornecer uma análise de alto nível do que */}
-          {/* seu sistema trata. Tente falar sobre benefícios em vez de recursos. */}
-          Aqui, é possível acompanhar o status de cada solicitação e tomar as ações necessárias
-          para garantir que os usuários tenham acesso aos sistemas.
-        </p>
-
-        <Mockup />
+        {/* <Mockup /> */}
+        <Scene />
+        {/* <PilotoDetail /> */}
 
       </Card>
     </div>

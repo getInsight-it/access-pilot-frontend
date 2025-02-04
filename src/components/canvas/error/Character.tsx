@@ -51,7 +51,7 @@ export function Character(props: JSX.IntrinsicElements['group']) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.001}>
+        <group castShadow receiveShadow name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.001}>
           <primitive object={nodes.mixamorigHips} />
         </group>
         <skinnedMesh
@@ -61,6 +61,8 @@ export function Character(props: JSX.IntrinsicElements['group']) {
           skeleton={nodes.bigode.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
+          castShadow
+          receiveShadow
         />
         <skinnedMesh
           name="Boy"
@@ -69,6 +71,8 @@ export function Character(props: JSX.IntrinsicElements['group']) {
           skeleton={nodes.Boy.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
+          castShadow
+          receiveShadow
         >
           <meshStandardMaterial color={'white'} />
         </skinnedMesh>
@@ -79,6 +83,8 @@ export function Character(props: JSX.IntrinsicElements['group']) {
           skeleton={nodes.helmet.skeleton}
           rotation={[Math.PI / 2, 0, 0]}
           scale={0.01}
+          castShadow
+          receiveShadow
         />
       </group>
     </group>

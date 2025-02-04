@@ -22,6 +22,7 @@ import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
 import { ShuffleLoader } from '../../components/shuffle-loader/ShuffleLoader.tsx';
 import {requestService} from "../../services/request";
 import {RequestDTO} from "../../services/request/request-d-t-o.ts";
+import LEDBoard from '../../components/LEDBoard.tsx';
 
 export default function Dashboard() {
 
@@ -71,6 +72,8 @@ export default function Dashboard() {
   return (
     <ScrollArea className="h-full">
 
+      {/* <LEDBoard word="acesspilot" /> */}
+
       {/* <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
         <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
         <button type="button" onClick={ signOut }>Sair</button>
@@ -80,7 +83,7 @@ export default function Dashboard() {
 
 
       {/* user dashboard */}
-      <div className=" flex-1 space-y-4 p-4 pt-6 md:p-8">
+      <div className=" flex-1 space-y-4 mb-4 px-4 pt-6 md:px-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Olá, bem-vindo de volta
@@ -128,7 +131,7 @@ export default function Dashboard() {
           opacity: 1,
           transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
         }}
-        className="flex-1 space-y-4 px-4 pt-3.5 md:px-8 mt-4"
+        className="flex-1 space-y-4 px-4 md:px-8 mt-6"
       >
         <div className="flex items-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">

@@ -14,6 +14,7 @@ import {toast, useToast} from '../../../components/ui/use-toast.ts';
 import {clientService} from "../../../services/client";
 import { Checkbox } from '../../../components/ui/checkbox.tsx';
 import { Switch } from '../../../components/ui/switch.tsx';
+import { Textarea } from '../../../components/ui/textarea.tsx';
 
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -198,7 +199,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                   <FormItem className="mb-2">
                     <FormLabel className="text-lg font-bold">Descrição</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         disabled={loading}
                         placeholder="Descrição do sistema"
                         {...field}
@@ -230,7 +231,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                 name="managed"
                 render={({field}) => (
                   <FormItem className="mb-2">
-                      <FormLabel className="text-lg font-bold">Gerenciado</FormLabel>
+                    <FormLabel className="text-lg font-bold">Gerenciado</FormLabel>
                     <div className="mb-2 flex flex-row items-center justify-between rounded-lg border border-primary p-4">
 
                       <div className="space-y-0.5">
@@ -251,7 +252,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 name="status"
                 render={({field}) => (
                   <FormItem className="mb-2">
@@ -281,7 +282,33 @@ export const SystemForm: React.FC<SystemFormProps> = ({
                     <FormMessage/>
                   </FormItem>
                 )}
+              /> */}
+
+              <FormField
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="mb-2">
+                    <FormLabel className="text-lg font-bold">Status</FormLabel>
+                    <div className="flex flex-row items-center justify-between rounded-lg border border-primary p-4">
+                      <div className="space-y-0.5">
+                        <FormDescription>
+                          {field.value === "published" ? "Sistema publicado" : "Sistema não publicado"}
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === "published"}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked ? "published" : "unpublished")
+                          }}
+                          disabled={loading}
+                        />
+                      </FormControl>
+                    </div>
+                  </FormItem>
+                )}
               />
+
             </div>
           </div>
           <Separator className="mt-10" />

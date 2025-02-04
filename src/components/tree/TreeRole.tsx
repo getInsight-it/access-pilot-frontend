@@ -104,8 +104,8 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
 
   return (
     <>
-      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 mt-8 border-2 rounded-[var(--card-border-radius)] py-8 px-8 h-auto min-h-[220px] ">
-        <div className="w-80" >
+      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 bg-yellow-50 rounded-xl py-8 px-8 h-auto min-h-[220px] ">
+        <div className="w-96" >
           <div>
             <UncontrolledTreeEnvironment<string>
               dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}

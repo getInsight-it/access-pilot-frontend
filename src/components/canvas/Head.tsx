@@ -161,7 +161,7 @@ function Scene() {
   }, [hovered])
 
   return (
-    <div className="w-60 h-60 ">
+    <div className="w-full h-full ">
       <Canvas camera={{ position: [3, 0, 5], fov: 50 }}>
         <Suspense fallback={<LoadingFallback />}>
           <ambientLight intensity={0.5} />
