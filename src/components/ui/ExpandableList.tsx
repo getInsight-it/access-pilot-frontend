@@ -4,6 +4,7 @@ import { useOutsideClick } from "../../hooks/use-outside-click"
 import { Eye } from "lucide-react"
 import type { RequestDTO } from "../../services/request/request-d-t-o.ts"
 import IconRenderer from "../icons/IconRenderer.tsx"
+import { TruncatedDescription } from "../TruncateDescription.tsx"
 
 interface ExpandableListProps {
   requests?: RequestDTO[]
@@ -63,7 +64,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
 
   function renderContent(request: RequestDTO) {
     return (
-      <div className="grid grid-cols-2 gap-5 py-6">
+      <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-4 py-6">
         <div className="font-bold space-y-3">
           <p>Sistema:</p>
           <p>Papel solicitado:</p>
@@ -76,11 +77,20 @@ export function ExpandableList({ requests }: ExpandableListProps) {
         <div className="space-y-3">
           <p>{request.role.client?.name ?? "N/A"}</p>
           <p className="capitalize">{request.role.name ?? "N/A"}</p>
-          <p>{status[request?.status]?.description || "N/A"}</p>
+          <div
+            className={`px-2 py-1 text-xs font-medium rounded text-center w-20 inline-block justify-self-end ${
+              status[request.status].color
+            }`}
+          >
+            <p>{status[request?.status]?.description || "N/A"}</p>
+          </div>
           <p>{new Date(request.criacao).toLocaleDateString("pt-BR") || "N/A"}</p>
           <p>{request.requestingUser?.username || "N/A"}</p>
           <p>{request.approvingUser?.username || "N/A"}</p>
-          <p>{request.description || "N/A"}</p>
+          <p className="">
+          <TruncatedDescription fontSize="text-md" maxLength={80} description={request.description ? request.description : "Sem descrição"}/>
+            {/* {request.description || "N/A"} */}
+          </p>
         </div>
       </div>
     )
@@ -115,7 +125,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
             <motion.div
               layoutId={`card-${active.id}-${id}`}
               ref={ref}
-              className="p-4 w-full max-w-[500px] relative h-full md:h-fit md:max-h-[90%] flex flex-col bg-secondary sm:rounded-3xl overflow-hidden"
+              className="p-4 w-full max-w-[540px] relative h-full md:h-fit md:max-h-[90%] flex flex-col bg-secondary sm:rounded-3xl overflow-hidden"
             >
               <motion.div className="absolute right-6 top-6" layoutId={`image-${active.id}-${id}`}>
                 {/* <img
@@ -123,7 +133,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
                   alt={active.role.name}
                   className="w-full h-12 sm:rounded-tr-lg sm:rounded-tl-lg"
                 /> */}
-                <IconRenderer className={`${active.role.icon} h-8 w-8`} />
+                <IconRenderer className={`${active.role.icon} h-6 w-6`} />
               </motion.div>
 
               <div>

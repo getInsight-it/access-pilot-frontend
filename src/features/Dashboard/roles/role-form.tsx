@@ -13,6 +13,7 @@ import {ClientDTO} from "../../../services/client/client-dto.ts";
 import {useNavigate} from "react-router-dom";
 import { Separator } from '../../../components/ui/separator.tsx';
 import { IconPicker } from '../../../components/icon-picker/IconPicker.tsx';
+import { Textarea } from '../../../components/ui/textarea.tsx';
 
 const formSchema = z.object({
   name: z
@@ -132,7 +133,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({client, initialData, readonly
                   <FormItem className="mb-2">
                     <FormLabel className="text-lg font-bold">Descrição</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         disabled={loading || isReadOnly()}
                         placeholder="Descrição do papel"
                         {...field}
