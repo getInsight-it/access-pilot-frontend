@@ -87,10 +87,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
           <p>{new Date(request.criacao).toLocaleDateString("pt-BR") || "N/A"}</p>
           <p>{request.requestingUser?.username || "N/A"}</p>
           <p>{request.approvingUser?.username || "N/A"}</p>
-          <p className="">
           <TruncatedDescription fontSize="text-md" maxLength={80} description={request.description ? request.description : "Sem descrição"}/>
-            {/* {request.description || "N/A"} */}
-          </p>
         </div>
       </div>
     )
