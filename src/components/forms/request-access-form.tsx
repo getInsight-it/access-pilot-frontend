@@ -848,7 +848,7 @@ export function RequestAccessForm() {
 
                     <motion.div
                       className={cn(
-                        "w-8 h-8 hover:bg-gray-200 rounded-full flex items-center justify-center z-10 cursor-pointer",
+                        "w-8 h-8 hover:bg-gray-200 rounded-full flex items-center justify-center z-10",
                         step.id === currentStep
                           ? "hover:bg-primary bg-primary text-primary-foreground"
                           : stepsState[step.id] === 'completed'
@@ -864,7 +864,7 @@ export function RequestAccessForm() {
                         transition: { duration: 0.3, ease: "easeOut", delay: 0.3 },
                         opacity: 1, x: 0
                       }}
-                      onClick={() => handleStepClick(step.id)}
+                      // onClick={() => handleStepClick(step.id)}
                     >
 
                       <motion.span
