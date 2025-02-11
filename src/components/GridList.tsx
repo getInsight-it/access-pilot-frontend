@@ -250,7 +250,7 @@ function GridList() {
                     href={client.baseUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-black hover:text-blue-700 underline"
+                    className="text-black cursor-pointer hover:text-blue-700 underline"
                   >
                     <ExternalLink className="absolute w-4 h-4 top-5 right-5" />
                   </a>

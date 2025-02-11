@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useOutsideClick } from "../../hooks/use-outside-click"
-import { Eye } from "lucide-react"
+import { Eye, X } from "lucide-react"
 import type { RequestDTO } from "../../services/request/request-d-t-o.ts"
 import IconRenderer from "../icons/IconRenderer.tsx"
 import { TruncatedDescription } from "../TruncateDescription.tsx"
+import { useNavigate } from "react-router-dom"
 
 interface ExpandableListProps {
   requests?: RequestDTO[]
@@ -43,6 +44,8 @@ export function ExpandableList({ requests }: ExpandableListProps) {
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -76,7 +79,12 @@ export function ExpandableList({ requests }: ExpandableListProps) {
         </div>
         <div className="space-y-3">
           <p>{request.role.client?.name ?? "N/A"}</p>
-          <p className="capitalize">{request.role.name ?? "N/A"}</p>
+          <p className="capitalize flex gap-x-4">
+            <motion.span className="" layoutId={`image-${active.id}-${id}`}>
+              <IconRenderer className={`${active.role.icon} h-5 w-5`} />
+            </motion.span>
+            {request.role.name ?? "N/A"}
+          </p>
           <div
             className={`px-2 py-1 text-xs font-medium rounded text-center w-20 inline-block justify-self-end ${
               status[request.status].color
@@ -114,7 +122,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.05 } }}
-              className="flex absolute lg:hidden items-center justify-center bg-white rounded-full h-6 w-6"
+              className="flex absolute hidden z-50 items-start justify-center bg-red-500 rounded-full h-6 w-6"
               onClick={() => setActive(null)}
             >
               <CloseIcon />
@@ -124,32 +132,37 @@ export function ExpandableList({ requests }: ExpandableListProps) {
               ref={ref}
               className="p-4 w-full max-w-[540px] relative h-full md:h-fit md:max-h-[90%] flex flex-col bg-secondary sm:rounded-3xl overflow-hidden"
             >
-              <motion.div className="absolute right-6 top-6" layoutId={`image-${active.id}-${id}`}>
-                {/* <img
-                  src={active.role.icon || "/placeholder.svg"}
-                  alt={active.role.name}
-                  className="w-full h-12 sm:rounded-tr-lg sm:rounded-tl-lg"
-                /> */}
+              {/* <motion.div className="absolute right-6 top-6" layoutId={`image-${active.id}-${id}`}>
                 <IconRenderer className={`${active.role.icon} h-6 w-6`} />
-              </motion.div>
+              </motion.div> */}
 
               <div>
                 <div className="flex justify-between items-start px-4 pt-4">
+
                   <div>
                     <motion.h3 layoutId={`title-${active.id}-${id}`} className="font-bold text-[var(--list-color)]">
                       {active.role.client?.name}
                     </motion.h3>
                     <motion.p layoutId={`description-${active.id}-${id}`} className="text-[var(--list-color)]">
                       {active.role.description}
-                    </motion.p>
+                    </motion.p>                    
                   </div>
 
                   <motion.div
-                    layoutId={`button-${active.id}-${id}`}
-                    onClick={() => setActive(null)}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => navigate(`/dashboard/access-requests/${active.id}`, { state: { origin: origin } })}
                     className="z-10 cursor-pointer absolute right-6 bottom-6 px-4 py-3 text-sm rounded-full font-bold bg-primary text-secondary"
                   >
-                    Fechar
+                    Ir para a solicitação
+                  </motion.div>
+                  <motion.div
+                    layoutId={`button-${active.id}-${id}`}
+                    onClick={() => setActive(null)}
+                    className="z-10 cursor-pointer absolute right-6 top-6 p-3 text-sm rounded-full font-bold bg-primary text-secondary"
+                  >
+                    <X className="h-4 w-4" />
                   </motion.div>
                 </div>
                 <div className="pt-0 relative px-4">

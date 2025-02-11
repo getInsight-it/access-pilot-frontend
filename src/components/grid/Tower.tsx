@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { PulseLine } from "../../components/utils/PulseLine";
 import { Grid, Home, Settings, User } from "lucide-react";
 import Scene from "../canvas/room/Scene";
-import { PilotoDetail } from "../canvas/PilotoDetail";
 
 export const Tower = () => {
   return (
@@ -22,9 +21,8 @@ export const Tower = () => {
           </p>
         </div>
 
-        {/* <Mockup /> */}
-        <Scene />
-        {/* <PilotoDetail /> */}
+        <Mockup />
+        {/* <Scene /> */}
 
       </Card>
     </div>
@@ -50,10 +48,9 @@ const MockupSideBar = () => (
     <div className="space-y-2">
       <div className="flex items-center gap-1 rounded bg-primary px-1 py-0.5 text-xs text-primary-foreground">
         <User />
-        Usuários
+        Solicitações
       </div>
-      <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
-        {/* <Mail /> */}
+      {/* <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
         Admin
       </div>
       <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
@@ -63,7 +60,7 @@ const MockupSideBar = () => (
       <div className="flex items-center gap-1 rounded px-1 py-0.5 text-xs text-zinc-600">
         <Grid className="w-4" />
         Papéis
-      </div>
+      </div> */}
     </div>
   </div>
 );
@@ -80,57 +77,48 @@ const MockupMain = () => {
   const [users, setUsers] = useState([
     {
       id: 1,
-      name: "Diretor",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+      name: "Aluno",
       src: "/sistemas/sis01.svg",
     },
     {
       id: 2,
-      name: "Gerente",
+      name: "Aluno",
       src: "/sistemas/sis02.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dan",
     },
     {
       id: 3,
-      name: "Administrator",
+      name: "Professor",
       src: "/sistemas/sis03.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",
     },
     {
       id: 4,
-      name: "Usuário",
+      name: "Aluno",
       src: "/sistemas/sis04.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Andrea",
     },
     {
       id: 5,
-      name: "Usuário",
+      name: "Aluno",
       src: "/sistemas/sis05.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Pete",
     },
     {
       id: 6,
-      name: "Usuário",
+      name: "Professor",
       src: "/sistemas/sis02.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Phil",
     },
     {
       id: 7,
-      name: "Usuário",
+      name: "Aluno",
       src: "/sistemas/sis01.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Garry",
     },
     {
       id: 8,
-      name: "Usuário",
+      name: "Aluno",
       src: "/sistemas/sis04.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Frank",
     },
     {
       id: 9,
-      name: "Usuário",
+      name: "Aluno",
       src: "/sistemas/sis04.svg",
-      // src: "https://api.dicebear.com/7.x/avataaars/svg?seed=Don",
     },
   ]);
 
