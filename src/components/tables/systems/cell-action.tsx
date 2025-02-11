@@ -159,7 +159,7 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
             <DropdownMenuItem
               onClick={() => navigate(`/dashboard/systems/${data.clientId}/roles`)}
             >
-              <Cog className="mr-2 h-4 w-4"/> Gerenciar roles
+              <Cog className="mr-2 h-4 w-4"/> Gerenciar papéis
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

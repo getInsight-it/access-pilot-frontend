@@ -25,15 +25,15 @@ export const UserRole: React.FC<UserRoleProps> = ({ data}) => {
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`Gerenciar funções (${data.length})`}
-          description="Gerenciar funções dos usuários."
+          title={`Gerenciar papéis (${data.length})`}
+          description="Gerenciar os papéis dos usuários."
         />
         {params.clientId && (
           <Link
             to={`/dashboard/systems/${params.clientId}/role-new`}
             className={cn(buttonVariants({variant: 'default'}))}
           >
-            <Plus className="mr-2 h-4 w-4"/> Adicionar nova função 2
+            <Plus className="mr-2 h-4 w-4"/> Adicionar novo papel
           </Link>
         )}
       </div>

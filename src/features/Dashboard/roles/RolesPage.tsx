@@ -14,7 +14,7 @@ import { motion } from 'framer-motion'
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
   { title: 'Gerenciar Sistemas', link: '/dashboard/systems' },
-  { title: 'Gerenciar funções', link: '/dashboard/:client' }
+  { title: 'Gerenciar papéis', link: '/dashboard/:client' }
 ];
 export default function RolesPage() {
   const { clientId } = useParams<{ clientId: string }>();
