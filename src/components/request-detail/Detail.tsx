@@ -70,6 +70,8 @@ export const Detail = ({
   const userInfo = useAuthStore((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log(attachments)
+
   const handleDownload = async (fileId: string) => {
     const token = await authService.getBearerToken()
     const apiClient = axios.create({
@@ -335,9 +337,6 @@ export const Detail = ({
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <p className="mt-6 font-bold mb-3 text-lg">Motivo do acesso:</p>
             <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
-              {/* <p>
-                {data?.description}
-              </p> */}
               <TruncatedDescription description={data?.description} maxLength={600} fontSize="" />
             </div>
           </div>
@@ -345,38 +344,32 @@ export const Detail = ({
           <div className="col-span-12 lg:col-span-3 w-full">
             <p className="text-md font-bold lg:mt-6 mb-1 text-lg">Anexos:</p>
             <div className="mt-3 flex gap-4">
-
-              {/* <div className="w-20 flex flex-col">
-                <div
-                  className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
-                >
-                  <div className="flex flex-col items-center">
-                    <File className="w-8 h-8"/>
-                  </div>
-                  <button
-                    className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
-                  >
-                    Baixar
-                  </button>
-                </div>
-
-              </div> */}
-
                 
               {attachments?.map((attachment) => (
                 <div key={attachment.id} className="w-16 flex flex-col">
                   <div
                     className="flex flex-col items-center justify-center rounded-md shadow-sm hover:shadow-lg transition"
                   >
-                    <div className="flex flex-col items-center">
-                      <File className="w-8 h-8"/>
-                    </div>
-                    <button
-                      className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
-                      onClick={() => handleDownload(attachment.id)}
-                    >
-                      Baixar
-                    </button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <div className="flex flex-col items-center">
+                              <File className="w-8 h-8"/>
+                            </div>
+                            <button
+                              className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
+                              onClick={() => handleDownload(attachment.id)}
+                            >
+                              Baixar
+                            </button>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {attachment.originalFilename}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               ))}
@@ -396,22 +389,18 @@ export const Detail = ({
           </div>
         </div>
 
-        {/* <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
-
-
-          <div className="col-span-8 2xl:col-span-6 w-full ">
-            <p className="mt-6 font-bold mb-3 text-lg">Motivo da conclusão:</p>
-            <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
-              <p>
-                {data?.finalReason}
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, enim odit. Voluptates rerum
-                exercitationem consequuntur amet omnis labore ullam, dolorem porro saepe reiciendis fugit quae. Sed
-                porro quae magnam!
-              </p>
+        {(data?.status === 'REJECTED' || data?.status === 'CANCELED') && (
+          <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="col-span-8 2xl:col-span-6 w-full ">
+              <p className="mt-6 font-bold mb-3 text-lg">Motivo da conclusão:</p>
+              <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
+                <p>
+                  {data?.finalReason}
+                </p>
+              </div>
             </div>
           </div>
-
-        </div> */}
+        )}
 
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="col-span-12 w-full ">
@@ -444,7 +433,7 @@ export const Detail = ({
                         Cancelar
                       </Button>
                     )}
-                    {(!isFinished && origin === 'assigned') && (
+                    {(!isFinished && origin === 'assigned' && data?.status !== 'CANCELED') && (
                       <>
                         <Button
                           className="w-40 bg-red-200 text-red-800 hover:bg-red-400 hover:text-white"
