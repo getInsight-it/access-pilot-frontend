@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '../../../components/ui/dropdown-menu';
-import {Cog, Eye, MoreHorizontal} from 'lucide-react';
+import {Cog, Eye, FolderSync, MoreHorizontal, Pen, User} from 'lucide-react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {ModalSystemDrawer} from "../../drawers/ModalSystemDrawer.tsx";
@@ -132,13 +132,13 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
           <DropdownMenuItem
             onClick={() => navigate(`/dashboard/systems/${data.clientId}/edit`)}
           >
-            <Eye className="mr-2 h-4 w-4"/> Editar
+            <Pen className="mr-2 h-4 w-4"/> Editar
           </DropdownMenuItem>
           {data.managed && (
             <DropdownMenuItem
               onClick={() => handleSync(data.clientId)}
             >
-              <Cog className="mr-2 h-4 w-4"/> Sincronizar
+              <FolderSync className="mr-2 h-4 w-4"/> Sincronizar
             </DropdownMenuItem>
           )}
           {data.status !== 'PUBLISHED' && (
@@ -159,7 +159,7 @@ export const CellAction: React.FC<CellActionProps> = ({data, updateState}) => {
             <DropdownMenuItem
               onClick={() => navigate(`/dashboard/systems/${data.clientId}/roles`)}
             >
-              <Cog className="mr-2 h-4 w-4"/> Gerenciar papéis
+              <User className="mr-2 h-4 w-4"/> Gerenciar papéis
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

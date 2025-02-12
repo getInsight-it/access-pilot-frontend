@@ -24,7 +24,12 @@ export const columns = (
   },
   {
     accessorKey: 'description',
-    header: 'DESCRIÇÃO'
+    header: 'DESCRIÇÃO',
+    cell: ({ row }) => (
+      <span>
+        {row.original.description?.trim() ? row.original.description : '-'}
+      </span>
+    )
   },
   {
     accessorKey: 'status',

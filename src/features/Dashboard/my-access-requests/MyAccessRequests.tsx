@@ -108,7 +108,7 @@ export default function MyAccessRequests() {
         
           
           <RequestsTable
-            searchKey="clientId"
+            searchKey="protocolCode"
             pageNo={page} // Passa o valor da página que começa em 1
             columns={columns('created')}
             totalUsers={totalUsers}
