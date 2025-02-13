@@ -292,3 +292,157 @@ export function SystemsTable<TData, TValue>({
     </>
   );
 }
+
+
+// import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+// import { Button } from "../../ui/button"
+// import { Input } from "../../ui/input"
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table"
+// import { ScrollArea } from "../../ui/scroll-area"
+
+// interface DataTableProps<TData, TValue> {
+//   columns: ColumnDef<TData, TValue>[]
+//   data: TData[]
+//   searchKey: string
+//   pageNo: number
+//   totalUsers: number
+//   pageSizeOptions?: number[]
+//   pageCount: number
+//   onPageChange: (page: number) => void
+//   onSearchChange: (search: string) => void
+//   search: string
+//   searchLength: number
+//   currentPage: number
+//   isLoading: boolean
+//   isTimeout: boolean
+//   error: string | null
+//   pageSize: number
+// }
+
+// export function SystemsTable<TData, TValue>({
+//   columns,
+//   data,
+//   pageNo,
+//   searchKey,
+//   totalUsers,
+//   pageCount,
+//   pageSizeOptions = [10, 20, 30, 40, 50],
+//   onPageChange,
+//   onSearchChange,
+//   search,
+//   searchLength,
+//   currentPage,
+//   isLoading,
+//   isTimeout,
+//   error,
+//   pageSize,
+// }: DataTableProps<TData, TValue>) {
+//   const table = useReactTable({
+//     data,
+//     columns,
+//     pageCount: pageCount,
+//     state: {
+//       pagination: {
+//         pageIndex: currentPage - 1,
+//         pageSize: pageSize,
+//       },
+//     },
+//     onPaginationChange: (updater) => {
+//       if (typeof updater === "function") {
+//         const newPagination = updater({ pageIndex: currentPage - 1, pageSize: pageSize })
+//         onPageChange(newPagination.pageIndex + 1)
+//       } else {
+//         onPageChange(updater.pageIndex + 1)
+//       }
+//     },
+//     getCoreRowModel: getCoreRowModel(),
+//     manualPagination: true,
+//     debugTable: true,
+//   })
+
+//   return (
+//     <div>
+//       <div className="flex items-center py-4">
+//         <Input
+//           placeholder={`Pesquisar ${searchKey}...`}
+//           value={search}
+//           onChange={(event) => onSearchChange(event.target.value)}
+//           className="max-w-sm"
+//         />
+//       </div>
+//       <div className="rounded-md border">
+//         <ScrollArea className="h-[calc(80vh-220px)]">
+//           <Table>
+//             <TableHeader>
+//               {table.getHeaderGroups().map((headerGroup) => (
+//                 <TableRow key={headerGroup.id}>
+//                   {headerGroup.headers.map((header) => (
+//                     <TableHead key={header.id}>
+//                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+//                     </TableHead>
+//                   ))}
+//                 </TableRow>
+//               ))}
+//             </TableHeader>
+//             <TableBody>
+//               {isLoading ? (
+//                 <TableRow>
+//                   <TableCell colSpan={columns.length} className="h-24 text-center">
+//                     Carregando...
+//                   </TableCell>
+//                 </TableRow>
+//               ) : data.length > 0 ? (
+//                 table.getRowModel().rows.map((row) => (
+//                   <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+//                     {row.getVisibleCells().map((cell) => (
+//                       <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+//                     ))}
+//                   </TableRow>
+//                 ))
+//               ) : (
+//                 <TableRow>
+//                   <TableCell colSpan={columns.length} className="h-24 text-center">
+//                     Nenhum resultado.
+//                   </TableCell>
+//                 </TableRow>
+//               )}
+//             </TableBody>
+//           </Table>
+//         </ScrollArea>
+//       </div>
+//       <div className="flex items-center justify-between space-x-2 py-4">
+//         <div className="flex-1 text-sm text-muted-foreground">{totalUsers} item(s) no total</div>
+//         <div className="flex items-center space-x-6 lg:space-x-8">
+//           <div className="flex items-center space-x-2">
+//             <p className="text-sm font-medium">
+//               Página {currentPage} de {pageCount}
+//             </p>
+//           </div>
+//           <div className="flex items-center space-x-2">
+//             <Button
+//               variant="outline"
+//               size="sm"
+//               onClick={() => onPageChange(currentPage - 1)}
+//               disabled={currentPage === 1 || isLoading}
+//             >
+//               Anterior
+//             </Button>
+//             <Button
+//               variant="outline"
+//               size="sm"
+//               onClick={() => onPageChange(currentPage + 1)}
+//               disabled={currentPage === pageCount || isLoading}
+//             >
+//               Próxima
+//             </Button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
+
+
+
+
+

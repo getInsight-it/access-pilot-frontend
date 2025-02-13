@@ -310,7 +310,8 @@ export const SystemDetail = () => {
                     <div className="mt-6 w-full max-w-96">
                       <p className="font-bold text-lg">URL:</p>
                       <p>
-                        {data?.baseUrl ? data?.baseUrl : null}
+                        {/* {data?.baseUrl ? data?.baseUrl : null} */}
+                        {data?.baseUrl ? data?.baseUrl : '-'}
                       </p>
                     </div>
 

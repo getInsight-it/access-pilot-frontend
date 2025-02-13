@@ -129,7 +129,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <ScrollArea className="h-full ">
+    // <ScrollArea className="h-full ">
 
       <motion.div
         initial={{
@@ -179,6 +179,6 @@ export default function NotificationsPage() {
 
       </motion.div>
 
-    </ScrollArea>
+    // </ScrollArea>
   );
 }

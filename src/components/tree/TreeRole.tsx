@@ -104,7 +104,7 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
 
   return (
     <>
-      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 bg-gray-50 rounded-xl py-8 px-8 h-auto min-h-[220px] ">
+      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 bg-gray-50 rounded-xl m-6 border py-8 px-8 h-auto min-h-[220px] ">
         <div className="w-96" >
           <div>
             <UncontrolledTreeEnvironment<string>
