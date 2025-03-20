@@ -245,7 +245,7 @@ import {
             <ambientLight intensity={0.25} />
             <directionalLight position={[0, 10, 5]} intensity={10.5} />
             <Retro />
-            {/* <OrbitControls /> */}
+            {/* <OrbitControls /> */}1
           </Suspense>
         </Canvas>
       </>

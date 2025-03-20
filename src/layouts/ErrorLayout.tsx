@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import Scene from '../components/canvas/error/Scene';
+// import Scene from '../components/canvas/error/Scene';
 import { Button } from '../components/ui/button';
+import Head from '../components/canvas/Head';
 
 const ErrorLayout = () => {
   const navigate = useNavigate();
@@ -12,8 +13,9 @@ const ErrorLayout = () => {
   return (
     <>
 
-      <div className="relative">
-        <Scene />
+      <div className="relative w-full h-screen">
+        {/* <Scene /> */}
+          <Head />
       </div>
 
       <div className="pointer-events-none absolute w-full h-full top-0 left-0 z-10 ">

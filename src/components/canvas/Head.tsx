@@ -74,7 +74,7 @@ type GLTFResult = GLTF & {
   animations: GLTFAction[]
 }
 
-function Head({ setHovered }: { setHovered: (hovered: boolean) => void }) {
+function Head() {
   const group = useRef<THREE.Group>(null)
   const { nodes, materials, animations } = useGLTF('/models/head-transformed.glb') as GLTFResult
   const { actions, names } = useAnimations(animations, group)
@@ -105,17 +105,13 @@ function Head({ setHovered }: { setHovered: (hovered: boolean) => void }) {
     }
   })
 
-  const handlePointerOver = useCallback(() => setHovered(true), [setHovered])
-  const handlePointerOut = useCallback(() => setHovered(false), [setHovered])
 
   return (
     <group
       ref={group}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
       dispose={null}
     >
-      <group name="Scene" scale={0.16}>
+      <group name="Scene" scale={0.05}>
         <mesh name="Boy" geometry={nodes.Boy.geometry} material={materials['standardSurface1.001']} position={[-0.014, -0.503, 0.592]}>
           <meshStandardMaterial color="white" />
         </mesh>
@@ -167,7 +163,7 @@ function Scene() {
           <ambientLight intensity={0.5} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           <CameraController />
-          <Head setHovered={setHovered} />
+          <Head />          
           <Environment preset="sunset" />
         </Suspense>
       </Canvas>
