@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { motion } from 'framer-motion';
-import { Calendar, Check, Clock, Copy, Download, File, MonitorIcon as MonitorCog, MonitorIcon, Pencil, User } from 'lucide-react';
+import { Calendar, Check, Clock, Copy, Download, File, Globe, MonitorIcon as MonitorCog, MonitorIcon, Pencil, User } from 'lucide-react';
 import RequestStatus from '../../components/request-status/RequestStatus';
 import { CardShine } from '../../components/CardShine';
 import CompactCalendar from '../../components/CompactCalendar';
@@ -36,6 +36,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import { TruncatedDescription } from '../TruncateDescription.tsx';
 import { ShuffleLoader } from '../shuffle-loader/ShuffleLoader.tsx';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
+import DisplaySpheres from '../spheres/DisplaySpheres.tsx';
+import DetailEight from './DetailEight.tsx';
 
 export const Detail = ({
                          data,
@@ -230,6 +232,8 @@ export const Detail = ({
     <FormProvider {...form}>
       <div className="relative max-w-[1440px] mx-auto">
 
+        {/* <DetailEight /> */}
+
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8 mt-6 lg:h-[310px]">
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <div className="w-full ">
@@ -267,6 +271,7 @@ export const Detail = ({
         </div>
 
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-x-8 ">
+
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <div className="">
               <div className="flex gap-6">
@@ -274,7 +279,7 @@ export const Detail = ({
                   <p className="font-bold mb-3 text-lg">Sistema:</p>
 
                   <CardShine>
-                    <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[112px]">
+                    <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[122px]">
                       <div className="flex flex-row items-center">
                         <MonitorCog className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg">
@@ -301,7 +306,7 @@ export const Detail = ({
                   <p className="font-bold mb-3 text-lg">Papel:</p>
                   <CardShine>
                     <div
-                      className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)] min-h-[112px]">
+                      className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)] min-h-[122px]">
                       <div className="flex flex-row items-center">
                         <Pencil className="w-6 h-6 mr-4"/>
                         <p className="font-bold text-lg capitalize">
@@ -321,8 +326,23 @@ export const Detail = ({
           </div>
 
           <div className="col-span-4 2xl:col-span-3 mt-6 lg:mt-0">
+            <p className="mt-2 font-bold mb-3 text-lg">Esfera:</p>
+            <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[122px]">
+              <div className="flex flex-row items-center">
+                <Globe className="w-6 h-6 mr-4"/>
+                <p className="font-bold text-lg">
+                  Educacional
+                </p>
+              </div>
+              <div className="mt-2">
+                <DisplaySpheres />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-4 2xl:col-span-3 mt-6 lg:mt-0">
             <p className="mt-2 font-bold mb-3 text-lg">Solicitante:</p>
-            <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[112px]">
+            <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[122px]">
               <div className="flex flex-row items-center">
                 <User className="w-6 h-6 mr-4"/>
                 <p className="">
@@ -331,9 +351,11 @@ export const Detail = ({
               </div>
             </div>
           </div>
+
         </div>
 
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
+          
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <p className="mt-6 font-bold mb-3 text-lg">Motivo do acesso:</p>
             <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
@@ -342,6 +364,8 @@ export const Detail = ({
           </div>
 
           <div className="col-span-12 lg:col-span-3 w-full">
+            
+
             <p className="text-md font-bold lg:mt-6 mb-1 text-lg">Anexos:</p>
             <div className="mt-3 flex gap-4">
                 
@@ -375,7 +399,10 @@ export const Detail = ({
               ))}
 
             </div>
+
           </div>
+
+          
 
           <div className="col-span-12 lg:col-span-3 w-full relative">
             <div className="hidden 2xl:block 2xl:absolute right-0 -top-24 w-72 h-72">
@@ -387,6 +414,7 @@ export const Detail = ({
               </BackgroundLines>
             }
           </div>
+
         </div>
 
         {(data?.status === 'REJECTED' || data?.status === 'CANCELED') && (

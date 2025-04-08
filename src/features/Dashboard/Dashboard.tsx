@@ -13,16 +13,10 @@ import { Typewriter } from '../../typewriter/Typewriter.tsx';
 import {SummaryDto} from "../../services/summary/summary-dto.ts";
 import {summaryService} from "../../services/summary";
 import { motion } from 'framer-motion';
-import { TabsDemo } from '../../components/TabsDemo.tsx';
-import { Separator } from '@radix-ui/react-select';
-import { GridCards } from '../../components/GridCards.tsx';
-import { cn } from '../../lib/utils.ts';
+
 import { Card } from '../../components/utils/Card.tsx';
-import { CalloutChip } from '../../components/utils/CalloutChip.tsx';
-import { ShuffleLoader } from '../../components/shuffle-loader/ShuffleLoader.tsx';
 import {requestService} from "../../services/request";
 import {RequestDTO} from "../../services/request/request-d-t-o.ts";
-import LEDBoard from '../../components/LEDBoard.tsx';
 
 export default function Dashboard() {
 
@@ -31,10 +25,6 @@ export default function Dashboard() {
   const { theme } = useTheme();
   const [summary, setSummary] = useState<SummaryDto>(null);
   const [requests, setRequests] = useState<RequestDTO[]>(null);
-
-  const signOut = async () => {
-    await authService.signOut();
-  };
 
   const init = () => {
     getData();
@@ -68,19 +58,8 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   };
 
-
   return (
     <ScrollArea className="h-full">
-
-      {/* <LEDBoard word="acesspilot" /> */}
-
-      {/* <div className="absolute bottom-0 right-0 bg-red-500 z-50 text-white p-6">
-        <p className="">[Dashboard] Está autenticado? { isAuthenticated ? 'Sim' : 'Não' }</p>
-        <button type="button" onClick={ signOut }>Sair</button>
-      </div> */}
-
-      {/* admin dashboard */}
-
 
       {/* user dashboard */}
       <div className=" flex-1 space-y-4 mb-4 px-4 pt-6 md:px-8">
@@ -89,21 +68,11 @@ export default function Dashboard() {
             Olá, bem-vindo de volta
           </h2>
         </div>
-
-        {/* <div className="grid grid-cols-1 xl:grid-cols-[4fr_2fr] gap-10">
-          <GridList />
-          <div></div>
-          <GridListNoAccess />
-        </div> */}
-
       </div>
 
       <div className="col-span-2 h-fit px-8">
         <Card className="bg-primary-foreground">
           <div className="relative z-20">
-
-            {/* <CalloutChip>#3</CalloutChip> */}
-
             <p className="mb-5 ml-1.5 text-2xl">Sistemas que você tem acesso</p>
             <GridList />
           </div>
@@ -113,15 +82,11 @@ export default function Dashboard() {
       <div className="col-span-2 h-fit px-8 pt-3.5">
         <Card className="bg-primary-foreground">
           <div className="relative z-20">
-
-            {/* <CalloutChip>#3</CalloutChip> */}
-
             <p className="mb-5 ml-1.5 text-2xl">Sistemas que você pode solicitar acesso</p>
             <GridListNoAccess />
           </div>
         </Card>
       </div>
-
 
       <motion.div
         initial={{
@@ -142,11 +107,11 @@ export default function Dashboard() {
         {(summary && requests) && <FeatureGrid summary={summary} requests={requests}/>}
       </motion.div>
 
-      {/* {theme === 'gov' && (
+      {theme === 'gov' && (
         <div className="mt-20">
           <FooterGovbr />
         </div>
-      )} */}
+      )}
 
       <div className="mt-20">
         {
