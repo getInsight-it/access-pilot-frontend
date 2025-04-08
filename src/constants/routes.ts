@@ -21,7 +21,12 @@ export const PRIVATE_ROUTES = {
   ROLES_DETAILS: '/dashboard/roles/:id/details',
   NEW_ROLE: '/dashboard/systems/:clientId/role-new',
   NOTIFICATIONS: '/dashboard/notifications',
-  PROFILE: '/dashboard/profile'
+  PROFILE: '/dashboard/profile',
+  CREATE_LEVEL: '/dashboard/levels/create',
+  LEVELS: '/dashboard/levels',
+  LEVEL_ITEMS: '/dashboard/levels/:id/items',
+  CREATE_ITEM: '/dashboard/levels/:id/items/create',
+  EDIT_ITEM: '/dashboard/levels/:id/items/:itemId/edit',
 };
 
 export const ERROR_ROUTES = {

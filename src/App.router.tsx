@@ -18,13 +18,17 @@ import PrivateRoute from './components/PrivateRoute';
 import NotificationsPage from './features/Dashboard/notifications/NotificationsPage.tsx';
 import useAuthStore from './store/authStore.ts';
 import RequestDetailPage from "./features/Dashboard/request-detail/request-detail-page.tsx";
-import RequestTestePage from "./features/Dashboard/request-detail/requestTeste.tsx";
 import {SystemEdit} from "./features/Dashboard/systems/SystemEdit.tsx";
 import {SystemDetail} from "./features/Dashboard/systems/SystemDetail.tsx";
 import {RoleEdit} from "./features/Dashboard/roles/RoleEdit.tsx";
 import {RoleDetail} from "./features/Dashboard/roles/RoleDetail.tsx";
 import NewRole from "./features/Dashboard/roles/NewRole.tsx";
 import Profile from './features/Dashboard/profile/Profile.tsx';
+import { CreateItem } from './features/Dashboard/levels/CreateItem.tsx';
+import { EditItem } from './features/Dashboard/levels/EditItem.tsx';
+import LevelsPage from './features/Dashboard/levels/LevelsPage.tsx';
+import LevelItems from './features/Dashboard/levels/LevelItems.tsx';
+import CreateOrEditLevel from './features/Dashboard/levels/CreateLevel.tsx';
 
 const authRoutes = [{
   element: <AuthLayout />,
@@ -135,6 +139,26 @@ const privateApproverRoutes = [
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
             element: <AccessRequests />
+          },
+          {
+            path: PRIVATE_ROUTES.CREATE_LEVEL,
+            element: <CreateOrEditLevel />
+          },
+          {
+            path: PRIVATE_ROUTES.LEVELS,
+            element: <LevelsPage />
+          },
+          {
+            path: PRIVATE_ROUTES.LEVEL_ITEMS,
+            element: <LevelItems />
+          },
+          {
+            path: PRIVATE_ROUTES.CREATE_ITEM,
+            element: <CreateItem />
+          },
+          {
+            path: PRIVATE_ROUTES.EDIT_ITEM,
+            element: <EditItem />
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,

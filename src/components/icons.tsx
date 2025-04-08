@@ -14,6 +14,7 @@ import {
   File,
   FileQuestion,
   FileText,
+  Globe2,
   HandHelping,
   HelpCircle,
   Image,
@@ -73,6 +74,7 @@ export const Icons = {
   cog: Cog,
   book: BookText,
   bookuser: BookUser,
+  globe2: Globe2,
   dot: Dot,
   gitHub: ({ ...props }: LucideProps) => (
     <svg

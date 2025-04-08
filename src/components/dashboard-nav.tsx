@@ -11,8 +11,8 @@ import {
   TooltipTrigger
 } from './ui/tooltip';
 import { useTheme } from './layout/ThemeToggle/theme-provider';
-import useAuthStore from '../store/authStore';
-import { authService } from '../services/auth';
+// import useAuthStore from '../store/authStore';
+// import { authService } from '../services/auth';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -36,11 +36,11 @@ export function DashboardNav({
   const { theme } = useTheme();
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  // const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
-  const signOut = async () => {
-    await authService.signOut();
-  };
+  // const signOut = async () => {
+  //   await authService.signOut();
+  // };
 
   return (
     <nav className="grid items-start gap-0">
@@ -96,11 +96,11 @@ export function DashboardNav({
         })}
       </TooltipProvider>
       
-      <div className="flex flex-col absolute bottom-32 w-full z-50 text-gray-500 p-6">
+      {/* <div className="flex flex-col absolute bottom-32 w-full z-50 text-gray-500 p-6">
         <p className="ml-1">Está autenticado?</p>
         <strong className="ml-1">{ isAuthenticated ? 'Sim' : 'Não' }</strong>
         <button className="bg-gray-300 text-black px-6 py-1 rounded-full mt-2" type="button" onClick={ signOut }>Sair</button>
-      </div>
+      </div> */}
 
       {theme === 'gov' && (isMobileNav || (!isMinimized && !isMobileNav)) && (
         <div className="absolute bottom-0 p-4 pointer-events-none truncate">

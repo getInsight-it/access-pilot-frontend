@@ -202,6 +202,12 @@ export const navItems: NavItem[] = [
     icon: 'bookuser',
     label: 'Gerenciar solicitações'
   },
+  {
+    title: 'Gerenciar esferas',
+    href: '/dashboard/levels',
+    icon: 'globe2',
+    label: 'Gerenciar esferas'
+  },
   // helpNavItem,
   // exitNavItem
 ];
