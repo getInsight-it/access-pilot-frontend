@@ -49,33 +49,6 @@ export default function SphereHierarchy() {
         </Select>
       </div>
 
-      <div className="flex items-center ml-0">
-        {/* <span className="text-gray-500 -translate-y-2 mr-2">↳</span> */}
-        <Select defaultValue="">
-          <SelectTrigger className="w-[280px]">
-            <SelectValue className="text-black" placeholder="Selecione uma esfera" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hospitalar">Hospitalar</SelectItem>
-            <SelectItem value="comercial">Comercial</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center ml-0">
-        {/* <span className="text-gray-500 -translate-y-2 mr-2">↳</span> */}
-        <Select defaultValue="">
-          <SelectTrigger className="w-[280px]">
-            <SelectValue className="text-black" placeholder="Selecione um item" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hospitalar">Hospital das Clinicas</SelectItem>
-            <SelectItem value="comercial">Hospital das Forças Armadas</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-
     </div>
   )
 }

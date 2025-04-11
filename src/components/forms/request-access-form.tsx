@@ -50,6 +50,7 @@ import { PilotoForm } from "../canvas/PilotoForm";
 import useWindowSize from "../../hooks/use-window-size";
 import { CustomInput } from "../ui/custom-input";
 import { TruncatedDescription } from "../TruncateDescription";
+import SphereHierarchy from "../spheres/SphereHierarchy";
 
 interface Client {
   id: number;
@@ -128,6 +129,7 @@ export function RequestAccessForm() {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles);
+      console.log("Roles:", fetchedRoles);
     } catch (error) {
       console.error("Erro ao carregar roles:", error);
     }
@@ -367,9 +369,19 @@ export function RequestAccessForm() {
                       </CardShine>
                     </div>
                   ))}
+
+
                 </div>
               </FormControl>
               <FormMessage />
+              
+              {selectedRole && (
+                <div className="">
+                  <h4 className="text-lg font-semibold mt-6 mb-3">Selecione a esfera</h4>
+                  <SphereHierarchy />
+                </div>
+              )}
+
             </FormItem>
           )}
         />
@@ -922,7 +934,7 @@ export function RequestAccessForm() {
 
               </div>
 
-              <div className="bg-secondary p-6 rounded-xl min-h-[640px] relative">
+              <div className="bg-secondary p-6 rounded-xl min-h-[740px] relative">
                 <div className="mb-8 min-h-[480px]">
                   <p className="text-gray-600 mb-2">Passo {currentStep}/{steps.length}</p>
                   <AnimatePresence mode="wait">
