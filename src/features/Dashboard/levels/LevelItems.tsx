@@ -10,21 +10,14 @@ import { Link } from "react-router-dom"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../components/ui/dialog"
 import { toast } from "../../../components/ui/use-toast"
 import { ScrollArea } from "../../../components/ui/scroll-area"
-import { Edit, File, Trash, Search } from "lucide-react"
+import { Edit, File, Trash, Search, ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import useAuthStore from "../../../store/authStore"
 import { Input } from "../../../components/ui/input"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../../../components/ui/pagination"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 
 import { motion } from "framer-motion"
 import HighlightLoader from "../../../components/highlightloader/HighLightLoader"
-import { levelService } from "../../level/common/api/level-service.ts";
+import { levelService } from "../../level/common/api/level-service.ts"
 
 interface Item {
   id: number
@@ -86,6 +79,9 @@ export default function LevelItems() {
   const [pageSize, setPageSize] = useState(10)
   const [searchTerm, setSearchTerm] = useState("")
   const [totalPages, setTotalPages] = useState(1)
+
+  // Opções de tamanho de página
+  const pageSizeOptions = [5, 10, 20, 50, 100]
 
   // Adicionar um mecanismo para atualizar a lista de itens após uma edição
   // Modificar o useEffect para incluir uma verificação de atualização
@@ -464,7 +460,6 @@ export default function LevelItems() {
           </div>
 
           <ScrollArea className="h-[calc(80vh-320px)] rounded-md border">
-
             {loading ? (
               <div className="grid justify-center items-center h-full">
                 {/* <ShuffleLoader /> */}
@@ -521,42 +516,79 @@ export default function LevelItems() {
                 </TableBody>
               </Table>
             )}
-
-
           </ScrollArea>
 
           {/* Controles de paginação */}
           {!searchTerm && totalPages > 1 && (
-            <div className="flex justify-center mt-4">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-
-                  {getPageNumbers().map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        isActive={page === currentPage}
-                        onClick={() => handlePageChange(page)}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+            <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
+                  <div className="flex items-center space-x-2">
+                    <p className="whitespace-nowrap text-sm font-medium">Linhas por página</p>
+                    <Select
+                      value={String(pageSize)}
+                      onValueChange={(value) => {
+                        setPageSize(Number(value))
+                        setCurrentPage(1) // Reset to first page when changing page size
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-[70px]">
+                        <SelectValue placeholder={String(pageSize)} />
+                      </SelectTrigger>
+                      <SelectContent side="top">
+                        {pageSizeOptions.map((size) => (
+                          <SelectItem key={size} value={String(size)}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex w-full items-center justify-between gap-2 sm:justify-end">
+                <div className="flex w-[110px] items-center justify-center text-sm font-medium">
+                  Página {currentPage} de {totalPages}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    aria-label="Primeira página"
+                    variant="outline"
+                    className="hidden h-8 w-8 p-0 lg:flex"
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    aria-label="Página anterior"
+                    variant="outline"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    aria-label="Próxima página"
+                    variant="outline"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    aria-label="Última página"
+                    variant="outline"
+                    className="hidden h-8 w-8 p-0 lg:flex"
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
         </>
@@ -588,4 +620,3 @@ export default function LevelItems() {
     </motion.div>
   )
 }
-
