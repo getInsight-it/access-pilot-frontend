@@ -1,99 +1,3 @@
-// "use client"
-
-// import { Breadcrumbs } from "../../../components/breadcrumbs"
-// import { Separator } from "../../../components/ui/separator"
-// import { useParams } from "react-router-dom"
-// import { levelService } from "../../../services/level"
-// import { useEffect, useState } from "react"
-// import type { LevelDTO } from "../../../services/level/level-dto.ts"
-// import useAuthStore from "../../../store/authStore.ts"
-// import { motion } from "framer-motion"
-
-// const breadcrumbItems = [
-//   { title: "Dashboard", link: "/dashboard" },
-//   { title: "Gerenciar esferas", link: "/dashboard/levels" },
-// ]
-
-// export default function LevelsPage() {
-//   const { clientId } = useParams<{ clientId: string }>()
-//   const [levelsData, setLevelsData] = useState<LevelDTO[] | null>(null)
-//   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated)
-//   const [loading, setLoading] = useState(true)
-
-//   const getData = async () => {
-//     try {
-//       // Usando os parâmetros de paginação conforme o swagger
-//       const data = await levelService.getLevels()
-//       setLevelsData(data)
-//       console.log("Dados obtidos:", data)
-//     } catch (e) {
-//       console.error("Erro ao buscar esferas:", e)
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   useEffect(() => {
-//     if (isAuthenticated) {
-//       getData()
-//     }
-//   }, [isAuthenticated])
-
-//   return (
-//     <>
-//       <motion.div
-//         initial={{ opacity: 0 }}
-//         animate={{
-//           opacity: 1,
-//           transition: { duration: 0.3, delay: 0.3, ease: "easeOut" },
-//         }}
-//         className="container mx-auto"
-//       >
-//         <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-//           <Breadcrumbs items={breadcrumbItems} />
-//         </div>
-//         <Separator className="mb-6" />
-
-//         {loading ? (
-//           <div className="flex justify-center p-8">
-//             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-//           </div>
-//         ) : !levelsData ? (
-//           <div className="text-center p-8">
-//             <h2 className="text-xl font-semibold">Nenhum dado encontrado</h2>
-//             <p className="text-muted-foreground mt-2">Verifique sua conexão e permissões.</p>
-//           </div>
-//         ) : (
-//           <div className="p-4">
-//             <h1 className="text-2xl font-bold mb-6">Esferas ({levelsData.total})</h1>
-//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//               {levelsData.items.map((item) => (
-//                 <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-//                   <div className="p-6">
-//                     <div className="flex justify-between items-center mb-4">
-//                       <div>
-//                         <h2 className="text-xl font-bold">{item.name}</h2>
-//                         <p className="text-sm text-muted-foreground">{item.sigla}</p>
-//                       </div>
-//                       <span className="px-3 py-1 text-xs bg-primary/20 text-primary rounded-full">{item.type}</span>
-//                     </div>
-
-//                     {item.description && <p className="text-sm text-muted-foreground mb-4">{item.description}</p>}
-
-//                     {item.parentId && <div className="text-xs text-muted-foreground">Parent ID: {item.parentId}</div>}
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         )}
-//       </motion.div>
-//     </>
-//   )
-// }
-
-
-
 import { useState, useEffect } from "react"
 import { Button, buttonVariants } from "../../../components/ui/button"
 import { Tree, TreeItem } from "../../../components/ui/tree"
@@ -108,10 +12,9 @@ import { Plus } from "lucide-react"
 import { Breadcrumbs } from "../../../components/breadcrumbs"
 import { cn } from "../../../lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip"
-import { levelService } from "../../../services/level"
 import useAuthStore from "../../../store/authStore"
-import Globe from "../../../components/canvas/globe/Globe"
 import HighlightLoader from "../../../components/highlightloader/HighLightLoader"
+import { levelService } from "../../level/common/api/level-service.ts";
 
 interface SphereItem {
   id: string
@@ -395,7 +298,7 @@ export default function Levels() {
       <Tree>
         {items.map((item) => (
           <TreeItem key={item.id}>
-            
+
             <div className="flex items-center justify-between w-full pr-2  transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" style={{ paddingLeft: `${level * 20}px` }}>
               <div className="flex items-center h-16">
                 {item.children && item.children.length > 0 ? (

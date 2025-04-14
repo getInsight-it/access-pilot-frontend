@@ -1,102 +1,92 @@
-import { useState, useEffect } from 'react';
-import { Button } from '../../components/ui/button';
-import { motion } from 'framer-motion';
-import { Calendar, Check, Clock, Copy, Download, File, Globe, MonitorIcon as MonitorCog, MonitorIcon, Pencil, User } from 'lucide-react';
-import RequestStatus from '../../components/request-status/RequestStatus';
-import { CardShine } from '../../components/CardShine';
-import CompactCalendar from '../../components/CompactCalendar';
-import { CopyProtocol } from '../../components/CopyProtocol';
+import { useEffect, useState } from "react";
+import { Button } from "../../components/ui/button";
+import { motion } from "framer-motion";
+import { Clock, File, Globe, MonitorIcon as MonitorCog, Pencil, User } from "lucide-react";
+import RequestStatus from "../../components/request-status/RequestStatus";
+import { CardShine } from "../../components/CardShine";
+import { CopyProtocol } from "../../components/CopyProtocol";
 
-import {OPTIONS} from "./options";
-import {format} from 'date-fns';
-import {StorageDTO} from "../../services/storage/storage-dto";
+import { OPTIONS } from "./options";
+import { format } from "date-fns";
+import { StorageDTO } from "../../services/storage/storage-dto";
 import axios from "axios";
-import {authService} from "../../services/auth";
-import {STORAGE_API} from "../../services/storage/storage-api.ts";
-import {catchError, from, tap} from "rxjs";
-import {requestService} from "../../services/request";
-import {toast} from "../ui/use-toast.ts";
+import { authService } from "../../services/auth";
+import { STORAGE_API } from "../../services/storage/storage-api.ts";
+import { catchError, from, tap } from "rxjs";
+import { toast } from "../ui/use-toast.ts";
 import useAuthStore from "../../store/authStore.ts";
-import { FlipCalendar } from '../calendar/Flipcalendar.tsx';
-import Head from '../../components/canvas/Head.tsx'
-import { PilotoDetail } from '../canvas/PilotoDetail.tsx';
-import CountdownTracker from '../CountdownTracker.tsx';
-import { Card } from '../ui/card.tsx';
-import { PulseLine } from '../utils/PulseLine.tsx';
-import { BackgroundLines } from '../BackgroundLines.tsx';
-import {FormProvider, useForm} from 'react-hook-form';
-import {zodResolver} from "@hookform/resolvers/zod";
+import { FlipCalendar } from "../calendar/Flipcalendar.tsx";
+import { PilotoDetail } from "../canvas/PilotoDetail.tsx";
+import { BackgroundLines } from "../BackgroundLines.tsx";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form";
-import {Input} from "../ui/input.tsx";
-import {Textarea} from "../ui/textarea";
-import { ConfirmationModal } from './ConfirmationModal';
-import { Cracha } from './Cracha.tsx';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip.tsx';
-import { TruncatedDescription } from '../TruncateDescription.tsx';
-import { ShuffleLoader } from '../shuffle-loader/ShuffleLoader.tsx';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
-import DisplaySpheres from '../spheres/DisplaySpheres.tsx';
-import DetailEight from './DetailEight.tsx';
+import { ConfirmationModal } from "./ConfirmationModal";
+import { Cracha } from "./Cracha.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip.tsx";
+import { TruncatedDescription } from "../TruncateDescription.tsx";
+import { ShuffleLoader } from "../shuffle-loader/ShuffleLoader.tsx";
+import DisplaySpheres from "../spheres/DisplaySpheres.tsx";
+import { requestService } from "../../features/requests/common/api/request-service.ts";
 
 export const Detail = ({
-                         data,
-                         attachments,
-                         onUpdate,
-                         origin
-                       }: {
+  data,
+  attachments,
+  onUpdate,
+  origin
+}: {
   data?: any,
   attachments?: StorageDTO[],
   onUpdate?: () => void,
   origin?: string
 }) => {
 
-  const getInitialAnimation = (status: string): 'idle' | 'headshake' | 'hiphop' => {
-    switch (status) {
-      case 'REJECTED':
-        return 'headshake';
-      case 'APPROVED':
-        return 'hiphop';
+  const getInitialAnimation = (status: string): "idle" | "headshake" | "hiphop" => {
+    switch(status) {
+      case "REJECTED":
+        return "headshake";
+      case "APPROVED":
+        return "hiphop";
       default:
-        return 'idle';
+        return "idle";
     }
   };
 
-  const [pilotoAnimation, setPilotoAnimation] = useState<'idle' | 'headshake' | 'hiphop'>(getInitialAnimation(data?.status));
-  const [action, setAction] = useState<string>('');
+  const [pilotoAnimation, setPilotoAnimation] = useState<"idle" | "headshake" | "hiphop">(getInitialAnimation(data?.status));
+  const [action, setAction] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<'CANCELED' | 'REJECTED' | 'APPROVED'>('CANCELED');
+  const [modalAction, setModalAction] = useState<"CANCELED" | "REJECTED" | "APPROVED">("CANCELED");
 
   const selected: StatusValue = OPTIONS.filter((o) => o.value === data?.status).map((o) => o.value as StatusValue)[0];
-  const formattedDate = data?.criacao ? format(new Date(data.criacao), 'dd/MM/yyyy') : '';
+  const formattedDate = data?.criacao ? format(new Date(data.criacao), "dd/MM/yyyy") : "";
   const userInfo = useAuthStore((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(attachments)
+  console.log(attachments);
 
   const handleDownload = async (fileId: string) => {
-    const token = await authService.getBearerToken()
+    const token = await authService.getBearerToken();
     const apiClient = axios.create({
       baseURL: window.env.API_URL,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `${token}`
+        "Content-Type": "application/json",
+        "Authorization": `${token}`
       }
-    })
+    });
     await apiClient.get(`${STORAGE_API.DOWNLOAD}/${fileId}?registerDownload=true`, {
-      responseType: 'blob',
+      responseType: "blob",
       headers: {
-        'Content-Type': 'application/json',
-      },
+        "Content-Type": "application/json"
+      }
     }).then((response) => {
       const url = window.URL.createObjectURL(response.data as Blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = response.headers['content-disposition']?.match(/filename="(.+)"/)[1];
+      a.download = response.headers["content-disposition"]?.match(/filename="(.+)"/)[1];
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-    })
+    });
     //TODO: analisar possivel bug no download de arquivos relacionado com biblioteca de http
     /*      const response: HttpRequestResponse | HttpRequestError = await storageService.downloadFile(fileId);
           if (response instanceof HttpRequestResponse){
@@ -117,85 +107,93 @@ export const Detail = ({
           }*/
   };
 
-  const handleCancel = (request: { finalReason: string}) => {
+  const handleCancel = (request: { finalReason: string }) => {
 
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'CANCELED', description: data.description, finalReason: request?.finalReason}));
+    formData.append("request", JSON.stringify({
+      status: "CANCELED",
+      description: data.description,
+      finalReason: request?.finalReason
+    }));
 
     from(requestService.updateRequest(data.id, formData)).pipe(
       tap(() => {
           toast({
-            title: 'Sucesso!',
-            description: `Solicitação cancelada com sucesso.`,
+            title: "Sucesso!",
+            description: `Solicitação cancelada com sucesso.`
           });
           onUpdate?.();
           setIsModalOpen(false);
         }
       ), catchError((error) => {
         toast({
-          title: 'Erro!',
+          title: "Erro!",
           description: `Erro ao cancelar solicitação.`,
-          variant: "destructive",
+          variant: "destructive"
         });
-        console.error('Erro ao cancelar solicitação', error);
+        console.error("Erro ao cancelar solicitação", error);
         return [];
       })).subscribe();
-  }
+  };
 
   const handleReject = (request: { id: number, description: string, finalReason: string }) => {
 
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'REJECTED', description: request.description, finalReason: request?.finalReason}));
+    formData.append("request", JSON.stringify({
+      status: "REJECTED",
+      description: request.description,
+      finalReason: request?.finalReason
+    }));
 
     from(requestService.updateRequest(request.id, formData)).pipe(
       tap(() => {
           toast({
-            title: 'Sucesso!',
-            description: `Solicitação rejeitada com sucesso.`,
+            title: "Sucesso!",
+            description: `Solicitação rejeitada com sucesso.`
           });
           onUpdate?.();
           setIsModalOpen(false);
         }
       ), catchError((error) => {
         toast({
-          title: 'Erro!',
+          title: "Erro!",
           description: `Erro ao rejeitar solicitação.`,
-          variant: "destructive",
+          variant: "destructive"
         });
-        console.error('Erro ao rejeitar solicitação', error);
+        console.error("Erro ao rejeitar solicitação", error);
         return [];
       })).subscribe();
-  }
+  };
   const handleApprove = (request: { id: number, description: string }) => {
     const formData = new FormData();
-    formData.append("request", JSON.stringify({status: 'APPROVED', description: request.description}));
+    formData.append("request", JSON.stringify({ status: "APPROVED", description: request.description }));
 
     from(requestService.updateRequest(request.id, formData)).pipe(
       tap(() => {
           toast({
-            title: 'Sucesso!',
-            description: `Solicitação aprovada com sucesso.`,
+            title: "Sucesso!",
+            description: `Solicitação aprovada com sucesso.`
           });
           onUpdate?.();
           setIsModalOpen(false);
         }
       ), catchError((error) => {
         toast({
-          title: 'Erro!',
+          title: "Erro!",
           description: `Erro ao aprovar solicitação.`,
-          variant: "destructive",
+          variant: "destructive"
         });
-        console.error('Erro ao aprovar solicitação', error);
+        console.error("Erro ao aprovar solicitação", error);
         return [];
       })).subscribe();
-  }
+  };
 
   const onSubmit = async (formData: any) => {
-    if (modalAction === 'APPROVED') {
-      handleApprove({id: data.id, description: ''});
-    } else if (modalAction === 'REJECTED') {
-      handleReject({...formData, id: data.id});
-    } else if (modalAction === 'CANCELED') {
+    if(modalAction === "APPROVED") {
+      handleApprove({ id: data.id, description: "" });
+    } else if(modalAction === "REJECTED") {
+      handleReject({ ...formData, id: data.id });
+    } else if(modalAction === "CANCELED") {
       handleCancel(formData);
     }
   };
@@ -211,19 +209,19 @@ export const Detail = ({
     setPilotoAnimation(getInitialAnimation(data?.status));
   }, [data?.status]);
 
-  const isFinished = ['APPROVED', 'REJECTED'].includes(data?.status);
-  const canCancel = ['CREATED', 'PENDING' ].includes(data?.status) && userInfo?.id === data?.requestingUser?.externalId;
+  const isFinished = ["APPROVED", "REJECTED"].includes(data?.status);
+  const canCancel = ["CREATED", "PENDING"].includes(data?.status) && userInfo?.id === data?.requestingUser?.externalId;
 
   const formSchema = z.object({
     finalReason: z
       .string()
-      .min(3, { message: 'O motivo deve conter no mínimo 3 caracteres' }),
+      .min(3, { message: "O motivo deve conter no mínimo 3 caracteres" })
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      finalReason: ''
+      finalReason: ""
     }
   });
 
@@ -245,11 +243,11 @@ export const Detail = ({
 
           <div className="col-span-5 lg:col-span-4 2xl:col-span-3">
             <div className="">
-              <CopyProtocol protocol={data?.protocolCode}/>
+              <CopyProtocol protocol={data?.protocolCode} />
             </div>
             <div className="mt-4">
               <p className="font-bold mb-3 text-lg">Data de envio:</p>
-              <FlipCalendar initialDate={formattedDate}/>
+              <FlipCalendar initialDate={formattedDate} />
             </div>
           </div>
 
@@ -279,9 +277,10 @@ export const Detail = ({
                   <p className="font-bold mb-3 text-lg">Sistema:</p>
 
                   <CardShine>
-                    <div className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[122px]">
+                    <div
+                      className="ring-2 ring-primary p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[122px]">
                       <div className="flex flex-row items-center">
-                        <MonitorCog className="w-6 h-6 mr-4"/>
+                        <MonitorCog className="w-6 h-6 mr-4" />
                         <p className="font-bold text-lg">
                           {data?.role.client.name}
                         </p>
@@ -293,13 +292,14 @@ export const Detail = ({
                           <ShuffleLoader />
                         </div>
                       ) : (
-                        <TruncatedDescription description={data?.role?.client?.description} maxLength={100} fontSize="text-sm" />
+                        <TruncatedDescription description={data?.role?.client?.description} maxLength={100}
+                                              fontSize="text-sm" />
                       )}
 
 
                     </div>
                   </CardShine>
-                  
+
                 </div>
 
                 <div className="mt-2 w-full max-w-72">
@@ -308,7 +308,7 @@ export const Detail = ({
                     <div
                       className="flex flex-col p-5 transition-all ring-2 ring-primary rounded-[var(--card-border-radius)] min-h-[122px]">
                       <div className="flex flex-row items-center">
-                        <Pencil className="w-6 h-6 mr-4"/>
+                        <Pencil className="w-6 h-6 mr-4" />
                         <p className="font-bold text-lg capitalize">
                           {data?.role.name}
                         </p>
@@ -329,7 +329,7 @@ export const Detail = ({
             <p className="mt-2 font-bold mb-3 text-lg">Esfera:</p>
             <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[122px]">
               <div className="flex flex-row items-center">
-                <Globe className="w-6 h-6 mr-4"/>
+                <Globe className="w-6 h-6 mr-4" />
                 <p className="font-bold text-lg">
                   Educacional
                 </p>
@@ -344,7 +344,7 @@ export const Detail = ({
             <p className="mt-2 font-bold mb-3 text-lg">Solicitante:</p>
             <div className="flex flex-col p-5 transition-all border rounded-[var(--card-border-radius)] min-h-[122px]">
               <div className="flex flex-row items-center">
-                <User className="w-6 h-6 mr-4"/>
+                <User className="w-6 h-6 mr-4" />
                 <p className="">
                   {data?.requestingUser.firstName}
                 </p>
@@ -355,7 +355,7 @@ export const Detail = ({
         </div>
 
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           <div className="col-span-8 2xl:col-span-6 w-full ">
             <p className="mt-6 font-bold mb-3 text-lg">Motivo do acesso:</p>
             <div className="col-span-8 p-5 transition-all border rounded-[var(--card-border-radius)]">
@@ -364,11 +364,11 @@ export const Detail = ({
           </div>
 
           <div className="col-span-12 lg:col-span-3 w-full">
-            
+
 
             <p className="text-md font-bold lg:mt-6 mb-1 text-lg">Anexos:</p>
             <div className="mt-3 flex gap-4">
-                
+
               {attachments?.map((attachment) => (
                 <div key={attachment.id} className="w-16 flex flex-col">
                   <div
@@ -379,7 +379,7 @@ export const Detail = ({
                         <TooltipTrigger asChild>
                           <div>
                             <div className="flex flex-col items-center">
-                              <File className="w-8 h-8"/>
+                              <File className="w-8 h-8" />
                             </div>
                             <button
                               className="text-blue-400 text-sm mt-1 cursor-pointer hover:underline"
@@ -402,13 +402,12 @@ export const Detail = ({
 
           </div>
 
-          
 
           <div className="col-span-12 lg:col-span-3 w-full relative">
             <div className="hidden 2xl:block 2xl:absolute right-0 -top-24 w-72 h-72">
-              <PilotoDetail currentAnimation={pilotoAnimation}/>
+              <PilotoDetail currentAnimation={pilotoAnimation} />
             </div>
-            {pilotoAnimation === 'hiphop' &&
+            {pilotoAnimation === "hiphop" &&
               <BackgroundLines className="absolute flex items-center justify-center w-full flex-col px-4 -mt-20">
                 &nbsp;
               </BackgroundLines>
@@ -417,7 +416,7 @@ export const Detail = ({
 
         </div>
 
-        {(data?.status === 'REJECTED' || data?.status === 'CANCELED') && (
+        {(data?.status === "REJECTED" || data?.status === "CANCELED") && (
           <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="col-span-8 2xl:col-span-6 w-full ">
               <p className="mt-6 font-bold mb-3 text-lg">Motivo da conclusão:</p>
@@ -433,40 +432,40 @@ export const Detail = ({
         <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="col-span-12 w-full ">
             <div className="w-full mt-6">
-              <hr className="mb-6"/>
+              <hr className="mb-6" />
               {
                 <motion.div
                   className="absolute"
-                  initial={{y: 12, opacity: 0}}
-                  animate={{y: 0, opacity: 1}}
-                  exit={{y: -12, opacity: 0}}
+                  initial={{ y: 12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -12, opacity: 0 }}
                 >
                   {canCancel && !isFinished && (
                     <div className="flex gap-x-2">
-                      <Clock className="w-5 h-5 text-red-500 mt-1"/>
+                      <Clock className="w-5 h-5 text-red-500 mt-1" />
                       <h2 className="text-lg mb-6">
                         Essa solicitação aguarda definição.
                       </h2>
                     </div>
                   )}
                   <div className="w-full flex gap-4 pb-8">
-                    {canCancel && origin === 'created' && (
+                    {canCancel && origin === "created" && (
                       <Button
                         className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
                         onClick={() => {
-                          setModalAction('CANCELED');
+                          setModalAction("CANCELED");
                           setIsModalOpen(true);
                         }}
                       >
                         Cancelar
                       </Button>
                     )}
-                    {(!isFinished && origin === 'assigned' && data?.status !== 'CANCELED') && (
+                    {(!isFinished && origin === "assigned" && data?.status !== "CANCELED") && (
                       <>
                         <Button
                           className="w-40 bg-red-200 text-red-800 hover:bg-red-400 hover:text-white"
                           onClick={() => {
-                            setModalAction('REJECTED');
+                            setModalAction("REJECTED");
                             setIsModalOpen(true);
                           }}
                         >
@@ -475,7 +474,7 @@ export const Detail = ({
                         <Button
                           className="w-40 bg-green-200 text-green-800 hover:bg-green-800 hover:text-green-200"
                           onClick={() => {
-                            setModalAction('APPROVED');
+                            setModalAction("APPROVED");
                             setIsModalOpen(true);
                           }}
                         >
@@ -493,9 +492,9 @@ export const Detail = ({
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onConfirm={modalAction === 'APPROVED' ? () => onSubmit({}) : form.handleSubmit(onSubmit)}
-          title={`${modalAction === 'CANCELED' ? 'Cancelar' : modalAction === 'REJECTED' ? 'Rejeitar' : 'Aprovar'} Solicitação`}
-          action={modalAction === 'CANCELED' ? 'cancelamento' : modalAction === 'REJECTED' ? 'rejeição' : 'aprovação'}
+          onConfirm={modalAction === "APPROVED" ? () => onSubmit({}) : form.handleSubmit(onSubmit)}
+          title={`${modalAction === "CANCELED" ? "Cancelar" : modalAction === "REJECTED" ? "Rejeitar" : "Aprovar"} Solicitação`}
+          action={modalAction === "CANCELED" ? "cancelamento" : modalAction === "REJECTED" ? "rejeição" : "aprovação"}
           form={form}
         />
       </div>

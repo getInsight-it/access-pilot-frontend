@@ -2,13 +2,13 @@ import { useEffect, useId, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useOutsideClick } from "../../hooks/use-outside-click"
 import { Eye, X } from "lucide-react"
-import type { RequestDTO } from "../../services/request/request-d-t-o.ts"
+import type { RequestModel } from "../../features/requests/common/types/request.model.ts"
 import IconRenderer from "../icons/IconRenderer.tsx"
 import { TruncatedDescription } from "../TruncateDescription.tsx"
 import { useNavigate } from "react-router-dom"
 
 interface ExpandableListProps {
-  requests?: RequestDTO[]
+  requests?: RequestModel[]
 }
 
 const status = {
@@ -40,7 +40,7 @@ const status = {
 }
 
 export function ExpandableList({ requests }: ExpandableListProps) {
-  const [active, setActive] = useState<RequestDTO | null>(null)
+  const [active, setActive] = useState<RequestModel | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
 
@@ -65,7 +65,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
 
   useOutsideClick(ref, () => setActive(null))
 
-  function renderContent(request: RequestDTO) {
+  function renderContent(request: RequestModel) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-[150px,1fr] gap-4 py-6">
         <div className="font-bold space-y-3">
@@ -145,7 +145,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
                     </motion.h3>
                     <motion.p layoutId={`description-${active.id}-${id}`} className="text-[var(--list-color)]">
                       {active.role.description}
-                    </motion.p>                    
+                    </motion.p>
                   </div>
 
                   <motion.div
@@ -195,7 +195,7 @@ export function ExpandableList({ requests }: ExpandableListProps) {
           >
             <div className="flex gap-4 md:flex-row">
               <motion.div className="hidden md:block" layoutId={`image-${request.id}-${id}`}>
-                
+
                 {/* <img
                   src={request.role.icon || "/img/ap.svg"}
                   alt={request.role.name}

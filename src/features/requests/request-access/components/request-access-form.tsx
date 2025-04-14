@@ -1,56 +1,58 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEffect, useState, useCallback } from "react";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "../../components/ui/use-toast";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { useToast } from "../../../../components/ui/use-toast.ts";
 
-import { Button } from "../../components/ui/button";
+import { Button } from "../../../../components/ui/button.tsx";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "../../../../components/ui/form.tsx";
+import { Input } from "../../../../components/ui/input.tsx";
+import { Textarea } from "../../../../components/ui/textarea.tsx";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "../../components/ui/form";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../ui/textarea";
-import { Check, MonitorIcon as MonitorCog, Plus, FileIcon, FileText, Image, FileAudio, FileVideo, Search, ClipboardList, User, MonitorIcon } from 'lucide-react';
-import { ScrollArea } from "../../components/ui/scroll-area";
+  Check,
+  ClipboardList,
+  FileAudio,
+  FileIcon,
+  FileText,
+  FileVideo,
+  Image,
+  MonitorIcon,
+  Plus,
+  User,
+  X
+} from "lucide-react";
+import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "../../components/ui/dialog";
+  DialogTitle
+} from "../../../../components/ui/dialog.tsx";
 
 import { HttpRequestResponse } from "@getinsight.it/getinsight-common";
-import { RequestService } from "../../services/request/request-service";
-import { clientService } from "../../services/client";
-import { roleService } from "../../services/role";
-import useAuthStore from "../../store/authStore";
-import { httpClient } from "../../config/http/http";
-import { StepLoader } from "../steploader/StepLoader";
-import { Heading } from "../ui/heading";
+import { RequestService } from "../../common/api/request-service.ts";
+import { clientService } from "../../../../services/client";
+import { roleService } from "../../../../services/role";
+import useAuthStore from "../../../../store/authStore.ts";
+import { httpClient } from "../../../../config/http/http.ts";
+import { StepLoader } from "../../../../components/steploader/StepLoader.tsx";
+import { Heading } from "../../../../components/ui/heading.tsx";
 import { Separator } from "@radix-ui/react-separator";
-import { FlipWords } from "../ui/flip-words";
-import { CardShine } from "../CardShine";
-import { cn } from "../../lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
-import { X } from 'lucide-react';
-import IconRenderer from "../icons/IconRenderer";
-import { PilotoForm } from "../canvas/PilotoForm";
-import useWindowSize from "../../hooks/use-window-size";
-import { CustomInput } from "../ui/custom-input";
-import { TruncatedDescription } from "../TruncateDescription";
-import SphereHierarchy from "../spheres/SphereHierarchy";
+import { FlipWords } from "../../../../components/ui/flip-words.tsx";
+import { CardShine } from "../../../../components/CardShine.tsx";
+import { cn } from "../../../../lib/utils.ts";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover.tsx";
+import IconRenderer from "../../../../components/icons/IconRenderer.tsx";
+import { PilotoForm } from "../../../../components/canvas/PilotoForm.tsx";
+import useWindowSize from "../../../../hooks/use-window-size.ts";
+import { CustomInput } from "../../../../components/ui/custom-input.tsx";
+import { TruncatedDescription } from "../../../../components/TruncateDescription.tsx";
+import DynamicSphereForm from "./dynamic-sphere-form.tsx";
+import { RoleInterface } from "../../../level/common/types/role.model.ts";
 
 interface Client {
   id: number;
@@ -58,19 +60,14 @@ interface Client {
   description: string;
 }
 
-interface Role {
-  id: number;
-  name: string;
-}
-
-type ActionName = 'idle' | 'headshake' | 'hiphop';
+type ActionName = "idle" | "headshake" | "hiphop";
 
 const formSchema = z.object({
   clientId: z.string({
-    required_error: "Selecione um sistema.",
+    required_error: "Selecione um sistema."
   }),
   roleId: z.string({
-    required_error: "Selecione um papel.",
+    required_error: "Selecione um papel."
   }),
   description: z
     .string()
@@ -79,14 +76,11 @@ const formSchema = z.object({
   attachments: z
     .array(z.instanceof(File))
     .optional()
-    // .refine((val) => !val || val.length > 0, {
-    //   message: "Se fornecido, deve conter pelo menos um arquivo.",
-    // }),
 });
 
 export function RequestAccessForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<RoleInterface[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [showContent, setShowContent] = useState(true);
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -96,14 +90,14 @@ export function RequestAccessForm() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [stepsState, setStepsState] = useState<Record<number, 'pending' | 'completed' | 'error'>>({
-    1: 'pending',
-    2: 'pending',
-    3: 'pending',
-    4: 'pending'
+  const [stepsState, setStepsState] = useState<Record<number, "pending" | "completed" | "error">>({
+    1: "pending",
+    2: "pending",
+    3: "pending",
+    4: "pending"
   });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const [currentAnimation, setCurrentAnimation] = useState<ActionName>('idle');
+  const [currentAnimation, setCurrentAnimation] = useState<ActionName>("idle");
   const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
 
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
@@ -113,7 +107,7 @@ export function RequestAccessForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { description: "", clientId: location?.state?.clientId },
+    defaultValues: { description: "", clientId: location?.state?.clientId }
   });
 
   const getClients = async () => {
@@ -136,7 +130,7 @@ export function RequestAccessForm() {
   };
 
   function init() {
-    if (isAuthenticated) {
+    if(isAuthenticated) {
       getClients();
       const client = location.state;
       if(client) {
@@ -151,39 +145,39 @@ export function RequestAccessForm() {
   }, [isAuthenticated]);
 
   const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    switch (extension) {
-      case 'pdf':
-      case 'doc':
-      case 'docx':
-      case 'txt':
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    switch(extension) {
+      case "pdf":
+      case "doc":
+      case "docx":
+      case "txt":
         return <FileText className="w-5 h-5" />;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
+      case "png":
+      case "jpg":
+      case "jpeg":
+      case "gif":
         return <Image className="w-5 h-5" />;
-      case 'mp3':
-      case 'wav':
+      case "mp3":
+      case "wav":
         return <FileAudio className="w-5 h-5" />;
-      case 'mp4':
-      case 'avi':
-      case 'mov':
+      case "mp4":
+      case "avi":
+      case "mov":
         return <FileVideo className="w-5 h-5" />;
       default:
         return <FileIcon className="w-5 h-5" />;
     }
   };
 
-  console.log(clients)
+  console.log(clients);
 
   function handlerSelectedClient(client: Client) {
     setSelectedClient(client.clientId);
     getRolesByClientId(client.clientId);
   }
 
-  const { width } = useWindowSize()
-  const isLargeScreen = width >= 1024 // lg breakpoint
+  const { width } = useWindowSize();
+  const isLargeScreen = width >= 1024; // lg breakpoint
 
   const steps = [
     {
@@ -202,7 +196,7 @@ export function RequestAccessForm() {
                 <Popover>
                   <PopoverTrigger asChild>
                     <div
-                      className={`max-w-96 w-full cursor-pointer ${selectedClient ? ' text-primary ' : ''}`}
+                      className={`max-w-96 w-full cursor-pointer ${selectedClient ? " text-primary " : ""}`}
                     >
 
                       <CardShine>
@@ -224,7 +218,8 @@ export function RequestAccessForm() {
                           </div>
 
                           {selectedClient &&
-                          <TruncatedDescription description={clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"} />
+                            <TruncatedDescription
+                              description={clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"} />
                             // <p className="mt-1 text-sm">
                             //   {clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"}
                             // </p>
@@ -241,11 +236,11 @@ export function RequestAccessForm() {
                     align={isLargeScreen ? "start" : "end"}
                     className={`
                       w-[26em]
-                      ${isLargeScreen ? "ml-[20px]" : ""} 
+                      ${isLargeScreen ? "ml-[20px]" : ""}
                       ${isLargeScreen ? "" : " mb-10"}
                     `}
                   >
-                    
+
                     {/* <Input
                       type="text"
                       placeholder="Buscar sistema..."
@@ -273,7 +268,6 @@ export function RequestAccessForm() {
                     </div>
 
 
-                    
                     <ScrollArea className="h-[340px] mt-4">
                       <div className="space-y-2 grid grid-cols-1 gap-2">
                         {clients
@@ -286,14 +280,15 @@ export function RequestAccessForm() {
                               <div
                                 className={cn(
                                   "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
-                                  selectedClient === client.clientId &&  "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                                  selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                                 )}
                                 onClick={() => {
                                   field.onChange(client.clientId);
                                   handlerSelectedClient(client);
                                 }}
                               >
-                                {selectedClient === client.clientId && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                                {selectedClient === client.clientId &&
+                                  <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
                                 <div className="flex flex-row items-center">
                                   <MonitorIcon className="w-6 h-6 mr-4" />
@@ -322,7 +317,7 @@ export function RequestAccessForm() {
             </FormItem>
           )}
         />
-      ),
+      )
     },
     {
       id: 2,
@@ -369,23 +364,22 @@ export function RequestAccessForm() {
                       </CardShine>
                     </div>
                   ))}
-
-
                 </div>
               </FormControl>
+
               <FormMessage />
-              
+
               {selectedRole && (
                 <div className="">
                   <h4 className="text-lg font-semibold mt-6 mb-3">Selecione a esfera</h4>
-                  <SphereHierarchy />
+                  <DynamicSphereForm initialId={roles.find(role => role.name === selectedRole)!.level.id} />
                 </div>
               )}
 
             </FormItem>
           )}
         />
-      ),
+      )
     },
     {
       id: 3,
@@ -423,7 +417,8 @@ export function RequestAccessForm() {
             name="attachments"
             render={({ field }) => (
               <FormItem className="mt-4 max-w-xl">
-                <h4 className="text-lg font-semibold mb-4">Adicione arquivos que ajudem a justificar sua solicitação (opcional)</h4>
+                <h4 className="text-lg font-semibold mb-4">Adicione arquivos que ajudem a justificar sua solicitação
+                  (opcional)</h4>
                 <FormControl>
                   <div className="min-h-[100px]">
                     <Input
@@ -435,7 +430,8 @@ export function RequestAccessForm() {
                     {attachments.length > 0 && (
                       <div className="mt-3 space-y-2">
                         {attachments.map((file, index) => (
-                          <div key={index} className=" bg-white pl-4 pr-2 py-0 rounded flex items-center justify-between">
+                          <div key={index}
+                               className=" bg-white pl-4 pr-2 py-0 rounded flex items-center justify-between">
                             <div className="flex items-center">
                               {getFileIcon(file.name)}
                               {/* <span className="overflow-hidden truncate w-40 text-sm ml-2">{file.name}</span> */}
@@ -469,7 +465,7 @@ export function RequestAccessForm() {
             )}
           />
         </>
-      ),
+      )
     },
     {
       id: 4,
@@ -555,35 +551,35 @@ export function RequestAccessForm() {
 
           </ul>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
   const updateStepState = useCallback(() => {
     setStepsState(prevState => {
       const newState = { ...prevState };
-      for (let i = 1; i <= steps.length; i++) {
-        if (i === 1) {
-          newState[i] = form.getValues("clientId") ? 'completed' : (prevState[i] === 'error' ? 'error' : 'pending');
-        } else if (i === 2) {
-          newState[i] = form.getValues("roleId") ? 'completed' : (prevState[i] === 'error' ? 'error' : 'pending');
-        } else if (i === 3) {
-          newState[i] = form.getValues("description").length >= 10 ? 'completed' : (prevState[i] === 'error' ? 'error' : 'pending');
-        } else if (i === 4) {
+      for(let i = 1; i <= steps.length; i++) {
+        if(i === 1) {
+          newState[i] = form.getValues("clientId") ? "completed" : (prevState[i] === "error" ? "error" : "pending");
+        } else if(i === 2) {
+          newState[i] = form.getValues("roleId") ? "completed" : (prevState[i] === "error" ? "error" : "pending");
+        } else if(i === 3) {
+          newState[i] = form.getValues("description").length >= 10 ? "completed" : (prevState[i] === "error" ? "error" : "pending");
+        } else if(i === 4) {
           newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10)
-            ? 'completed'
-            : (prevState[i] === 'error' ? 'error' : 'pending');
+            ? "completed"
+            : (prevState[i] === "error" ? "error" : "pending");
         }
       }
       return newState;
     });
 
-    if (form.getValues("clientId") &&
-        form.getValues("roleId") &&
-        form.getValues("description").length >= 10) {
-      setCurrentAnimation('hiphop');
+    if(form.getValues("clientId") &&
+      form.getValues("roleId") &&
+      form.getValues("description").length >= 10) {
+      setCurrentAnimation("hiphop");
     } else {
-      setCurrentAnimation('idle');
+      setCurrentAnimation("idle");
     }
   }, [form, steps.length]);
 
@@ -595,7 +591,7 @@ export function RequestAccessForm() {
   }, [form, updateStepState]);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (currentStep < steps.length) {
+    if(currentStep < steps.length) {
       goToNextStep();
     }
   }
@@ -603,20 +599,20 @@ export function RequestAccessForm() {
   const handleFinalSubmit = async () => {
     setIsFormSubmitted(true);
     const isValid = await form.trigger();
-    if (!isValid) {
+    if(!isValid) {
       setStepsState(prevState => {
         const newState = { ...prevState };
-        for (let i = 1; i <= steps.length; i++) {
-          if (i === 1) {
-            newState[i] = form.getValues("clientId") ? 'completed' : 'error';
-          } else if (i === 2) {
-            newState[i] = form.getValues("roleId") ? 'completed' : 'error';
-          } else if (i === 3) {
-            newState[i] = form.getValues("description").length >= 10 ? 'completed' : 'error';
-          } else if (i === 4) {
+        for(let i = 1; i <= steps.length; i++) {
+          if(i === 1) {
+            newState[i] = form.getValues("clientId") ? "completed" : "error";
+          } else if(i === 2) {
+            newState[i] = form.getValues("roleId") ? "completed" : "error";
+          } else if(i === 3) {
+            newState[i] = form.getValues("description").length >= 10 ? "completed" : "error";
+          } else if(i === 4) {
             newState[i] = (form.getValues("clientId") && form.getValues("roleId") && form.getValues("description").length >= 10)
-              ? 'completed'
-              : 'error';
+              ? "completed"
+              : "error";
           }
         }
         return newState;
@@ -624,13 +620,13 @@ export function RequestAccessForm() {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
+        variant: "destructive"
       });
-      setCurrentAnimation('headshake');
+      setCurrentAnimation("headshake");
       return;
     }
 
-    setCurrentAnimation('hiphop');
+    setCurrentAnimation("hiphop");
     setIsConfirmModalOpen(true);
   };
 
@@ -648,7 +644,7 @@ export function RequestAccessForm() {
         description: form.getValues("description")
       }));
 
-      if (attachments.length > 0) {
+      if(attachments.length > 0) {
         attachments.forEach((file) => formData.append("attachments", file));
       }
 
@@ -657,13 +653,13 @@ export function RequestAccessForm() {
 
       const response = await requestService.createRequest(formData, headers);
 
-      if (response instanceof HttpRequestResponse) {
+      if(response instanceof HttpRequestResponse) {
         toast({
           title: "Solicitação enviada com sucesso!",
-          description: "Sua solicitação foi processada.",
+          description: "Sua solicitação foi processada."
         });
         // Navegue para a página de listagem de solicitações
-        navigate('/dashboard/my-access-requests');
+        navigate("/dashboard/my-access-requests");
       } else {
         throw new Error("Erro ao enviar solicitação");
       }
@@ -671,7 +667,7 @@ export function RequestAccessForm() {
       toast({
         title: "Erro",
         description: "Ocorreu um erro ao processar sua solicitação.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setHasError(true);
     } finally {
@@ -684,22 +680,22 @@ export function RequestAccessForm() {
     const maxFileSize = 5 * 1024 * 1024;
 
     const validFiles = selectedFiles.filter(file => {
-      if (file.size > maxFileSize) {
+      if(file.size > maxFileSize) {
         toast({
           title: "Arquivo muito grande",
           description: `${file.name} excede o tamanho máximo de 5MB.`,
-          variant: "destructive",
+          variant: "destructive"
         });
         return false;
       }
       return true;
     });
 
-    if (validFiles.length + attachments.length > 3) {
+    if(validFiles.length + attachments.length > 3) {
       toast({
         title: "Limite de arquivos excedido",
         description: "O número máximo de arquivos permitidos é 3.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -712,7 +708,7 @@ export function RequestAccessForm() {
       clientId: "",
       roleId: "",
       description: "",
-      attachments: [],
+      attachments: []
     });
     setShowContent(true);
     setAttachments([]);
@@ -722,13 +718,13 @@ export function RequestAccessForm() {
     setHasError(false);
     setCurrentStep(1);
     setStepsState({
-      1: 'pending',
-      2: 'pending',
-      3: 'pending',
-      4: 'pending'
+      1: "pending",
+      2: "pending",
+      3: "pending",
+      4: "pending"
     });
     setIsFormSubmitted(false);
-    setCurrentAnimation('idle');
+    setCurrentAnimation("idle");
     setSearchTerm(""); // Reset search term
   };
 
@@ -742,7 +738,7 @@ export function RequestAccessForm() {
 
   const handleStepClick = (stepNumber: number) => {
     setCurrentStep(stepNumber);
-    if (!isFormSubmitted) {
+    if(!isFormSubmitted) {
       updateStepState();
     }
   };
@@ -754,37 +750,37 @@ export function RequestAccessForm() {
 
 
   const validateCurrentStep = (step: number): boolean => {
-    switch (step) {
+    switch(step) {
       case 1:
-        return !!form.getValues("clientId")
+        return !!form.getValues("clientId");
       case 2:
-        return !!form.getValues("roleId")
+        return !!form.getValues("roleId");
       case 3:
-        return form.getValues("description").length >= 10
+        return form.getValues("description").length >= 10;
       default:
-        return true
+        return true;
     }
-  }
+  };
 
   const goToNextStep = () => {
-    if (currentStep < steps.length) {
-      const isCurrentStepValid = validateCurrentStep(currentStep)
-      if (isCurrentStepValid) {
-        const nextStep = currentStep + 1
-        setCurrentStep(nextStep)
-        if (!isFormSubmitted) {
-          updateStepState()
+    if(currentStep < steps.length) {
+      const isCurrentStepValid = validateCurrentStep(currentStep);
+      if(isCurrentStepValid) {
+        const nextStep = currentStep + 1;
+        setCurrentStep(nextStep);
+        if(!isFormSubmitted) {
+          updateStepState();
         }
       } else {
         toast({
           title: "Campos obrigatórios",
           description: "Por favor, preencha todos os campos obrigatórios antes de prosseguir.",
-          variant: "destructive",
-        })
-        setCurrentAnimation("headshake")
+          variant: "destructive"
+        });
+        setCurrentAnimation("headshake");
       }
     }
-  }
+  };
 
   // const goToNextStep = () => {
   //   if (currentStep < steps.length) {
@@ -797,10 +793,10 @@ export function RequestAccessForm() {
   // };
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if(currentStep > 1) {
       const prevStep = currentStep - 1;
       setCurrentStep(prevStep);
-      if (!isFormSubmitted) {
+      if(!isFormSubmitted) {
         updateStepState();
       }
     }
@@ -827,7 +823,7 @@ export function RequestAccessForm() {
               x: 0,
               transition: { duration: 0.8, delay: 0.3, ease: "easeOut" }
             }}
-            className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-20 lg:-left-72 z-10 pointer-events-none ${hasError ? 'hidden lg:-bottom-60 lg:-left-32' : ''} ${!showContent && !hasError ? '-bottom-80 -left-96 lg:-bottom-40 lg:left-2' : ''}`}
+            className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-20 lg:-left-72 z-10 pointer-events-none ${hasError ? "hidden lg:-bottom-60 lg:-left-32" : ""} ${!showContent && !hasError ? "-bottom-80 -left-96 lg:-bottom-40 lg:left-2" : ""}`}
           >
             <PilotoForm currentAnimation={currentAnimation} />
           </motion.div>
@@ -863,11 +859,11 @@ export function RequestAccessForm() {
                         "w-8 h-8 hover:bg-gray-200 rounded-full flex items-center justify-center z-10",
                         step.id === currentStep
                           ? "hover:bg-primary bg-primary text-primary-foreground"
-                          : stepsState[step.id] === 'completed'
-                          ? "bg-green-500 hover:bg-green-600 text-white"
-                          : stepsState[step.id] === 'error'
-                          ? "bg-red-500 hover:bg-red-700 text-white"
-                          : "bg-[var(--bg-indicator)]"
+                          : stepsState[step.id] === "completed"
+                            ? "bg-green-500 hover:bg-green-600 text-white"
+                            : stepsState[step.id] === "error"
+                              ? "bg-red-500 hover:bg-red-700 text-white"
+                              : "bg-[var(--bg-indicator)]"
                       )}
                       // initial={false}
                       initial={{ opacity: 0, x: -500 }}
@@ -886,10 +882,10 @@ export function RequestAccessForm() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        {stepsState[step.id] === 'completed' ? (
+                        {stepsState[step.id] === "completed" ? (
                           <Check className="w-6 h-6" />
                         ) : (
-                          <span className={stepsState[step.id] === 'completed' ? 'text-white' : ''}>{step.number}</span>
+                          <span className={stepsState[step.id] === "completed" ? "text-white" : ""}>{step.number}</span>
                         )}
                       </motion.span>
 
@@ -897,7 +893,7 @@ export function RequestAccessForm() {
 
                     <div className="ml-14 sm:mt-0 sm:ml-4">
                       <h3
-                        className={`text-md xl:text-lg -mt-8 sm:mt-1 ${step.id === currentStep ? 'font-bold' : ''}`}
+                        className={`text-md xl:text-lg -mt-8 sm:mt-1 ${step.id === currentStep ? "font-bold" : ""}`}
                       >
                         {step.title}
                       </h3>
@@ -913,7 +909,7 @@ export function RequestAccessForm() {
 
                       className="absolute left-4 top-8 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300"
                     >
-                      </motion.div>
+                    </motion.div>
 
                     {index < steps.length - 1 && (
                       <motion.div
@@ -921,9 +917,9 @@ export function RequestAccessForm() {
                         initial={{ backgroundColor: "#b2b2b2", y: -500 }}
 
                         animate={{
-                          backgroundColor: stepsState[step.id] === 'completed' && stepsState[step.id + 1] === 'completed' ? "#22c55e" : "#b2b2b2",
+                          backgroundColor: stepsState[step.id] === "completed" && stepsState[step.id + 1] === "completed" ? "#22c55e" : "#b2b2b2",
                           opacity: step.id < currentStep ? 1 : 0,
-                          y: 0,
+                          y: 0
                         }}
                         transition={{ duration: 0.3, delay: 0.5 }}
                       />
@@ -1059,7 +1055,9 @@ export function RequestAccessForm() {
             <h4 className="text-sm font-medium mb-2">Resumo da solicitação:</h4>
             <ul className="space-y-1 text-sm">
               <li><strong>Sistema:</strong> {form.getValues("clientId")}</li>
-              <li><strong>Papel:</strong> {roles.find(role => role.id.toString() === form.getValues("roleId"))?.name || form.getValues("roleId")}</li>
+              <li>
+                <strong>Papel:</strong> {roles.find(role => role.id.toString() === form.getValues("roleId"))?.name || form.getValues("roleId")}
+              </li>
               <li><strong>Motivo:</strong> {form.getValues("description")}</li>
               {attachments.length > 0 && (
                 <li>

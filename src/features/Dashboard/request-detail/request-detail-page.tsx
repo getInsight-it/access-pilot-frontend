@@ -1,5 +1,4 @@
 import { Breadcrumbs } from '../../../components/breadcrumbs';
-import { ScrollArea } from '../../../components/ui/scroll-area';
 import { RequestDetail } from '../../../components/request-detail/RequestDetail';
 import { Heading } from '../../../components/ui/heading';
 import { Separator } from '../../../components/ui/separator';

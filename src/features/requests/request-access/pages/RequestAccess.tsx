@@ -1,6 +1,6 @@
-import { Breadcrumbs } from '../../../components/breadcrumbs';
-import { RequestAccessForm } from '../../../components/forms/request-access-form';
-import { ScrollArea } from '../../../components/ui/scroll-area';
+import { Breadcrumbs } from '../../../../components/breadcrumbs.tsx';
+import { RequestAccessForm } from '../components/request-access-form.tsx';
+import { ScrollArea } from '../../../../components/ui/scroll-area.tsx';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },

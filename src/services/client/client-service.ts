@@ -40,7 +40,13 @@ export class ClientService {
     return null;
   }
 
-  async getClientsPaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, name?: string): Promise<PaginatedResponse<ClientDTO> | null> {
+  async getClientsPaginated(
+    pageIndex: number, 
+    pageSize: number, 
+    sortField: string, 
+    sortType: string, 
+    filter?: string
+  ): Promise<PaginatedResponse<ClientDTO> | null> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),
       pageSize: pageSize.toString(),
@@ -48,8 +54,9 @@ export class ClientService {
       sortType: sortType
     });
 
-    if (name) {
-      queryParams.append('name', name);
+    if(filter) {
+      queryParams.append('clientId', filter);
+      queryParams.append('description', filter);
     }
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);

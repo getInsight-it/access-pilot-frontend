@@ -1,7 +1,8 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from '@getinsight.it/getinsight-common';
-import { REQUEST_API } from './request-api.ts';
-import { RequestDTO } from "./request-d-t-o.ts";
-import { PaginatedResponse } from '../../lib/paginated-response.ts';
+import { REQUEST_API } from '../types/request.enum.ts';
+import { RequestModel } from "../types/request.model.ts";
+import { PaginatedResponse } from '../../../../lib/paginated-response.ts';
+import { httpClient } from "../../../../config/http/http.ts";
 
 export class RequestService {
   httpClient: HttpClient;
@@ -10,7 +11,7 @@ export class RequestService {
     this.httpClient = httpClient;
   }
 
-  async getRequests(): Promise<RequestDTO | null> {
+  async getRequests(): Promise<RequestModel | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(REQUEST_API.REQUESTS);
 
     if (response instanceof HttpRequestResponse) {
@@ -22,7 +23,7 @@ export class RequestService {
     return null;
   }
 
-  async getRequestsPaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, name?: string): Promise<PaginatedResponse<RequestDTO> | null> {
+  async getRequestsPaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, name?: string): Promise<PaginatedResponse<RequestModel> | null> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),
       pageSize: pageSize.toString(),
@@ -37,7 +38,7 @@ export class RequestService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.PAGINATED}?${queryParams.toString()}`);
 
     if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<RequestDTO>;
+      return JSON.parse(response.data) as PaginatedResponse<RequestModel>;
     } else {
       console.error('Erro ao buscar clients paginados');
     }
@@ -45,7 +46,14 @@ export class RequestService {
     return null;
   }
 
-  async getRequestsMePaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, type?: string): Promise<PaginatedResponse<RequestDTO> | null> {
+  async getRequestsMePaginated(
+    pageIndex: number,
+    pageSize: number,
+    sortField: string,
+    sortType: string,
+    type?: string,
+    filter?: string
+  ): Promise<PaginatedResponse<RequestModel> | null> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),
       pageSize: pageSize.toString(),
@@ -57,10 +65,16 @@ export class RequestService {
       queryParams.append('type', type);
     }
 
+    if(filter) {
+      queryParams.append('protocolCode', filter);
+      queryParams.append('roleName', filter);
+      queryParams.append('clientName', filter);
+    }
+
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.ME_REQUESTS}?${queryParams.toString()}`);
 
     if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<RequestDTO>;
+      return JSON.parse(response.data) as PaginatedResponse<RequestModel>;
     } else {
       console.error('Erro ao buscar clients paginados');
     }
@@ -105,11 +119,11 @@ export class RequestService {
       }
   }
 
-  async findRequestById(id: string): Promise<RequestDTO | null> {
+  async findRequestById(id: string): Promise<RequestModel | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}`);
 
     if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as RequestDTO;
+      return JSON.parse(response.data) as RequestModel;
     } else {
       console.error('Erro ao buscar solicitação');
     }
@@ -118,3 +132,5 @@ export class RequestService {
   }
 
 }
+
+export const requestService: RequestService = new RequestService(httpClient);

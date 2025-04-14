@@ -1,15 +1,15 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
 import Login from './features/Login/Login.tsx';
 import Dashboard from './features/Dashboard/Dashboard.tsx';
-import MyAccessRequests from './features/Dashboard/my-access-requests/MyAccessRequests.tsx';
+import MyAccessRequests from './features/requests/my-access-request/MyAccessRequests.tsx';
 import AuthLayout from './layouts/AuthLayout.tsx';
 import DashboardLayout from './layouts/DashboardLayout.tsx';
 import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from './constants/routes.ts';
 import ErrorLayout from './layouts/ErrorLayout.tsx';
 import Error from './features/Error/Error.tsx';
 import { Suspense } from 'react';
-import AccessRequests from './features/Dashboard/access-requests/AccessRequests.tsx';
-import RequestAccess from './features/Dashboard/request-access/RequestAccess.tsx';
+import ManageRequests from './features/requests/manage-request/ManageRequests.tsx';
+import RequestAccess from './features/requests/request-access/pages/RequestAccess.tsx';
 import Help from './features/Dashboard/help/Help.tsx';
 import RolesPage from './features/Dashboard/roles/RolesPage.tsx';
 import SystemsPage from './features/Dashboard/systems/SystemsPage.tsx';
@@ -138,7 +138,7 @@ const privateApproverRoutes = [
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
-            element: <AccessRequests />
+            element: <ManageRequests />
           },
           {
             path: PRIVATE_ROUTES.CREATE_LEVEL,

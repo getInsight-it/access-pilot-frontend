@@ -1,19 +1,19 @@
-import { Button } from '../../../components/ui/button';
+import { Button } from "../../../../../components/ui/button.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger
-} from '../../ui/dropdown-menu.tsx';
-import { Eye, MoreHorizontal} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { RequestDTO } from '../../../services/request/request-d-t-o';
+} from "../../../../../components/ui/dropdown-menu.tsx";
+import { Eye, MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { RequestModel } from "../../types/request.model.ts";
 import React from "react";
 
 interface CellActionProps {
-  data: RequestDTO;
-  origin?: string
+  data: RequestModel;
+  origin?: string;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data, origin }) => {

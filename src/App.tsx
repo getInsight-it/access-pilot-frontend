@@ -50,7 +50,8 @@ function App() {
         getUserInfo()
         setUserRoles(authService.getRoles());
         console.log(useAuthStore.getState().roles);
-        getNotifications()
+        // TODO remove this comment
+        //getNotifications()
 
         const currentRoute = window.location.pathname;
 

@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "../../../components/ui/use-toast"
 import { ScrollArea } from "../../../components/ui/scroll-area"
 import { Edit, File, Trash, Search } from "lucide-react"
-import { levelService } from "../../../services/level"
 import useAuthStore from "../../../store/authStore"
 import { Input } from "../../../components/ui/input"
 import {
@@ -25,6 +24,7 @@ import {
 
 import { motion } from "framer-motion"
 import HighlightLoader from "../../../components/highlightloader/HighLightLoader"
+import { levelService } from "../../level/common/api/level-service.ts";
 
 interface Item {
   id: number
@@ -522,7 +522,7 @@ export default function LevelItems() {
               </Table>
             )}
 
-            
+
           </ScrollArea>
 
           {/* Controles de paginação */}

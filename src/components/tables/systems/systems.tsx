@@ -7,7 +7,7 @@ import {
   PaginationState,
   useReactTable
 } from '@tanstack/react-table';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import {Button} from '../../../components/ui/button';
 import {Input} from '../../../components/ui/input';
@@ -29,24 +29,22 @@ interface DataTableProps<TData, TValue> {
   searchParams?: {
     [key: string]: string | string[] | undefined;
   },
-  onPageChange?: (pageIndex, pageSize) => void
+  onPageChange?: (pageIndex: number, pageSize: number, searchFilter?: string) => void
 }
 
 export function SystemsTable<TData, TValue>({
-                                              columns,
-                                              data,
-                                              pageNo,
-                                              searchKey,
-                                              totalUsers,
-                                              pageCount,
-                                              pageSizeOptions = [10, 20, 30, 40, 50],
-                                              onPageChange
-                                            }: DataTableProps<TData, TValue>) {
+    columns,
+    data,
+    pageNo,
+    searchKey,
+    totalUsers,
+    pageCount,
+    pageSizeOptions = [10, 20, 30, 40, 50],
+    onPageChange
+  }: DataTableProps<TData, TValue>) {
   const navigate = useNavigate();
   const {search, pathname} = useLocation();
   const searchParams = new URLSearchParams(search);
-
-  // Search params
   const page = searchParams?.get('page') ?? '1';
   const pageAsNumber = Number(page);
   const fallbackPage = isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
@@ -54,11 +52,7 @@ export function SystemsTable<TData, TValue>({
   const perPageAsNumber = pageSizeOptions.filter(o => o >= per_page)[0] ?? 10;
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
-  /* this can be used to get the selectedrows
-  console.log("value", table.getFilteredSelectedRowModel()); */
-
-  // Create query string
-  const createQueryString = React.useCallback(
+  const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
       const newSearchParams = new URLSearchParams(search);
       for (const [key, value] of Object.entries(params)) {
@@ -73,13 +67,12 @@ export function SystemsTable<TData, TValue>({
     [search]
   );
 
-  const [{pageIndex, pageSize}, setPagination] = React.useState<PaginationState>({
+  const [{pageIndex, pageSize}, setPagination] = useState<PaginationState>({
     pageIndex: fallbackPage - 1,
     pageSize: fallbackPerPage
   });
 
-
-  React.useEffect(() => {
+  useEffect(() => {
     navigate(
       `${pathname}?${createQueryString({
         page: pageIndex + 1,
@@ -87,8 +80,6 @@ export function SystemsTable<TData, TValue>({
       })}`,
       {replace: true}
     );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
 
   const table = useReactTable({
@@ -104,7 +95,11 @@ export function SystemsTable<TData, TValue>({
       setPagination(old => {
           const newPaginationValue = updater instanceof Function ? updater(old) : updater;
           if ('pageIndex' in newPaginationValue) {
-            onPageChange?.(newPaginationValue?.pageIndex, newPaginationValue?.pageSize);
+            onPageChange?.(
+              newPaginationValue?.pageIndex, 
+              newPaginationValue?.pageSize,
+              searchValue
+            );
             return newPaginationValue;
           }
         }
@@ -116,33 +111,25 @@ export function SystemsTable<TData, TValue>({
   });
 
   const searchValue = table.getColumn(searchKey)?.getFilterValue() as string;
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
 
-  React.useEffect(() => {
-    if (searchValue?.length > 0) {
-      navigate(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: searchValue
-        })}`,
-        {replace: true}
-      );
-    }
-    if (searchValue?.length === 0 || searchValue === undefined) {
-      navigate(
-        `${pathname}?${createQueryString({
-          page: null,
-          limit: null,
-          search: null
-        })}`,
-        {replace: true}
-      );
-    }
+  useEffect(() => {
+    const timeoutHandler = setTimeout(() => {
+      setDebouncedSearchValue(searchValue)
+    }, 300);
 
+    return () => {
+      clearTimeout(timeoutHandler);
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     setPagination((prev) => ({...prev, pageIndex: 0}));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+    if(onPageChange) {
+      onPageChange(1, table.getState().pagination.pageSize, searchValue)
+    }
+  }, [debouncedSearchValue]);
 
   return (
     <>

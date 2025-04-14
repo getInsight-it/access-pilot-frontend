@@ -40,8 +40,8 @@ export default function SystemsPage() {
     getData(page,pageLimit);
   };
 
-  const getData = async (page, pageSize) => {
-    const pageResponse = await clientService.getClientsPaginated(page, pageSize, 'id', 'asc');
+  const getData = async (page: number, pageSize: number, searchFilter: string = '') => {
+    const pageResponse = await clientService.getClientsPaginated(page, pageSize, 'id', 'asc', searchFilter);
     setClients(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
   }
@@ -63,24 +63,19 @@ export default function SystemsPage() {
   function updatePageInfo() {
     if (clients !== null && clients.length > 0) {
       const pageSizeOptions = [10, 20, 30, 40, 50]
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : 0;
-      setPage(page)
+      setPage(page);
       const pageLimitReal = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 10;
       const pageCount = pageSizeOptions.filter(o => o >= pageLimitReal)[0] ?? 10;
-      const name = searchParams.get('search') || null;
       setSearch(search || '');
       setPageCount(Math.ceil(totalUsers / pageCount));
       setPageLimit(pageSizeOptions.filter(o => o >= pageLimitReal)[0] ?? 10);
-
     }
   }
 
   useEffect(() => {
     updatePageInfo();
   }, [getData]);
-
-  const navigate = useNavigate();
 
   return (
     <>

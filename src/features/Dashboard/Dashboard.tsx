@@ -1,22 +1,21 @@
-import useAuthStore from '../../store/authStore.ts';
-import { authService } from '../../services/auth';
-import { FeatureGrid } from '../../components/grid/FeatureGrid';
-import GridList from '../../components/GridList';
-import GridListNoAccess from '../../components/GridListNoAccess';
-import { Stripe } from '../../components/stripe/Stripe';
-import { from, interval, startWith, switchMap, combineLatest } from 'rxjs';
-import { ScrollArea } from '../../components/ui/scroll-area';
-import FooterGovbr from '../../components/layout/footer-govbr.tsx';
-import {useEffect, useState} from 'react';
-import { useTheme } from '../../components/layout/ThemeToggle/theme-provider.tsx';
-import { Typewriter } from '../../typewriter/Typewriter.tsx';
-import {SummaryDto} from "../../services/summary/summary-dto.ts";
-import {summaryService} from "../../services/summary";
-import { motion } from 'framer-motion';
+import useAuthStore from "../../store/authStore.ts";
+import { FeatureGrid } from "../../components/grid/FeatureGrid";
+import GridList from "../../components/GridList";
+import GridListNoAccess from "../../components/GridListNoAccess";
+import { Stripe } from "../../components/stripe/Stripe";
+import { combineLatest, from, interval, startWith, switchMap } from "rxjs";
+import { ScrollArea } from "../../components/ui/scroll-area";
+import FooterGovbr from "../../components/layout/footer-govbr.tsx";
+import { useEffect, useState } from "react";
+import { useTheme } from "../../components/layout/ThemeToggle/theme-provider.tsx";
+import { Typewriter } from "../../typewriter/Typewriter.tsx";
+import { SummaryDto } from "../../services/summary/summary-dto.ts";
+import { summaryService } from "../../services/summary";
+import { motion } from "framer-motion";
 
-import { Card } from '../../components/utils/Card.tsx';
-import {requestService} from "../../services/request";
-import {RequestDTO} from "../../services/request/request-d-t-o.ts";
+import { Card } from "../../components/utils/Card.tsx";
+import { RequestModel } from "../requests/common/types/request.model.ts";
+import { requestService } from "../requests/common/api/request-service.ts";
 
 export default function Dashboard() {
 
@@ -24,15 +23,15 @@ export default function Dashboard() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { theme } = useTheme();
   const [summary, setSummary] = useState<SummaryDto>(null);
-  const [requests, setRequests] = useState<RequestDTO[]>(null);
+  const [requests, setRequests] = useState<RequestModel[]>(null);
 
   const init = () => {
     getData();
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      init()
+    if(isAuthenticated) {
+      init();
     }
   }, [isAuthenticated]);
 
@@ -42,7 +41,7 @@ export default function Dashboard() {
       switchMap(() =>
         combineLatest([
           from(summaryService.getSummary()),
-          from(requestService.getRequestsMePaginated(1, 3, 'id', 'desc', 'assigned')),
+          from(requestService.getRequestsMePaginated(1, 3, "id", "desc", "assigned"))
         ])
       )
     );
@@ -52,7 +51,7 @@ export default function Dashboard() {
         setSummary(summaries);
         setRequests(requestsResponse?.items || []);
       },
-      error: (err) => console.error(err),
+      error: (err) => console.error(err)
     });
 
     return () => subscription.unsubscribe();
@@ -102,12 +101,12 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold tracking-tight">
             Resumo
           </h2>
-          {summary && (<Typewriter {...summary}/>)}
+          {summary && (<Typewriter {...summary} />)}
         </div>
-        {(summary && requests) && <FeatureGrid summary={summary} requests={requests}/>}
+        {(summary && requests) && <FeatureGrid summary={summary} requests={requests} />}
       </motion.div>
 
-      {theme === 'gov' && (
+      {theme === "gov" && (
         <div className="mt-20">
           <FooterGovbr />
         </div>

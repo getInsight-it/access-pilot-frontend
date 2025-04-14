@@ -14,8 +14,8 @@ import { Input } from "../../../components/ui/input.tsx"
 import { Button } from "../../../components/ui/button.tsx"
 import { Textarea } from "../../../components/ui/textarea.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
-import { levelService } from "../../../services/level"
 import HighlightLoader from "../../../components/highlightloader/HighLightLoader"
+import { levelService } from "../../level/common/api/level-service.ts";
 
 interface Sphere {
   id: string

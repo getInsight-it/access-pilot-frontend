@@ -1,46 +1,29 @@
 import {
   ColumnDef,
-  PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  PaginationState,
   useReactTable
-} from '@tanstack/react-table';
-import React, { useEffect, useState } from 'react';
+} from "@tanstack/react-table";
+import React, { useEffect, useState } from "react";
 
-import { Button } from '../../../components/ui/button';
-import { Input } from '../../../components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '../../../components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '../../../components/ui/select';
-import { ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ScrollArea, ScrollBar } from '../../../components/ui/scroll-area';
+import { Button } from "../../../../../components/ui/button.tsx";
+import { Input } from "../../../../../components/ui/input.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../components/ui/table.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../components/ui/select.tsx";
+import { ArrowLeft, ArrowRight, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { ScrollArea, ScrollBar } from "../../../../../components/ui/scroll-area.tsx";
 
-import { Card, CardContent } from '../../../components/ui/card';
-import { RequestDTO } from '../../../services/request/request-d-t-o';
-import { useMediaQuery } from '../../../hooks/use-media-query';
-import { ShuffleLoader } from '../../shuffle-loader/ShuffleLoader';
-import HighlightLoader from '../../highlightloader/HighLightLoader';
+import { Card, CardContent } from "../../../../../components/ui/card.tsx";
+import { useMediaQuery } from "../../../../../hooks/use-media-query.ts";
+import HighlightLoader from "../../../../../components/highlightloader/HighLightLoader.tsx";
 
 export function RequestsTable<TData, TValue>({
   columns,
   data,
-  pageNo,
-  totalUsers,
   pageCount,
   pageSizeOptions = [10, 20, 30, 40, 50],
   onPageChange
@@ -51,19 +34,16 @@ export function RequestsTable<TData, TValue>({
   totalUsers: number;
   pageCount: number;
   pageSizeOptions?: number[];
-  onPageChange: (pageIndex: number, pageSize: number) => void;
+  onPageChange: (pageIndex: number, pageSize: number, filter: string) => void;
 }) {
-  const navigate = useNavigate();
-  const { search, pathname } = useLocation();
+  const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
-
-  const [globalFilter, setGlobalFilter] = useState<string>(''); // Estado do filtro global
   const [isLoading, setIsLoading] = useState(true);
 
-  const page = searchParams?.get('page') ?? '1';
+  const page = searchParams?.get("page") ?? "1";
   const pageAsNumber = Number(page);
   const fallbackPage = isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const per_page = searchParams?.get('limit') ?? '10';
+  const per_page = searchParams?.get("limit") ?? "10";
   const perPageAsNumber = Number(per_page);
   const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
 
@@ -72,48 +52,18 @@ export function RequestsTable<TData, TValue>({
     pageSize: fallbackPerPage
   });
 
-  const createQueryString = React.useCallback(
-    (params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(search);
-      for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          newSearchParams.delete(key);
-        } else {
-          newSearchParams.set(key, String(value));
-        }
-      }
-      return newSearchParams.toString();
-    },
-    [search]
-  );
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Simulating a 2-second load time
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    navigate(
-      `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        limit: pageSize,
-        filter: globalFilter || null
-      })}`,
-      { replace: true }
-    );
-  }, [pageIndex, pageSize, navigate, pathname, createQueryString, globalFilter]);
 
   const table = useReactTable({
     data,
     columns,
     pageCount: pageCount ?? -1,
-    state: {
-      pagination: { pageIndex, pageSize },
-      globalFilter // Conecta o estado do filtro global à tabela
-    },
-    globalFilterFn: 'includesString', // Usa um filtro global baseado em substring
+    state: { pagination: { pageIndex, pageSize } },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -121,23 +71,47 @@ export function RequestsTable<TData, TValue>({
     onPaginationChange: (updater) => {
       setPagination((old) => {
         const newPaginationValue = updater instanceof Function ? updater(old) : updater;
-        onPageChange?.(newPaginationValue.pageIndex + 1, newPaginationValue.pageSize);
+        onPageChange?.(newPaginationValue.pageIndex + 1, newPaginationValue.pageSize, "");
         return newPaginationValue;
       });
     }
   });
 
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter, setDebouncedFilter] = useState(filter);
+
+  useEffect(() => {
+    const timeoutHandler = setTimeout(() => {
+      setDebouncedFilter(filter);
+    }, 300);
+
+    return () => {
+      clearTimeout(timeoutHandler);
+    };
+  }, [filter]);
+
+  useEffect(() => {
+    console.log(filter);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+
+    if(onPageChange) {
+      onPageChange(1, table.getState().pagination.pageSize, filter);
+    }
+  }, [debouncedFilter]);
 
   return (
     <>
       <div className="flex gap-4 pt-1 pb-2">
-        {/* Input de filtro pelo nome do sistema */}
         <Input
           placeholder="Filtrar por Sistema..."
           className="w-full md:max-w-sm"
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
+          value={filter}
+          onChange={(e) => {
+            console.log(e.target.value);
+            setFilter(e.target.value);
+          }}
         />
       </div>
 
@@ -173,9 +147,9 @@ export function RequestsTable<TData, TValue>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -283,7 +257,6 @@ export function RequestsTable<TData, TValue>({
           </div>
         </div>
       </div>
-
     </>
   );
 }

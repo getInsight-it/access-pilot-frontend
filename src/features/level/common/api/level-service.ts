@@ -1,6 +1,7 @@
 import { type HttpClient, type HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common"
-import { LEVEL_API } from "./level-api.ts"
-import type { LevelDTO, LevelItem } from "./level-dto.ts"
+import { LEVEL_API } from "../../../../services/level/level-api.ts"
+import type { LevelDTO, LevelItem } from "../../../../services/level/level-dto.ts"
+import { httpClient } from "../../../../config/http/http.ts";
 
 export class LevelService {
   httpClient: HttpClient
@@ -21,9 +22,19 @@ export class LevelService {
         console.log("Resposta bem-sucedida:", response.status)
         return JSON.parse(response.data)
       } else {
-        console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro")
         return null
       }
+    } catch (error) {
+      console.error("Erro ao buscar levels:", error)
+      return null
+    }
+  }
+
+  async getLevelHierarchy(id: number): Promise<any> {
+    try {
+      const url = `${LEVEL_API.LEVELS}/${id}/hierarchy`;
+      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url)
+      return JSON.parse(response.data as any);
     } catch (error) {
       console.error("Erro ao buscar levels:", error)
       return null
@@ -45,23 +56,6 @@ export class LevelService {
 
         try {
           const data = JSON.parse(response.data) as LevelItem
-          console.log(`Dados da esfera ${id} recebidos da API:`, JSON.stringify(data, null, 2))
-
-          // Verificar especificamente a estrutura do parent
-          if (data.parent) {
-            console.log(`Esfera ${id} tem parent:`, JSON.stringify(data.parent, null, 2))
-          } else if (data.parentId) {
-            console.log(`Esfera ${id} tem parentId:`, data.parentId)
-          } else {
-            console.log(`Esfera ${id} não tem parent ou parentId`)
-          }
-
-          // Verificar especificamente o apiKey para esferas externas
-          if (data.type === "EXTERNAL") {
-            // Para esferas externas, assumir que tem API Key configurada
-            // mesmo que a API não retorne o campo por razões de segurança
-            console.log(`Esfera ${id} é externa, assumindo que tem API Key configurada`)
-          }
 
           return data
         } catch (parseError) {
@@ -487,7 +481,8 @@ export class LevelService {
       headers.set("Accept", "application/json")
 
       // Usar o método put diretamente com o objeto
-      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(url, data, headers)
+      const { parent, parentIdStr, ...requestData  } = data;
+      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(url, requestData, headers);
 
       if (response instanceof HttpRequestResponse) {
         console.log("Resposta bem-sucedida:", response.status)
@@ -608,3 +603,4 @@ export class LevelService {
   }
 }
 
+export const levelService: LevelService = new LevelService(httpClient);

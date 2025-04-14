@@ -1,6 +1,6 @@
-import {RoleDTO} from "../role/role-dto.ts";
+import {RoleDTO} from "../../../../services/role/role-dto.ts";
 
-export interface RequestDTO {
+export interface RequestModel {
   id: number;
   description: string;
   requestingUser: {

@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from "react";
-import { Tag } from "./Tag";
 import { Detail } from "./Detail";
 import { StorageDTO } from "../../services/storage/storage-dto";
 import {useParams} from "react-router-dom";
-import {requestService} from "../../services/request";
 import useAuthStore from "../../store/authStore.ts";
-import {RequestDTO} from "../../services/request/request-d-t-o.ts";
+import {RequestModel} from "../../features/requests/common/types/request.model.ts";
 import {catchError, from, tap} from "rxjs";
 import {storageService} from "../../services/storage";
+import { requestService } from "../../features/requests/common/api/request-service.ts";
 
 export const RequestDetail = ({
                                 origin
@@ -18,7 +17,7 @@ export const RequestDetail = ({
 
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { id } = useParams();
-  const [data, setData] = useState<RequestDTO>();
+  const [data, setData] = useState<RequestModel>();
 
   const onUpdate = () => {
     getData();

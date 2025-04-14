@@ -1,9 +1,9 @@
 import {HttpClient, HttpRequestError, HttpRequestResponse} from "@getinsight.it/getinsight-common";
 import {NOTIFICATION_API} from "./notification-api.ts";
 import {NotificationDto} from "./notification-dto.ts";
-import {REQUEST_API} from "../request/request-api.ts";
+import {REQUEST_API} from "../../features/requests/common/types/request.enum.ts";
 import {PaginatedResponse} from "../../lib/paginated-response.ts";
-import {RequestDTO} from "../request/request-d-t-o.ts";
+import {RequestModel} from "../../features/requests/common/types/request.model.ts";
 import {ClientDTO} from "../client/client-dto.ts";
 import {NotificationSummaryDto} from "./notification-summary-dto.ts";
 
