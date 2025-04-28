@@ -8,10 +8,8 @@ import { CopyProtocol } from "../../components/CopyProtocol";
 
 import { OPTIONS } from "./options";
 import { format } from "date-fns";
-import { StorageDTO } from "../../services/storage/storage-dto";
+import { StorageModel } from "../../features/storage/common/model/storage.model.ts";
 import axios from "axios";
-import { authService } from "../../services/auth";
-import { STORAGE_API } from "../../services/storage/storage-api.ts";
 import { catchError, from, tap } from "rxjs";
 import { toast } from "../ui/use-toast.ts";
 import useAuthStore from "../../store/authStore.ts";
@@ -28,6 +26,7 @@ import { TruncatedDescription } from "../TruncateDescription.tsx";
 import { ShuffleLoader } from "../shuffle-loader/ShuffleLoader.tsx";
 import DisplaySpheres from "../spheres/DisplaySpheres.tsx";
 import { requestService } from "../../features/requests/common/api/request-service.ts";
+import { STORAGE_API } from "../../features/storage/common/api/storage-service.ts";
 
 export const Detail = ({
   data,
@@ -36,7 +35,7 @@ export const Detail = ({
   origin
 }: {
   data?: any,
-  attachments?: StorageDTO[],
+  attachments?: StorageModel[],
   onUpdate?: () => void,
   origin?: string
 }) => {
@@ -53,7 +52,6 @@ export const Detail = ({
   };
 
   const [pilotoAnimation, setPilotoAnimation] = useState<"idle" | "headshake" | "hiphop">(getInitialAnimation(data?.status));
-  const [action, setAction] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"CANCELED" | "REJECTED" | "APPROVED">("CANCELED");
 
@@ -61,8 +59,6 @@ export const Detail = ({
   const formattedDate = data?.criacao ? format(new Date(data.criacao), "dd/MM/yyyy") : "";
   const userInfo = useAuthStore((state) => state.user);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log(attachments);
 
   const handleDownload = async (fileId: string) => {
     const token = await authService.getBearerToken();

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Modal } from '@/components/ui/modal';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
 
 interface RequestDetailModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
+  if(!isMounted) {
     return null;
   }
 
@@ -55,15 +55,6 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
           <p>Gerenciar sistema</p>
           <p>3 Meses</p>
         </div>
-        {/* Solicitação de acesso: REQ-2023-06-15-002
-        Sistema: Portal RH
-        Função solicitada: Gerente
-        Status: Em progresso
-        Data de envio: 15 de Junho, 2024
-        Solicitante: José Maria
-        Gerente: Maria José
-        Motivo do acesso: Gerenciar sistema
-        Duração: 3 Meses */}
       </div>
       <div className="flex w-full items-center justify-end space-x-2 pt-6">
         <Button disabled={loading} variant="outline" onClick={onClose}>

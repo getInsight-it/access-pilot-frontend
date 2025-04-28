@@ -1,4 +1,4 @@
-import {RoleDTO} from "../../../../services/role/role-dto.ts";
+import {RoleResponseInterface} from "../../../../services/role/role-dto.ts";
 
 export interface RequestModel {
   id: number;
@@ -21,7 +21,7 @@ export interface RequestModel {
   clientIcon: string;
   clientId: string;
   uuid: string;
-  role: RoleDTO;
+  role: RoleResponseInterface;
   protocolCode: string;
   criacao: string;
   status: string;

@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Detail } from "./Detail";
-import { StorageDTO } from "../../services/storage/storage-dto";
-import {useParams} from "react-router-dom";
+import { StorageModel } from "../../features/storage/common/model/storage.model.ts";
+import { useParams } from "react-router-dom";
 import useAuthStore from "../../store/authStore.ts";
-import {RequestModel} from "../../features/requests/common/types/request.model.ts";
-import {catchError, from, tap} from "rxjs";
-import {storageService} from "../../services/storage";
+import { RequestModel } from "../../features/requests/common/types/request.model.ts";
+import { catchError, from, tap } from "rxjs";
 import { requestService } from "../../features/requests/common/api/request-service.ts";
+import { storageService } from "../../features/storage/common/api/storage-service.ts";
 
 export const RequestDetail = ({
-                                origin
-                              }: {
+  origin
+}: {
   origin?: string
 }) => {
 
@@ -21,22 +21,21 @@ export const RequestDetail = ({
 
   const onUpdate = () => {
     getData();
-  }
-  const [attachments, setAttachments] = useState<StorageDTO[]>([]);
+  };
+  const [attachments, setAttachments] = useState<StorageModel[]>([]);
   const handleAttachments = (ownerId: string) => {
-    if (isAuthenticated) {
+    if(isAuthenticated) {
       getStorageData(ownerId, 1, 1000);
     }
-  }
+  };
 
-  const getStorageData = async (ownerId : string, pageIndex: number, pageCount: number) => {
+  const getStorageData = async (ownerId: string, pageIndex: number, pageCount: number) => {
     const pageResponse = await storageService.getStoragesPaginated(ownerId, pageIndex, pageCount, "id", "asc");
     setAttachments(pageResponse?.items || []);
   };
 
-
   useEffect(() => {
-    if (data?.uuid) {
+    if(data?.uuid) {
       handleAttachments(data?.uuid);
     }
   }, [data, isAuthenticated]);
@@ -45,21 +44,21 @@ export const RequestDetail = ({
     if(!id) return;
     from(requestService.findRequestById(id)).pipe(
       tap((response) => {
-        if (response){
-          setData(response)
+        if(response) {
+          setData(response);
         }
-      }),catchError((error) => {
-        console.error(error);
-        return [];
-      }
-    )).subscribe();
+      }), catchError((error) => {
+          console.error(error);
+          return [];
+        }
+      )).subscribe();
   };
 
   useEffect(() => {
     getData();
-  }, [isAuthenticated,id]);
+  }, [isAuthenticated, id]);
 
   return (
-      <Detail data={data} attachments={attachments} onUpdate={onUpdate} origin={origin}/>
+    <Detail data={data} attachments={attachments} onUpdate={onUpdate} origin={origin} />
   );
 };

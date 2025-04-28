@@ -1,6 +1,6 @@
-import { KeycloakRoles } from '@getinsight.it/getinsight-common';
-import { create } from 'zustand'
-import {NotificationDto} from "../services/notification/notification-dto.ts";
+import { KeycloakRoles } from "@getinsight.it/getinsight-common";
+import { create } from "zustand";
+import { NotificationModel } from "../common/types/notification/notification.model.ts";
 
 interface UserInfo {
   id: string;
@@ -14,7 +14,7 @@ interface UserInfo {
 
 interface NotificationInfo {
   unread: number;
-  notifications: NotificationDto[];
+  notifications: NotificationModel[];
 }
 
 interface AuthState {

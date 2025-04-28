@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router-dom';
-import Header from '../components/layout/header';
-import Sidebar from '../components/layout/sidebar';
+import { Outlet } from "react-router-dom";
+import Header from "../components/layout/header";
+import Sidebar from "../components/navigation/sidebar.tsx";
 
 export default function DashboardLayout() {
   return (
@@ -9,7 +9,7 @@ export default function DashboardLayout() {
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-hidden overflow-y-auto pt-16">
-          <Outlet/>
+          <Outlet />
         </main>
       </div>
     </>

@@ -7,3 +7,8 @@ export interface LevelInterface {
   type: string;
   parent?: LevelInterface;
 }
+
+export interface LevelResponseInterface {
+  total: number,
+  items: LevelInterface[]
+}

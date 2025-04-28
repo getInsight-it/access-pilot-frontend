@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
-import { cn } from "../../lib/utils";
+import { cn } from "../../config/lib/utils";
 
 export const FlipWords = ({
   words,
@@ -61,7 +61,7 @@ export const FlipWords = ({
         )}
         key={currentWord}
       >
-        
+
         {currentWord.split(" ").map((word, wordIndex) => (
           <motion.span
             key={word + wordIndex}

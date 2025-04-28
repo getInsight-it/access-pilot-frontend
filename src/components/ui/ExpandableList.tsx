@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { useOutsideClick } from "../../hooks/use-outside-click"
+import { useOutsideClick } from "../../common/hooks/use-outside-click"
 import { Eye, X } from "lucide-react"
 import type { RequestModel } from "../../features/requests/common/types/request.model.ts"
 import IconRenderer from "../icons/IconRenderer.tsx"

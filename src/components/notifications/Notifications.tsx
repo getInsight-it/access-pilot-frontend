@@ -240,7 +240,7 @@ import { notificationService } from "../../services/notification"
 import { from, interval, startWith, switchMap, filter } from "rxjs"
 import { summaryService } from "../../services/summary"
 import useAuthStore from "../../store/authStore.ts"
-import type { NotificationDto } from "../../services/notification/notification-dto.ts"
+import type { NotificationModel } from "../../common/types/notification/notification.model.ts"
 import { format } from "date-fns"
 
 // Custom hook for handling outside clicks
@@ -274,7 +274,7 @@ export default function Notifications() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
-  const [notifications, setNotifications] = useState<NotificationDto[]>([])
+  const [notifications, setNotifications] = useState<NotificationModel[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated)
   const user = useAuthStore((state: any) => state.user)
@@ -449,7 +449,7 @@ export default function Notifications() {
                         ? format(new Date(notification?.ultimaAlteracao), "dd/MM/yyyy")
                         : ""}
                     </small>
-                    
+
                   </div>
                 ))}
 

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "../../lib/utils"
+import { cn } from "../../config/lib/utils"
 import { Search, X } from "lucide-react"
 
 export interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}

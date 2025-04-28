@@ -1,9 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import {RoleDTO} from "../../../services/role/role-dto.ts";
+import {RoleResponseInterface} from "../../../services/role/role-dto.ts";
 
 export const columns = (
-): ColumnDef<RoleDTO>[] => [
+): ColumnDef<RoleResponseInterface>[] => [
   {
     accessorKey: 'name',
     header: 'NOME DO PAPEL'

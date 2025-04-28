@@ -1,4 +1,4 @@
-import { cn } from "../../lib/utils";
+import { cn } from "../../config/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useDropzone } from "react-dropzone";

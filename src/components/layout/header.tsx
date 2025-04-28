@@ -1,26 +1,22 @@
-import ThemeToggle from '../../components/layout/ThemeToggle/theme-toggle';
-import { cn } from '../../lib/utils';
-import { MobileSidebar } from './mobile-sidebar';
-import { UserNav } from './user-nav';
-import ThemedLogo from './ThemedLogo';
-import { Link } from 'react-router-dom';
-import Notifications from '../notifications/Notifications';
-import Scene from '../canvas/Head';
+import ThemeToggle from "../../components/layout/ThemeToggle/theme-toggle";
+import { cn } from "../../config/lib/utils";
+import { MobileSidebar } from "../navigation/mobile-sidebar.tsx";
+import { UserNav } from "./user-nav";
+import ThemedLogo from "./ThemedLogo";
+import { Link } from "react-router-dom";
+import Notifications from "../notifications/Notifications";
 
 export default function Header() {
   return (
-    <div className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
+    <div
+      className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur">
       <nav className="flex h-16 items-center justify-between px-4">
         <div className="hidden md:block">
-          <Link
-            className=""
-            to={'#'} // Alterado de 'href' para 'to'
-            // target="_blank"
-          >
+          <Link to={"#"}>
             <ThemedLogo />
           </Link>
         </div>
-        <div className={cn('block md:!hidden')}>
+        <div className={cn("block md:!hidden")}>
           <MobileSidebar />
         </div>
 
@@ -28,7 +24,6 @@ export default function Header() {
           <Notifications />
           <UserNav />
           <ThemeToggle />
-          {/* <Scene /> */}
         </div>
       </nav>
     </div>

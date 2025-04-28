@@ -1,24 +1,17 @@
-import { HelpCircle, LogOut, User } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import { Button } from '../../components/ui/button';
+import { HelpCircle, LogOut, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar.tsx";
+import { Button } from "../ui/button.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuShortcut // Certifique-se de que está utilizando
-} from '../../components/ui/dropdown-menu';
-import { Link } from 'react-router-dom';
-import useAuthStore from '../../store/authStore';
-import { authService } from '../../services/auth';
+  DropdownMenuTrigger
+} from "../ui/dropdown-menu.tsx";
+import { Link } from "react-router-dom";
+import { authService } from "../../features/auth/common/AuthService.ts";
 
 export function UserNav() {
-
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   const signOut = async () => {
     await authService.signOut();
@@ -31,7 +24,7 @@ export function UserNav() {
           <Avatar className="h-8 w-8">
             <AvatarImage
               src="/img/ap.svg"
-              alt={''}
+              alt={""}
             />
             <AvatarFallback>Nome do Usuário</AvatarFallback>
           </Avatar>
@@ -49,25 +42,18 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard/profile'>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/profile">
           <User className="w-4 h-4 mr-2" />
           Perfil
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/dashboard/help'>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/help">
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to='/login' onClick={ signOut }>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/login" onClick={signOut}>
           <LogOut className="w-4 h-4 mr-2" />
           Sair
         </Link>
-
-        {/* <div className="flex flex-col absolute bottom-32 w-full z-50 text-gray-500 p-6">
-          <p className="ml-1">Está autenticado?</p>
-          <strong className="ml-1">{ isAuthenticated ? 'Sim' : 'Não' }</strong>
-          <button className="bg-gray-300 text-black px-6 py-1 rounded-full mt-2" type="button" onClick={ signOut }>Sair</button>
-        </div> */}
-
       </DropdownMenuContent>
     </DropdownMenu>
   );

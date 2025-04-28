@@ -2,7 +2,7 @@ import {ColumnDef} from '@tanstack/react-table';
 import {CellAction} from './cell-action';
 import TrafficLight from '../../../components/TrafficLights';
 import React from "react";
-import {ClientDTO} from "../../../services/client/client-dto.ts";
+import {ClientResponseInterface} from "../../../core/client/model/client-dto.ts";
 
 const statusColors: Record<string, string> = {
   gerenciado: 'px-3 py-1 rounded font-normal bg-green-200 text-green-800 block text-center w-32 text-sm',
@@ -12,7 +12,7 @@ const statusColors: Record<string, string> = {
 };
 
 export const columns = (
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<ClientDTO>[] => [
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<ClientResponseInterface>[] => [
   {
     accessorKey: 'clientId',
     header: 'SISTEMA'

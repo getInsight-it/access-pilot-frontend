@@ -1,7 +1,11 @@
 import { type HttpClient, type HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common"
-import { LEVEL_API } from "../../../../services/level/level-api.ts"
-import type { LevelDTO, LevelItem } from "../../../../services/level/level-dto.ts"
 import { httpClient } from "../../../../config/http/http.ts";
+import { LevelSubItemResponseInterface } from "../types/level-subitem.model.ts";
+import { LevelInterface, LevelResponseInterface } from "../types/level.model.ts";
+
+const LEVEL_API = {
+  LEVELS: '/v1/levels',
+};
 
 export class LevelService {
   httpClient: HttpClient
@@ -11,19 +15,13 @@ export class LevelService {
     this.httpClient = httpClient
   }
 
-  async getLevels(pageIndex = 1, pageSize = 1000, sortField = "id", sortType = "ASC"): Promise<LevelDTO | null> {
+  async getLevels(pageIndex = 1, pageSize = 1000, sortField = "id", sortType = "ASC"): Promise<LevelResponseInterface | null> {
     try {
       const url = `${LEVEL_API.LEVELS}?pageIndex=${pageIndex}&pageSize=${pageSize}&sortField=${sortField}&sortType=${sortType}`
-      console.log("URL da requisição:", url)
-
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url)
-
-      if (response instanceof HttpRequestResponse) {
-        console.log("Resposta bem-sucedida:", response.status)
-        return JSON.parse(response.data)
-      } else {
-        return null
-      }
+      return response instanceof HttpRequestResponse
+        ? JSON.parse(response.data)
+        : null
     } catch (error) {
       console.error("Erro ao buscar levels:", error)
       return null
@@ -41,8 +39,24 @@ export class LevelService {
     }
   }
 
+  async getItemSubItems(
+    levelId: number,
+    itemId: number,
+    pageSize: number = 10,
+    page: number = 1,
+  ): Promise<LevelSubItemResponseInterface> {
+    try {
+      const url = `${LEVEL_API.LEVELS}/${levelId}/items/${itemId}/subitems?pageSize=${pageSize}&pageIndex=${page}`;
+      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
+      return JSON.parse(response.data) as LevelSubItemResponseInterface;
+    } catch (error) {
+      console.error("Erro ao buscar sub itens:", error);
+      throw error;
+    }
+  }
+
   // Modificar o método getLevelById para melhorar o log de API Key
-  async getLevelById(id?: string): Promise<LevelItem | null> {
+  async getLevelById(id?: string): Promise<LevelInterface | null> {
     try {
       console.log(`Buscando esfera com ID: ${id}`)
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${LEVEL_API.LEVELS}/${id}`)
@@ -55,7 +69,7 @@ export class LevelService {
         }
 
         try {
-          const data = JSON.parse(response.data) as LevelItem
+          const data = JSON.parse(response.data) as LevelInterface
 
           return data
         } catch (parseError) {
@@ -105,7 +119,6 @@ export class LevelService {
     }
   }
 
-  // Adicionar os métodos para gerenciar itens
   async getLevelItems(
     levelId: string,
     pageIndex = 1,
@@ -115,8 +128,6 @@ export class LevelService {
   ): Promise<any | null> {
     try {
       const url = `${LEVEL_API.LEVELS}/${levelId}/items?pageIndex=${pageIndex}&pageSize=${pageSize}&sortField=${sortField}&sortType=${sortType}`
-      console.log("URL da requisição de itens:", url)
-
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url)
 
       if (response instanceof HttpRequestResponse) {

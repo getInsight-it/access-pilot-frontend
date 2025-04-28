@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
-import {UncontrolledTreeEnvironment, Tree, StaticTreeDataProvider} from 'react-complex-tree';
-import 'react-complex-tree/lib/style-modern.css';
-import {RoleDTO} from "../../services/role/role-dto.ts";
-import {roleService} from "../../services/role";
-import {toast} from "../ui/use-toast.ts";
-import {catchError, finalize, from, tap} from "rxjs";
-import {StepLoader} from "../steploader/StepLoader.tsx";
-import {Button} from "../ui/button.tsx";
+import { useEffect, useState } from "react";
+import { StaticTreeDataProvider, Tree, UncontrolledTreeEnvironment } from "react-complex-tree";
+import "react-complex-tree/lib/style-modern.css";
+import { toast } from "../ui/use-toast.ts";
+import { catchError, finalize, from, tap } from "rxjs";
+import { StepLoader } from "../steploader/StepLoader.tsx";
+import { Button } from "../ui/button.tsx";
+import { roleService } from "../../features/role/common/service/role-service.ts";
+import { RoleResponseInterface } from "../../features/role/common/types/role.model.ts";
 
 type TreeRoleType = {
   index: string,
@@ -16,51 +16,51 @@ type TreeRoleType = {
 }
 
 interface TreeRoleProps {
-  data?: RoleDTO[],
+  data?: RoleResponseInterface[],
   onSuccess?: () => Promise<void>
 }
 
-function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
+function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   const [items, setItems] = useState<{ [key: string]: TreeRoleType }>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (data) {
+    if(data) {
       setItems(buildTreeObject(data));
-      console.log('data', items);
+      console.log("data", items);
     }
   }, [data]);
 
 
-  function buildTreeObject(backendData: RoleDTO[]) {
+  function buildTreeObject(backendData: RoleResponseInterface[]) {
     const validData = Array.isArray(backendData) ? backendData : [];
 
     const items = {
       root: {
-        index: 'root',
+        index: "root",
         isFolder: true,
-        children: validData.filter(o => o.roleParent === undefined).map((_) => `${_.name}`) || [''],
-        data: 'Root item',
-      } as TreeRoleType,
+        children: validData.filter(o => o.roleParent === undefined).map((_) => `${_.name}`) || [""],
+        data: "Root item"
+      } as TreeRoleType
     };
 
     validData.forEach((item) => {
       items[`${item.name}`] = {
         index: `${item.name}`,
         isFolder: true,
-        children: validData.filter(o => o?.roleParent?.id === item?.id).map((o) => `${o.name}`) || [''],
-        data: item.name,
+        children: validData.filter(o => o?.roleParent?.id === item?.id).map((o) => `${o.name}`) || [""],
+        data: item.name
       };
     });
     return items;
   }
 
-  const convertToRoleDTOList = (items: { [key: string]: TreeRoleType }): RoleDTO[] => {
+  const convertToRoleDTOList = (items: { [key: string]: TreeRoleType }): RoleResponseInterface[] => {
     const validData = Array.isArray(data) ? data : [];
 
     const childParentMap: { [key: string]: string } = {};
     Object.keys(items).forEach(key => {
-      if (key !== 'root') {
+      if(key !== "root") {
         const item = items[key];
         item.children.forEach(child => {
           childParentMap[child] = key;
@@ -74,7 +74,7 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
     });
 
     return validData;
-  }
+  };
 
 
   const handleSave = () => {
@@ -84,7 +84,7 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
       tap(() => {
         toast({
           title: "Roles atualizados",
-          description: "Os roles foram atualizados com sucesso",
+          description: "Os roles foram atualizados com sucesso"
         });
         onSuccess?.();
       }),
@@ -92,26 +92,27 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
         toast({
           title: "Erro ao atualizar roles",
           description: "Ocorreu um erro ao atualizar os roles",
-          variant: "destructive",
+          variant: "destructive"
         });
         console.error(error);
         return [];
       }),
       finalize(() => setLoading(false))
     ).subscribe();
-  }
+  };
 
 
   return (
     <>
-      <div className="w-full max-w-xl flex justify-between items-start gap-x-8 bg-gray-50 rounded-xl m-6 border py-8 px-8 h-auto min-h-[220px] ">
-        <div className="w-96" >
+      <div
+        className="w-full max-w-xl flex justify-between items-start gap-x-8 bg-gray-50 rounded-xl m-6 border py-8 px-8 h-auto min-h-[220px] ">
+        <div className="w-96">
           <div>
             <UncontrolledTreeEnvironment<string>
-              dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({...item, data: newName}))}
+              dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({ ...item, data: newName }))}
               getItemTitle={item => item.data}
               viewState={{
-                'tree-1': {},
+                "tree-1": {}
               }}
               canDragAndDrop={true}
               canDropOnFolder={true}
@@ -120,7 +121,6 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
               <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" treeLabelledBy="tree-label" />
             </UncontrolledTreeEnvironment>
 
-            
 
             {/* <UncontrolledTreeEnvironment<string>
               canDragAndDrop
@@ -166,8 +166,8 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
             >
               <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
             </UncontrolledTreeEnvironment> */}
-              
-          
+
+
           </div>
         </div>
         <div className="mt-2">
@@ -176,13 +176,13 @@ function TreeRole({data, onSuccess}: Readonly<TreeRoleProps>) {
           </Button>
         </div>
       </div>
-      <StepLoader loading={loading} onClose={() => setLoading(false)}/>
+      <StepLoader loading={loading} onClose={() => setLoading(false)} />
 
     </>
   );
 }
 
-export default TreeRole
+export default TreeRole;
 
 // continuo na parte do access pilot, estava tocando no modulo de roles a feature de arvore de roles, consegui fazer funcionar,
 // so fazer mais alguns testes aqui e
