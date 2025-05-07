@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useToast } from "../../../../../../components/ui/use-toast.ts";
 
 import { Button } from "../../../../../../components/ui/button.tsx";
@@ -11,15 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "../../../..
 import {
   Check,
   ClipboardList,
-  FileAudio,
-  FileIcon,
   FileText,
-  FileVideo,
-  Image,
   MonitorIcon,
   Plus,
-  User,
-  X
+  User
 } from "lucide-react";
 import { ScrollArea } from "../../../../../../components/ui/scroll-area.tsx";
 import {
@@ -51,50 +46,11 @@ import { RoleInterface } from "../../../../../level/common/types/role.model.ts";
 import { roleService } from "../../../../../role/common/service/role-service.ts";
 import { clientService } from "../../../../../client/common/service/client-service.ts";
 import DynamicSphereForm from "../DynamicSphereForm.tsx";
-import AttachmentForm from "./AttachmentForm.tsx";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../../../../components/ui/card.tsx";
+import AttachmentForm, { FileAttachment } from "./AttachmentForm.tsx";
+import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../../../components/ui/card.tsx";
 import { AutoHeight } from "./AutoHeigth.tsx";
-
-//mock
-
-const clientAttachmentsMock = [
-  {
-    name: 'Contrato',
-    description: 'Contrato assinado em PDF',
-    required: true,
-    allowedExtensions: ['PDF'],
-  },
-  {
-    name: 'Foto de Perfil',
-    description: 'Imagem em JPG ou PNG',
-    required: true,
-    allowedExtensions: ['JPG', 'PNG'],
-  },
-  {
-    name: 'Relatório',
-    description: 'Relatório financeiro anual',
-    required: true,
-    allowedExtensions: ['PDF', 'XLSX'],
-  },
-  {
-    name: 'Relatório',
-    description: 'Relatório financeiro anual',
-    required: true,
-    allowedExtensions: ['PDF', 'XLSX'],
-  },
-  {
-    name: 'Relatório',
-    description: 'Relatório financeiro anual',
-    required: true,
-    allowedExtensions: ['PDF', 'XLSX'],
-  },
-]
-
-interface Client {
-  id: number;
-  clientId: string;
-  description: string;
-}
+import { ClientResponseInterface } from "../../../../../client/common/model/client.model.ts";
+import { FileIcon } from "../../../../../../common/components/FileIcon.tsx";
 
 type ActionName = "idle" | "headshake" | "hiphop";
 
@@ -108,16 +64,16 @@ const formSchema = z.object({
     .min(10, { message: "Deve conter ao menos 10 caracteres." })
     .max(160, { message: "Não deve exceder 160 caracteres." }),
   attachments: z
-    .array(z.instanceof(File))
+    .array()
     .optional()
 });
 
 export function RequestAccessForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [roles, setRoles] = useState<RoleInterface[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<ClientResponseInterface[]>([]);
   const [showContent, setShowContent] = useState(true);
-  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
@@ -133,6 +89,7 @@ export function RequestAccessForm() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [currentAnimation, setCurrentAnimation] = useState<ActionName>("idle");
   const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
+  const [roleSearchTerm, setRoleSearchTerm] = useState(""); // Novo estado para pesquisa de papéis
 
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { toast } = useToast();
@@ -149,7 +106,7 @@ export function RequestAccessForm() {
   const getClients = async () => {
     try {
       const fetchedClients = await clientService.getClients();
-      setClients(fetchedClients);
+      setClients(fetchedClients as any);
     } catch (error) {
       console.error("Erro ao carregar clients:", error);
     }
@@ -158,7 +115,7 @@ export function RequestAccessForm() {
   const getRolesByClientId = async (clientId: string) => {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
-      setRoles(fetchedRoles);
+      setRoles(fetchedRoles as any);
     } catch (error) {
       console.error("Erro ao carregar roles:", error);
     }
@@ -171,7 +128,6 @@ export function RequestAccessForm() {
       if(client) {
         handlerSelectedClient(client);
       }
-
     }
   }
 
@@ -179,32 +135,7 @@ export function RequestAccessForm() {
     init();
   }, [isAuthenticated]);
 
-  const getFileIcon = (fileName: string) => {
-    const extension = fileName.split(".").pop()?.toLowerCase();
-    switch(extension) {
-      case "pdf":
-      case "doc":
-      case "docx":
-      case "txt":
-        return <FileText className="w-5 h-5" />;
-      case "png":
-      case "jpg":
-      case "jpeg":
-      case "gif":
-        return <Image className="w-5 h-5" />;
-      case "mp3":
-      case "wav":
-        return <FileAudio className="w-5 h-5" />;
-      case "mp4":
-      case "avi":
-      case "mov":
-        return <FileVideo className="w-5 h-5" />;
-      default:
-        return <FileIcon className="w-5 h-5" />;
-    }
-  };
-
-  function handlerSelectedClient(client: Client) {
+  function handlerSelectedClient(client: ClientResponseInterface) {
     setSelectedClient(client.clientId);
     getRolesByClientId(client.clientId);
   }
@@ -344,39 +275,96 @@ export function RequestAccessForm() {
               <FormItem>
                 <h4 className="text-lg font-semibold mb-4">Selecione seu papel no sistema</h4>
                 <FormControl>
-                  <div className="grid grid-cols-1 xl:grid-cols-2 max-w-xl md:flex-row gap-4">
-                    {roles.map((role) => (
-                      <div className="max-w-96" key={role.id}>
-
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <div
+                        className={`max-w-96 w-full cursor-pointer ${selectedRole ? " text-primary " : ""}`}
+                      >
                         <CardShine>
                           <div
                             className={cn(
-                              "flex flex-col p-5 cursor-pointer transition-all",
-                              selectedRole === role.name && "ring-2 ring-primary rounded-[var(--card-border-radius)]"
+                              "border border-dashed p-5 grid items-center min-h-[106px] h-auto transition-all rounded-[var(--card-border-radius)]",
+                              selectedRole && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                             )}
-                            onClick={() => {
-                              field.onChange(role.id.toString());
-                              setSelectedRole(role.name);
-                            }}
                           >
+                            {!selectedRole && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
+                            {selectedRole && <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
                             <div className="flex flex-row items-center">
-                              <IconRenderer className={`${role?.icon} w-6 h-6 mr-4`} />
-                              <p className="font-bold text-lg capitalize">
-                                {role.name}
+                              {selectedRole && <User className="w-6 h-6 mr-4" />}
+                              <p className="font-bold text-lg">
+                                {selectedRole}
                               </p>
                             </div>
 
-                            {selectedRole === role.name && <Check className="absolute top-4 right-4" />}
-                            <p className="mt-2 text-sm">
-                              {role.label}
-                            </p>
+                            {selectedRole &&
+                              <TruncatedDescription
+                                description={roles.find(role => role.name === selectedRole)?.label || "Sem descrição disponível"} />
+                            }
                           </div>
-
                         </CardShine>
                       </div>
-                    ))}
-                  </div>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side={isLargeScreen ? "right" : "bottom"}
+                      align={isLargeScreen ? "start" : "end"}
+                      className={`
+                    w-[26em]
+                    ${isLargeScreen ? "ml-[20px]" : ""}
+                    ${isLargeScreen ? "" : " mb-10"}
+                  `}
+                    >
+                      <div className="relative">
+                        <CustomInput
+                          value={roleSearchTerm}
+                          onChange={(e) => setRoleSearchTerm(e.target.value)}
+                          placeholder="Pesquisar papéis..."
+                          className="pl-10 pr-10"
+                        />
+                        {roleSearchTerm && (
+                          <p className="mt-4">
+                            Você está pesquisando por: <strong>{roleSearchTerm}</strong>
+                          </p>
+                        )}
+                      </div>
+
+                      <ScrollArea className="h-[340px] mt-4">
+                        <div className="space-y-2 grid grid-cols-1 gap-2">
+                          {roles
+                            .filter((role) =>
+                              role.name.toLowerCase().includes(roleSearchTerm.toLowerCase()) ||
+                              role.label.toLowerCase().includes(roleSearchTerm.toLowerCase())
+                            )
+                            .map((role) => (
+                              <CardShine key={role.id}>
+                                <div
+                                  className={cn(
+                                    "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
+                                    selectedRole === role.name && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                                  )}
+                                  onClick={() => {
+                                    field.onChange(role.id.toString());
+                                    setSelectedRole(role.name);
+                                  }}
+                                >
+                                  {selectedRole === role.name &&
+                                    <Check className="absolute top-4 right-4 flex-shrink-0" />}
+
+                                  <div className="flex flex-row items-center">
+                                    <IconRenderer className={`${role?.icon as any} w-6 h-6 mr-4`} />
+                                    <p className="font-bold text-lg capitalize">
+                                      {role.name}
+                                    </p>
+                                  </div>
+
+                                  <TruncatedDescription description={role.label as any} />
+                                </div>
+                              </CardShine>
+                            ))}
+                        </div>
+                      </ScrollArea>
+                    </PopoverContent>
+                  </Popover>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -417,7 +405,15 @@ export function RequestAccessForm() {
       title: "Por que você precisa desse acesso?",
       number: 3,
       description: "Nos ajude a entender o porquê deste acesso.",
-      content: (<AttachmentForm requiredAttachments={clientAttachmentsMock}></AttachmentForm>)
+      content: (
+        <AttachmentForm
+          onAttach={(attachments: any) => { setAttachments(attachments) }}
+          onReasonChange={(reason: string) => { setDescription(reason); form.setValue("description", reason); }}
+          initialAttachments={attachments}
+          initialReason={description}
+          requiredAttachments={clients.find(client => client.clientId === selectedClient)?.configurations || []}>
+        </AttachmentForm>
+      )
     },
     {
       id: 4,
@@ -425,7 +421,7 @@ export function RequestAccessForm() {
       number: 4,
       description: "Certifique-se de que está tudo certo antes de enviar.",
       content: (
-        <div className=" max-w-md bg-background shadow-lg rounded-[var(--card-border-radius)] p-6">
+        <div className="bg-background shadow-lg rounded-[var(--card-border-radius)] p-6">
           <h3 className="text-lg font-semibold">Resumo da solicitação</h3>
           <p className="mt-1 mb-4 text-gray-900">Revise suas escolhas antes de enviar:</p>
           <ul className="space-y-4">
@@ -474,33 +470,30 @@ export function RequestAccessForm() {
                 )}
               </div>
             </li>
-            {attachments.length > 0 && (
-              <li className="">
-                <strong>Anexos:</strong>
-                <ul className="space-y-2 mt-4">
-                  {attachments.map((file, index) => (
-
-                    <li key={index} className=" bg-white pl-0 pr-2 py-0 rounded flex items-center justify-between">
-                      <div className="flex items-center">
-
-                        {getFileIcon(file.name)}
-
-                        <span
-                          className="overflow-hidden truncate w-40 text-sm ml-2"
-                          title={file.name} // Nome completo exibido no tooltip
-                        >
-                          {file.name.length > 16
-                            ? `${file.name.slice(0, 16)}...${file.name.slice(-4)}`
-                            : file.name}
-                        </span>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Anexos:</h4>
+              <div className="space-y-4">
+                {attachments.length > 0 ? (
+                  attachments.map((attachment) => (
+                    <div key={attachment.key} className="border rounded-md p-4">
+                      <h5 className="font-medium mb-2">{attachment.fileName}:</h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                        {attachment.files.map((file, index) => (
+                          <div key={`${attachment.key}-${index}`} className="flex items-center gap-2 bg-secondary rounded-md p-2">
+                            <div className="min-w-4 min-h-4">
+                              <FileIcon  fileName={file.name}></FileIcon>
+                            </div>
+                            <span className="text-sm truncate">{file.name}</span>
+                          </div>
+                        ))}
                       </div>
-                    </li>
-
-                  ))}
-                </ul>
-              </li>
-            )}
-
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">Nenhum anexo fornecido.</p>
+                )}
+              </div>
+            </div>
           </ul>
         </div>
       )
@@ -598,12 +591,19 @@ export function RequestAccessForm() {
       };
 
       payloadFormData.append("request", JSON.stringify(request));
+      attachments.forEach(att => {
+        att.files.forEach(file => {
+          payloadFormData.append(att.key, file);
+        });
+      });
 
-      if(attachments.length > 0) {
-        attachments.forEach((file) => { payloadFormData.append("attachments", file); });
+      const preview: any = {};
+      for (const key of payloadFormData.keys()) {
+        preview[key] = payloadFormData.getAll(key);
       }
+      console.log(preview);
 
-      console.log(Object.fromEntries(payloadFormData.entries()));
+      return
 
       const response = await requestService.createRequest(payloadFormData);
 
@@ -643,6 +643,7 @@ export function RequestAccessForm() {
     setIsFormSubmitted(false);
     setCurrentAnimation("idle");
     setSearchTerm(""); // Reset search term
+    setRoleSearchTerm("");
   };
 
   const handleLoaderClose = () => {
@@ -659,8 +660,10 @@ export function RequestAccessForm() {
         return !!form.getValues("clientId");
       case 2:
         return !!form.getValues("roleId") && form.getValues("roleSphere").length > 0;
-      case 3:
+      case 3: {
         return form.getValues("description").length >= 10;
+      }
+
       default:
         return true;
     }
@@ -678,7 +681,7 @@ export function RequestAccessForm() {
       } else {
         toast({
           title: "Campos obrigatórios",
-          description: "Por favor, preencha todos os campos obrigatórios antes de prosseguir.",
+          description: `Por favor, preencha todos os campos obrigatórios antes de prosseguir.`,
           variant: "destructive"
         });
         setCurrentAnimation("headshake");
@@ -871,7 +874,7 @@ export function RequestAccessForm() {
                     <p>{description}</p>
                     <ul>
                       {attachments.map((file, index) => (
-                        <li key={index}>{file.name}</li>
+                        <li key={index}>{file.fileName}</li>
                       ))}
                     </ul>
                   </div>
@@ -916,7 +919,7 @@ export function RequestAccessForm() {
                   <strong>Anexos:</strong>
                   <ul className="">
                     {attachments.map((file, index) => (
-                      <li key={index}>- {file.name}</li>
+                      <li key={index}>- {file.fileName}</li>
                     ))}
                   </ul>
                 </li>

@@ -396,16 +396,13 @@ export default function CreateOrEditLevel() {
   return (
     <ScrollArea className="h-full">
       <motion.div
-        initial={{
-          opacity: 0
-        }}
+        initial={{ opacity: 0 }}
         animate={{
           opacity: 1,
           transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
         }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
-      >
-        <div className="">
+        className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+        <div>
           <Breadcrumbs items={breadcrumbItems} />
 
           <div className="flex items-start justify-between my-4">

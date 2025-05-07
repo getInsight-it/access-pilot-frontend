@@ -4,14 +4,14 @@ import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
 import { Heading } from "../../../components/ui/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
-import { SystemForm } from "./SystemForm.tsx";
+import { SystemForm } from "../common/components/system-form/SystemForm.tsx";
 
 const breadcrumbItems = [
   { title: "Dashboard", link: "/dashboard" },
   { title: "Adicionar novo sistema", link: "" }
 ];
 
-export default function NewSystem({ data }) {
+export default function NewSystem() {
   return (
     <ScrollArea className="h-full ">
       <motion.div
@@ -26,9 +26,7 @@ export default function NewSystem({ data }) {
           <Heading title={`Adicionar novo sistema`} description="Gerenciar sistemas." />
         </div>
         <Separator className="" />
-        <div className="w-128">
-          <SystemForm initialData={data || null} />
-        </div>
+        <SystemForm initialData={null} readonly={false} />
       </motion.div>
     </ScrollArea>
   );

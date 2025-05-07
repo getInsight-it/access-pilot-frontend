@@ -36,7 +36,7 @@ export const UserRole: React.FC<UserRoleProps> = ({ data }) => {
         )}
       </div>
       <Separator />
-      <DataTableRole searchKey="name" columns={columns()} data={data} />
+      <DataTableRole columns={columns()} data={data} />
       <StepLoader loading={loading} />
     </>
   );

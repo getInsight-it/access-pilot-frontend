@@ -4,16 +4,21 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Input } from "../../../components/ui/input.tsx";
-import { Button } from "../../../components/ui/button.tsx";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel } from "../../../components/ui/form.tsx";
-import { Separator } from "../../../components/ui/separator.tsx";
-import { useToast } from "../../../components/ui/use-toast.ts";
-import { Switch } from "../../../components/ui/switch.tsx";
-import { Textarea } from "../../../components/ui/textarea.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip.tsx";
 import { AlertCircle } from "lucide-react";
-import { clientService } from "../common/service/client-service.ts";
+import { Input } from "../../../../../components/ui/input.tsx";
+import { Button } from "../../../../../components/ui/button.tsx";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from "../../../../../components/ui/form.tsx";
+import { Separator } from "../../../../../components/ui/separator.tsx";
+import { useToast } from "../../../../../components/ui/use-toast.ts";
+import { Switch } from "../../../../../components/ui/switch.tsx";
+import { Textarea } from "../../../../../components/ui/textarea.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../components/ui/tooltip.tsx";
+import { clientService } from "../../service/client-service.ts";
+import { AttachmentConfigurationForm } from "./AttachmentConfigurationForm.tsx";
+import { AttachmentConfigurationInterface } from "../../model/configuration.model.ts";
+import { ClientStatusEnum } from "../../enum/client-status.enum.ts";
+import { useEffect } from "react";
+
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
@@ -26,7 +31,8 @@ const formSchema = z.object({
     .string()
     .min(3, { message: "O baseUrl do sistema deve conter no mínimo 3 caracteres" })
     .regex(/^(https|http?:\/\/)?([\w.-:?-]+)$/, { message: "baseUrl inválido" }),
-  managed: z.boolean().default(false)
+  managed: z.boolean().default(false),
+  status: z.string().optional().nullable().default("unpublished"),
 });
 
 interface SystemFormProps {
@@ -38,23 +44,11 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-
-  function getActionStyle() {
-    if(readonly) {
-      return "DETAIL";
-    } else if(initialData && !readonly) {
-      return "EDIT";
-    } else {
-      return "CREATE";
-    }
-  }
-
   const actionMap = {
     DETAIL: "",
     EDIT: "Salvar alterações",
     CREATE: "Adicionar sistema"
   };
-
   const defaultValues = initialData || {
     id: "",
     name: "",
@@ -66,24 +60,38 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
     status: ""
   };
 
-  const onSubmit = async (form) => {
+  function getActionStyle() {
+    if(readonly) {
+      return "DETAIL";
+    } else if(initialData && !readonly) {
+      return "EDIT";
+    } else {
+      return "CREATE";
+    }
+  }
+
+  const [attachmentConfigs, setAttachmentConfigs] = useState<AttachmentConfigurationInterface[]>([]);
+  const handleAddAttachmentConfig = (config: AttachmentConfigurationInterface) => {
+    setAttachmentConfigs([...attachmentConfigs, config]);
+  };
+  const handleDeleteAttachmentConfig = (name: string) => {
+    setAttachmentConfigs(attachmentConfigs.filter(config => config.key !== name));
+  };
+
+  const onSubmit = async (form: any) => {
     try {
       setLoading(true);
+      const payload = { ...form, configurations: attachmentConfigs };
+
       if(initialData?.id) {
-        form = { ...form, id: initialData.id };
-        await clientService.updateClient(initialData.id, form).then(() => {
-          toast({
-            title: "Sistema atualizado",
-            description: "O sistema foi atualizado com sucesso"
-          });
+        payload.id = initialData.id;
+        await clientService.updateClient(initialData.id, payload).then(() => {
+          toast({ title: "Sistema atualizado", description: "O sistema foi atualizado com sucesso" });
           navigate("/dashboard/systems/" + form.clientId + "/details");
         });
       } else {
-        await clientService.createClient(form).then(() => {
-          toast({
-            title: "Sistema criado",
-            description: "O sistema foi criado com sucesso"
-          });
+        await clientService.createClient(payload).then(() => {
+          toast({ title: "Sistema criado", description: "O sistema foi criado com sucesso" });
           navigate("/dashboard/systems/" + form.clientId + "/details");
         });
       }
@@ -106,18 +114,22 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
     defaultValues: defaultValues
   });
 
+  useEffect(() => {
+    if(initialData) setAttachmentConfigs(initialData.configurations || []);
+  }, [initialData]);
+
   return (
     <>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="">
-            <div className="flex flex-col gap-y-4">
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-4">
               <FormField
                 control={methods.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">Nome</FormLabel>
+                    <FormLabel className="text-base font-semibold">Nome</FormLabel>
                     <div className="relative">
                       <FormControl>
                         <Input
@@ -149,7 +161,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
                 name="clientId"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">Client Id</FormLabel>
+                    <FormLabel className="text-base font-semibold">Client Id</FormLabel>
                     <div className="relative">
                       <FormControl>
                         <Input
@@ -180,8 +192,8 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
                 control={methods.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">Descrição</FormLabel>
+                  <FormItem className="mb-2 col-span-1 md:col-span-2">
+                    <FormLabel className="text-base font-semibold">Descrição</FormLabel>
                     <div className="relative">
                       <FormControl>
                         <Textarea
@@ -210,32 +222,41 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
 
               <FormField
                 control={methods.control}
-                name="baseUrl"
+                name="status"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">Url</FormLabel>
-                    <div className="relative">
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder="Url do sistema"
-                          {...field}
-                          className={methods.formState.errors.baseUrl ? "border-red-500" : ""}
-                        />
-                      </FormControl>
-                      {methods.formState.errors.baseUrl && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle
-                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{methods.formState.errors.baseUrl?.message?.toString()}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
+                    <FormLabel className="text-base font-semibold">
+                      Status <span className="italic text-sm">(opcional)</span>
+                    </FormLabel>
+                    <div className="flex flex-row items-center justify-between rounded-lg border border-primary p-4">
+                      <div className="space-y-0.5">
+                        <FormDescription>
+                          {field.value === ClientStatusEnum.PUBLISHED ? "Sistema publicado" : "Sistema não publicado"}
+                        </FormDescription>
+                      </div>
+                      <div className="flex items-center">
+                        <FormControl>
+                          <Switch
+                            checked={field.value === ClientStatusEnum.PUBLISHED}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked ? ClientStatusEnum.PUBLISHED : ClientStatusEnum.UNPUBLISHED);
+                            }}
+                            disabled={loading}
+                          />
+                        </FormControl>
+                        {methods.formState.errors.status && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 ml-2" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{methods.formState.errors.status?.message?.toString()}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                     </div>
                   </FormItem>
                 )}
@@ -246,7 +267,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
                 name="managed"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">
+                    <FormLabel className="text-base font-semibold">
                       Gerenciado <span className="italic text-sm">(opcional)</span>
                     </FormLabel>
                     <div
@@ -278,55 +299,52 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
 
               <FormField
                 control={methods.control}
-                name="status"
+                name="baseUrl"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-lg font-bold">
-                      Status <span className="italic text-sm">(opcional)</span>
-                    </FormLabel>
-                    <div className="flex flex-row items-center justify-between rounded-lg border border-primary p-4">
-                      <div className="space-y-0.5">
-                        <FormDescription>
-                          {field.value === "published" ? "Sistema publicado" : "Sistema não publicado"}
-                        </FormDescription>
-                      </div>
-                      <div className="flex items-center">
-                        <FormControl>
-                          <Switch
-                            checked={field.value === "published"}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked ? "published" : "unpublished");
-                            }}
-                            disabled={loading}
-                          />
-                        </FormControl>
-                        {methods.formState.errors.status && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 ml-2" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{methods.formState.errors.status?.message?.toString()}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
+                    <FormLabel className="text-base font-semibold">Url</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Url do sistema"
+                          {...field}
+                          className={methods.formState.errors.baseUrl ? "border-red-500" : ""}
+                        />
+                      </FormControl>
+                      {methods.formState.errors.baseUrl && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertCircle
+                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{methods.formState.errors.baseUrl?.message?.toString()}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
                   </FormItem>
                 )}
+              />
+
+              <AttachmentConfigurationForm
+                configurations={attachmentConfigs}
+                onAddConfiguration={handleAddAttachmentConfig}
+                onDeleteConfiguration={handleDeleteAttachmentConfig}
               />
             </div>
           </div>
           <Separator className="mt-10" />
 
           <div className="mt-6 flex justify-between">
-            <Button className="" onClick={() => navigate(-1)} variant="ghost">
+            <Button type="button" onClick={() => navigate(-1)} variant="ghost">
               Voltar
             </Button>
             {getActionStyle() === "DETAIL" ? null : (
-              <Button disabled={loading} className="" type="submit">
+              <Button disabled={loading} type="submit">
                 {actionMap[getActionStyle()]}
               </Button>
             )}
@@ -336,4 +354,3 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
     </>
   );
 };
-

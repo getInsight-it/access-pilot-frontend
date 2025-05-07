@@ -17,6 +17,7 @@ interface DynamicSphereInterface {
 interface DynamicSphereFormProps {
   initialId: any;
   onHierarchyComplete?: (complete: string[]) => void;
+  limitFirst?: boolean
 }
 
 const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereFormProps) => {

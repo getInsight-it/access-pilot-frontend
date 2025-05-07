@@ -8,7 +8,7 @@ import { useTheme } from '../../layout/ThemeToggle/theme-provider'
 function Model(props: JSX.IntrinsicElements['group']) {
   const group = useRef<THREE.Group>(null)
   const { nodes, materials } = useGLTF('/models/mac-draco.glb') as unknown as any
-  
+
   const lidRef = useRef<THREE.Group>(null)
   const [isOpen, setIsOpen] = useState(true)
 
@@ -30,7 +30,7 @@ function Model(props: JSX.IntrinsicElements['group']) {
       lidRef.current.rotation.x = THREE.MathUtils.lerp(lidRef.current.rotation.x, targetRotation, 0.1)
     }
   })
-  
+
 
   useFrame((state) => {
     if (group.current) {
@@ -41,7 +41,7 @@ function Model(props: JSX.IntrinsicElements['group']) {
       group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, (-2 + Math.sin(t / 2)) / 2, 0.1)
     }
   })
-  
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group
@@ -80,7 +80,7 @@ function Model(props: JSX.IntrinsicElements['group']) {
 }
 
 export default function System() {
-  
+
   const container = {
     backgroundColor: 'white',
     color: 'black'
@@ -107,7 +107,7 @@ export default function System() {
           dataStyles={data}
         />
       }>
-        <Canvas className="system-canvas" camera={{ position: [-5, 0, -15], fov: 55 }}>
+        <Canvas className="system-canvas max-h-[400px]" camera={{ position: [-5, 0, -15], fov: 55 }}>
           <pointLight position={[10, 10, 10]} intensity={1.5} />
             <group rotation={[0, Math.PI, 0]} position={[0, 2.5, 0]}>
               <Model

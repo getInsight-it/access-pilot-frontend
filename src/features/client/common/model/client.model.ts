@@ -1,3 +1,5 @@
+import { AttachmentConfigurationInterface } from "./configuration.model.ts";
+
 export type ClientResponseInterface = {
   id?: number;
   clientExternalId?: string;
@@ -8,4 +10,5 @@ export type ClientResponseInterface = {
   managed: boolean,
   status?: string;
   baseUrl?: string;
+  configurations: AttachmentConfigurationInterface[]
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { catchError, from, tap } from "rxjs";
-import { SystemForm } from "./SystemForm.tsx";
+import { SystemForm } from "../common/components/system-form/SystemForm.tsx";
 
 import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
 import { Heading } from "../../../components/ui/heading.tsx";
@@ -58,9 +58,7 @@ export const SystemEdit = () => {
           <Separator className="" />
           {data && (
             <div className="">
-              <div className="w-128">
-                <SystemForm initialData={data || null} readonly={false} />
-              </div>
+              <SystemForm initialData={data || null} readonly={false} />
             </div>
           )}
         </motion.div>

@@ -1,43 +1,41 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import {RoleResponseInterface} from "../../../services/role/role-dto.ts";
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
+import { RoleResponseInterface } from "../../../features/role/common/types/role.model.ts";
 
-export const columns = (
-): ColumnDef<RoleResponseInterface>[] => [
+export const columns = (): ColumnDef<RoleResponseInterface>[] => [
   {
-    accessorKey: 'name',
-    header: 'NOME DO PAPEL'
+    accessorKey: "name",
+    header: "NOME DO PAPEL"
   },
   {
-    accessorKey: 'roleParent.name',
-    header: 'PAPEL PAI',
+    accessorKey: "roleParent.name",
+    header: "PAPEL PAI",
     cell: ({ row }) => (
       <span>
-        {row.original.roleParent?.name?.trim() ? row.original.roleParent?.name : '-'}
+        {row.original.roleParent?.name?.trim() ? row.original.roleParent?.name : "-"}
       </span>
     )
   },
   {
-    accessorKey: 'description',
-    header: 'DESCRIÇÃO',
+    accessorKey: "description",
+    header: "DESCRIÇÃO",
     cell: ({ row }) => (
       <span>
-        {row.original.description?.trim() ? row.original.description : '-'}
+        {row.original.description?.trim() ? row.original.description : "-"}
       </span>
     )
   },
   {
-    accessorKey: 'esfera',
-    header: 'ESFERA',
+    accessorKey: "level.name",
+    header: "ESFERA",
     cell: ({ row }) => (
       <span>
-        -
-        {/* {row.original.description?.trim() ? row.original.description : '-'} */}
+         {row.original.level?.name?.trim() ? row.original.level?.name : "-"}
       </span>
     )
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

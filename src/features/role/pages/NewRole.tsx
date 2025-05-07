@@ -60,9 +60,7 @@ export default function NewRole() {
 
         <Separator className="" />
 
-        <div className="w-128">
-          <RoleForm client={client} readonly={false} initialData={null} />
-        </div>
+        <RoleForm client={client} readonly={false} initialData={null} />
       </motion.div>
     </ScrollArea>
   );
