@@ -45,20 +45,21 @@ import { TruncatedDescription } from "../../../../../../components/TruncateDescr
 import { RoleInterface } from "../../../../../level/common/types/role.model.ts";
 import { roleService } from "../../../../../role/common/service/role-service.ts";
 import { clientService } from "../../../../../client/common/service/client-service.ts";
-import DynamicSphereForm from "../DynamicSphereForm.tsx";
+import DynamicSphereForm from "./DynamicSphereForm.tsx";
 import AttachmentForm, { FileAttachment } from "./AttachmentForm.tsx";
 import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../../../components/ui/card.tsx";
-import { AutoHeight } from "./AutoHeigth.tsx";
+import { AutoHeight } from "../../../../../../common/components/AutoHeigth.tsx";
 import { ClientResponseInterface } from "../../../../../client/common/model/client.model.ts";
 import { FileIcon } from "../../../../../../common/components/FileIcon.tsx";
+import AttachmentConfigurationPresentation
+  from "../../../../../../common/components/AttachmentConfiguration/AttachmentConfigurationPresentation.tsx";
 
 type ActionName = "idle" | "headshake" | "hiphop";
 
 const formSchema = z.object({
   clientId: z.string({ required_error: "Selecione um sistema." }),
   roleId: z.string({ required_error: "Selecione um papel." }),
-  roleSphere: z.array(z.string(), { required_error: "Preencha os campos necessários relacionados à esfera" })
-    .nonempty("Preencha os campos necessários relacionados à esfera"),
+  codeItem: z.number({ required_error: "Preencha os campos necessários relacionados à esfera." }),
   description: z
     .string()
     .min(10, { message: "Deve conter ao menos 10 caracteres." })
@@ -88,8 +89,8 @@ export function RequestAccessForm() {
   });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [currentAnimation, setCurrentAnimation] = useState<ActionName>("idle");
-  const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
-  const [roleSearchTerm, setRoleSearchTerm] = useState(""); // Novo estado para pesquisa de papéis
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleSearchTerm, setRoleSearchTerm] = useState("");
 
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { toast } = useToast();
@@ -141,7 +142,7 @@ export function RequestAccessForm() {
   }
 
   const { width } = useWindowSize();
-  const isLargeScreen = width >= 1024; // lg breakpoint
+  const isLargeScreen = width >= 1024;
 
   const steps = [
     {
@@ -159,12 +160,8 @@ export function RequestAccessForm() {
               <FormControl>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <div
-                      className={`max-w-96 w-full cursor-pointer ${selectedClient ? " text-primary " : ""}`}
-                    >
-
+                    <div className={`max-w-96 w-full cursor-pointer ${selectedClient ? " text-primary " : ""}`}>
                       <CardShine>
-
                         <div
                           className={cn(
                             "border border-dashed p-5 grid items-center min-h-[106px] h-auto transition-all rounded-[var(--card-border-radius)]",
@@ -345,16 +342,12 @@ export function RequestAccessForm() {
                                   onClick={() => {
                                     field.onChange(role.id.toString());
                                     setSelectedRole(role.name);
-                                  }}
-                                >
-                                  {selectedRole === role.name &&
-                                    <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                                  }}>
+                                  {selectedRole === role.name && <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
                                   <div className="flex flex-row items-center">
                                     <IconRenderer className={`${role?.icon as any} w-6 h-6 mr-4`} />
-                                    <p className="font-bold text-lg capitalize">
-                                      {role.name}
-                                    </p>
+                                    <p className="font-bold text-lg capitalize">{role.name}</p>
                                   </div>
 
                                   <TruncatedDescription description={role.label as any} />
@@ -375,10 +368,11 @@ export function RequestAccessForm() {
             <div className="mt-4">
               <FormField
                 control={form.control}
-                name="roleSphere"
+                name="codeItem"
                 render={({ field }) => {
-                  const onHierarchyComplete = useCallback((result: string[]) => {
-                    if(JSON.stringify(result) !== JSON.stringify(field.value)) {
+                  const onHierarchyComplete = useCallback((result: number) => {
+                    if(result !== field.value) {
+                      console.log("äsdasd")
                       field.onChange(result);
                     }
                   }, [field, field.value]);
@@ -389,7 +383,7 @@ export function RequestAccessForm() {
                         <DynamicSphereForm
                           onHierarchyComplete={onHierarchyComplete}
                           initialId={roles.find(r => r.name === selectedRole)!.level.id} />
-                        {form.getFieldState("roleSphere").isTouched && (<FormMessage />)}
+                        {form.getFieldState("codeItem").isTouched && (<FormMessage />)}
                       </FormItem>
                     </FormControl>
                   );
@@ -472,27 +466,7 @@ export function RequestAccessForm() {
             </li>
             <div>
               <h4 className="text-lg font-semibold mb-4">Anexos:</h4>
-              <div className="space-y-4">
-                {attachments.length > 0 ? (
-                  attachments.map((attachment) => (
-                    <div key={attachment.key} className="border rounded-md p-4">
-                      <h5 className="font-medium mb-2">{attachment.fileName}:</h5>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                        {attachment.files.map((file, index) => (
-                          <div key={`${attachment.key}-${index}`} className="flex items-center gap-2 bg-secondary rounded-md p-2">
-                            <div className="min-w-4 min-h-4">
-                              <FileIcon  fileName={file.name}></FileIcon>
-                            </div>
-                            <span className="text-sm truncate">{file.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500">Nenhum anexo fornecido.</p>
-                )}
-              </div>
+              <AttachmentConfigurationPresentation attachments={attachments} direction="column" />
             </div>
           </ul>
         </div>
@@ -586,7 +560,7 @@ export function RequestAccessForm() {
       const request = {
         clientId: data.clientId,
         roleId: data.roleId,
-        roleSphere: data.roleSphere,
+        codeItem: data.codeItem,
         description: data.description
       };
 
@@ -602,8 +576,6 @@ export function RequestAccessForm() {
         preview[key] = payloadFormData.getAll(key);
       }
       console.log(preview);
-
-      return
 
       const response = await requestService.createRequest(payloadFormData);
 
@@ -642,7 +614,7 @@ export function RequestAccessForm() {
     });
     setIsFormSubmitted(false);
     setCurrentAnimation("idle");
-    setSearchTerm(""); // Reset search term
+    setSearchTerm("");
     setRoleSearchTerm("");
   };
 
@@ -659,7 +631,7 @@ export function RequestAccessForm() {
       case 1:
         return !!form.getValues("clientId");
       case 2:
-        return !!form.getValues("roleId") && form.getValues("roleSphere").length > 0;
+        return !!form.getValues("roleId") && !!form.getValues("codeItem");
       case 3: {
         return form.getValues("description").length >= 10;
       }
@@ -729,7 +701,7 @@ export function RequestAccessForm() {
               }}
               className="grid grid-cols-1 lg:grid-cols-[360px,1fr] xl:grid-cols-[400px,1fr] gap-4 ">
 
-              <div className="relative py-8 rounded-xl space-y-10 sm:space-y-12 min-h-[280px] sm:min-h-[340px]">
+              <div className="relative py-8 rounded-xl space-y-10 sm:space-y-12 md:min-h-[600px] min-h-[500px]">
                 {steps.map((step, index) => (
                   <motion.div
                     key={step.id}

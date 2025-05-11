@@ -29,7 +29,7 @@ interface SphereItem {
   isBuiltIn?: boolean
   sigla?: string
   uuid?: string
-  apiKey?: string
+  externalUrl?: string
 }
 
 const BUILT_IN_SPHERES = ["FEDERAL", "ESTADUAL", "MUNICIPAL"]
@@ -95,7 +95,7 @@ export default function Levels() {
         isBuiltIn: item.type === "BUILT_IN",
         sigla: item.sigla,
         uuid: item.uuid,
-        apiKey: item.apiKey,
+        externalUrl: item.externalUrl,
       }))
 
       const spheresWithBuiltInFlag = spheresData.map((sphere) => ({

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Card, CardContent } from "../../components/ui/card"
+import { Card, CardContent } from "../../../../../components/ui/card.tsx"
 import { FileCheck, FileSearch, FileX, FilePlus, HelpCircle, Dot } from 'lucide-react'
-import { STATUS } from '../request-detail/status'
+import { STATUS } from '../../../../../components/request-detail/status.ts'
 
 // type StatusValue = "CREATED" | "PENDING" | "APPROVED" | "REJECTED" | "CANCELED" | undefined
 
@@ -46,7 +46,7 @@ export default function RequestStatus({ status, finalReason }: RequestStatusProp
 
   return (
     <>
-      <Card className="w-full min-h-[214px] rounded-[var(--card-border-radius)] bg-white-300 z-50 ">
+      <Card className="border-primary bg-[(--system-card)] w-full min-h-[214px] rounded-[var(--card-border-radius)] bg-white-300 z-50 ">
         <CardContent className="p-6 relative grid grid-cols-1 items-center gap-y-4">
           <div className="flex items-center mb-2">
             <div className={`p-3 rounded-full block ${config.bgColor} mr-4`}>

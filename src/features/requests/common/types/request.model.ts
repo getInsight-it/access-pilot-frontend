@@ -1,4 +1,4 @@
-import {RoleResponseInterface} from "../../../../services/role/role-dto.ts";
+import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
 
 export interface RequestModel {
   id: number;

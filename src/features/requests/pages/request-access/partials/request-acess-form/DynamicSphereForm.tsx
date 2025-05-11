@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../components/ui/select.tsx";
-import { levelService } from "../../../../level/common/api/level-service.ts";
-import { LevelInterface } from "../../../../level/common/types/level.model.ts";
-import { LevelItemInterface } from "../../../../level/common/types/level-item.model.ts";
-import { LevelSubItemInterface } from "../../../../level/common/types/level-subitem.model.ts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../../components/ui/select.tsx";
+import { levelService } from "../../../../../level/common/api/level-service.ts";
+import { LevelInterface } from "../../../../../level/common/types/level.model.ts";
+import { LevelItemInterface } from "../../../../../level/common/types/level-item.model.ts";
+import { LevelSubItemInterface } from "../../../../../level/common/types/level-subitem.model.ts";
 import { Label } from "@radix-ui/react-label";
 
 interface DynamicSphereInterface {
@@ -16,7 +16,7 @@ interface DynamicSphereInterface {
 
 interface DynamicSphereFormProps {
   initialId: any;
-  onHierarchyComplete?: (complete: string[]) => void;
+  onHierarchyComplete?: (complete: number) => void;
   limitFirst?: boolean
 }
 
@@ -61,7 +61,14 @@ const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereForm
 
   useEffect(() => {
     const allFilled = selectedValues.every(val => val !== "");
-    if(onHierarchyComplete) onHierarchyComplete(allFilled ? selectedValues : []);
+    if(onHierarchyComplete && allFilled && selectedValues.length) {
+      const lastIdx = spheresData.length - 1
+      const itemId = spheresData[lastIdx]
+        .items
+        .find(item => item.name === selectedValues[spheresData.length - 1])!
+        .id
+      onHierarchyComplete(itemId);
+    }
   }, [selectedValues, onHierarchyComplete]);
 
   const handleSelectChange = async (index: number, newValue: string) => {

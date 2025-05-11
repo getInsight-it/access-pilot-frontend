@@ -78,25 +78,27 @@ const config = {
   					height: '0'
   				}
   			},
-			led: {
-			"0%": { fill: "currentColor", brightness: "1" },
-			"50%": { fill: "#00ff00", brightness: "500%" },
-			"100%": { fill: "currentColor", brightness: "1" },
-			},
+        led: {
+          "0%": { fill: "currentColor", brightness: "1" },
+          "50%": { fill: "#00ff00", brightness: "500%" },
+          "100%": { fill: "currentColor", brightness: "1" },
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-			led: "led 100ms ease-in-out",
+			  led: "led 100ms ease-in-out",
   		},
   		transitionDuration: {
   			'1500': '1500ms'
   		},
-
-		width: {
-			'112': '28rem', // 448px
-			'128': '32rem', // 512px
-		},
+      maxWidth: {
+        'content-container': '1440px'
+      },
+      width: {
+        '112': '28rem', // 448px
+        '128': '32rem', // 512px
+      },
   	}
   },
   plugins: [require("tailwindcss-animate"), addVariablesForColors],
@@ -110,7 +112,7 @@ function addVariablesForColors({ addBase, theme }: any) {
   let newVars = Object.fromEntries(
     Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
   );
- 
+
   addBase({
     ":root": newVars,
   });

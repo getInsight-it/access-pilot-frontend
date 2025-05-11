@@ -72,15 +72,20 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
 
   const [attachmentConfigs, setAttachmentConfigs] = useState<AttachmentConfigurationInterface[]>([]);
   const handleAddAttachmentConfig = (config: AttachmentConfigurationInterface) => {
-    setAttachmentConfigs([...attachmentConfigs, config]);
+    setAttachmentConfigs(prev => {
+      return [...prev, config]
+    });
   };
   const handleDeleteAttachmentConfig = (name: string) => {
-    setAttachmentConfigs(attachmentConfigs.filter(config => config.key !== name));
+    setAttachmentConfigs(prev => {
+      return prev.filter(config => config.key !== name)
+    });
   };
 
   const onSubmit = async (form: any) => {
     try {
       setLoading(true);
+      // salvar configurações antigas, comparar com as novas e desativar as antigas
       const payload = { ...form, configurations: attachmentConfigs };
 
       if(initialData?.id) {

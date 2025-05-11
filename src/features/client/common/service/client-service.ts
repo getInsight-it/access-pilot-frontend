@@ -5,12 +5,13 @@ import { httpClient } from "../../../../config/http/http.ts";
 import { ClientResponseInterface } from "../model/client.model.ts";
 
 export const CLIENT_API = {
-  CLIENTS: '/v1/clients',
-  CLIENTS_PUBLISHES: '/v1/clients/publishes',
-  CLIENTS_ME_ASSOCIATIONS: '/v1/clients/me/associations',
-  CLIENTS_BY_CLIENT_ID: '/v1/clients/client-id',
-  PAGINATED: '/v1/clients/paginated',
-  SYNCHRONOUS: '/v1/clients/synchronous'
+  CLIENTS: "/v1/clients",
+  CLIENTS_PUBLISHES: "/v1/clients/publishes",
+  CLIENTS_ME_ASSOCIATIONS: "/v1/clients/me/associations",
+  CLIENTS_BY_CLIENT_ID: "/v1/clients/client-id",
+  PAGINATED: "/v1/clients/paginated",
+  SYNCHRONOUS: "/v1/clients/synchronous",
+  CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview"
 };
 
 export class ClientService {
@@ -137,6 +138,13 @@ export class ClientService {
     if(response instanceof HttpRequestResponse) {
       return JSON.parse(response.data) as ClientResponseInterface;
     }
+  }
+
+  async clientConfigurationPreview(csv: File): Promise<HttpRequestResponse | HttpRequestError> {
+    const headers = new Map<string, string>([["Content-Type", "multipart/form-data"]]);
+    const formData = new FormData();
+    formData.append("file", csv, csv.name);
+    return this.httpClient.post(`${CLIENT_API.CLIENT_CONFIGURATION_PREVIEW}`, formData, headers);
   }
 }
 

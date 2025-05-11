@@ -5,7 +5,7 @@ interface TreeProps {
 }
 
 export function Tree({ children }: TreeProps) {
-  return <ul className="pl-2">{children}</ul>
+  return <ul>{children}</ul>
 }
 
 interface TreeItemProps {

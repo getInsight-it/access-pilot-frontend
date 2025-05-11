@@ -48,7 +48,7 @@
 @layer base {
   :root {
     --font-family: 'Mulish', sans-serif;
-    
+
     --blur-bg: rgb(243, 244, 246); /* Correspondente ao to-gray-100 */
     --stripe-text: #1f1f1f;
     --stripe-bg: #ffffff;
@@ -78,7 +78,7 @@
     --steploader-bg: #ffffff;
 
     --bg-indicator: rgba(209, 213, 219, 1.0);
-    
+
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
@@ -109,7 +109,7 @@
     --rct-color-tree-bg: transparent;
     --rct-item-height: 42px;
     --rct-color-search-highlight-bg: #acccf1;
-  
+
     --rct-color-tree-focus-outline: transparent;
     --rct-item-margin: 1px;
     --rct-item-padding: 6px;
@@ -118,19 +118,19 @@
     --rct-bar-width: 8px;
     --rct-bar-color: #0366d6;
     --rct-focus-outline: #000000;
-  
+
     --rct-color-focustree-item-selected-bg: #f0f2f5;
     --rct-color-focustree-item-hover-bg: #f0f2f5;
     --rct-color-focustree-item-hover-text: inherit;
     --rct-color-focustree-item-active-bg: #e4e6eb;
     --rct-color-focustree-item-active-text: #4f4f4f;
-  
+
     --rct-arrow-size: 16px;
     --rct-arrow-container-size: 24px;
     --rct-arrow-padding: 8px;
-  
+
     --rct-cursor: pointer;
-  
+
     --rct-search-width: 120px;
     --rct-search-height: 16px;
     --rct-search-padding: 8px;
@@ -139,11 +139,11 @@
     --rct-search-bg: #f8f9fa;
     --rct-search-text: #000000;
     --rct-search-text-offset: calc(var(--rct-search-padding) * 2 + 16px);
-  
+
 
   }
   html[data-theme='dark'] {
-    
+
     --blur-bg: #000000;
     --stripe-text: #dedede;
     --stripe-bg: #000000;
@@ -288,7 +288,7 @@
     --steploader-bg: #0000ff;
 
     --bg-indicator: rgba(209, 213, 219, 1.0);
-    
+
     --background: 240 100% 97%; /* Azul claro */
     --foreground: 240 100% 15%;
     --card: 240 100% 97%;
@@ -319,7 +319,7 @@
   html[data-theme='gov'] {
 
     --font-family: 'Rawline', sans-serif;
-    
+
     --blur-bg: rgb(243, 244, 246); /* Correspondente ao to-gray-100 */
     // --stripe-text: #ffffff;
     // --stripe-bg: #0c326f;
@@ -352,7 +352,7 @@
     --steploader-bg: #ffffff;
 
     --bg-indicator: rgba(209, 213, 219, 1.0);
-    
+
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
@@ -384,7 +384,7 @@
     --bg-active: #0c326f;
     --blue-warm-vivid: #D4E5FF;
     --blue-warm-vivid-70: #1351B4;
-    
+
   }
 
 }
@@ -406,15 +406,10 @@
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
- 
+
 .no-visible-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-// canvas {
-//   width: 100%;
-//   height: 100vh;
-// }
 
 .characterForm {
   pointer-events: none !important;
@@ -521,8 +516,6 @@
   font-size: 12px;
 }
 
-
-/* css badge */
 .badge-container {
   perspective: 1000px;
 }
@@ -534,9 +527,7 @@
   backface-visibility: inherit;
   transform-origin: center top;
   transform-style: preserve-3d;
-  // width: 260px; /* Largura ajustada para 260px */
-  // height: 700px;
-  width: 170px; /* Largura ajustada para 260px */
+  width: 170px;
   height: 347px;
   will-change: transform;
 }
@@ -583,38 +574,10 @@
   fill: #cecece;
 }
 
-
-
-
-
-
-
-// olho piscando
 .olho {
-  // position: relative;
-  // width: 108px;
-  // display: flex;
-  // justify-content: space-between;
   animation: blink 10s infinite;
 }
-// .olho::after , .olho::before  {
-//   content: '';
-//   display: inline-block;
-//   width: 48px;
-//   height: 48px;
-//   background-color: #bada55;
-//   background-image:  radial-gradient(circle 14px, #0d161b 100%, transparent 0);
-//   background-repeat: no-repeat;
-//   border-radius: 50%;
-//   animation: eyeMove 10s infinite , blink 10s infinite;
-// }
-// @keyframes eyeMove {
-//   0%  , 10% {     background-position: 0px 0px}
-//   13%  , 40% {     background-position: -15px 0px}
-//   43%  , 70% {     background-position: 15px 0px}
-//   73%  , 90% {     background-position: 0px 15px}
-//   93%  , 100% {     background-position: 0px 0px}
-// }
+
 @keyframes blink {
   0%  , 10% , 12% , 20%, 22%, 40%, 42% , 60%, 62%,  70%, 72% , 90%, 92%, 98% , 100%
   { height: 64px}

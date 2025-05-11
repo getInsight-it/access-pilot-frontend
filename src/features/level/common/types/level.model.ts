@@ -6,6 +6,7 @@ export interface LevelInterface {
   description: string;
   type: string;
   parent?: LevelInterface;
+  externalUrl?: string;
 }
 
 export interface LevelResponseInterface {

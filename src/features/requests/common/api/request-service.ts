@@ -7,43 +7,8 @@ import { httpClient } from "../../../../config/http/http.ts";
 export class RequestService {
   httpClient: HttpClient;
 
-  constructor(httpClient: HttpClient) {  // Removi o `private` aqui
+  constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
-  }
-
-  async getRequests(): Promise<RequestModel | null> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(REQUEST_API.REQUESTS);
-
-    if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data);
-    } else {
-      console.error('erro ao buscar solicitações');
-    }
-
-    return null;
-  }
-
-  async getRequestsPaginated(pageIndex: number, pageSize: number, sortField: string, sortType: string, name?: string): Promise<PaginatedResponse<RequestModel> | null> {
-    const queryParams = new URLSearchParams({
-      pageIndex: pageIndex.toString(),
-      pageSize: pageSize.toString(),
-      sortField: sortField,
-      sortType: sortType
-    });
-
-    if (name) {
-      queryParams.append('name', name);
-    }
-
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.PAGINATED}?${queryParams.toString()}`);
-
-    if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<RequestModel>;
-    } else {
-      console.error('Erro ao buscar clients paginados');
-    }
-
-    return null;
   }
 
   async getRequestsMePaginated(
@@ -83,7 +48,9 @@ export class RequestService {
   }
 
   async createRequest(formData: FormData): Promise<HttpRequestResponse | HttpRequestError> {
-    return await this.httpClient.post(REQUEST_API.REQUESTS, formData);
+    const headers = new Map<string, string>();
+    headers.set("Content-Type", "multipart/form-data");
+    return await this.httpClient.post(REQUEST_API.REQUESTS, formData, headers);
   }
 
   async updateRequest(id: number, formData: FormData): Promise<void> {
@@ -112,6 +79,9 @@ export class RequestService {
     return null;
   }
 
+  async getClientAttachments(id: number): Promise<HttpRequestResponse | HttpRequestError> {
+    return await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}/attachments`);
+  }
 }
 
 export const requestService: RequestService = new RequestService(httpClient);

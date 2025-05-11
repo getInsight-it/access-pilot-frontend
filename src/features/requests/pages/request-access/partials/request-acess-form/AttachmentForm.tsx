@@ -174,7 +174,7 @@ const AttachmentForm: React.FC<AttachmentFormProps> = ({
         <h3 className="text-xl font-bold mb-2">Anexos necessários:</h3>
         <div className="space-y-4">
           {requiredAttachments.map((item) => (
-            <Card key={item.key} className="flex flex-col gap-2 border rounded-md p-4">
+            <Card key={item.key} className="flex flex-col gap-2 border rounded-md p-4 bg-[var(--system-card)]">
               <Label htmlFor={`file-upload-${item.key}`}>
                 {item.description}
                 {item.required && <span className="text-red-500 ml-1">*</span>}

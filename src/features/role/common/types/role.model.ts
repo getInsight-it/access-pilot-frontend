@@ -1,5 +1,5 @@
-import { ClientResponseInterface } from "../../../../core/client/model/client-dto.ts";
 import { LevelInterface } from "../../../level/common/types/level.model.ts";
+import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 
 export interface Role {
   id: number;
@@ -11,15 +11,15 @@ export interface Role {
 }
 
 export interface RoleResponseInterface {
-  id?: number;
+  id: number;
   roleExternalId?: string;
-  name?: string;
-  label?: string;
-  icon?: string;
-  description?: string;
+  name: string;
+  label: string;
+  icon: string;
+  description: string;
   idRoleParent?: number;
   idClient?: number;
-  clientName?: string;
+  clientName: string;
   roleParent?: RoleResponseInterface;
   client?: ClientResponseInterface;
   level: LevelInterface

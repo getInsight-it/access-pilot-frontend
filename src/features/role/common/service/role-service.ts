@@ -51,6 +51,11 @@ export class RoleService {
     return null;
   }
 
+  async getRolesByClientIdV2(clientId: string): Promise<HttpRequestResponse | HttpRequestError> {
+    const queryParams = new URLSearchParams({ clientId: clientId.toString() });
+    return this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
+  }
+
   async update(data: RoleResponseInterface[]): Promise<void> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(ROLE_API.ROLES, data);
 

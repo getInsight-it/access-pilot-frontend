@@ -21,13 +21,13 @@ import LevelsPage from "./features/level/pages/level/LevelsPage.tsx";
 import LevelItems from "./features/level/pages/level/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/CreateLevel.tsx";
 import { SystemEdit } from "./features/client/pages/SystemEdit.tsx";
-import { SystemDetail } from "./features/client/pages/SystemDetail.tsx";
+import { SystemDetail } from "./features/client/pages/client-detail/SystemDetail.tsx";
 import { RoleEdit } from "./features/role/pages/RoleEdit.tsx";
 import { RoleDetail } from "./features/role/pages/RoleDetail.tsx";
 import { CreateItem } from "./features/level/pages/item/CreateItem.tsx";
 import { EditItem } from "./features/level/pages/item/EditItem.tsx";
 import { ApproverGuard } from "./common/context/auth/approver-guard.tsx";
-import RequestDetailPage from "./features/requests/pages/RequestDetailPage.tsx";
+import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
 
 const authRoutes = [
   {

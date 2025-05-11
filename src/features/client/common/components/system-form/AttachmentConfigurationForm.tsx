@@ -1,6 +1,5 @@
-import type React from "react";
-import { useState } from "react";
-import { Plus, Settings, X } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Plus, Settings, Upload, X } from "lucide-react";
 import { Input } from "../../../../../components/ui/input.tsx";
 import { Button } from "../../../../../components/ui/button.tsx";
 import { Switch } from "../../../../../components/ui/switch.tsx";
@@ -14,7 +13,16 @@ import {
 import { Label } from "../../../../../components/ui/label.tsx";
 import { Card } from "../../../../../components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "../../../../../components/ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../../model/configuration.model.ts";
+import { clientService } from "../../service/client-service.ts";
+import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 
 export interface AttachmentConfigSectionProps {
   configurations: AttachmentConfigurationInterface[];
@@ -36,6 +44,12 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     description?: string;
     extensions?: string;
   }>({});
+  const [loading, setLoading] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [duplicateKeys, setDuplicateKeys] = useState<string[]>([]);
+  const [importedConfigs, setImportedConfigs] = useState<AttachmentConfigurationInterface[]>([]);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddConfig = () => {
     const errors: {
@@ -55,7 +69,6 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     }
 
     setFormError({});
-
     onAddConfiguration({
       key,
       description,
@@ -71,13 +84,11 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKey(e.target.value);
-
     if(formError.key) setFormError(prev => ({ ...prev, key: undefined }));
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
-
     if(formError.description) setFormError(prev => ({ ...prev, description: undefined }));
   };
 
@@ -87,7 +98,6 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         ? prev.filter(ext => ext !== extension)
         : [...prev, extension]
     );
-
     if(formError.extensions) setFormError(prev => ({ ...prev, extensions: undefined }));
   };
 
@@ -96,94 +106,178 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     return text.substring(0, maxLength) + "...";
   };
 
+  const handleImportClick = () => {
+    if(fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if(!file) return;
+
+    if(file.type !== "text/csv" && !file.name.endsWith(".csv")) {
+      alert("Por favor, selecione apenas arquivos CSV.");
+      if(fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    await clientService.clientConfigurationPreview(file)
+      .then((response: HttpRequestResponse | HttpRequestError) => {
+        if(response instanceof HttpRequestResponse) {
+          const importedConfigurations = JSON.parse(response.data) as AttachmentConfigurationInterface[];
+          const duplicates = importedConfigurations.filter(
+            importedConfig => configurations.some(
+              existingConfig => existingConfig.key === importedConfig.key
+            )
+          ).map(config => config.key);
+
+          if(duplicates.length > 0) {
+            setDuplicateKeys(duplicates);
+            setImportedConfigs(importedConfigurations);
+            setImportModalOpen(true);
+          } else {
+            importedConfigurations.forEach(config => {
+              onAddConfiguration(config);
+            });
+          }
+        }
+      })
+      .catch((error: HttpRequestError) => {
+        console.error("Erro ao importar configurações:", error);
+        alert("Ocorreu um erro ao importar as configurações.");
+      })
+      .finally(() => {
+        setLoading(false);
+        if(fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      });
+  };
+
+  const confirmImport = () => {
+    duplicateKeys.forEach(key => {
+      onDeleteConfiguration(key);
+    });
+
+    importedConfigs.forEach(config => {
+      onAddConfiguration(config);
+    });
+
+    setImportModalOpen(false);
+    setDuplicateKeys([]);
+    setImportedConfigs([]);
+  };
+
+  const cancelImport = () => {
+    setImportModalOpen(false);
+    setDuplicateKeys([]);
+    setImportedConfigs([]);
+  };
+
   return (
     <div className="col-span-1 md:col-span-2">
-
       <h3 className="text-lg font-bold mb-2">Configurações de Anexos</h3>
-
       <Card className="border-primary p-4 bg-[var(--system-card)]">
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="add-config">
-            <AccordionTrigger className="pb-3 pt-0 text-base font-medium">
-              <div className="flex flex-row gap-2 items-center">
-                Adicionar Nova Configuração
-                <Plus className="h-4 w-4 mr-2" />
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="border border-primary rounded-lg p-4 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="config-key" className="mb-2 block">Chave *</Label>
-                    <Input
-                      id="config-key"
-                      value={key}
-                      onChange={handleNameChange}
-                      placeholder="Chave da configuração"
-                      className={formError.key ? "border-red-500" : ""} />
-                    {formError.key && (
-                      <p className="text-red-500 text-xs mt-1">{formError.key}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="config-required" className="mb-2 block">Obrigatório *</Label>
-                    <div className="flex items-center h-10 space-x-2">
-                      <Switch
-                        id="config-required"
-                        checked={required}
-                        onCheckedChange={setRequired}
+        <div className="flex flex-wrap mb-4 items-center">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="add-config">
+              <AccordionTrigger className="p-0">
+                <div
+                  className="flex flex-row items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-secondary/80 transition-colors">
+                  <Plus className="h-4 w-4" />
+                  Adicionar Nova Configuração
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="mt-4">
+                <div className="border border-primary rounded-lg p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="config-key" className="mb-2 block">Chave *</Label>
+                      <Input
+                        id="config-key"
+                        value={key}
+                        onChange={handleNameChange}
+                        placeholder="Chave da configuração"
+                        className={formError.key ? "border-red-500" : ""}
                       />
-                      <span>{required ? "Sim" : "Não"}</span>
+                      {formError.key && (
+                        <p className="text-red-500 text-xs mt-1">{formError.key}</p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="config-required" className="mb-2 block">Obrigatório *</Label>
+                      <div className="flex items-center h-10 space-x-2">
+                        <Switch
+                          id="config-required"
+                          checked={required}
+                          onCheckedChange={setRequired}
+                        />
+                        <span>{required ? "Sim" : "Não"}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="config-description" className="mb-2 block">Descrição *</Label>
-                  <Textarea
-                    id="config-description"
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    placeholder="Descrição da configuração"
-                    className={formError.description ? "border-red-500" : ""}
-                  />
-                  {formError.description && (
-                    <p className="text-red-500 text-xs mt-1">{formError.description}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label className="mb-2 block">Extensões Permitidas *</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {AVAILABLE_EXTENSIONS.map((extension) => (
-                      <div
-                        key={extension}
-                        onClick={() => toggleExtension(extension)}
-                        className={`px-3 py-1 rounded-md cursor-pointer transition-colors ${
-                          selectedExtensions.includes(extension)
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                        }`}
-                      >
-                        {extension}
-                      </div>
-                    ))}
+                  <div>
+                    <Label htmlFor="config-description" className="mb-2 block">Descrição *</Label>
+                    <Textarea
+                      id="config-description"
+                      value={description}
+                      onChange={handleDescriptionChange}
+                      placeholder="Descrição da configuração"
+                      className={formError.description ? "border-red-500" : ""}
+                    />
+                    {formError.description && (
+                      <p className="text-red-500 text-xs mt-1">{formError.description}</p>
+                    )}
                   </div>
-                  {formError.extensions && (<p className="text-red-500 text-xs mt-1">{formError.extensions}</p>)}
+                  <div>
+                    <Label className="mb-2 block">Extensões Permitidas *</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {AVAILABLE_EXTENSIONS.map((extension) => (
+                        <div
+                          key={extension}
+                          onClick={() => toggleExtension(extension)}
+                          className={`px-3 py-1 rounded-md cursor-pointer transition-colors ${
+                            selectedExtensions.includes(extension)
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                          }`}
+                        >
+                          {extension}
+                        </div>
+                      ))}
+                    </div>
+                    {formError.extensions && (
+                      <p className="text-red-500 text-xs mt-1">{formError.extensions}</p>
+                    )}
+                  </div>
+                  <Button onClick={handleAddConfig} className="mt-4" type="button">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Configuração
+                  </Button>
                 </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-                <Button
-                  onClick={handleAddConfig}
-                  className="mt-4"
-                  type="button">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Configuração
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+          <div
+            onClick={handleImportClick}
+            className="flex flex-row items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-secondary/80 transition-colors">
+            <Upload className="h-4 w-4" />
+            <span className="font-medium">Importar Configuração</span>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".csv"
+              className="hidden"
+              disabled={loading}
+            />
+          </div>
+        </div>
 
         <div>
           {configurations.length === 0 ? (
@@ -192,6 +286,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
           ) : (
             <div className="p-4 flex flex-row flex-wrap gap-4 items-center border border-dashed rounded-lg">
+              {/*TODO apresentar apenas configurações que estão ativas*/}
               {configurations.map((config) => (
                 <Card
                   key={config.key}
@@ -236,6 +331,53 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           )}
         </div>
       </Card>
+
+      <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Confirmação de Importação</DialogTitle>
+          </DialogHeader>
+
+          <div className="py-4">
+            <div className="mb-4">
+              <h4 className="font-medium text-lg mb-2">Configurações duplicadas</h4>
+              <div className="border rounded-md p-3 bg-amber-50 dark:bg-amber-950/30">
+                <p className="mb-2">As seguintes configurações já existem e serão sobrescritas:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  {duplicateKeys.map(key => (
+                    <li key={key}><strong>{key}</strong></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-lg mb-2">Configurações a serem importadas</h4>
+              <div className="max-h-[200px] overflow-y-auto border rounded-md p-3">
+                <ul className="space-y-3">
+                  {importedConfigs.map(config => (
+                    <li key={config.key} className="pb-2 border-b last:border-b-0">
+                      <div><span className="font-semibold">Chave:</span> {config.key}</div>
+                      <div><span className="font-semibold">Descrição:</span> {config.description}</div>
+                      <div><span className="font-semibold">Obrigatório:</span> {config.required ? "Sim" : "Não"}</div>
+                      <div><span className="font-semibold">Extensões:</span> {config.allowedExtensions.join(", ")}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex justify-end space-x-2 mt-4">
+            <Button variant="outline" onClick={cancelImport}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmImport}>
+              Confirmar Importação
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -360,34 +360,6 @@ export default function LevelItems() {
     setSearchTerm(e.target.value)
   }
 
-  // Gerar array de páginas para exibição
-  const getPageNumbers = () => {
-    const pages = []
-    const maxPagesToShow = 5
-
-    if (totalPages <= maxPagesToShow) {
-      // Se houver menos páginas que o máximo, mostrar todas
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      // Caso contrário, mostrar um subconjunto com a página atual no centro
-      let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2))
-      let endPage = startPage + maxPagesToShow - 1
-
-      if (endPage > totalPages) {
-        endPage = totalPages
-        startPage = Math.max(1, endPage - maxPagesToShow + 1)
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i)
-      }
-    }
-
-    return pages
-  }
-
   // Função para renderizar o item pai de forma segura
   const renderParentItem = (item: Item) => {
     if (!item.parent) return "Nenhum"
