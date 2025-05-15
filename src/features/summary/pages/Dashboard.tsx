@@ -16,6 +16,7 @@ import { Card } from "../../../components/utils/Card.tsx";
 import { RequestModel } from "../../requests/common/types/request.model.ts";
 import { requestService } from "../../requests/common/api/request-service.ts";
 import { summaryService } from "../common/api/summary-service.ts";
+import { Separator } from "../../../components/ui/separator.tsx";
 
 export default function Dashboard() {
 
@@ -59,8 +60,6 @@ export default function Dashboard() {
 
   return (
     <ScrollArea className="h-full">
-
-      {/* user dashboard */}
       <div className=" flex-1 space-y-4 mb-4 px-4 pt-6 md:px-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -69,42 +68,46 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="col-span-2 h-fit px-8">
-        <Card className="bg-primary-foreground">
-          <div className="relative z-20">
-            <p className="mb-5 ml-1.5 text-2xl">Sistemas que você tem acesso</p>
-            <GridList />
-          </div>
-        </Card>
-      </div>
+      <Separator className="mb-4"></Separator>
 
-      <div className="col-span-2 h-fit px-8 pt-3.5">
-        <Card className="bg-primary-foreground">
-          <div className="relative z-20">
-            <p className="mb-5 ml-1.5 text-2xl">Sistemas que você pode solicitar acesso</p>
-            <GridListNoAccess />
-          </div>
-        </Card>
-      </div>
-
-      <motion.div
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
-        }}
-        className="flex-1 space-y-4 px-4 md:px-8 mt-6"
-      >
-        <div className="flex items-center space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Resumo
-          </h2>
-          {summary && (<Typewriter {...summary} />)}
+      <div className="max-w-content-container mx-auto">
+        <div className="col-span-2 h-fit px-8">
+          <Card className="bg-primary-foreground">
+            <div className="relative z-20">
+              <p className="mb-5 ml-1.5 text-2xl">Sistemas que você tem acesso</p>
+              <GridList />
+            </div>
+          </Card>
         </div>
-        {(summary && requests) && <FeatureGrid summary={summary} requests={requests} />}
-      </motion.div>
+
+        <div className="col-span-2 h-fit px-8 pt-3.5">
+          <Card className="bg-primary-foreground">
+            <div className="relative z-20">
+              <p className="mb-5 ml-1.5 text-2xl">Sistemas que você pode solicitar acesso</p>
+              <GridListNoAccess />
+            </div>
+          </Card>
+        </div>
+
+        <motion.div
+          initial={{
+            opacity: 0
+          }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
+          }}
+          className="flex-1 space-y-4 px-4 md:px-8 mt-6"
+        >
+          <div className="flex items-center space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Resumo
+            </h2>
+            {summary && (<Typewriter {...summary} />)}
+          </div>
+          {(summary && requests) && <FeatureGrid summary={summary} requests={requests} />}
+        </motion.div>
+      </div>
 
       {theme === "gov" && (
         <div className="mt-20">

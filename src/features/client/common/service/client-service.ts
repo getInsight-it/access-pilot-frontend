@@ -82,21 +82,21 @@ export class ClientService {
   async createClient(clientData: ClientResponseInterface): Promise<ClientResponseInterface | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(CLIENT_API.CLIENTS, clientData);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as ClientResponseInterface;
-    } else {
-      console.error("Erro ao criar client");
+    if(!(response instanceof HttpRequestResponse)) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as ClientResponseInterface;
   }
 
   async updateClient(clientId: number, clientData: ClientResponseInterface): Promise<void> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${CLIENT_API.CLIENTS}/${clientId}`, clientData);
 
     if(!(response instanceof HttpRequestResponse)) {
-      console.error("Erro ao atualizar client");
+      throw response;
     }
+
+    return;
   }
 
   async publish(id: number): Promise<ClientResponseInterface | null> {

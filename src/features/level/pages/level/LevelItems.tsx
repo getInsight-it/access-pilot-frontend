@@ -426,149 +426,153 @@ export default function LevelItems() {
       ) : (
         <>
           {/* Campo de pesquisa */}
-          <div className="relative w-full md:w-1/3 mb-4">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Pesquisar itens..." className="pl-8" value={searchTerm} onChange={handleSearchChange} />
-          </div>
+          <div className="max-w-content-container m-auto">
+            <div className="relative w-full md:w-1/3 mb-4">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Pesquisar itens..." className="pl-8" value={searchTerm} onChange={handleSearchChange} />
+            </div>
 
-          <ScrollArea className="h-[calc(80vh-320px)] rounded-md border">
-            {loading ? (
-              <div className="grid justify-center items-center h-full">
-                {/* <ShuffleLoader /> */}
-                <HighlightLoader />
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow className="uppercase">
-                    <TableHead>Nome</TableHead>
-                    {sphere?.type !== "BUILT_IN" && (
-                      <>
-                        <TableHead>Descrição</TableHead>
-                        <TableHead>Código externo</TableHead>
-                        <TableHead>Item da esfera pai</TableHead>
-                        <TableHead>Ações</TableHead>
-                      </>
-                    )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredItems.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={sphere?.type !== "BUILT_IN" ? 7 : 2} className="text-center py-6">
-                        {searchTerm
-                          ? "Nenhum item encontrado para esta pesquisa."
-                          : "Nenhum item encontrado para esta esfera."}
-                      </TableCell>
+            <ScrollArea className="h-[calc(80vh-320px)] rounded-md border">
+              {loading ? (
+                <div className="grid justify-center items-center h-full">
+                  {/* <ShuffleLoader /> */}
+                  <HighlightLoader />
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="uppercase">
+                      <TableHead>Nome</TableHead>
+                      {sphere?.type !== "BUILT_IN" && (
+                        <>
+                          <TableHead>Descrição</TableHead>
+                          <TableHead>Código externo</TableHead>
+                          <TableHead>Item da esfera pai</TableHead>
+                          <TableHead>Ações</TableHead>
+                        </>
+                      )}
                     </TableRow>
-                  ) : (
-                    filteredItems.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item.name}</TableCell>
-                        {sphere?.type !== "BUILT_IN" && (
-                          <>
-                            <TableCell>{item.description}</TableCell>
-                            <TableCell>{item.externalCode}</TableCell>
-                            <TableCell>{renderParentItem(item)}</TableCell>
-                            <TableCell>
-                              <Button className="h-[2rem]" variant="ghost" asChild>
-                                <Link to={`/dashboard/levels/${id}/items/${item.id}/edit`}>
-                                  <Edit className="w-3.5 h-3.5" />
-                                </Link>
-                              </Button>
-                              <Button className="h-[2rem]" variant="ghost" onClick={() => handleDelete(item)}>
-                                <Trash className="w-4 h-4" />
-                              </Button>
-                            </TableCell>
-                          </>
-                        )}
+                  </TableHeader>
+                  <TableBody>
+                    {filteredItems.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={sphere?.type !== "BUILT_IN" ? 7 : 2} className="text-center py-6">
+                          {searchTerm
+                            ? "Nenhum item encontrado para esta pesquisa."
+                            : "Nenhum item encontrado para esta esfera."}
+                        </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            )}
-          </ScrollArea>
+                    ) : (
+                      filteredItems.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item.name}</TableCell>
+                          {sphere?.type !== "BUILT_IN" && (
+                            <>
+                              <TableCell>{item.description}</TableCell>
+                              <TableCell>{item.externalCode}</TableCell>
+                              <TableCell>{renderParentItem(item)}</TableCell>
+                              <TableCell>
+                                <Button className="h-[2rem]" variant="ghost" asChild>
+                                  <Link to={`/dashboard/levels/${id}/items/${item.id}/edit`}>
+                                    <Edit className="w-3.5 h-3.5" />
+                                  </Link>
+                                </Button>
+                                <Button className="h-[2rem]" variant="ghost" onClick={() => handleDelete(item)}>
+                                  <Trash className="w-4 h-4" />
+                                </Button>
+                              </TableCell>
+                            </>
+                          )}
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </ScrollArea>
 
-          {/* Controles de paginação */}
-          {!searchTerm && totalPages > 1 && (
-            <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
-              <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
+            {/* Controles de paginação */}
+            {!searchTerm && totalPages > 1 && (
+              <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
+                    <div className="flex items-center space-x-2">
+                      <p className="whitespace-nowrap text-sm font-medium">Linhas por página</p>
+                      <Select
+                        value={String(pageSize)}
+                        onValueChange={(value) => {
+                          setPageSize(Number(value))
+                          setCurrentPage(1) // Reset to first page when changing page size
+                        }}
+                      >
+                        <SelectTrigger className="h-8 w-[70px]">
+                          <SelectValue placeholder={String(pageSize)} />
+                        </SelectTrigger>
+                        <SelectContent side="top">
+                          {pageSizeOptions.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                              {size}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex w-full items-center justify-between gap-2 sm:justify-end">
+                  <div className="flex w-[110px] items-center justify-center text-sm font-medium">
+                    Página {currentPage} de {totalPages}
+                  </div>
                   <div className="flex items-center space-x-2">
-                    <p className="whitespace-nowrap text-sm font-medium">Linhas por página</p>
-                    <Select
-                      value={String(pageSize)}
-                      onValueChange={(value) => {
-                        setPageSize(Number(value))
-                        setCurrentPage(1) // Reset to first page when changing page size
-                      }}
+                    <Button
+                      aria-label="Primeira página"
+                      variant="outline"
+                      className="hidden h-8 w-8 p-0 lg:flex"
+                      onClick={() => handlePageChange(1)}
+                      disabled={currentPage === 1}
                     >
-                      <SelectTrigger className="h-8 w-[70px]">
-                        <SelectValue placeholder={String(pageSize)} />
-                      </SelectTrigger>
-                      <SelectContent side="top">
-                        {pageSizeOptions.map((size) => (
-                          <SelectItem key={size} value={String(size)}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      aria-label="Página anterior"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      aria-label="Próxima página"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      aria-label="Última página"
+                      variant="outline"
+                      className="hidden h-8 w-8 p-0 lg:flex"
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Button>
                   </div>
                 </div>
               </div>
-              <div className="flex w-full items-center justify-between gap-2 sm:justify-end">
-                <div className="flex w-[110px] items-center justify-center text-sm font-medium">
-                  Página {currentPage} de {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    aria-label="Primeira página"
-                    variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
-                    onClick={() => handlePageChange(1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    aria-label="Página anterior"
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    aria-label="Próxima página"
-                    variant="outline"
-                    className="h-8 w-8 p-0"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    aria-label="Última página"
-                    variant="outline"
-                    className="hidden h-8 w-8 p-0 lg:flex"
-                    onClick={() => handlePageChange(totalPages)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
 
-      <Button className="" onClick={() => navigate(-1)} variant="ghost">
-        Voltar
-      </Button>
+      <div className="max-w-content-container m-auto">
+        <Button className="" onClick={() => navigate(-1)} variant="ghost">
+          Voltar
+        </Button>
+      </div>
 
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <DialogContent>

@@ -2,7 +2,7 @@ import { KeycloakRoles } from "@getinsight.it/getinsight-common";
 import { create } from "zustand";
 import { NotificationModel } from "../common/types/notification/notification.model.ts";
 
-interface UserInfo {
+export interface UserInfo {
   id: string;
   username?: string;
   firstName?: string;

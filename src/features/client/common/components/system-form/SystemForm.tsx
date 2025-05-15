@@ -82,23 +82,59 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
     });
   };
 
+
+
   const onSubmit = async (form: any) => {
     try {
       setLoading(true);
-      // salvar configurações antigas, comparar com as novas e desativar as antigas
       const payload = { ...form, configurations: attachmentConfigs };
 
       if(initialData?.id) {
         payload.id = initialData.id;
-        await clientService.updateClient(initialData.id, payload).then(() => {
-          toast({ title: "Sistema atualizado", description: "O sistema foi atualizado com sucesso" });
-          navigate("/dashboard/systems/" + form.clientId + "/details");
-        });
+        if (initialData.configurations && initialData.configurations.length > 0) {
+          const payloadConfigKeys = new Set(
+            payload.configurations.map((config: AttachmentConfigurationInterface) => config.key)
+          );
+          const payloadConfigIds = new Set(
+            payload.configurations
+              .filter((config: AttachmentConfigurationInterface) => config.id)
+              .map((config: AttachmentConfigurationInterface) => config.id)
+          );
+          const configsToDeactivate: AttachmentConfigurationInterface[] = [];
+          const deletedConfigs = initialData.configurations.filter(
+            (config: AttachmentConfigurationInterface) =>
+              !payloadConfigKeys.has(config.key)
+          );
+          const replacedConfigs = initialData.configurations.filter(
+            (config: AttachmentConfigurationInterface) =>
+              payloadConfigKeys.has(config.key) &&
+              config.id &&
+              !payloadConfigIds.has(config.id)
+          );
+          configsToDeactivate.push(
+            ...deletedConfigs,
+            ...replacedConfigs
+          );
+          if (configsToDeactivate.length > 0) {
+            const inactiveConfigs = configsToDeactivate.map(
+              (config: AttachmentConfigurationInterface) => ({
+                ...config,
+                active: false
+              })
+            );
+
+            payload.configurations = [...payload.configurations, ...inactiveConfigs];
+          }
+        }
+
+        await clientService.updateClient(initialData.id, payload);
+        toast({ title: "Sistema atualizado", description: "O sistema foi atualizado com sucesso" });
+        navigate("/dashboard/systems/" + form.clientId + "/details");
       } else {
-        await clientService.createClient(payload).then(() => {
-          toast({ title: "Sistema criado", description: "O sistema foi criado com sucesso" });
-          navigate("/dashboard/systems/" + form.clientId + "/details");
-        });
+        await clientService.createClient(payload);
+        console.log("dasdasd", payload);
+        toast({ title: "Sistema criado", description: "O sistema foi criado com sucesso" });
+        navigate("/dashboard/systems/" + form.clientId + "/details");
       }
     } catch (error: any) {
       if(error.response) {
@@ -126,7 +162,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
   return (
     <>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form className="max-w-content-container m-auto" onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-4">
               <FormField

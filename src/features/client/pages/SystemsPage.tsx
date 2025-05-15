@@ -97,16 +97,17 @@ export default function SystemsPage() {
           </Link>
         </div>
         <Separator />
-
-        <SystemsTable
-          searchKey="clientId"
-          pageNo={page}
-          columns={columns(setDataUpdated)}
-          totalUsers={totalUsers}
-          data={clients}
-          pageCount={pageCount}
-          onPageChange={getData}
-        />
+        <div className="max-w-content-container m-auto">
+          <SystemsTable
+            searchKey="clientId"
+            pageNo={page}
+            columns={columns(setDataUpdated)}
+            totalUsers={totalUsers}
+            data={clients}
+            pageCount={pageCount}
+            onPageChange={getData}
+          />
+        </div>
       </motion.div>
     </>
   );

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../../components/ui/select.tsx";
-import { levelService } from "../../../../../level/common/api/level-service.ts";
-import { LevelInterface } from "../../../../../level/common/types/level.model.ts";
-import { LevelItemInterface } from "../../../../../level/common/types/level-item.model.ts";
-import { LevelSubItemInterface } from "../../../../../level/common/types/level-subitem.model.ts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../components/ui/select.tsx";
+import { levelService } from "../../../../level/common/api/level-service.ts";
+import { LevelInterface } from "../../../../level/common/types/level.model.ts";
+import { LevelItemInterface } from "../../../../level/common/types/level-item.model.ts";
+import { LevelSubItemInterface } from "../../../../level/common/types/level-subitem.model.ts";
 import { Label } from "@radix-ui/react-label";
+import { cn } from "../../../../../config/lib/utils.ts";
 
 interface DynamicSphereInterface {
   sphere: LevelInterface;
@@ -17,10 +18,17 @@ interface DynamicSphereInterface {
 interface DynamicSphereFormProps {
   initialId: any;
   onHierarchyComplete?: (complete: number) => void;
-  limitFirst?: boolean
+  limitFirst?: boolean;
+  hasError?: boolean;
+  onErrorClear?: () => void;
 }
 
-const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereFormProps) => {
+const DynamicSphereForm = ({
+  initialId,
+  onHierarchyComplete,
+  hasError = false,
+  onErrorClear
+}: DynamicSphereFormProps) => {
   const subItemPageSize = 10;
   const [spheresData, setSpheresData] = useState<DynamicSphereInterface[]>([]);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
@@ -68,8 +76,24 @@ const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereForm
         .find(item => item.name === selectedValues[spheresData.length - 1])!
         .id
       onHierarchyComplete(itemId);
+
+      // Clear error when hierarchy is complete
+      if (hasError && onErrorClear) {
+        onErrorClear();
+      }
     }
-  }, [selectedValues, onHierarchyComplete]);
+  }, [selectedValues, onHierarchyComplete, hasError, onErrorClear]);
+
+  // Find the last available select that isn't disabled
+  const findLastActiveSelectIndex = () => {
+    for (let i = spheresData.length - 1; i >= 0; i--) {
+      // A select is active if either it's the first one, or its parent has a value
+      if (i === 0 || (i > 0 && selectedValues[i - 1] !== "")) {
+        return i;
+      }
+    }
+    return 0; // Default to the first one if none are active
+  };
 
   const handleSelectChange = async (index: number, newValue: string) => {
     setSelectedValues(prev => {
@@ -88,6 +112,11 @@ const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereForm
       }
       return data;
     });
+
+    // Clear error when any selection is made
+    if (hasError && onErrorClear) {
+      onErrorClear();
+    }
 
     if(index < spheresData.length - 1) {
       const currentSphereData = spheresData[index];
@@ -189,38 +218,56 @@ const DynamicSphereForm = ({ initialId, onHierarchyComplete }: DynamicSphereForm
     return <div>Erro: {error}</div>;
   }
 
-  //TODO ao retornar com o estado adicionar value ao select e nas opções adicionar apenas a opção selecionada
+  const lastActiveSelectIndex = findLastActiveSelectIndex();
+
   return (
     <div className="flex flex-col space-y-4">
-      {spheresData.map(({ sphere, items, totalItems }, index) => (
-        <div key={sphere.id} className="flex flex-col gap-1">
-          <Label className="flex flex-row justify-between">
-            <span className="text-sm font-medium">Selecione um item para a esfera de nível {sphere.name}:</span>
-            <span className="text-xs font-normal text-gray-500">({totalItems} itens encontrados)</span>
-          </Label>
-          <Select
-            disabled={index > 0 && !selectedValues[index - 1]}
-            onValueChange={(value: string) => handleSelectChange(index, value)}>
-            <SelectTrigger className="w-full">
-              <SelectValue className="text-black" placeholder="Selecionar..." />
-            </SelectTrigger>
-            <SelectContent ref={contentRef}>
-              {items.length > 0 ? (
-                items.map((item, idx) => {
-                  return (
-                    <SelectItem
-                      key={item.id}
-                      value={item.name}
-                      data-level-index={index}
-                      ref={idx === items.length - 1 ? lastSelectItemNodeRef : null}>{item.name}
-                    </SelectItem>
-                  );
-                })
-              ) : (<SelectItem value="empty">Carregando itens...</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-      ))}
+      {spheresData.map(({ sphere, items, totalItems }, index) => {
+        const isLastActiveSelect = index === lastActiveSelectIndex;
+        const shouldShowError = hasError && isLastActiveSelect;
+
+        return (
+          <div key={sphere.id} className="flex flex-col gap-1">
+            <Label className={cn(
+              "flex flex-row justify-between",
+              shouldShowError && "text-red-500"
+            )}>
+              <span className="text-sm font-medium">
+                Selecione um item para a esfera de nível {sphere.name}:
+                {shouldShowError && <span className="text-red-500 ml-1">*</span>}
+              </span>
+              <span className="text-xs font-normal text-gray-500">({totalItems} itens encontrados)</span>
+            </Label>
+            <Select
+              disabled={index > 0 && !selectedValues[index - 1]}
+              onValueChange={(value: string) => handleSelectChange(index, value)}>
+              <SelectTrigger className={cn(
+                "w-full",
+                shouldShowError && "border-red-500 ring-red-500"
+              )}>
+                <SelectValue className="text-black" placeholder="Selecionar..." />
+              </SelectTrigger>
+              <SelectContent ref={contentRef}>
+                {items.length > 0 ? (
+                  items.map((item, idx) => {
+                    return (
+                      <SelectItem
+                        key={item.id}
+                        value={item.name}
+                        data-level-index={index}
+                        ref={idx === items.length - 1 ? lastSelectItemNodeRef : null}>{item.name}
+                      </SelectItem>
+                    );
+                  })
+                ) : (<SelectItem value="empty">Carregando itens...</SelectItem>)}
+              </SelectContent>
+            </Select>
+            {shouldShowError && (
+              <p className="text-red-500 text-xs mt-1">Este campo é obrigatório</p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -418,7 +418,7 @@ export default function CreateOrEditLevel() {
             </div>
           )}
 
-          <div className="w-full mt-4">
+          <div className="w-full mt-4 max-w-content-container m-auto">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <div>
@@ -560,7 +560,7 @@ export default function CreateOrEditLevel() {
         </div>
 
       </motion.div>
-      <div className="flex flex-row gap-2 px-4">
+      <div className="flex flex-row gap-2 px-4 max-w-content-container m-auto">
         <Button
           className="mr-2"
           onClick={(e) => {

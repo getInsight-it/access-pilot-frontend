@@ -93,7 +93,7 @@ const config = {
   			'1500': '1500ms'
   		},
       maxWidth: {
-        'content-container': '1440px'
+        'content-container': '2440px'
       },
       width: {
         '112': '28rem', // 448px

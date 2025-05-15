@@ -3,7 +3,6 @@ import { Heading } from "../../../components/ui/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { Link, useLocation } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
-import { RequestModel } from "../common/types/request.model.ts";
 import { useEffect, useState } from "react";
 import { columns } from "../common/components/request-table/columns.tsx";
 import { buttonVariants } from "../../../components/ui/button.tsx";
@@ -14,6 +13,7 @@ import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { motion } from "framer-motion";
 import { requestService } from "../common/api/request-service.ts";
 import { RequestsTable } from "../common/components/request-table/RequestsTable.tsx";
+import { RequestInterface } from "../common/types/request.model.ts";
 
 const breadcrumbItems = [
   { title: "Dashboard", link: "/dashboard" },
@@ -27,7 +27,7 @@ function useSearchParams() {
 
 export default function MyAccessRequests() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-  const [requests, setRequests] = useState<RequestModel[]>([]);
+  const [requests, setRequests] = useState<RequestInterface[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [pageCount, setPageCount] = useState(10);
   const [page, setPage] = useState(1);
@@ -81,17 +81,19 @@ export default function MyAccessRequests() {
         </div>
 
         <Separator />
-        <RequestsTable
-          pageNo={page}
-          columns={columns("created")}
-          totalUsers={totalUsers}
-          data={requests}
-          pageCount={pageCount}
-          onPageChange={(newPage, pageSize, filter) => {
-            setPage(newPage);
-            getData(newPage, pageSize, filter);
-          }}
-        />
+        <div className="max-w-content-container m-auto">
+          <RequestsTable
+            pageNo={page}
+            columns={columns("created")}
+            totalUsers={totalUsers}
+            data={requests}
+            pageCount={pageCount}
+            onPageChange={(newPage, pageSize, filter) => {
+              setPage(newPage);
+              getData(newPage, pageSize, filter);
+            }}
+          />
+        </div>
       </motion.div>
     </>
   );

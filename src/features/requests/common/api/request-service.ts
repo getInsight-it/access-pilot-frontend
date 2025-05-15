@@ -1,8 +1,9 @@
-import { HttpClient, HttpRequestError, HttpRequestResponse } from '@getinsight.it/getinsight-common';
-import { REQUEST_API } from '../types/request.enum.ts';
-import { RequestModel } from "../types/request.model.ts";
-import { PaginatedResponse } from '../../../../common/types/util/paginated-response.ts';
+import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
+import { REQUEST_API } from "../types/request.enum.ts";
+import { PaginatedResponse } from "../../../../common/types/util/paginated-response.ts";
 import { httpClient } from "../../../../config/http/http.ts";
+import { RequestAttachmentInterface } from "../types/request-attachment.model.ts";
+import { RequestInterface } from "../types/request.model.ts";
 
 export class RequestService {
   httpClient: HttpClient;
@@ -18,7 +19,7 @@ export class RequestService {
     sortType: string,
     type?: string,
     filter?: string
-  ): Promise<PaginatedResponse<RequestModel> | null> {
+  ): Promise<PaginatedResponse<RequestInterface> | null> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),
       pageSize: pageSize.toString(),
@@ -26,61 +27,72 @@ export class RequestService {
       sortType: sortType
     });
 
-    if (type) {
-      queryParams.append('type', type);
+    if(type) {
+      queryParams.append("type", type);
     }
 
     if(filter) {
-      queryParams.append('protocolCode', filter);
-      queryParams.append('roleName', filter);
-      queryParams.append('clientName', filter);
+      queryParams.append("protocolCode", filter);
+      queryParams.append("roleName", filter);
+      queryParams.append("clientName", filter);
     }
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.ME_REQUESTS}?${queryParams.toString()}`);
 
-    if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<RequestModel>;
+    if(response instanceof HttpRequestResponse) {
+      return JSON.parse(response.data) as PaginatedResponse<RequestInterface>;
     } else {
-      console.error('Erro ao buscar clients paginados');
+      console.error("Erro ao buscar clients paginados");
     }
 
     return null;
   }
 
-  async createRequest(formData: FormData): Promise<HttpRequestResponse | HttpRequestError> {
+  async createRequest(formData: FormData): Promise<void> {
     const headers = new Map<string, string>();
     headers.set("Content-Type", "multipart/form-data");
-    return await this.httpClient.post(REQUEST_API.REQUESTS, formData, headers);
+
+    const response = await this.httpClient.post(REQUEST_API.REQUESTS, formData, headers);
+
+    if(response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return;
   }
 
   async updateRequest(id: number, formData: FormData): Promise<void> {
-      const headers = new Map<string, string>();
-      headers.set("Content-Type", "multipart/form-data");
-      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(
-        `${REQUEST_API.REQUESTS}/${id}`,
-        formData,
-        headers
-      );
+    const headers = new Map<string, string>();
+    headers.set("Content-Type", "multipart/form-data");
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(
+      `${REQUEST_API.REQUESTS}/${id}`,
+      formData,
+      headers
+    );
 
-      if (response instanceof HttpRequestError) {
-        console.error('Erro ao atualizar solicitação');
-      }
+    if(response instanceof HttpRequestError) {
+      console.error("Erro ao atualizar solicitação");
+    }
   }
 
-  async findRequestById(id: string): Promise<RequestModel | null> {
+  async findRequestById(id: string): Promise<RequestInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}`);
 
-    if (response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as RequestModel;
-    } else {
-      console.error('Erro ao buscar solicitação');
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as RequestInterface;
   }
 
-  async getClientAttachments(id: number): Promise<HttpRequestResponse | HttpRequestError> {
-    return await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}/attachments`);
+  async getClientAttachments(id: number): Promise<RequestAttachmentInterface[]> {
+    const response = await this.httpClient.get(`${REQUEST_API.REQUESTS}/${id}/attachments`);
+
+    if(response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return JSON.parse(response.data) as RequestAttachmentInterface[];
   }
 }
 

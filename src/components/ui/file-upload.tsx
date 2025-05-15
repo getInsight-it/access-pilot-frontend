@@ -52,7 +52,7 @@ export const FileUpload = ({
 
   const handleRemoveFile = (index: number, event: React.MouseEvent) => {
     event.preventDefault();
-    event.stopPropagation(); // Impede a propagação do evento para evitar a abertura da janela de seleção de arquivos
+    event.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 

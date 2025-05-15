@@ -73,7 +73,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       key,
       description,
       required,
-      allowedExtensions: selectedExtensions
+      allowedExtensions: selectedExtensions,
+      active: true
     });
 
     setKey("");
@@ -141,7 +142,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             setImportModalOpen(true);
           } else {
             importedConfigurations.forEach(config => {
-              onAddConfiguration(config);
+              onAddConfiguration({...config, active: true});
             });
           }
         }
@@ -164,7 +165,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     });
 
     importedConfigs.forEach(config => {
-      onAddConfiguration(config);
+      onAddConfiguration({...config, active: true});
     });
 
     setImportModalOpen(false);
@@ -177,6 +178,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     setDuplicateKeys([]);
     setImportedConfigs([]);
   };
+
+  const activeConfigurations = configurations.filter(config => config.active !== false);
 
   return (
     <div className="col-span-1 md:col-span-2">
@@ -280,14 +283,13 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         </div>
 
         <div>
-          {configurations.length === 0 ? (
+          {activeConfigurations.length === 0 ? (
             <div className="p-8 text-center border border-dashed rounded-lg">
               <p className="text-muted-foreground">Nenhuma configuração adicionada</p>
             </div>
           ) : (
             <div className="p-4 flex flex-row flex-wrap gap-4 items-center border border-dashed rounded-lg">
-              {/*TODO apresentar apenas configurações que estão ativas*/}
-              {configurations.map((config) => (
+              {activeConfigurations.map((config) => (
                 <Card
                   key={config.key}
                   className="border-primary relative w-[100px] h-[100px] flex flex-col items-center justify-center p-2 bg-secondary">

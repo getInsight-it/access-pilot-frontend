@@ -347,15 +347,9 @@ export default function Levels() {
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-      }}
-      animate={{
-        opacity: 1,
-        transition: { duration: 0.3, delay: 0.3, ease: "easeOut" },
-      }}
-      className="flex-1 space-y-4 p-4 pt-6 md:p-8"
-    >
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+      className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <Breadcrumbs items={breadcrumbItems} />
 
       <div className="flex items-start justify-between">
@@ -364,9 +358,10 @@ export default function Levels() {
           <Plus className="mr-2 h-4 w-4" /> Adicionar nova esfera
         </Link>
       </div>
+
       <Separator />
 
-      <div className="w-full ">
+      <div className="w-full max-w-content-container m-auto">
         <div className="rounded-md border border-[#b3b3b3] relative mb-10">
           <div className=" w-full  flex justify-between items-center px-4 h-[48px] border-b border-b3b3b3">
             <p className="uppercase font-medium text-muted-foreground">Nome</p>
