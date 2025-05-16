@@ -130,7 +130,7 @@ export function PilotoForm({ currentAnimation }: PersonagemProps) {
 
   return (
     <Canvas className="characterForm" camera={{ position: [-1, 2, 10], fov: 25 }}>
-      
+
       <ambientLight intensity={Math.PI} />
       <Environment files={environmentHDR} />
       <Character
@@ -140,16 +140,7 @@ export function PilotoForm({ currentAnimation }: PersonagemProps) {
         position={[0, -1, 0]}
       />
       <ContactShadows position={[0, -1.01, 0]} opacity={0.2} scale={10} blur={2} far={10} resolution={256} color="#000000" />
-
-      {/* <Environment background blur={0.75}>
-        <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-        <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-        <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
-        <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
-      </Environment> */}
-      
       <OrbitControls />
-
     </Canvas>
   )
 }

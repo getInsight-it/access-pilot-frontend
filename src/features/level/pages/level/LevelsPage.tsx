@@ -298,7 +298,7 @@ export default function Levels() {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={() => handleViewItems(item)}>
+                        <Button disabled={item.type === 'EXTERNAL'} variant="ghost" size="icon" onClick={() => handleViewItems(item)}>
                           <List className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>

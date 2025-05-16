@@ -1,6 +1,6 @@
 import type React from "react"
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "../../../../components/ui/button.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/table.tsx"
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx"
@@ -18,6 +18,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { motion } from "framer-motion"
 import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx"
 import { levelService } from "../../common/api/level-service.ts"
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 interface Item {
   id: number
@@ -33,11 +35,6 @@ interface Item {
   }
   externalCode?: string
   status?: string
-}
-
-interface ItemsResponse {
-  total: number
-  items: Item[]
 }
 
 interface Sphere {
@@ -349,39 +346,34 @@ export default function LevelItems() {
     }
   }
 
-  // Função para lidar com a mudança de página
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return
     setCurrentPage(page)
   }
 
-  // Função para lidar com a mudança no termo de pesquisa
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
   }
 
-  // Função para renderizar o item pai de forma segura
   const renderParentItem = (item: Item) => {
     if (!item.parent) return "Nenhum"
 
-    // Usar diretamente o nome do item pai da propriedade parent
     return item.parent.name || `Item ${item.parent.id}`
   }
 
   const breadcrumbItems = [
     { title: "Dashboard", link: "/dashboard" },
     { title: "Esferas", link: "/dashboard/levels" },
-    // { title: sphere?.name || "", link: `/dashboard/levels/${id}` },
     { title: "Itens", link: `/dashboard/levels/${id}/items` },
   ]
 
-  // if (loading)
-  //   return (
-  //     <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
-  //       <HighlightLoader />{" "}
-  //     </div>
-  //   )
-  if (error) return <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>
+  if (loading) return (
+    <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
+      <HighlightLoader />{" "}
+    </div>
+  );
+
+  const location = useLocation();
 
   return (
     <motion.div
@@ -407,8 +399,14 @@ export default function LevelItems() {
                   Importar CSV
                 </Link>
               </Button>
-              <Button asChild>
-                <Link to={`/dashboard/levels/${id}/items/create`}>Adicionar novo item</Link>
+              <Button
+                className="cursor-pointer"
+                asChild
+                onClick={() => {
+                  savePreviousRoute(location.pathname + location.search);
+                  navigate(`/dashboard/levels/${id}/items/create`);
+                }}>
+                <span>Adicionar novo item</span>
               </Button>
             </>
           )}
@@ -472,10 +470,17 @@ export default function LevelItems() {
                               <TableCell>{item.externalCode}</TableCell>
                               <TableCell>{renderParentItem(item)}</TableCell>
                               <TableCell>
-                                <Button className="h-[2rem]" variant="ghost" asChild>
-                                  <Link to={`/dashboard/levels/${id}/items/${item.id}/edit`}>
+                                <Button
+                                  className="h-[2rem] cursor-pointer"
+                                  variant="ghost"
+                                  asChild
+                                  onClick={() => {
+                                    savePreviousRoute(location.pathname + location.search);
+                                    navigate(`/dashboard/levels/${id}/items/${item.id}/edit`)
+                                  }}>
+                                  <span>
                                     <Edit className="w-3.5 h-3.5" />
-                                  </Link>
+                                  </span>
                                 </Button>
                                 <Button className="h-[2rem]" variant="ghost" onClick={() => handleDelete(item)}>
                                   <Trash className="w-4 h-4" />
@@ -569,7 +574,7 @@ export default function LevelItems() {
       )}
 
       <div className="max-w-content-container m-auto">
-        <Button className="" onClick={() => navigate(-1)} variant="ghost">
+        <Button className="" onClick={() => navigate(PRIVATE_ROUTES.LEVELS)} variant="ghost">
           Voltar
         </Button>
       </div>

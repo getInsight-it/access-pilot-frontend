@@ -9,11 +9,12 @@ import {
 } from "../../../components/ui/dropdown-menu";
 import { Cog, Eye, FolderSync, MoreHorizontal, Pen, User } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { catchError, finalize, from, tap } from "rxjs";
 import { toast } from "../../ui/use-toast.ts";
 import { ClientResponseInterface } from "../../../features/client/common/model/client.model.ts";
 import { clientService } from "../../../features/client/common/service/client-service.ts";
+import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 
 interface CellActionProps {
   data: ClientResponseInterface,
@@ -24,6 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, updateState }) => 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const onConfirm = async () => {};
 
@@ -126,8 +128,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, updateState }) => 
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/systems/${data.clientId}/edit`)}
-          >
+            onClick={() => {
+              savePreviousRoute(location.pathname + location.search);
+              navigate(`/dashboard/systems/${data.clientId}/edit`);
+            }}>
             <Pen className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           {data.managed && (
@@ -153,8 +157,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, updateState }) => 
           )}
           {data.managed && (
             <DropdownMenuItem
-              onClick={() => navigate(`/dashboard/systems/${data.clientId}/roles`)}
-            >
+              onClick={() => {
+                savePreviousRoute(location.pathname + location.search);
+                navigate(`/dashboard/systems/${data.clientId}/roles`);
+              }}>
               <User className="mr-2 h-4 w-4" /> Gerenciar papéis
             </DropdownMenuItem>
           )}

@@ -32,7 +32,7 @@ const status = {
     icon: "Clock",
     description: "Pendente",
   },
-  CANCELLED: {
+  CANCELED: {
     color: "bg-gray-200 text-gray-800 block w-32",
     icon: "Clock",
     description: "Cancelado",

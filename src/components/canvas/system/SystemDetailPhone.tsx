@@ -83,7 +83,7 @@ export default function SystemPhone() {
           <group rotation={[0, Math.PI, 0]}  position={[0, -2, 0]}>
             <Model scale={[2.2, 2.2, 2.2]} />
           </group>
-          <Environment preset="city" />
+          <Environment files={environmentHDR} />
           <ContactShadows position={[0, -4.4, 0]} opacity={0.5} scale={20} blur={2} far={4.5} />
           <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2.2} maxPolarAngle={Math.PI / 2.2} />
         </Canvas>

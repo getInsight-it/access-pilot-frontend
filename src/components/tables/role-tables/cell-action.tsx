@@ -14,6 +14,7 @@ import { toast } from "../../ui/use-toast.ts";
 import { useNavigate } from "react-router-dom";
 import { roleService } from "../../../features/role/common/service/role-service.ts";
 import { RoleResponseInterface } from "../../../features/role/common/types/role.model.ts";
+import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 
 interface CellActionProps {
   data: RoleResponseInterface,
@@ -61,7 +62,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/roles/${data.id}/edit`)}>
+            onClick={() => {
+              savePreviousRoute(location.pathname + location.search);
+              navigate(`/dashboard/roles/${data.id}/edit`)
+            }}>
             <Edit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           <DropdownMenuItem

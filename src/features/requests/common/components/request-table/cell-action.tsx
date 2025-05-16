@@ -7,17 +7,18 @@ import {
   DropdownMenuTrigger
 } from "../../../../../components/ui/dropdown-menu.tsx";
 import { Eye, MoreHorizontal } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { RequestModel } from "../../types/request.model.ts";
+import { useLocation, useNavigate } from "react-router-dom";
 import React from "react";
+import { savePreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 
 interface CellActionProps {
-  data: RequestModel;
+  data: any;
   origin?: string;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data, origin }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <>
@@ -32,8 +33,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, origin }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => navigate(`/dashboard/access-requests/${data.id}`, { state: { origin: origin } })}
-          >
+            onClick={() => {
+              savePreviousRoute(location.pathname + location.search, origin)
+              navigate(`/dashboard/access-requests/${data.id}`, { state: { origin: origin } })}
+            }>
             <Eye className="mr-2 h-4 w-4" /> Ver detalhes
           </DropdownMenuItem>
         </DropdownMenuContent>

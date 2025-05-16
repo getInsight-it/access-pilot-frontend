@@ -115,8 +115,8 @@ export const RoleStep = ({
               )}
             </div>
 
-            <ScrollArea className="h-[340px] mt-4">
-              <div className="space-y-2 grid grid-cols-1 gap-2">
+            <ScrollArea className="h-[340px] mt-4 px-2">
+              <div className="space-y-2 grid grid-cols-1 gap-2 px-2">
                 {roles && roles
                   .filter((role) =>
                     role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -150,7 +150,7 @@ export const RoleStep = ({
         </Popover>
       </div>
 
-      {selectedRole && (
+      {selectedRole && selectedRoleObject?.level && (
         <div className="mt-6">
           <h4 className="text-lg font-semibold mb-4">Preencha os detalhes da esfera:</h4>
           <DynamicSphereForm

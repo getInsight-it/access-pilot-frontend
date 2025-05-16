@@ -19,12 +19,13 @@ import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import { useLazyLoad } from "../../../../common/hooks/useIntersectionLazyLoad.ts";
 import { LevelItemInterface } from "../../common/types/level-item.model.ts";
+import { getPreviousRoute, goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 interface FormData {
   name: string;
   externalCode: string;
   description: string;
-  parentId: string;
+  parentId?: string;
 }
 
 interface PageablePresentationLevelItemInterface {
@@ -99,7 +100,7 @@ export const CreateItem: React.FC = () => {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
-        parentId: data.parentId
+        ...(level?.parent && { parentId: data.parentId })
       };
       const result = await levelService.createLevelItem(levelId!, payload);
       if (!result) throw new Error("Falha ao adicionar o item.");
@@ -207,48 +208,50 @@ export const CreateItem: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full md:w-1/3">
-                  <Label htmlFor="parentId">Item pai</Label>
-                  <Controller
-                    name="parentId"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: "Item pai é obrigatório" }}
-                    render={({ field }) => (
-                      <div className="relative">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className={`w-full mt-2 ${errors.parentId ? "border-red-500" : ""}`}>
-                            <SelectValue placeholder="Selecione o item pai" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {pageableAvailableParentItens.items.map((item, idx) => (
-                              <SelectItem
-                                key={`${item.id}-${idx}`}
-                                value={item.id.toString()}
-                                ref={
-                                  idx === (pageableAvailableParentItens.items.length > 10
-                                      ? pageableAvailableParentItens.items.length - 10
-                                      : pageableAvailableParentItens.items.length - 1
-                                  ) ? sentinelRef : null}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {errors.parentId && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                              </TooltipTrigger>
-                              <TooltipContent>{errors.parentId.message}</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
+                {level?.parent && (
+                  <div className="w-full md:w-1/3">
+                    <Label htmlFor="parentId">Item pai</Label>
+                    <Controller
+                      name="parentId"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Item pai é obrigatório" }}
+                      render={({ field }) => (
+                        <div className="relative">
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`w-full mt-2 ${errors.parentId ? "border-red-500" : ""}`}>
+                              <SelectValue className="text-red-500" placeholder="Selecione o item pai" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {pageableAvailableParentItens.items.map((item, idx) => (
+                                <SelectItem
+                                  key={`${item.id}-${idx}`}
+                                  value={item.id.toString()}
+                                  ref={
+                                    idx === (pageableAvailableParentItens.items.length > 10
+                                        ? pageableAvailableParentItens.items.length - 10
+                                        : pageableAvailableParentItens.items.length - 1
+                                    ) ? sentinelRef : null}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {errors.parentId && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                                </TooltipTrigger>
+                                <TooltipContent>{errors.parentId.message}</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
+                )}
               </div>
               <div className="w-full">
                 <Label htmlFor="description">Descrição</Label>
@@ -282,7 +285,7 @@ export const CreateItem: React.FC = () => {
         <div className="max-w-content-container m-auto">
           <Separator />
           <div className="flex justify-between w-full mt-6">
-            <Button onClick={() => navigate(-1)} variant="ghost">Voltar</Button>
+            <Button onClick={() => goToPreviousRoute(navigate)} variant="ghost">Voltar</Button>
             <Button type="submit" onClick={handleSubmit(onSubmit)}>Adicionar Item</Button>
           </div>
         </div>

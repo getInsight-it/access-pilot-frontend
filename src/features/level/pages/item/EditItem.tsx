@@ -19,6 +19,7 @@ import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import { useLazyLoad } from "../../../../common/hooks/useIntersectionLazyLoad.ts";
 import { LevelItemInterface } from "../../common/types/level-item.model.ts";
+import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 interface FormData {
   name: string;
@@ -38,6 +39,7 @@ export const EditItem: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState<LevelInterface | null>(null);
+  const [item, setItem] = useState<LevelItemInterface>(null);
   const [pageableAvailableParentItens, setPageableAvailableParentItens] = useState<PageablePresentationLevelItemInterface>({
     items: [],
     total: 0,
@@ -102,6 +104,7 @@ export const EditItem: React.FC = () => {
       if (!itemData) {
         throw new Error("Falha ao carregar dados do item");
       }
+      setItem(itemData);
 
       setValue("name", itemData.name || "");
       setValue("description", itemData.description || "");
@@ -147,7 +150,7 @@ export const EditItem: React.FC = () => {
 
   const sentinelRef = useLazyLoad(
     retriveAvailableParentItemOptions,
-    [level!.parent!.id.toString(), true],
+    [level?.parent?.id.toString() || "", true],
     { threshold: 0, oncePerElement: true }
   );
 
@@ -259,18 +262,25 @@ export const EditItem: React.FC = () => {
                             <SelectValue placeholder="Selecione o item pai" />
                           </SelectTrigger>
                           <SelectContent>
-                            {pageableAvailableParentItens.items.map((item, idx) => (
-                              <SelectItem
-                                key={`${item.id}-${idx}`}
-                                value={item.id.toString()}
-                                ref={
-                                  idx === (pageableAvailableParentItens.items.length > 10
-                                      ? pageableAvailableParentItens.items.length - 10
-                                      : pageableAvailableParentItens.items.length - 1
-                                  ) ? sentinelRef : null}>
-                                {item.name}
+                            {item && item.parent && (
+                              <SelectItem value={item.parent.id.toString()} disabled>
+                                {item.parent.name}
                               </SelectItem>
-                            ))}
+                            )}
+                            {pageableAvailableParentItens.items
+                              .filter(parentItem => !(item?.parent && parentItem.id === item.parent.id))
+                              .map((item, idx) => (
+                                <SelectItem
+                                  key={`${item.id}-${idx}`}
+                                  value={item.id.toString()}
+                                  ref={
+                                    idx === (pageableAvailableParentItens.items.length > 10
+                                        ? pageableAvailableParentItens.items.length - 10
+                                        : pageableAvailableParentItens.items.length - 1
+                                    ) ? sentinelRef : null}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                         {errors.parentId && (
@@ -320,7 +330,7 @@ export const EditItem: React.FC = () => {
         <div className="max-w-content-container m-auto">
           <Separator />
           <div className="flex justify-between w-full mt-6">
-            <Button onClick={() => navigate(-1)} variant="ghost">Voltar</Button>
+            <Button onClick={() => goToPreviousRoute(navigate)} variant="ghost">Voltar</Button>
             <Button
               type="submit"
               onClick={handleSubmit(onSubmit)}

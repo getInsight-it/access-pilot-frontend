@@ -59,9 +59,7 @@ export const RoleEdit = () => {
 
         <Separator className="" />
 
-        <div className="w-128">
-          {data && (<RoleForm client={data?.client} readonly={false} initialData={data} />)}
-        </div>
+        {data && (<RoleForm client={data?.client} readonly={false} initialData={data} />)}
       </motion.div>
     </ScrollArea>
   );

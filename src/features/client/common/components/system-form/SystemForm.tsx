@@ -18,6 +18,7 @@ import { AttachmentConfigurationForm } from "./AttachmentConfigurationForm.tsx";
 import { AttachmentConfigurationInterface } from "../../model/configuration.model.ts";
 import { ClientStatusEnum } from "../../enum/client-status.enum.ts";
 import { useEffect } from "react";
+import { goToPreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 
 
 const formSchema = z.object({
@@ -381,7 +382,7 @@ export const SystemForm: React.FC<SystemFormProps> = ({ initialData, readonly })
           <Separator className="mt-10" />
 
           <div className="mt-6 flex justify-between">
-            <Button type="button" onClick={() => navigate(-1)} variant="ghost">
+            <Button type="button" onClick={() => goToPreviousRoute(navigate)} variant="ghost">
               Voltar
             </Button>
             {getActionStyle() === "DETAIL" ? null : (

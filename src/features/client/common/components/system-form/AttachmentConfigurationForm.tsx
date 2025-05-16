@@ -304,7 +304,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                   <Popover>
                     <PopoverTrigger asChild>
                       <div className="cursor-pointer gap-2 w-full h-full flex flex-col items-center justify-center">
-                        <Settings className="h-6 w-6 mt-1 text-gray-400" />
+                        <Settings className="h-5 w-5 mt-1 text-gray-800" />
                         <span className="text-xs text-center line-clamp-2">
                           {truncateText(config.key, 12)}
                         </span>

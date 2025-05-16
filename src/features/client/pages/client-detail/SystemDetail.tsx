@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { catchError, finalize, from, tap } from "rxjs";
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
 import { Heading } from "../../../../components/ui/heading.tsx";
@@ -18,6 +18,8 @@ import { ClientDetailActions } from "./partials/ClientDetailActions.tsx";
 import { ClientDetailDescription } from "./partials/ClientDetailDescription.tsx";
 import { ClientDetailGeneralInformation } from "./partials/ClientDetailGeneralInformation.tsx";
 import { ClientDetailConfigurations } from "./partials/ClientDetailConfigurations.tsx";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 const breadcrumbItems = [
   { title: "Dashboard", link: "/dashboard" },
@@ -161,11 +163,15 @@ export const SystemDetail = () => {
     });
   };
 
+  const location = useLocation();
+
   const handleEdit = (clientId: string) => {
+    savePreviousRoute(location.pathname + location.search);
     navigate(`/dashboard/systems/${clientId}/edit`);
   };
 
   const handleManageRoles = (clientId: string) => {
+    savePreviousRoute(location.pathname + location.search);
     navigate(`/dashboard/systems/${clientId}/roles`);
   };
 
@@ -226,7 +232,7 @@ export const SystemDetail = () => {
 
             <Button
               className=""
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(PRIVATE_ROUTES.SYSTEMS)}
               variant="ghost">
               Voltar
             </Button>

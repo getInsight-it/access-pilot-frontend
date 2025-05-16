@@ -26,12 +26,14 @@ import {
 } from "../../../components/ui/select.tsx";
 import { LevelInterface } from "../../level/common/types/level.model.ts";
 import { levelService } from "../../level/common/api/level-service.ts";
+import { goToPreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
+import HighlightLoader from "../../../components/highlightloader/HighLightLoader.tsx";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
   description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
   label: z.string().min(3, { message: "A label do sistema deve conter no mínimo 3 caracteres" }),
-  levelId: z.string()
+  levelId: z.string().optional()
 });
 
 interface RoleFormProps {
@@ -43,7 +45,8 @@ interface RoleFormProps {
 
 export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonly, onSuccessSubmit }) => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Para operações de submissão
+  const [dataLoading, setDataLoading] = useState(true); // Para carregamento inicial de dados
   const [levels, setLevels] = useState<LevelInterface[]>([]);
   const [loadingLevels, setLoadingLevels] = useState(false);
   const toastMessage = initialData ? "Papel atualizado." : "Papel criado.";
@@ -56,25 +59,32 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
   });
 
   useEffect(() => {
-    setLoadingLevels(true);
-    levelService.getLevels()
-      .then((response) => {
+    const fetchData = async () => {
+      setLoadingLevels(true);
+      try {
+        const response = await levelService.getLevels();
         if (response && response.items) {
           setLevels(response.items);
+
+          if (initialData && initialData.level.id.toString()) {
+            methods.setValue("levelId", initialData.level.id.toString());
+          }
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Erro ao carregar esferas:", error);
         toast({
           title: "Erro ao carregar esferas",
           description: "Não foi possível carregar as esferas disponíveis.",
           variant: "destructive"
         });
-      })
-      .finally(() => {
+      } finally {
         setLoadingLevels(false);
-      });
-  }, [toast]);
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast, initialData, methods]);
 
   function getActionStyle() {
     if(readonly) {
@@ -96,35 +106,47 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
     CREATE: "Adicionar papel"
   };
 
-  const onSubmit = async (form: RoleResponseInterface) => {
+  const onSubmit = async (form: any) => {
     const role = {
-      ...form
+      ...form,
+      levelId: form.levelId === undefined || form.levelId === "empty" ? undefined : Number(form.levelId)
     } as RoleResponseInterface;
     role.client = client;
-
     setLoading(true);
-    from(initialData ? roleService.updateRole(initialData?.id, role) : roleService.createRole(role))
-      .pipe(
-        tap(() => {
-          toast({
-            title: toastMessage,
-            description: `O papel ${role.name} foi ${initialData ? "atualizado" : "criado"} com sucesso.`
-          });
-          onSuccessSubmit?.();
-        }),
-        catchError((error) => {
-          toast({
-            title: `Erro ao ${toastMessage}`,
-            description: `O papel ${role.name} não foi ${initialData ? "atualizado" : "criado"}.`,
-            variant: "destructive"
-          });
-          console.error(error);
-          return [];
-        }),
-        finalize(() => setLoading(false))
-      )
-      .subscribe();
+
+    try {
+      if(initialData) {
+        await roleService.updateRole(initialData?.id, role);
+      } else {
+        await roleService.createRole(role)
+      }
+
+      toast({
+        title: toastMessage,
+        description: `O papel ${role.name} foi ${initialData ? "atualizado" : "criado"} com sucesso.`
+      });
+      onSuccessSubmit?.();
+      navigate(`/dashboard/systems/${client?.clientId}/roles`);
+    } catch (error) {
+      toast({
+        title: `Erro ao ${toastMessage}`,
+        description: `O papel ${role.name} não foi ${initialData ? "atualizado" : "criado"}.`,
+        variant: "destructive"
+      });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Se ainda estiver carregando dados, exibe apenas o loading
+  if (dataLoading || loadingLevels) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <HighlightLoader />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -231,7 +253,9 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
                 name="levelId"
                 render={({ field }) => (
                   <FormItem className="mb-2">
-                    <FormLabel className="text-base font-semibold">Esfera</FormLabel>
+                    <FormLabel className="text-base font-semibold">
+                      Esfera <span className="italic text-sm">(opcional)</span>
+                    </FormLabel>
                     <div className="relative">
                       <FormControl>
                         <Select
@@ -243,21 +267,12 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
                             <SelectValue placeholder="Selecione uma esfera" />
                           </SelectTrigger>
                           <SelectContent>
-                            {loadingLevels ? (
-                              <SelectItem value="loading" disabled>
-                                Carregando esferas...
+                            <SelectItem value="empty">Nenhuma esfera</SelectItem>
+                            {!loadingLevels && levels.length > 0 && levels.map((level) => (
+                              <SelectItem key={level.id} value={level.id.toString()}>
+                                {level.name}
                               </SelectItem>
-                            ) : levels.length > 0 ? (
-                              levels.map((level) => (
-                                <SelectItem key={level.id} value={level.id.toString()}>
-                                  {level.name}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <SelectItem value="empty" disabled>
-                                Nenhuma esfera encontrada
-                              </SelectItem>
-                            )}
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -299,7 +314,7 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
           </div>
           <Separator className="mt-10" />
           <div className="mt-6 flex justify-between">
-            <Button type="button" onClick={() => navigate(-1)} variant="ghost">
+            <Button type="button" onClick={() => goToPreviousRoute(navigate)} variant="ghost">
               Voltar
             </Button>
             {getActionStyle() === "DETAIL" ? null : (

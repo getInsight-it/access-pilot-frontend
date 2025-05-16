@@ -72,28 +72,24 @@ export class RoleService {
     }
   }
 
-  async createRole(roleData: RoleResponseInterface): Promise<RoleResponseInterface | null> {
+  async createRole(roleData: RoleResponseInterface): Promise<RoleResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(ROLE_API.ROLES, roleData);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as RoleResponseInterface;
-    } else {
-      console.error("Erro ao criar role");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as RoleResponseInterface;
   }
 
-  async updateRole(id?: number, roleData?: RoleResponseInterface): Promise<RoleResponseInterface | null> {
+  async updateRole(id?: number, roleData?: RoleResponseInterface): Promise<RoleResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${ROLE_API.ROLES}/${id}`, roleData);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as RoleResponseInterface;
-    } else {
-      console.error("Erro ao atualizar role");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as RoleResponseInterface;
   }
 }
 

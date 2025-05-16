@@ -184,7 +184,7 @@ const appRoutes = [
               </ApproverGuard>
             )
           },
-          { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+          // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
         ]
       }
     ]
@@ -198,13 +198,13 @@ export const AppRouter: React.FC = () => {
     ? [
       ...appRoutes,
       ...errorRoutes,
-      { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+      // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
     ]
     : [
       ...authRoutes,
       ...errorRoutes,
       { path: "/", element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
-      { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+      // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
     ];
 
   return <>{useRoutes(routes)}</>;

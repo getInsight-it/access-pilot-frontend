@@ -418,8 +418,8 @@ export default function CreateOrEditLevel() {
             </div>
           )}
 
-          <div className="w-full mt-4 max-w-content-container m-auto">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="w-full mt-4 max-w-content-container m-auto">
+            <div  className="space-y-4 pb-10 border-b">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <div>
                   <Label className="text-base font-semibold" htmlFor="name">Nome</Label>
@@ -553,25 +553,22 @@ export default function CreateOrEditLevel() {
                   </div>
                 </div>
               )}
-
-
-            </form>
-          </div>
+            </div>
+            <div className="flex flex-row gap-2 max-w-content-container m-auto justify-between mt-6">
+              <Button
+                className="mr-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/dashboard/levels");
+                }}
+                variant="ghost"
+                type="button">Voltar
+              </Button>
+              <Button onClick={() => {console.log("dasda")}}>{isEditing ? "Atualizar esfera" : "Criar esfera"}</Button>
+            </div>
+          </form>
         </div>
-
       </motion.div>
-      <div className="flex flex-row gap-2 px-4 max-w-content-container m-auto">
-        <Button
-          className="mr-2"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate(-1);
-          }}
-          variant="ghost"
-          type="button">Voltar
-        </Button>
-        <Button type="submit">{isEditing ? "Atualizar esfera" : "Criar esfera"}</Button>
-      </div>
     </ScrollArea>
   );
 }

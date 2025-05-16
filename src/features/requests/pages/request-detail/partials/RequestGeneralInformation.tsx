@@ -39,7 +39,7 @@ const RequestGeneralInformation = ({
                 <p className="font-bold text-lg mr-2 whitespace-nowrap">Motivo do acesso:</p>
                 <div className="w-full mt-[2px]">
                   <TruncatedText
-                    text={"asda adsdasdqwa a" + description}
+                    text={description}
                     maxChars={150}
                     fontSize="text-base"
                     className="w-full"

@@ -51,6 +51,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useAnimations, OrbitControls, Environment, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { GLTF } from 'three-stdlib'
+import { useTheme } from "../layout/ThemeToggle/theme-provider.tsx";
 
 type ActionName = 'RightEyeAction' | 'LeftEyeAction'
 
@@ -95,7 +96,7 @@ function Head() {
   useFrame((state) => {
     if (group.current) {
       const t = state.clock.getElapsedTime()
-      
+
       // Gentle floating animation
       group.current.position.y = Math.sin(t * 2) * 0.05
 
@@ -156,6 +157,15 @@ function Scene() {
     }
   }, [hovered])
 
+  const theme = useTheme();
+
+  // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
+  const environmentHDR = theme === 'dark'
+    ? '/hdr/warehouse.hdr'
+    : theme === 'tangerine'
+      ? '/hdr/lobby.hdr'  // Caminho para o HDR do tema tangerine
+      : '/hdr/park.hdr';  // Tema claro usa o HDR padrão
+
   return (
     <div className="w-full h-full ">
       <Canvas camera={{ position: [3, 0, 5], fov: 50 }}>
@@ -163,8 +173,8 @@ function Scene() {
           <ambientLight intensity={0.5} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           <CameraController />
-          <Head />          
-          <Environment preset="sunset" />
+          <Head />
+          <Environment files={environmentHDR} />
         </Suspense>
       </Canvas>
       {/* <div className="absolute bottom-5 left-5 text-white text-xl font-bold">

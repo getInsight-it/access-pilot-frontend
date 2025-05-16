@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Button } from "../../../../../components/ui/button.tsx";
 import { ConfirmationModal } from "../../../../../components/request-detail/ConfirmationModal.tsx";
+import { getPreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 
 interface RequestStatusContainerProps {
   status: any;
@@ -92,6 +93,8 @@ const RequestStatus = ({
     setIsModalOpen(false);
   };
 
+  const previousRouteState = getPreviousRoute();
+
   return (
     <div className="grid grid-flow-row-dense grid-cols-1 lg:grid-cols-12 gap-8 mt-6 lg:h-auto mb-6">
       <div className="col-span-8 2xl:col-span-6 w-full">
@@ -121,7 +124,7 @@ const RequestStatus = ({
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -12, opacity: 0 }}>
                             <div className="flex gap-4">
-                              {canCancel && (
+                              {(canCancel && previousRouteState?.data === "created" && !isFinished) && (
                                 <Button
                                   className="w-40 bg-red-200 text-red-800 hover:bg-red-800 hover:text-red-200"
                                   onClick={() => {
@@ -131,8 +134,8 @@ const RequestStatus = ({
                                   Cancelar
                                 </Button>
                               )}
-
-                              {(!isFinished && status !== "CANCELED" && !canCancel) && (
+                              {/* TODO implementar essa lógica apenas no backend pois irá gerar erro caso ocorra acesso via URL */}
+                              {(!isFinished && status !== "CANCELED" && previousRouteState!.data === "assigned") && (
                                 <>
                                   <Button
                                     className="w-40 bg-red-200 text-red-800 hover:bg-red-400 hover:text-white"

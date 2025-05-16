@@ -107,7 +107,8 @@ export default function RequestAccess() {
         isValid = false;
       }
 
-      if(customForm["roleId"].value && !customForm["codeItem"].value) {
+      const role = roles.find(role => role.id.toString() === customForm["roleId"].value);
+      if((customForm["roleId"].value && role!.level) && !customForm["codeItem"].value) {
         setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
         isValid = false;
       }
@@ -284,7 +285,7 @@ export default function RequestAccess() {
       const request = {
         clientId: customForm["clientId"].value,
         roleId: Number(customForm["roleId"].value),
-        codeItem: customForm["codeItem"].value,
+        ...(customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }),
         description: customForm["reason"].value
       };
 

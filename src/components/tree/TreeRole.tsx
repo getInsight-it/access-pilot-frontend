@@ -31,7 +31,6 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     }
   }, [data]);
 
-
   function buildTreeObject(backendData: RoleResponseInterface[]) {
     const validData = Array.isArray(backendData) ? backendData : [];
 
@@ -76,11 +75,19 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     return validData;
   };
 
-
   const handleSave = () => {
     const roleDTOList = convertToRoleDTOList(items);
+    const clientId = roleDTOList[0].client!.id;
+    const rolePayload = roleDTOList.map((role) => {
+      return {
+        id: role.id,
+        parentId: role.roleParent?.id,
+        clientId
+      }
+    });
+
     setLoading(true);
-    from(roleService.update(roleDTOList)).pipe(
+    from(roleService.update(rolePayload as any)).pipe(
       tap(() => {
         toast({
           title: "Roles atualizados",
@@ -100,7 +107,6 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
       finalize(() => setLoading(false))
     ).subscribe();
   };
-
 
   return (
     <>
