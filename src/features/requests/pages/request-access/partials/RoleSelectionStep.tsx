@@ -8,7 +8,7 @@ import { ScrollArea } from "../../../../../components/ui/scroll-area.tsx";
 import { useEffect, useState } from "react";
 import { RoleResponseInterface } from "../../../../role/common/types/role.model.ts";
 import IconRenderer from "../../../../../components/icons/IconRenderer.tsx";
-import DynamicSphereForm from "./DynamicSphereForm.tsx";
+import DynamicSphereForm from "../../../../level/common/components/DynamicSphereForm.tsx";
 import { BasicFormFieldInterface, RequestFormFieldType } from "../RequestAccess.tsx";
 
 interface RoleStepProps {

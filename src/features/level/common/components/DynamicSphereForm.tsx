@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../components/ui/select.tsx";
-import { levelService } from "../../../../level/common/api/level-service.ts";
-import { LevelInterface } from "../../../../level/common/types/level.model.ts";
-import { LevelItemInterface } from "../../../../level/common/types/level-item.model.ts";
-import { LevelSubItemInterface } from "../../../../level/common/types/level-subitem.model.ts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select.tsx";
+import { levelService } from "../api/level-service.ts";
+import { LevelInterface } from "../types/level.model.ts";
+import { LevelItemInterface } from "../types/level-item.model.ts";
+import { LevelSubItemInterface } from "../types/level-subitem.model.ts";
 import { Label } from "@radix-ui/react-label";
-import { cn } from "../../../../../config/lib/utils.ts";
+import { cn } from "../../../../config/lib/utils.ts";
 
 interface DynamicSphereInterface {
   sphere: LevelInterface;
@@ -13,6 +13,7 @@ interface DynamicSphereInterface {
   hasMoreItems: boolean;
   actualPage: number;
   totalItems: number;
+  selectedItemId: string | number
 }
 
 interface DynamicSphereFormProps {
@@ -21,13 +22,15 @@ interface DynamicSphereFormProps {
   limitFirst?: boolean;
   hasError?: boolean;
   onErrorClear?: () => void;
+  simpleLabel?: boolean;
 }
 
 const DynamicSphereForm = ({
   initialId,
   onHierarchyComplete,
   hasError = false,
-  onErrorClear
+  onErrorClear,
+  simpleLabel = false
 }: DynamicSphereFormProps) => {
   const subItemPageSize = 10;
   const [spheresData, setSpheresData] = useState<DynamicSphereInterface[]>([]);
@@ -77,22 +80,19 @@ const DynamicSphereForm = ({
         .id
       onHierarchyComplete(itemId);
 
-      // Clear error when hierarchy is complete
       if (hasError && onErrorClear) {
         onErrorClear();
       }
     }
   }, [selectedValues, onHierarchyComplete, hasError, onErrorClear]);
 
-  // Find the last available select that isn't disabled
   const findLastActiveSelectIndex = () => {
     for (let i = spheresData.length - 1; i >= 0; i--) {
-      // A select is active if either it's the first one, or its parent has a value
       if (i === 0 || (i > 0 && selectedValues[i - 1] !== "")) {
         return i;
       }
     }
-    return 0; // Default to the first one if none are active
+    return 0;
   };
 
   const handleSelectChange = async (index: number, newValue: string) => {
@@ -113,7 +113,6 @@ const DynamicSphereForm = ({
       return data;
     });
 
-    // Clear error when any selection is made
     if (hasError && onErrorClear) {
       onErrorClear();
     }
@@ -124,12 +123,13 @@ const DynamicSphereForm = ({
       if(selectedItem) {
         try {
           const newPageableItems = await levelService.getItemSubItems(
-            currentSphereData.sphere.id,
+            spheresData[index].sphere.id,
             selectedItem.id,
             subItemPageSize
           );
           setSpheresData(prev => {
             const data = [...prev];
+            data[index] = { ...data[index], selectedItemId: selectedItem.id };
             data[index + 1] = { ...data[index + 1], items: newPageableItems.items, totalItems: newPageableItems.total };
             return data;
           });
@@ -143,10 +143,12 @@ const DynamicSphereForm = ({
   const loadMoreSubItems = async (index: number) => {
     if(spheresData[index].hasMoreItems) {
       if(index === 0) {
+        const parentSphereData = spheresData[index - 1];
         const actualSphereData = spheresData[index];
         const actualSphereNextItemPage = actualSphereData.actualPage + 1;
-        const itemResponse = await levelService.getLevelItems(
-          actualSphereData.sphere.id.toString(),
+        const itemResponse = await levelService.getItemSubItems(
+          actualSphereData.sphere.parent!.id,
+          parentSphereData.selectedItemId as number,
           actualSphereNextItemPage
         );
         setSpheresData(prev => {
@@ -154,9 +156,9 @@ const DynamicSphereForm = ({
           data[index] = {
             ...data[index],
             actualPage: actualSphereNextItemPage,
-            items: [...data[index].items, ...itemResponse.items],
-            hasMoreItems: (data[index].items.length + itemResponse.items.length) < itemResponse.totalItems,
-            totalItems: itemResponse.totalItems
+            items: [...data[index].items, ...itemResponse.items] as any,
+            hasMoreItems: (data[index].items.length + itemResponse.items.length) < itemResponse.total,
+            totalItems: itemResponse.total
           };
           return data;
         });
@@ -165,26 +167,30 @@ const DynamicSphereForm = ({
       }
 
       try {
-        const { sphere, items } = spheresData[index - 1];
+        const { sphere: previousSphere, items } = spheresData[index - 1];
         const parentSelecetedItemName = selectedValues[index - 1];
         const selectedItem = items.find(i => i.name === parentSelecetedItemName);
         const actualSpherePageNextPage = spheresData[index].actualPage + 1;
-        const res = await levelService.getItemSubItems(sphere.id, selectedItem!.id, subItemPageSize, actualSpherePageNextPage);
+        const res = await levelService.getItemSubItems(
+          previousSphere.id, selectedItem!.id, subItemPageSize, actualSpherePageNextPage
+        );
 
-        setSpheresData(prev => {
-          const data = [...prev];
-          const indexNumber = index;
-          const actualSphereData = data[indexNumber];
+        if(res.items.length > 0) {
+          setSpheresData(prev => {
+            const data = [...prev];
+            const indexNumber = index;
+            const actualSphereData = data[indexNumber];
 
-          data[indexNumber] = {
-            ...actualSphereData,
-            items: [...actualSphereData.items, ...res.items] as LevelSubItemInterface[],
-            actualPage: actualSpherePageNextPage,
-            hasMoreItems: (actualSphereData.items.length + res.items.length) < res.total,
-            totalItems: res.total
-          };
-          return data;
-        });
+            data[indexNumber] = {
+              ...actualSphereData,
+              items: [...actualSphereData.items, ...res.items] as LevelSubItemInterface[],
+              actualPage: actualSpherePageNextPage,
+              hasMoreItems: (actualSphereData.items.length + res.items.length) < res.total,
+              totalItems: res.total
+            };
+            return data;
+          });
+        }
       } catch (err) {
         console.error("Erro ao buscar subitems:", err);
       }
@@ -233,7 +239,7 @@ const DynamicSphereForm = ({
               shouldShowError && "text-red-500"
             )}>
               <span className="text-sm font-medium">
-                Selecione um item para a esfera de nível {sphere.name}:
+                {!simpleLabel && 'Selecione um item para a esfera de nível'} {sphere.name}:
                 {shouldShowError && <span className="text-red-500 ml-1">*</span>}
               </span>
               <span className="text-xs font-normal text-gray-500">({totalItems} itens encontrados)</span>
