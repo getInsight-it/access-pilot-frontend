@@ -3,7 +3,7 @@ export interface NotificationModel {
   uuid: string;
   title: string;
   description: string;
-  isOpen: boolean;
+  isOpened: boolean;
   type: string;
   ultimaAlteracao: string;
   requestId: number;

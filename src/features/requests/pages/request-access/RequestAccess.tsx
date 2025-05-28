@@ -218,7 +218,11 @@ export default function RequestAccess() {
             setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
           }}
           handlerSelectedSphere={(codeItem) => {
-            setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
+            if(codeItem) {
+              setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
+            } else {
+              setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+            }
           }}
           handlerClearSphereHierarchyError={() => {
             clearError("codeItem");

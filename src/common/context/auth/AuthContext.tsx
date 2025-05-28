@@ -2,7 +2,7 @@ import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { KeycloakRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
 import useAuthStore from "../../../store/authStore.ts";
 
-interface AuthContextType {
+export interface AuthContextType {
   isAuthenticated: boolean;
   user: any;
   roles: KeycloakRoles | null;

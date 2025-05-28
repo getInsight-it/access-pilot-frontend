@@ -26,8 +26,9 @@ import { RoleEdit } from "./features/role/pages/RoleEdit.tsx";
 import { RoleDetail } from "./features/role/pages/RoleDetail.tsx";
 import { CreateItem } from "./features/level/pages/item/CreateItem.tsx";
 import { EditItem } from "./features/level/pages/item/EditItem.tsx";
-import { ApproverGuard } from "./common/context/auth/approver-guard.tsx";
+import { RoleGuard } from "./common/context/auth/RoleGuard.tsx";
 import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
+import { UserRoleEnum } from "./common/types/user/user.model.ts";
 
 const authRoutes = [
   {
@@ -61,130 +62,136 @@ const appRoutes = [
         children: [
           { path: PRIVATE_ROUTES.MY_ACCESS_REQUESTS, element: <MyAccessRequests /> },
           { path: PRIVATE_ROUTES.REQUEST_ACCESS, element: <RequestAccess /> },
-          { path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID, element: <RequestDetailPage /> },
-          { path: PRIVATE_ROUTES.NOTIFICATIONS, element: <NotificationsPage /> },
+          {
+            path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
+            element: <RequestDetailPage />
+          },
+          {
+            path: PRIVATE_ROUTES.NOTIFICATIONS,
+            element: <NotificationsPage />
+          },
           {
             path: PRIVATE_ROUTES.DASHBOARD,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]}>
                 <Dashboard />
-              </ApproverGuard>
+              </RoleGuard>
             ),
             index: true
           },
           {
             path: PRIVATE_ROUTES.SYSTEMS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <SystemsPage />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.SYSTEMS_EDIT,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <SystemEdit />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.SYSTEMS_DETAILS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <SystemDetail />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.NEW_SYSTEM,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <NewSystem />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.ROLES,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <RolesPage />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.ROLES_EDIT,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <RoleEdit />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.ROLES_DETAILS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <RoleDetail />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.NEW_ROLE,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <NewRole />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.APPROVER]}>
                 <ManageRequests />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.CREATE_LEVEL,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <CreateOrEditLevel />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.LEVELS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <LevelsPage />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.LEVEL_ITEMS,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <LevelItems />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.CREATE_ITEM,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <CreateItem />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
           {
             path: PRIVATE_ROUTES.EDIT_ITEM,
             element: (
-              <ApproverGuard>
+              <RoleGuard roles={[UserRoleEnum.ADMIN]}>
                 <EditItem />
-              </ApproverGuard>
+              </RoleGuard>
             )
           },
-          // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+          { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
         ]
       }
     ]
@@ -198,13 +205,13 @@ export const AppRouter: React.FC = () => {
     ? [
       ...appRoutes,
       ...errorRoutes,
-      // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+      { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
     ]
     : [
       ...authRoutes,
       ...errorRoutes,
       { path: "/", element: <Navigate to={AUTH_ROUTES.LOGIN} replace /> },
-      // { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
+      { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
     ];
 
   return <>{useRoutes(routes)}</>;

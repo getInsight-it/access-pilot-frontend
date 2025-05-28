@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../common/hooks/useSidebar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useTheme } from "./layout/ThemeToggle/theme-provider";
-import { ApproverComponentGuard } from "../common/context/auth/approver-guard.tsx";
+import { RoleComponentGuard } from "../common/context/auth/RoleGuard.tsx";
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -48,7 +48,7 @@ export function DashboardNav({
                     isMinimized && "px-3"
                   )}
                   onClick={() => {
-                    if (setOpen) setOpen(false);
+                    if(setOpen) setOpen(false);
                   }}
                 >
                   <Icon
@@ -78,7 +78,7 @@ export function DashboardNav({
 
           return item.href ? (
             item.protected
-              ? (<ApproverComponentGuard key={index}>{content}</ApproverComponentGuard>)
+              ? (<RoleComponentGuard roles={item.roles || undefined} key={index}>{content}</RoleComponentGuard>)
               : content
           ) : null;
         })}

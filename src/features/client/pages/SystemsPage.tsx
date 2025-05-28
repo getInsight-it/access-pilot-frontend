@@ -4,15 +4,16 @@ import { columns } from "../../../components/tables/systems/columns.tsx";
 import { Heading } from "../../../components/ui/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { motion } from "framer-motion";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { cn } from "../../../config/lib/utils.ts";
-import { buttonVariants } from "../../../components/ui/button.tsx";
+import { Button, buttonVariants } from "../../../components/ui/button.tsx";
 import { Plus } from "lucide-react";
 import { clientService } from "../common/service/client-service.ts";
 import { ClientResponseInterface } from "../common/model/client.model.ts";
+import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 
 const breadcrumbItems = [
   { title: "Dashboard", link: "/dashboard" },
@@ -77,6 +78,8 @@ export default function SystemsPage() {
     updatePageInfo();
   }, [getData]);
 
+  const navigate = useNavigate();
+
   return (
     <>
       <motion.div
@@ -90,11 +93,14 @@ export default function SystemsPage() {
 
         <div className="flex items-start justify-between">
           <Heading title={`Sistemas (${totalUsers})`} description="" />
-          <Link
-            to={PRIVATE_ROUTES.NEW_SYSTEM}
+          <Button
+            onClick={() => {
+              savePreviousRoute(PRIVATE_ROUTES.SYSTEMS);
+              navigate(PRIVATE_ROUTES.NEW_SYSTEM);
+            }}
             className={cn(buttonVariants({ variant: "default" }))}>
             <Plus className="mr-2 h-4 w-4" /> Adicionar novo
-          </Link>
+          </Button>
         </div>
         <Separator />
         <div className="max-w-content-container m-auto">

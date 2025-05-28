@@ -111,7 +111,7 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
       newAttachments = [...attachments, {
         key: item.key,
         files: validFiles,
-        fileName: item.description
+        fileName: item.name
       }];
     }
 
@@ -212,7 +212,7 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                 <Label
                   htmlFor={`file-upload-${item.key}`}
                   className={cn(isMissing && "text-red-500")}>
-                  {item.description}
+                  {item.name}
                   {item.required && <span className="text-red-500 ml-1">*</span>}
                 </Label>
 
