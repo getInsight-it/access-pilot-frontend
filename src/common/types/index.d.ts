@@ -19,4 +19,5 @@ export interface NavItem {
   label?: string;
   description?: string;
   protected?: boolean;
+  roles?: string[];
 }

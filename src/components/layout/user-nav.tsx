@@ -1,4 +1,4 @@
-import { HelpCircle, LogOut, User } from "lucide-react";
+import { ChevronDown, HelpCircle, LogOut, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar.tsx";
 import { Button } from "../ui/button.tsx";
 import {
@@ -20,28 +20,21 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src="/img/ap.svg"
-              alt={""}
-            />
+        <div className="relative rounded-full flex flex-row items-center cursor-pointer">
+          <Avatar className="h-10 w-10 mr-4">
+            <AvatarImage src="/img/ap.svg" alt={""} />
             <AvatarFallback>Nome do Usuário</AvatarFallback>
           </Avatar>
-        </Button>
+
+          <div className="flex flex-col space-y-1 mr-2">
+            <p className="text-sm font-medium leading-none">Nome do Usuário</p>
+            <p className="text-xs leading-none text-muted-foreground">usuario@accesspilot.com</p>
+          </div>
+
+          <ChevronDown className="w-4 h-4 text-gray-400" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              Nome do Usuário
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              usuario@accesspilot.com
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/profile">
           <User className="w-4 h-4 mr-2" />
           Perfil

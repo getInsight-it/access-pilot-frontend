@@ -34,16 +34,13 @@ export class NotificationService {
     queryParams.append("sortType", sortType);
     queryParams.append("externalId", userId);
 
-
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${NOTIFICATION_API.NOTIFICATIONS}?${queryParams?.toString()}`);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<NotificationModel>;
-    } else {
-      console.error("Deu ruim!");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
-    return {} as PaginatedResponse<NotificationModel>;
 
+    return JSON.parse(response.data) as PaginatedResponse<NotificationModel>;
   }
 
   async updateOpenNotification(notificationId: number, isOpened: boolean): Promise<void> {

@@ -184,7 +184,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
   return (
     <div className="col-span-1 md:col-span-2">
-      <h3 className="text-lg font-bold mb-2">Configurações de Anexos</h3>
+      <h3 className="text-lg font-bold mb-2">Anexos</h3>
       <Card className="border-primary p-4 bg-[var(--system-card)]">
         <div className="flex flex-wrap mb-4 items-center">
           <Accordion type="single" collapsible className="w-full">
@@ -193,7 +193,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                 <div
                   className="flex flex-row items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-secondary/80 transition-colors">
                   <Plus className="h-4 w-4" />
-                  Adicionar Nova Configuração
+                  Adicionar Novo Tipo de Anexo
                 </div>
               </AccordionTrigger>
               <AccordionContent className="mt-4">
@@ -271,7 +271,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             onClick={handleImportClick}
             className="flex flex-row items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-secondary/80 transition-colors">
             <Upload className="h-4 w-4" />
-            <span className="font-medium">Importar Configuração</span>
+            <span className="font-medium">Importar Anexos</span>
             <input
               type="file"
               ref={fileInputRef}
@@ -286,14 +286,14 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         <div>
           {activeConfigurations.length === 0 ? (
             <div className="p-8 text-center border border-dashed rounded-lg">
-              <p className="text-muted-foreground">Nenhuma configuração adicionada</p>
+              <p className="text-muted-foreground">Nenhum tipo de anexo adicionado</p>
             </div>
           ) : (
-            <div className="p-4 flex flex-row flex-wrap gap-4 items-center border border-dashed rounded-lg">
+            <div className="p-4 grid grid-cols-2 gap-4 items-center border border-dashed rounded-lg">
               {activeConfigurations.map((config) => (
                 <Card
                   key={config.name}
-                  className="border-primary relative w-[100px] h-[100px] flex flex-col items-center justify-center p-2 bg-secondary">
+                  className="border-primary relative h-[100px] flex flex-col items-center justify-center p-2 bg-secondary">
                   <button
                     onClick={() => onDeleteConfiguration(config.name)}
                     className="absolute top-1 right-1 text-gray-400 hover:text-red-500"
@@ -307,7 +307,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                       <div className="cursor-pointer gap-2 w-full h-full flex flex-col items-center justify-center">
                         <Settings className="h-5 w-5 mt-1 text-gray-800" />
                         <span className="text-xs text-center line-clamp-2">
-                          {truncateText(config.name, 12)}
+                          {truncateText(config.name, 100)}
                         </span>
                       </div>
                     </PopoverTrigger>

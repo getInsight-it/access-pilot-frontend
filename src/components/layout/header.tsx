@@ -21,9 +21,9 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Notifications />
           <UserNav />
-          <ThemeToggle />
         </div>
       </nav>
     </div>

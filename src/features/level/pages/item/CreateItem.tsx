@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
 import { Heading } from "../../../../components/ui/heading.tsx";
@@ -11,15 +11,13 @@ import { Label } from "../../../../components/ui/label.tsx";
 import { Input } from "../../../../components/ui/input.tsx";
 import { Button } from "../../../../components/ui/button.tsx";
 import { Textarea } from "../../../../components/ui/textarea.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../components/ui/tooltip.tsx";
 import { AlertCircle } from "lucide-react";
 import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
 import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
-import { useLazyLoad } from "../../../../common/hooks/useIntersectionLazyLoad.ts";
 import { LevelItemInterface } from "../../common/types/level-item.model.ts";
-import { getPreviousRoute, goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 
 interface FormData {
@@ -48,7 +46,6 @@ export const CreateItem: React.FC = () => {
   const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>();
   const { id: levelId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const parentId = level?.parent?.id.toString() ?? "";
 
   const retrieveLevel = async (id: string) => {
     try {
@@ -68,10 +65,10 @@ export const CreateItem: React.FC = () => {
     incremental?: boolean
   ) => {
     const { page, hasMorePages } = pageableAvailableParentItens;
-    if (!parentId || !hasMorePages) return;
+    if(!parentId || !hasMorePages) return;
     try {
       const availableItems = await levelService.getLevelItems(parentId, page, 30, "id", "ASC");
-      if (incremental) {
+      if(incremental) {
         setPageableAvailableParentItens((prev) => ({
           ...prev,
           page: prev.page + 1,
@@ -104,7 +101,7 @@ export const CreateItem: React.FC = () => {
         ...(level?.parent && { parentId: data.parentId })
       };
       const result = await levelService.createLevelItem(levelId!, payload);
-      if (!result) throw new Error("Falha ao adicionar o item.");
+      if(!result) throw new Error("Falha ao adicionar o item.");
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
     } catch (error) {
@@ -116,24 +113,18 @@ export const CreateItem: React.FC = () => {
     }
   };
 
-  const sentinelRef = useLazyLoad(
-    retriveAvailableParentItemOptions,
-    [parentId, true],
-    { threshold: 0, oncePerElement: true }
-  );
-
   useEffect(() => {
     retrieveLevel(levelId!);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (level && level.parent) {
+    if(level && level.parent) {
       retriveAvailableParentItemOptions(level.parent.id.toString());
     }
   }, [level]);
 
-  if (loading) {
+  if(loading) {
     return (
       <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
         <HighlightLoader />
@@ -177,7 +168,8 @@ export const CreateItem: React.FC = () => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                            <AlertCircle
+                              className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
                           </TooltipTrigger>
                           <TooltipContent>{errors.name.message}</TooltipContent>
                         </Tooltip>
@@ -201,7 +193,8 @@ export const CreateItem: React.FC = () => {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                            <AlertCircle
+                              className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
                           </TooltipTrigger>
                           <TooltipContent>{errors.externalCode.message}</TooltipContent>
                         </Tooltip>
@@ -248,6 +241,9 @@ export const CreateItem: React.FC = () => {
                         <DynamicSphereForm
                           initialId={level.parent!.id}
                           simpleLabel={true}
+                          onHierarchyNotCompleted={() => {
+                            field.onChange("");
+                          }}
                           onHierarchyComplete={(itemId) => {
                             field.onChange(itemId.toString());
                           }}

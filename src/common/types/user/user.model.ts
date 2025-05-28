@@ -7,3 +7,8 @@ export type UserModel = {
   isApprover: boolean,
   externalId: string,
 }
+
+export enum UserRoleEnum {
+  APPROVER = 'APPROVER',
+  ADMIN = 'ADMIN'
+}

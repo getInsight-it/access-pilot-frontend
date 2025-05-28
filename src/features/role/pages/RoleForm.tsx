@@ -45,8 +45,8 @@ interface RoleFormProps {
 
 export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonly, onSuccessSubmit }) => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false); // Para operações de submissão
-  const [dataLoading, setDataLoading] = useState(true); // Para carregamento inicial de dados
+  const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [levels, setLevels] = useState<LevelInterface[]>([]);
   const [loadingLevels, setLoadingLevels] = useState(false);
   const toastMessage = initialData ? "Papel atualizado." : "Papel criado.";
@@ -139,7 +139,6 @@ export const RoleForm: React.FC<RoleFormProps> = ({ client, initialData, readonl
     }
   };
 
-  // Se ainda estiver carregando dados, exibe apenas o loading
   if (dataLoading || loadingLevels) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">

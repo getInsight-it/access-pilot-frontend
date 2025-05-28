@@ -30,6 +30,8 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
     return <p className="text-gray-500">Nenhum anexo fornecido.</p>;
   }
 
+  console.log(attachments)
+
   return (
     <div className={cn("space-y-4", className)}>
       {attachments.map((attachment) => {

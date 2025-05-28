@@ -5,7 +5,7 @@ import { TruncatedDescription } from "../../../../../components/TruncateDescript
 import { Check, Plus, User } from "lucide-react";
 import { cn } from "../../../../../config/lib/utils.ts";
 import { ScrollArea } from "../../../../../components/ui/scroll-area.tsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { RoleResponseInterface } from "../../../../role/common/types/role.model.ts";
 import IconRenderer from "../../../../../components/icons/IconRenderer.tsx";
 import DynamicSphereForm from "../../../../level/common/components/DynamicSphereForm.tsx";
@@ -32,6 +32,8 @@ export const RoleStep = ({
 }: RoleStepProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showError, setShowError] = useState(false);
+  const hierarchyNotCompletedRef = useRef(false);
+  const currentCodeItemRef = useRef<string>("");
 
   const roleField: RequestFormFieldType = "roleId";
   const codeItemField: RequestFormFieldType = "codeItem";
@@ -47,9 +49,34 @@ export const RoleStep = ({
     setCodeItemHasError(!!form[codeItemField]?.error);
   }, [form[codeItemField]?.error]);
 
-  const handleClearCodeItemError = () => {
-    if (form[codeItemField]?.error) {
-      handlerClearSphereHierarchyError();
+  // Atualizar a referência quando o valor de codeItem mudar
+  useEffect(() => {
+    currentCodeItemRef.current = form[codeItemField]?.value || "";
+  }, [form[codeItemField]?.value]);
+
+  // Handler para notificar quando a hierarquia não está completa
+  const handleHierarchyNotCompleted = () => {
+    // Só limpar o valor se existir um valor definido
+    // e não tivermos limpado recentemente
+    if (currentCodeItemRef.current && !hierarchyNotCompletedRef.current) {
+      hierarchyNotCompletedRef.current = true;
+      handlerSelectedSphere("");
+    }
+  };
+
+  // Resetar a flag quando o papel é alterado
+  useEffect(() => {
+    hierarchyNotCompletedRef.current = false;
+  }, [selectedRole]);
+
+  // Handler para quando a hierarquia estiver completa
+  const handleHierarchyComplete = (codeItem: number) => {
+    const codeItemStr = codeItem.toString();
+
+    // Só atualizar se o valor for diferente do atual
+    if (currentCodeItemRef.current !== codeItemStr) {
+      hierarchyNotCompletedRef.current = false;
+      handlerSelectedSphere(codeItemStr);
     }
   };
 
@@ -155,11 +182,12 @@ export const RoleStep = ({
           <h4 className="text-lg font-semibold mb-4">Preencha os detalhes da esfera:</h4>
           <DynamicSphereForm
             initialId={roles.find(role => role.id.toString() === selectedRole)!.level.id}
-            onHierarchyComplete={(codeItem) => {
-              handlerSelectedSphere(codeItem.toString());
-            }}
+            onHierarchyNotCompleted={handleHierarchyNotCompleted}
+            onHierarchyComplete={handleHierarchyComplete}
             hasError={codeItemHasError}
-            onErrorClear={handleClearCodeItemError}
+            onErrorClear={() => {
+              handlerClearSphereHierarchyError();
+            }}
           />
         </div>
       )}

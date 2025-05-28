@@ -1,4 +1,5 @@
 import { NavItem } from "../../common/types";
+import { UserRoleEnum } from "../../common/types/user/user.model.ts";
 
 export const navItems: NavItem[] = [
   {
@@ -18,27 +19,31 @@ export const navItems: NavItem[] = [
     href: "/dashboard",
     icon: "dashboard",
     label: "Dashboard",
-    protected: true
+    protected: true,
+    roles: [UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]
   },
   {
     title: "Gerenciar sistemas",
     href: "/dashboard/systems",
     icon: "cog",
     label: "Gerenciar Sistemas",
-    protected: true
+    protected: true,
+    roles: [UserRoleEnum.ADMIN]
   },
   {
     title: "Gerenciar solicitações",
     href: "/dashboard/access-requests",
     icon: "bookuser",
     label: "Gerenciar solicitações",
-    protected: true
+    protected: true,
+    roles: [UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]
   },
   {
     title: "Gerenciar esferas",
     href: "/dashboard/levels",
     icon: "globe2",
     label: "Gerenciar esferas",
-    protected: true
+    protected: true,
+    roles: [UserRoleEnum.ADMIN]
   }
 ];

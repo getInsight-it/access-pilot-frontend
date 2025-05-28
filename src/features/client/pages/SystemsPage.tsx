@@ -4,7 +4,7 @@ import { columns } from "../../../components/tables/systems/columns.tsx";
 import { Heading } from "../../../components/ui/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { motion } from "framer-motion";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
@@ -96,7 +96,7 @@ export default function SystemsPage() {
           <Button
             onClick={() => {
               savePreviousRoute(PRIVATE_ROUTES.SYSTEMS);
-              navigate(PRIVATE_ROUTES.NEW_SYSTEM)
+              navigate(PRIVATE_ROUTES.NEW_SYSTEM);
             }}
             className={cn(buttonVariants({ variant: "default" }))}>
             <Plus className="mr-2 h-4 w-4" /> Adicionar novo

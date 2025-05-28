@@ -11,15 +11,14 @@ import { Label } from "../../../../components/ui/label.tsx";
 import { Input } from "../../../../components/ui/input.tsx";
 import { Button } from "../../../../components/ui/button.tsx";
 import { Textarea } from "../../../../components/ui/textarea.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../components/ui/tooltip.tsx";
 import { AlertCircle, Loader2 } from "lucide-react";
 import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
 import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
-import { useLazyLoad } from "../../../../common/hooks/useIntersectionLazyLoad.ts";
 import { LevelItemInterface } from "../../common/types/level-item.model.ts";
 import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 
 interface FormData {
   name: string;
@@ -28,24 +27,11 @@ interface FormData {
   parentId: string;
 }
 
-interface PageablePresentationLevelItemInterface {
-  items: LevelItemInterface[];
-  total: number;
-  hasMorePages: boolean;
-  page: number;
-}
-
 export const EditItem: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState<LevelInterface | null>(null);
-  const [item, setItem] = useState<LevelItemInterface>(null);
-  const [pageableAvailableParentItens, setPageableAvailableParentItens] = useState<PageablePresentationLevelItemInterface>({
-    items: [],
-    total: 0,
-    hasMorePages: true,
-    page: 1
-  });
+  const [item, setItem] = useState<LevelItemInterface | null>(null);
 
   const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<FormData>();
   const { id: levelId, itemId } = useParams<{ id: string; itemId: string }>();
@@ -59,38 +45,6 @@ export const EditItem: React.FC = () => {
       toast({
         title: "Erro",
         description: error instanceof Error ? error.message : "Erro ao buscar informações da esfera.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const retriveAvailableParentItemOptions = async (
-    parentId: string,
-    incremental?: boolean
-  ) => {
-    const { page, hasMorePages } = pageableAvailableParentItens;
-    if (!parentId || !hasMorePages) return;
-    try {
-      const availableItems = await levelService.getLevelItems(parentId, page, 30, "id", "ASC");
-      if (incremental) {
-        setPageableAvailableParentItens((prev) => ({
-          ...prev,
-          page: prev.page + 1,
-          items: [...prev.items, ...availableItems.items],
-          hasMorePages: prev.items.length + availableItems.items.length < availableItems.total
-        }));
-      } else {
-        setPageableAvailableParentItens({
-          items: availableItems.items,
-          total: availableItems.total,
-          hasMorePages: availableItems.items.length < availableItems.total,
-          page: 2
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao buscar opções de itens pais.",
         variant: "destructive"
       });
     }
@@ -148,12 +102,6 @@ export const EditItem: React.FC = () => {
     }
   };
 
-  const sentinelRef = useLazyLoad(
-    retriveAvailableParentItemOptions,
-    [level?.parent?.id.toString() || "", true],
-    { threshold: 0, oncePerElement: true }
-  );
-
   useEffect(() => {
     const initPage = async () => {
       if (levelId) {
@@ -165,12 +113,6 @@ export const EditItem: React.FC = () => {
 
     initPage();
   }, [levelId, itemId]);
-
-  useEffect(() => {
-    if (level && level.parent) {
-      retriveAvailableParentItemOptions(level.parent.id.toString());
-    }
-  }, [level]);
 
   if (loading) {
     return (
@@ -200,7 +142,7 @@ export const EditItem: React.FC = () => {
           <div className="max-w-content-container m-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="w-full">
               <div className="flex flex-col md:flex-row md:gap-4 mb-4">
-                <div className="w-full md:w-1/3 mb-4 md:mb-0">
+                <div className="w-full md:w-1/2 mb-4 md:mb-0">
                   <Label htmlFor="name">Nome</Label>
                   <div className="relative">
                     <Input
@@ -224,7 +166,7 @@ export const EditItem: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full md:w-1/3 mb-4 md:mb-0">
+                <div className="w-full md:w-1/2 mb-4 md:mb-0">
                   <Label htmlFor="externalCode">Código externo</Label>
                   <div className="relative">
                     <Input
@@ -248,57 +190,8 @@ export const EditItem: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full md:w-1/3">
-                  <Label htmlFor="parentId">Item pai</Label>
-                  <Controller
-                    name="parentId"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: "Item pai é obrigatório" }}
-                    render={({ field }) => (
-                      <div className="relative">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className={`w-full mt-2 ${errors.parentId ? "border-red-500" : ""}`}>
-                            <SelectValue placeholder="Selecione o item pai" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {item && item.parent && (
-                              <SelectItem value={item.parent.id.toString()} disabled>
-                                {item.parent.name}
-                              </SelectItem>
-                            )}
-                            {pageableAvailableParentItens.items
-                              .filter(parentItem => !(item?.parent && parentItem.id === item.parent.id))
-                              .map((item, idx) => (
-                                <SelectItem
-                                  key={`${item.id}-${idx}`}
-                                  value={item.id.toString()}
-                                  ref={
-                                    idx === (pageableAvailableParentItens.items.length > 10
-                                        ? pageableAvailableParentItens.items.length - 10
-                                        : pageableAvailableParentItens.items.length - 1
-                                    ) ? sentinelRef : null}>
-                                  {item.name}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                        {errors.parentId && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                              </TooltipTrigger>
-                              <TooltipContent>{errors.parentId.message}</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
               </div>
-              <div className="w-full">
+              <div className="w-full mb-4">
                 <Label htmlFor="description">Descrição</Label>
                 <div className="relative">
                   <Textarea
@@ -323,6 +216,40 @@ export const EditItem: React.FC = () => {
                   )}
                 </div>
               </div>
+              {level?.parent && (
+                <div className="w-full">
+                  <Label htmlFor="parentId">Selecione o item pai:</Label>
+                  <Controller
+                    name="parentId"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: "Item pai é obrigatório" }}
+                    render={({ field }) => (
+                      <div className="relative mt-2">
+                        <DynamicSphereForm
+                          initialId={level.parent!.id}
+                          simpleLabel={true}
+                          codeItem={itemId}
+                          onHierarchyNotCompleted={() => {
+                            field.onChange("");
+                          }}
+                          onHierarchyComplete={(itemId) => {
+                            field.onChange(itemId.toString());
+                          }}
+                          hasError={!!errors.parentId}
+                          onErrorClear={() => {
+                            if(errors.parentId) {
+                              Object.assign(errors, { parentId: undefined });
+                              control.unregister("parentId");
+                              control.register("parentId");
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+              )}
             </form>
           </div>
         </div>
