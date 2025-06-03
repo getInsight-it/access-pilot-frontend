@@ -1,5 +1,5 @@
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
-import { Heading } from "../../../../components/ui/heading.tsx";
+import { Heading } from "../../../../common/components/header/heading.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
@@ -23,7 +23,6 @@ import { RequestInterface } from "../../common/types/request.model.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
 import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarchy.model.ts";
 import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
-import { HttpRequestError } from "@getinsight.it/getinsight-common";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "APPROVED";
@@ -86,7 +85,7 @@ export default function RequestDetailPage() {
       setRequest(request);
       setItemHierarchy(hierarchy);
       setAttachments(presentationAttachments);
-    } catch (error: HttpRequestError | unknown) {
+    } catch (error: any) {
       console.error("Erro ao buscar detalhes da solicitação:", error);
       toast({
         title: "Erro",

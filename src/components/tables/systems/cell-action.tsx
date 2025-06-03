@@ -31,7 +31,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, updateState }) => 
 
   const handleSync = (clientId: string) => {
     setLoading(true);
-    from(clientService.synchronousByClientId(clientId)).pipe(
+    from(clientService.syncClient(clientId)).pipe(
       tap((response) => {
         toast({
           title: "Sistema sincronizado",
@@ -55,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, updateState }) => 
 
   const handlePublish = (clientId?: number) => {
     setLoading(true);
-    from(clientService.publish(clientId)).pipe(
+    from(clientService.updateSystemPublication(clientId)).pipe(
       tap((response) => {
         if(response) {
           toast({

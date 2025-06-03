@@ -1,0 +1,238 @@
+import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
+import { Separator } from "../../../components/ui/separator.tsx";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../../store/authStore.ts";
+import { useEffect, useState } from "react";
+import { buttonVariants } from "../../../components/ui/button.tsx";
+import { cn } from "../../../config/lib/utils.ts";
+import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog } from "lucide-react";
+import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
+
+import { motion } from "framer-motion";
+import { clientService } from "../common/service/client-service.ts";
+import { ClientResponseInterface } from "../common/model/client.model.ts";
+import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
+import { Input } from "../../../components/ui/input.tsx";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "../../../components/ui/table.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "../../../components/ui/dropdown-menu.tsx";
+import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
+import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
+import { toast } from "../../../components/ui/use-toast.ts";
+import { ClientStatusEnum, ClientStatusTranslationEnum } from "../common/enum/client-status.enum.ts";
+import { Badge } from "../../../components/ui/badge.tsx";
+
+const breadcrumbItems = [
+  { title: "Gerenciar sistemas", link: "/dashboard/systems" }
+];
+
+export default function SystemList() {
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const [clients, setClients] = useState<ClientResponseInterface[]>([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [pageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchFilter, setSearchFilter] = useState("");
+
+  const init = () => {
+    getData(currentPage, pageSize, searchFilter);
+  };
+
+  const getData = async (page: number, size: number, searchFilter: string = "") => {
+    const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
+    setClients(pageResponse?.items || []);
+    setTotalUsers(pageResponse?.total ?? 0);
+    setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
+  };
+
+  const syncClient = async (client: ClientResponseInterface) => {
+    try {
+      await clientService.syncClient(client.clientId);
+      toast({
+        title: "Sistema sincronizado",
+        description: "O sistema foi sincronizado com sucesso"
+      });
+    } catch (error: any) {
+      console.error("Erro ao sincronizar sistema:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi sincronizar o sistema.",
+        variant: "destructive"
+      });
+    }
+  }
+
+  const handlePublicationChange = async (client: ClientResponseInterface) => {
+    const newStatus = client.status === ClientStatusEnum.PUBLISHED ? ClientStatusEnum.UNPUBLISHED : ClientStatusEnum.PUBLISHED;
+    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "publicado" : "despublicado";
+
+    try {
+      await clientService.updateSystemPublication(client.id!, newStatus);
+      toast({
+        title: "Sistema publicado",
+        description: `O sistema foi ${toastMessage} com sucesso!`
+      });
+    } catch (error: any) {
+      console.error("Erro ao sincronizar sistema:", error);
+      toast({
+        title: "Erro",
+        description: `Não foi ${toastMessage} o sistema.`,
+        variant: "destructive"
+      });
+    }
+  }
+
+  useEffect(() => {
+    if(isAuthenticated) {
+      init();
+    }
+  }, [isAuthenticated, currentPage, searchFilter]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchFilter(value);
+    setCurrentPage(1);
+  };
+
+  const navigate = useNavigate();
+  const handleNavigateFromSystems = (route: string, clientId: string) => {
+    savePreviousRoute(PRIVATE_ROUTES.SYSTEMS);
+    navigate(route.replace(":clientId", clientId));
+  }
+
+  return (
+    <>
+      <motion.div
+        className="flex flex-col h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+
+        <div className="flex-none">
+          <HeaderContainer>
+            <Breadcrumbs items={breadcrumbItems} />
+
+            <div className="pl-1 flex items-start justify-between">
+              <Heading
+                title="Sistemas"
+                badgeValue={totalUsers}
+                description="Gerenciar sistemas cadastrados no ambiente."
+              />
+              <Link
+                to={PRIVATE_ROUTES.NEW_SYSTEM}
+                className={cn(buttonVariants({ variant: "default" }))}
+                onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
+                <Plus className="mr-2 h-4 w-4" /> Adicionar novo sistema
+              </Link>
+            </div>
+          </HeaderContainer>
+
+          <Separator />
+        </div>
+
+        <ScrollArea className="px-6 flex-grow">
+          <div className="py-6 max-w-content-container m-auto">
+            <Table auxiliaryHeader={
+              <div className="p-4 w-96">
+                <Input
+                  variant="dark"
+                  placeholder="Filtrar por Sistema..."
+                  value={searchFilter}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                />
+              </div>
+            }>
+              <TableHeader>
+                <TableRow>
+                  <TableHead width="calc(40% - 33px)">Sistema</TableHead>
+                  <TableHead width="calc(40% - 33px)">Descrição</TableHead>
+                  <TableHead width="calc(20% - 34px)">Status</TableHead>
+                  <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {clients && clients.map((client) => (
+                  <TableRow key={client.id}>
+                    <TableCell width="calc(40% - 33px)">{client.clientId}</TableCell>
+                    <TableCell width="calc(40% - 33px)">{client.description || '-'}</TableCell>
+                    <TableCell width="calc(20% - 34px)">
+                      {!client.status
+                        ? (<Badge variant="secondary">Desconhecido</Badge>)
+                        : (client.status === ClientStatusEnum.PUBLISHED
+                          ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
+                          : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
+                      }
+                    </TableCell>
+                    <TableCell className="flex align-center justify-center" width="100px">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <EllipsisVertical size={20} className="cursor-pointer" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="flex flex-row gap-2"
+                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
+                            <MonitorCog size={16} />
+                            <span>Detalhes</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex flex-row gap-2"
+                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
+                            <Edit size={16} />
+                            <span>Editar</span>
+                          </DropdownMenuItem>
+                          {client.managed && (
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
+                              <UserCog size={16}/>
+                              Gerenciar Papéis
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                            <RefreshCw size={16}/>
+                            Sincronizar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                            <Cog size={16}/>
+                            {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <div className="p-4">
+                  <PaginationWrapper
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => handlePageChange(page)}
+                  />
+                </div>
+              </TableFooter>
+            </Table>
+          </div>
+        </ScrollArea>
+      </motion.div>
+    </>
+  );
+}

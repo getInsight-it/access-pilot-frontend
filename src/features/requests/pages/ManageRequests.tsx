@@ -1,46 +1,60 @@
 import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
-import { Heading } from "../../../components/ui/heading.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { useEffect, useState } from "react";
-import { columns } from "../common/components/request-table/columns.tsx";
 import { buttonVariants } from "../../../components/ui/button.tsx";
 import { cn } from "../../../config/lib/utils.ts";
-import { Plus } from "lucide-react";
+import { EllipsisVertical, Plus, ReceiptText } from "lucide-react";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 
 import { motion } from "framer-motion";
 import { requestService } from "../common/api/request-service.ts";
-import { RequestsTable } from "../common/components/request-table/RequestsTable.tsx";
 import { RequestInterface } from "../common/types/request.model.ts";
+import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
+import { Input } from "../../../components/ui/input.tsx";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "../../../components/ui/table.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "../../../components/ui/dropdown-menu.tsx";
+import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
+import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
+import { RequestStatusBadge } from "../common/components/RequestStatusBadge.tsx";
+
 
 const breadcrumbItems = [
-  { title: "Dashboard", link: "/dashboard" },
   { title: "Gerenciar solicitações de acesso", link: "/dashboard/access-requests" }
 ];
-
-function useSearchParams() {
-  const { search } = useLocation();
-  return new URLSearchParams(search);
-}
 
 export default function ManageRequests() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const [requests, setRequests] = useState<RequestInterface[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [pageCount, setPageCount] = useState(10);
-  const [page, setPage] = useState(1);
-  const searchParams = useSearchParams();
+  const [pageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const init = () => {
-    getData(page, pageCount);
+    getData(currentPage, pageSize);
   };
 
-  const getData = async (page: any, pageCount: any) => {
-    const pageResponse = await requestService.getRequestsMePaginated(page, pageCount, "id", "desc", "assigned");
+  const getData = async (page: number, size: number) => {
+    const pageResponse = await requestService.getRequestsMePaginated(page, size, "id", "desc", "assigned");
     setRequests(pageResponse?.items || []);
     setTotalUsers(pageResponse?.total ?? 0);
+    setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
   };
 
   useEffect(() => {
@@ -49,58 +63,105 @@ export default function ManageRequests() {
     }
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    if(requests !== null && requests.length > 0) {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const pageFromParams = searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1;
-      setPage(pageFromParams);
-      const pageLimit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : 10;
-      setPageCount(Math.ceil(totalUsers / pageLimit));
-    }
-  }, [totalUsers, searchParams]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    console.log(page);
+  };
+
+  const navigate = useNavigate();
 
   return (
     <>
       <motion.div
-        initial={{
-          opacity: 0
-        }}
-        animate={{
-          opacity: 1,
-          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
-        }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8"
-      >
+        className="flex flex-col h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <Breadcrumbs items={breadcrumbItems} />
+        <div className="flex-none">
+          <HeaderContainer>
+            <Breadcrumbs items={breadcrumbItems} />
 
-        <div className="flex items-start justify-between">
-          <Heading
-            title={`Solicitações (${totalUsers})`}
-            description=""
-          />
-          <Link
-            to={PRIVATE_ROUTES.REQUEST_ACCESS}
-            className={cn(buttonVariants({ variant: "default" }))}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Solicitar novo acesso
-          </Link>
+            <div className="pl-1 flex items-start justify-between">
+              <Heading
+                title="Solicitações"
+                badgeValue={totalUsers}
+                description="Gerenciar solicitações de acesso para sistemas."
+              />
+              <Link to={PRIVATE_ROUTES.REQUEST_ACCESS} className={cn(buttonVariants({ variant: "default" }))}>
+                <Plus className="mr-2 h-4 w-4" /> Solicitar novo acesso
+              </Link>
+            </div>
+          </HeaderContainer>
+
+          <Separator />
         </div>
 
-        <Separator />
-        <div className="max-w-content-container m-auto">
-          <RequestsTable
-            pageNo={page}
-            columns={columns("assigned")}
-            totalUsers={totalUsers}
-            data={requests}
-            pageCount={pageCount}
-            onPageChange={(newPage, pageSize) => {
-              setPage(newPage);
-              getData(newPage, pageSize);
-            }}
-          />
-        </div>
+        <ScrollArea className="px-6 flex-grow">
+          <div className="py-6 max-w-content-container m-auto">
+            <Table auxiliaryHeader={
+              <div className="p-4 w-96">
+                <Input
+                  variant="dark"
+                  placeholder="Buscar solicitação..."
+                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                />
+              </div>
+            }>
+              <TableHeader>
+                <TableRow>
+                  <TableHead width="calc(20% - 20px)">Protocolo</TableHead>
+                  <TableHead width="calc(20% - 20px)">Sistema</TableHead>
+                  <TableHead width="calc(20% - 20px)">Papel</TableHead>
+                  <TableHead width="calc(20% - 20px)">Data de submissão</TableHead>
+                  <TableHead width="calc(20% - 20px)">Status</TableHead>
+                  <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {requests && requests.map((request) => (
+                  <TableRow key={request.id}>
+                    <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
+                    <TableCell width="calc(20% - 20px)">{request.role!.client!.name}</TableCell>
+                    <TableCell width="calc(20% - 20px)">{request.role.label}</TableCell>
+                    <TableCell width="calc(20% - 20px)">{new Date(request.criacao).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    }).replace(",", " -")}</TableCell>
+                    <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
+                    <TableCell className="flex align-center justify-center" width="100px">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <EllipsisVertical size={20} className="cursor-pointer" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem className="flex flex-row gap-2">
+                            <ReceiptText size={16} />
+                            <span onClick={() => {
+                              savePreviousRoute(PRIVATE_ROUTES.ACCESS_REQUESTS);
+                              navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", request.id.toString()));
+                            }}>Detalhes</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <div className="p-4">
+                  <PaginationWrapper
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => handlePageChange(page)}
+                  />
+                </div>
+              </TableFooter>
+            </Table>
+          </div>
+        </ScrollArea>
       </motion.div>
     </>
   );

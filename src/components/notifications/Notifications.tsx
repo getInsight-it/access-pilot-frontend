@@ -66,14 +66,14 @@ export default function Notifications() {
 
   return (
     <div className="flex items-center space-x-4">
-      <div className="relative">
+      <div>
         <Popover open={isOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon">
               <Bell className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[480px] p-0 max-h-[60vh] flex flex-col">
+          <PopoverContent className="w-[480px] p-0 max-h-[60vh] flex flex-col z-[100]">
             <header className="flex flex-row justify-between items-center p-4">
               <h4 className="text-lg font-semibold">Notificações</h4>
               <div className="flex flex-row gap-1 items-center cursor-pointer">

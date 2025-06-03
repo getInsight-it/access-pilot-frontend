@@ -1,10 +1,40 @@
-
-
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../../config/lib/utils"
+
+const selectTriggerVariants = cva(
+  "data-[placeholder]:text-muted-foreground flex w-full items-center justify-between rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors",
+  {
+    variants: {
+      variant: {
+        default: "border border-input bg-background hover:border-gray-400 dark:hover:border-gray-500",
+        filled: "border border-gray-200 bg-white hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-500",
+        ghost: "border-0 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-800",
+        outline: "border border-gray-300 bg-transparent hover:border-primary-400 dark:border-gray-600 dark:hover:border-primary-500",
+        dark: "!border border-gray-300 !bg-white text-gray-900 placeholder:text-gray-500 hover:border-gray-400 focus:ring-primary-500 focus:ring-offset-0"
+      },
+      size: {
+        sm: "h-8 px-2 py-1 text-xs",
+        default: "h-10 px-3 py-2",
+        lg: "h-12 px-4 py-3 text-base"
+      },
+      state: {
+        default: "",
+        error: "border-error-500 focus:ring-error-500 dark:border-error-400 dark:focus:ring-error-400",
+        success: "border-success-500 focus:ring-success-500 dark:border-success-400 dark:focus:ring-success-400",
+        warning: "border-warning-500 focus:ring-warning-500 dark:border-warning-400 dark:focus:ring-warning-400"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+      state: "default"
+    }
+  }
+)
 
 const Select = SelectPrimitive.Root
 
@@ -12,16 +42,17 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
+export interface SelectTriggerProps
+  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
+    VariantProps<typeof selectTriggerVariants> {}
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  SelectTriggerProps
+>(({ className, children, variant, size, state, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
-    className={cn(
-      "data-[placeholder]:text-muted-foreground flex h-10 w-full items-center justify-between rounded border border-primary focus:border-none bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
+    className={cn(selectTriggerVariants({ variant, size, state }), className)}
     {...props}
   >
     {children}
@@ -77,7 +108,7 @@ const SelectContent = React.forwardRef<
       className={cn(
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+        "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className
       )}
       position={position}
@@ -88,7 +119,7 @@ const SelectContent = React.forwardRef<
         className={cn(
           "p-1",
           position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+          "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
         )}
       >
         {children}
@@ -151,6 +182,7 @@ export {
   SelectGroup,
   SelectValue,
   SelectTrigger,
+  selectTriggerVariants,
   SelectContent,
   SelectLabel,
   SelectItem,

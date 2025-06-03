@@ -1,6 +1,6 @@
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
-import { Heading } from "../../../../components/ui/heading.tsx";
+import { Heading } from "../../../../common/components/header/heading.tsx";
 import { Separator } from "@radix-ui/react-separator";
 import { motion } from "framer-motion";
 import { PilotoForm } from "../../../../components/canvas/PilotoForm.tsx";

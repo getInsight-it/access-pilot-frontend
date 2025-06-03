@@ -11,16 +11,14 @@ import React, { Suspense } from "react";
 import ManageRequests from "./features/requests/pages/ManageRequests.tsx";
 import RequestAccess from "./features/requests/pages/request-access/RequestAccess.tsx";
 import RolesPage from "./features/role/pages/RolesPage.tsx";
-import SystemsPage from "./features/client/pages/SystemsPage.tsx";
-import NewSystem from "./features/client/pages/NewSystem.tsx";
+import SystemList from "./features/client/pages/SystemList.tsx";
+import SystemForm from "./features/client/pages/SystemForm.tsx";
 import PrivateRoute from "./components/PrivateRoute";
 import NotificationsPage from "./features/notification/NotificationsPage.tsx";
 import useAuthStore from "./store/authStore.ts";
 import NewRole from "./features/role/pages/NewRole.tsx";
-import LevelsPage from "./features/level/pages/level/LevelsPage.tsx";
-import LevelItems from "./features/level/pages/level/LevelItems.tsx";
+import LevelItems from "./features/level/pages/item/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/CreateLevel.tsx";
-import { SystemEdit } from "./features/client/pages/SystemEdit.tsx";
 import { SystemDetail } from "./features/client/pages/client-detail/SystemDetail.tsx";
 import { RoleEdit } from "./features/role/pages/RoleEdit.tsx";
 import { RoleDetail } from "./features/role/pages/RoleDetail.tsx";
@@ -29,6 +27,7 @@ import { EditItem } from "./features/level/pages/item/EditItem.tsx";
 import { RoleGuard } from "./common/context/auth/RoleGuard.tsx";
 import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
 import { UserRoleEnum } from "./common/types/user/user.model.ts";
+import { LevelList } from "./features/level/pages/level/LevelList.tsx";
 
 const authRoutes = [
   {
@@ -83,7 +82,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.SYSTEMS,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <SystemsPage />
+                <SystemList />
               </RoleGuard>
             )
           },
@@ -91,7 +90,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.SYSTEMS_EDIT,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <SystemEdit />
+                <SystemForm />
               </RoleGuard>
             )
           },
@@ -107,7 +106,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.NEW_SYSTEM,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <NewSystem />
+                <SystemForm />
               </RoleGuard>
             )
           },
@@ -163,7 +162,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.LEVELS,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <LevelsPage />
+                <LevelList />
               </RoleGuard>
             )
           },

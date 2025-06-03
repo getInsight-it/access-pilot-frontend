@@ -6,7 +6,7 @@ import { catchError, from, tap } from "rxjs";
 import useAuthStore from "../../../store/authStore.ts";
 
 import { motion } from "framer-motion";
-import { Heading } from "../../../components/ui/heading.tsx";
+import { Heading } from "../../../common/components/header/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { roleService } from "../common/service/role-service.ts";
 import { RoleResponseInterface } from "../common/types/role.model.ts";

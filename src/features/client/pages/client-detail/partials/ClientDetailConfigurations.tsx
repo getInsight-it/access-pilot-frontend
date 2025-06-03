@@ -1,6 +1,5 @@
-import { Settings } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { AttachmentConfigurationInterface } from "../../../common/model/configuration.model.ts";
-import { Card } from "../../../../../components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
 import { useState } from "react";
 
@@ -10,17 +9,17 @@ interface ClientDetailConfigurationsProps {
 }
 
 export const ClientDetailConfigurations = ({
-  configurations,
-  truncateText
+  configurations
 }: ClientDetailConfigurationsProps) => {
-  if (!configurations || configurations.length === 0) {
+  if(!configurations || configurations.length === 0) {
     return null;
   }
 
-  // Estado para controlar qual popover está aberto
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
+  const handleTogglePopover = (configKey: string) => {
+    setOpenPopoverId(prevId => prevId === configKey ? null : configKey);
+  };
 
-  // Manipuladores de eventos de mouse
   const handleMouseEnter = (configKey: string) => {
     setOpenPopoverId(configKey);
   };
@@ -31,48 +30,66 @@ export const ClientDetailConfigurations = ({
 
   return (
     <div>
-      <p className="font-bold mb-3 text-lg">Configurações de anexos:</p>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {configurations.map((config: AttachmentConfigurationInterface) => (
-          <Card
-            key={config.key}
-            className="relative flex flex-col items-center justify-center p-3 bg-secondary">
-            <Popover open={openPopoverId === config.key}>
-              <PopoverTrigger asChild>
-                <div
-                  className="cursor-pointer gap-2 w-full h-full flex flex-col items-center justify-center p-3"
-                  onMouseEnter={() => handleMouseEnter(config.key)}
-                  onMouseLeave={handleMouseLeave}>
-                  <Settings className="h-6 w-6 mt-1 text-gray-400" />
-                  <span className="text-sm font-medium text-center line-clamp-1">
-                    {truncateText(config.name, 50)}
-                  </span>
-                  <span className="text-xs text-center text-muted-foreground line-clamp-2">
-                    {truncateText(config.description, 50)}
+          <Popover key={config.key} open={openPopoverId === config.key}>
+            <div
+              className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4 relative">
+              <div className="flex flex-col flex-grow">
+                <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300 line-clamp-1 pr-8">
+                  {config.name}
+                </p>
+                <div className="mt-1">
+                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {config.description}
                   </span>
                 </div>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-100 max-w-[500px]"
-                onMouseEnter={() => handleMouseEnter(config.key)}
-                onMouseLeave={handleMouseLeave}>
-                <div className="space-y-2">
+                {config.required && (
                   <div>
-                    <span className="font-semibold">Nome:</span> {config.name}
+                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
+                      Obrigatório
+                    </span>
                   </div>
-                  <div>
-                    <span className="font-semibold">Descrição:</span> {config.description}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Obrigatório:</span> {config.required ? "Sim" : "Não"}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Extensões:</span> {config.allowedExtensions.join(", ")}
-                  </div>
+                )}
+              </div>
+              <div className="absolute top-4 right-4">
+                <PopoverTrigger asChild>
+                  <button
+                    className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center"
+                    onClick={() => handleTogglePopover(config.key)}
+                  >
+                    <InfoIcon className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+              </div>
+            </div>
+            <PopoverContent
+              className="w-100 max-w-[500px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+              onMouseEnter={() => handleMouseEnter(config.key)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div className="space-y-3">
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Nome</span>
+                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.name}</span>
                 </div>
-              </PopoverContent>
-            </Popover>
-          </Card>
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Descrição</span>
+                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.description}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Obrigatório</span>
+                  <span
+                    className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.required ? "Sim" : "Não"}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Extensões permitidas</span>
+                  <span
+                    className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.allowedExtensions.join(", ")}</span>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         ))}
       </div>
     </div>

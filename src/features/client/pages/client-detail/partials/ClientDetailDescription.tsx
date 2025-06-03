@@ -1,5 +1,5 @@
+
 import { MonitorIcon } from "lucide-react";
-import { CardShine } from "../../../../../components/CardShine.tsx";
 import TruncatedText from "../../../../../common/components/TruncatedText.tsx";
 
 interface ClientDetailDescriptionProps {
@@ -12,29 +12,24 @@ interface ClientDetailDescriptionProps {
 export const ClientDetailDescription = ({ clientId, description }: ClientDetailDescriptionProps) => {
   return (
     <div className="flex flex-col">
-      <p className="font-bold mb-3 text-lg">Sistema:</p>
-      <CardShine>
-        <div className="ring-2 ring-primary p-5 grid items-center h-auto max-h-[240px] transition-all rounded-[var(--card-border-radius)]">
-          <div className="flex flex-row items-center">
-            <MonitorIcon className="w-6 h-6 mr-4 flex-shrink-0" />
-            <p className="font-bold text-lg truncate">
-              {clientId}
-            </p>
-          </div>
-          <div className="mt-1 text-sm relative">
-            {description ? (
-              <TruncatedText
-                text={description}
-                autoManage={true}
-                maxLines={3}
-                fontSize="text-sm"
-              />
-            ) : (
-              "Sem função atribuída"
-            )}
+      <div className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
+        <div className="flex-shrink-0 mr-4">
+          <MonitorIcon size={20} />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+            {clientId}
+          </p>
+          <div className="mt-1 relative">
+            <TruncatedText
+              text={description}
+              autoManage={true}
+              maxLines={3}
+              fontSize="text-sm font-normal text-gray-600 dark:text-gray-400"
+            />
           </div>
         </div>
-      </CardShine>
+      </div>
     </div>
   );
 };

@@ -57,7 +57,7 @@ export class ClientService {
     filter?: string
   ): Promise<PaginatedResponse<ClientResponseInterface> | null> {
     const queryParams = new URLSearchParams({
-      pageIndex: (pageIndex + 1).toString(),
+      pageIndex: (pageIndex).toString(),
       pageSize: pageSize.toString(),
       sortField: sortField,
       sortType: sortType
@@ -79,7 +79,7 @@ export class ClientService {
     return null;
   }
 
-  async createClient(clientData: ClientResponseInterface): Promise<ClientResponseInterface | null> {
+  async createClient(clientData: ClientResponseInterface): Promise<ClientResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(CLIENT_API.CLIENTS, clientData);
 
     if(!(response instanceof HttpRequestResponse)) {
@@ -99,45 +99,35 @@ export class ClientService {
     return;
   }
 
-  async publish(id: number): Promise<ClientResponseInterface | null> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, { "status": "PUBLISHED" });
+  async updateSystemPublication(id: number, status: string): Promise<ClientResponseInterface> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, { "status": status });
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as ClientResponseInterface;
-    } else {
-      console.error("Erro ao publicar client");
+    if(response instanceof HttpRequestError) {
+      throw response
     }
 
-    return null;
+    return JSON.parse(response.data) as ClientResponseInterface;
   }
 
-  async unpublish(id: number): Promise<ClientResponseInterface | null> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, { "status": "UNPUBLISHED" });
+  async syncClient(clientId: string): Promise<void> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`, [clientId]);
 
-    if(response instanceof HttpRequestResponse) {
-      return response.data as ClientResponseInterface;
-    } else {
-      console.error("Erro ao publicar client");
+    if(response instanceof HttpRequestError) {
+      throw response
     }
 
-    return null;
+    return;
   }
 
-
-  async synchronousByClientId(clientId: string): Promise<void> {
-    const data = [clientId];
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`, data);
-
-    if(!(response instanceof HttpRequestResponse)) {
-      console.error("Erro ao sincronizar client");
-    }
-  }
-
-  async fetchByClientId(clientId?: string): Promise<ClientResponseInterface | undefined> {
+  async fetchByClientId(clientId?: string): Promise<ClientResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_BY_CLIENT_ID}/${clientId}`);
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as ClientResponseInterface;
+
+
+    if(response instanceof HttpRequestError) {
+      throw response
     }
+
+    return JSON.parse(response.data) as ClientResponseInterface;
   }
 
   async clientConfigurationPreview(csv: File): Promise<HttpRequestResponse | HttpRequestError> {

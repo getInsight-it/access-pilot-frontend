@@ -13,7 +13,7 @@ export function CopyProtocol({ protocol }: CopyProtocolProps) {
     try {
       await navigator.clipboard.writeText(protocol);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }

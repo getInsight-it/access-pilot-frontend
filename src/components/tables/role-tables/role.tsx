@@ -1,5 +1,5 @@
 import { buttonVariants } from "../../../components/ui/button";
-import { Heading } from "../../../components/ui/heading";
+import { Heading } from "../../../common/components/header/heading.tsx";
 import { Separator } from "../../../components/ui/separator";
 import { Plus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";

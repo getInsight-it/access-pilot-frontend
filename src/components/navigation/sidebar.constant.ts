@@ -47,3 +47,20 @@ export const navItems: NavItem[] = [
     roles: [UserRoleEnum.ADMIN]
   }
 ];
+
+export const supportNavItems: NavItem[] = [
+  {
+    title: "Ajuda",
+    href: "/dashboard/levels",
+    icon: "globe2",
+    label: "Ajuda",
+    protected: false,
+  },
+  {
+    title: "Configurações",
+    href: "/dashboard/levels",
+    icon: "globe2",
+    label: "Configurações",
+    protected: false,
+  }
+]

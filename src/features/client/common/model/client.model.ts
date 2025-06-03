@@ -5,6 +5,7 @@ export type ClientResponseInterface = {
   clientExternalId?: string;
   description?: string;
   name?: string;
+  label: string;
   clientId: string,
   clientUUID: string,
   managed: boolean,

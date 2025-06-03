@@ -30,7 +30,7 @@ export function DashboardNav({
   const { theme } = useTheme();
 
   return (
-    <nav className="grid items-start gap-0">
+    <nav className="grid items-start gap-1">
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon || "arrowRight"];
@@ -42,26 +42,38 @@ export function DashboardNav({
                 <Link
                   to={item.disabled ? "/" : item.href!}
                   className={cn(
-                    "flex items-center gap-2 overflow-hidden py-4 text-sm text-[var(--dashboard-nav-text)] font-medium hover:bg-[var(--dashboard-nav-bg)]",
-                    path === item.href ? "bg-[var(--dashboard-nav-bg)]" : "transparent",
+                    "flex items-center gap-2 overflow-hidden h-11 group",
+
+                    "rounded-md",
+                    "text-base font-semibold",
+                    "text-gray-700 dark:text-gray-300",
+                    "hover:bg-primary-100 hover:text-primary-800 dark:hover:bg-primary-900/20 dark:hover:text-primary-800",
+                    "transition-colors duration-200",
+                    path === item.href ?
+                      "bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-800" :
+                      "transparent",
                     item.disabled && "cursor-not-allowed opacity-80",
-                    isMinimized && "px-3"
+                    isMinimized && "px-3 justify-start"
                   )}
                   onClick={() => {
                     if(setOpen) setOpen(false);
-                  }}
-                >
+                  }}>
                   <Icon
                     className={cn(
-                      isMinimized ? "ml-3" : "ml-5",
-                      "size-5 text-[var(--dashboard-nav-text)]"
+                      isMinimized ? "ml-0" : "ml-4",
+                      "size-5",
+                      "text-gray-500 dark:text-gray-100",
+                      "group-hover:text-primary-800",
+                      path === item.href && "text-primary-800 dark:text-primary-800"
                     )}
                   />
                   {theme === "gov" && (
-                    <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100" />
+                    <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100 dark:bg-gray-700" />
                   )}
                   {(isMobileNav || (!isMinimized && !isMobileNav)) && (
-                    <span className="mr-2 truncate">{item.title}</span>
+                    <span className="mr-2 truncate">
+                      {item.title}
+                    </span>
                   )}
                 </Link>
               </TooltipTrigger>
@@ -69,8 +81,7 @@ export function DashboardNav({
                 align="center"
                 side="right"
                 sideOffset={8}
-                className={!isMinimized ? "hidden" : "inline-block"}
-              >
+                className={!isMinimized ? "hidden" : "inline-block"}>
                 {item.title}
               </TooltipContent>
             </Tooltip>
@@ -86,7 +97,7 @@ export function DashboardNav({
 
       {theme === "gov" && (isMobileNav || (!isMinimized && !isMobileNav)) && (
         <div className="absolute bottom-0 p-4 pointer-events-none truncate">
-          <p className="text-xs font-regular">Powered by:</p>
+          <p className="text-xs font-regular text-gray-600 dark:text-gray-400">Powered by:</p>
           <img className="w-36" src="/img/accesspilot-logo.svg" />
         </div>
       )}

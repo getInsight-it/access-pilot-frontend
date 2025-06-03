@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,12 +11,13 @@ import { toast } from "../../../../components/ui/use-toast.ts";
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
-import { Heading } from "../../../../components/ui/heading.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
 import { Info } from "lucide-react";
 import useAuthStore from "../../../../store/authStore.ts";
 import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
 import { motion } from "framer-motion";
 import { levelService } from "../../common/api/level-service.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 
 interface SphereItem {
   id: string;
@@ -39,9 +38,8 @@ interface SphereItem {
 }
 
 const breadcrumbItems = [
-  { title: "Dashboard", link: "/dashboard" },
-  { title: "Esferas", link: "/dashboard/levels" },
-  { title: "Gerenciar esferas", link: "" }
+  { title: "Gerenciar Esferas", link: "/dashboard/levels" },
+  { title: "Criar esfera", link: "" }
 ];
 
 export default function CreateOrEditLevel() {
@@ -64,9 +62,6 @@ export default function CreateOrEditLevel() {
   const [loading, setLoading] = useState(true);
   const [sigla, setSigla] = useState("");
   const [uuid, setUuid] = useState("");
-  const [icon, setIcon] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  // Adicionar um novo estado para rastrear se a esfera tem itens
   const [hasItems, setHasItems] = useState(false);
 
   useEffect(() => {
@@ -86,10 +81,8 @@ export default function CreateOrEditLevel() {
     }
   }, [isAuthenticated, location]);
 
-  // Modificar o método fetchSphereData para verificar se a esfera tem itens
   const fetchSphereData = async (id: string) => {
     try {
-      // Usar o método getLevelById que já está funcionando
       const data = await levelService.getLevelById(id);
 
       if(!data) {
@@ -111,56 +104,43 @@ export default function CreateOrEditLevel() {
       setDescription(data.description || "");
       setType(data.type === "BUILT_IN" ? "BUSINESS" : data.type);
 
-      // Verificar se o parentId está presente no objeto ou em outra propriedade
       let newParentId = "0";
       if(data.parent) {
         newParentId = data.parent.id.toString();
         console.log("Parent encontrado no objeto parent:", data.parent);
       } else if(data.parentId) {
-        // Tente usar parentId se estiver disponível
         newParentId = data.parentId.toString();
         console.log("Parent encontrado na propriedade parentId:", data.parentId);
       } else {
         console.log("Nenhum parent encontrado no objeto");
       }
 
-      // Definir o parentId após determinar seu valor
       setParentId(newParentId);
       setOriginalParentId(newParentId);
       console.log("Parent carregado e definido como:", newParentId);
 
       setUuid(data.uuid || "");
-      setIcon(data.icon || "");
 
-      // Modificar a lógica de detecção de API Key no método fetchSphereData
-      // Campos específicos para esferas externas
       if(data.type === "EXTERNAL") {
         console.log("Carregando dados de esfera externa:", data);
         console.log("API Key recebido da API:", data.apiKey);
         setEndpoint(data.externalUrl || "");
 
-        // Assumir que uma API Key existe para esferas externas existentes
-        // A API não retorna o campo apiKey por razões de segurança
-        const hasApiKey = true; // Assumir que existe por padrão para esferas externas existentes
+        const hasApiKey = true;
         setHasExistingApiKey(hasApiKey);
 
-        // Se tiver API Key existente, mostrar asteriscos no campo
         if(hasApiKey) {
-          setApiKey("••••••••••••••••"); // Mostrar asteriscos para indicar que existe uma chave
+          setApiKey("••••••••••••••••");
         } else {
           setApiKey("");
         }
         console.log("API Key existente assumida:", hasApiKey);
-
-        // Para esferas externas, não verificamos se tem itens
-        // pois elas não têm itens gerenciáveis diretamente
         setHasItems(false);
       } else {
         setEndpoint("");
         setApiKey("");
         setHasExistingApiKey(false);
 
-        // Verificar se a esfera tem itens apenas para esferas não-externas
         await checkIfSphereHasItems(id);
       }
 
@@ -176,12 +156,10 @@ export default function CreateOrEditLevel() {
     }
   };
 
-  // Adicionar uma função para verificar se a esfera tem itens
   const checkIfSphereHasItems = async (sphereId: string) => {
     try {
       const itemsData = await levelService.getLevelItems(sphereId, 1, 1);
 
-      // Se a API retornar dados e houver pelo menos um item, a esfera tem itens
       if(itemsData && itemsData.items && itemsData.items.length > 0) {
         setHasItems(true);
         console.log(`Esfera ${sphereId} tem itens. Desabilitando campo de esfera pai.`);
@@ -191,7 +169,6 @@ export default function CreateOrEditLevel() {
       }
     } catch (error) {
       console.error(`Erro ao verificar itens da esfera ${sphereId}:`, error);
-      // Em caso de erro, assumimos que não há itens para evitar bloquear a edição
       setHasItems(false);
     }
   };
@@ -235,12 +212,9 @@ export default function CreateOrEditLevel() {
   };
 
   const hasChanges = () => {
-    if(!sphereId) return true; // Se não estiver editando, sempre há mudanças
+    if(!sphereId) return true;
     const currentSphere = allSpheres.find((s) => s.id === sphereId);
     if(!currentSphere) return true;
-
-    // Se estamos editando uma esfera externa e o usuário digitou uma nova API key,
-    // consideramos que há mudanças
     const apiKeyChanged = type === "EXTERNAL" && apiKey.trim() !== "";
 
     return (
@@ -253,12 +227,8 @@ export default function CreateOrEditLevel() {
     );
   };
 
-  // Modify the handleSubmit function to ensure parent is properly structured
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Limpar mensagem de erro anterior
-    setError(null);
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
 
     if(!isEditing || hasChanges()) {
       try {
@@ -274,44 +244,35 @@ export default function CreateOrEditLevel() {
           }
         }
 
-        // Verificar se apenas o parentId foi alterado
         const onlyParentChanged = isEditing && parentId !== originalParentId && sphereId !== null;
 
         let result;
 
         if(onlyParentChanged) {
-          // Se apenas o parentId foi alterado, usar o método específico
           console.log(`Atualizando apenas o parentId de ${originalParentId} para ${parentId}`);
           result = await levelService.updateParent(sphereId, parentId);
         } else {
-          // Dados completos para envio
           const sphereData: any = {
             name,
             sigla,
             description,
             type,
-            // Enviar parent como objeto para o service, que vai converter para parentId
             parent: parentId && parentId !== "0" ? { id: Number(parentId) } : null,
-            // Include fields specific for external spheres
             externalUrl: endpoint,
             uuid: uuid
           };
 
-          // Sempre incluir apiKey para esferas externas
           if(type === "EXTERNAL") {
             sphereData.apiKey = apiKey;
             console.log("Enviando apiKey:", apiKey || "(vazio)");
           }
 
-          // Add detailed logging for debugging
           console.log("Sending data to API:", JSON.stringify(sphereData, null, 2));
           console.log("Parent ID value:", parentId, "converted to:", sphereData.parent);
 
           if(isEditing && sphereId) {
-            // Atualizar esfera existente
             result = await levelService.updateLevel(sphereId, sphereData);
           } else {
-            // Criar nova esfera
             console.log("Criando nova esfera");
             result = await levelService.createLevel(sphereData);
           }
@@ -323,7 +284,6 @@ export default function CreateOrEditLevel() {
           throw new Error(isEditing ? "Falha ao atualizar esfera" : "Falha ao criar esfera");
         }
 
-        // Verificar se o resultado contém o parentId esperado
         if(result.parent) {
           console.log("Parent no resultado:", result.parent);
         } else if(result.parentId) {
@@ -333,7 +293,6 @@ export default function CreateOrEditLevel() {
         }
 
         if(isEditing) {
-          // Disparar evento para atualizar a lista de esferas
           console.log("Disparando evento sphere-updated");
           window.dispatchEvent(new Event("sphere-updated"));
         }
@@ -343,14 +302,12 @@ export default function CreateOrEditLevel() {
           description: isEditing ? "Esfera atualizada com sucesso!" : "Nova esfera criada com sucesso!"
         });
 
-        // Adicionar um pequeno atraso antes de navegar para garantir que os eventos sejam processados
         setTimeout(() => {
           navigate("/dashboard/levels");
         }, 500);
       } catch (err) {
         console.error("Erro ao criar/editar a esfera:", err);
 
-        // Extrair mensagem de erro mais detalhada se disponível
         let errorMessage = "Ocorreu um erro enquanto a esfera foi criada/atualizada";
         if(err instanceof Error) {
           errorMessage = err.message;
@@ -361,11 +318,8 @@ export default function CreateOrEditLevel() {
           description: errorMessage,
           variant: "destructive"
         });
-
-        setError(errorMessage);
       }
     } else {
-      // Não há alterações a serem salvas
       toast({
         title: "Informação",
         description: "Não há alterações para salvar."
@@ -382,9 +336,6 @@ export default function CreateOrEditLevel() {
     }
   }, [allSpheres, parentId]);
 
-  // if (loading) {
-  //   return <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Carregando dados...</div>
-  // }
 
   if(loading)
     return (
@@ -396,178 +347,187 @@ export default function CreateOrEditLevel() {
   return (
     <ScrollArea className="h-full">
       <motion.div
+        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
-        animate={{
-          opacity: 1,
-          transition: { duration: 0.3, delay: 0.3, ease: "easeOut" }
-        }}
-        className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-        <div>
-          <Breadcrumbs items={breadcrumbItems} />
+        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-          <div className="flex items-start justify-between my-4">
-            <Heading title={isEditing ? "Editar esfera" : "Criar nova esfera"} description="" />
-          </div>
+        <div className="flex-none">
+          <HeaderContainer>
+            <Breadcrumbs items={breadcrumbItems} />
+
+            <div className="pl-1 flex items-start justify-between">
+              <Heading
+                title="Nova esfera"
+                returnButton={true}
+                onReturnClick={() => {navigate(PRIVATE_ROUTES.LEVELS)}}
+              />
+            </div>
+          </HeaderContainer>
 
           <Separator />
+        </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4">
-              <strong className="font-bold">Erro: </strong>
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="w-full mt-4 max-w-content-container m-auto">
-            <div  className="space-y-4 pb-10 border-b">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <div>
-                  <Label className="text-base font-semibold" htmlFor="name">Nome</Label>
-                  <Input
-                    className="mt-2"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Nome da esfera"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label className="text-base font-semibold" htmlFor="sigla">Sigla</Label>
-                  <Input
-                    className="mt-2"
-                    id="sigla"
-                    value={sigla}
-                    onChange={(e) => setSigla(e.target.value)}
-                    placeholder="Sigla da esfera (ex: FED, EST)"
-                    required/>
-                  <p className="text-xs text-gray-500 mt-1">
-                    A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-base font-semibold" htmlFor="parentSphere">Esfera pai</Label>
-                  <div className="mt-2">
-                    {/* Modificar o Select de esfera pai para ficar desabilitado quando a esfera tiver itens */}
-                    <Select
-                      value={parentId ?? "0"}
-                      onValueChange={(value) => {
-                        setParentId(value);
-                        const selectedSphere = allSpheres.find((s) => s.id === value);
-                        setSelectedSphereName(value === "0" ? "Nenhuma (esfera pai)" : selectedSphere?.name || "");
-                      }}
-                      disabled={isEditing && hasItems} // Desabilitar se estiver editando e tiver itens
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione a esfera pai">{selectedSphereName}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0">Nenhuma (esfera pai)</SelectItem>
-                        {allSpheres.map((sphere) => (
-                          <SelectItem key={sphere.id} value={sphere.id}>
-                            {sphere.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {isEditing && hasItems && (
-                      <p className="text-xs text-blue-600 mt-1">
-                        A esfera pai não pode ser alterada porque esta esfera já possui itens.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-base font-semibold" htmlFor="description">Descrição</Label>
-                <Textarea
-                  placeholder="Escreva uma descrição para a esfera"
-                  className="resize-none mt-2"
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required/>
-              </div>
-              <div>
-                <Label className="text-base font-semibold">Tipo</Label>
-                <RadioGroup
-                  className="mt-2 flex flex-row gap-4"
-                  value={type}
-                  onValueChange={(value: "BUSINESS" | "EXTERNAL") => {
-                    setType(value);
-
-                    if(value !== "EXTERNAL") {
-                      setHasExistingApiKey(false);
-                    }
-                  }}
-                  disabled={isEditing}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="BUSINESS" id="BUSINESS" disabled={isEditing} />
-                    <Label htmlFor="BUSINESS">Negocial</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="EXTERNAL" id="EXTERNAL" disabled={isEditing} />
-                    <Label htmlFor="EXTERNAL">Externa</Label>
-                  </div>
-                </RadioGroup>
-                {isEditing && (
-                  <p className="text-xs text-blue-600 mt-2">O tipo da esfera não pode ser alterado após a criação.</p>
-                )}
-              </div>
-              {type === "EXTERNAL" && (
+        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+          <div className="px-6 py-6 max-w-content-container m-auto">
+            <form onSubmit={handleSubmit} className="w-full mt-4 max-w-content-container m-auto">
+              <div className="space-y-4 pb-10">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                  <div className="lg:col-span-2">
-                    <Label className="flex justify-between items-center text-base font-semibold" htmlFor="endpoint">Endpoint</Label>
+                  <div>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">
+                      Nome <span className="text-primary-600">*</span>
+                    </Label>
                     <Input
-                      placeholder="https://api.exemplo.com"
                       className="mt-2"
-                      id="endpoint"
-                      value={endpoint}
-                      onChange={(e) => setEndpoint(e.target.value)}
-                      required/>
-                    <div className="text-xs text-gray-500 flex items-center mt-3">
-                      <Info className="min-w-5 min-h-5 mr-2" size="20" />
-                      <span>
-                        Para mais informações sobre a criação do seu endpoint <span className="bold text-black underline cursor-pointer">clique aqui</span>
-                      </span>
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Nome da esfera"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="sigla">
+                      Sigla <span className="text-primary-600">*</span>
+                    </Label>
+                    <Input
+                      className="mt-2"
+                      id="sigla"
+                      value={sigla}
+                      onChange={(e) => setSigla(e.target.value)}
+                      placeholder="Sigla da esfera (ex: FED, EST)"
+                      required />
+                    <p className="text-xs text-gray-500 mt-1">
+                      A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="parentSphere">
+                      Esfera pai <span className="text-primary-600">*</span>
+                    </Label>
+                    <div className="mt-2">
+                      <Select
+                        value={parentId ?? "0"}
+                        onValueChange={(value) => {
+                          setParentId(value);
+                          const selectedSphere = allSpheres.find((s) => s.id === value);
+                          setSelectedSphereName(value === "0" ? "Nenhuma (esfera pai)" : selectedSphere?.name || "");
+                        }}
+                        disabled={isEditing && hasItems}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione a esfera pai">{selectedSphereName}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Nenhuma (esfera pai)</SelectItem>
+                          {allSpheres.map((sphere) => (
+                            <SelectItem key={sphere.id} value={sphere.id}>
+                              {sphere.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {isEditing && hasItems && (
+                        <p className="text-xs text-blue-600 mt-1">
+                          A esfera pai não pode ser alterada porque esta esfera já possui itens.
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div className="lg:col-span-1">
-                    <Label className="text-base font-semibold" htmlFor="apiKey">API Key</Label>
-                    <Input
-                      placeholder={isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
-                      className="mt-2"
-                      id="apiKey"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      required={!isEditing}/>
-                    {isEditing && type === "EXTERNAL" && (
-                      <div className="text-xs text-blue-600 flex items-center mt-2">
-                        <Info className="min-w-5 min-h-5 mr-2" size="20" />
-                        {hasExistingApiKey
-                          ? "Deixe os asteriscos para manter a API Key atual ou digite uma nova para substituí-la."
-                          : "Nenhuma API Key configurada. Digite uma nova API Key."}
-                      </div>
-                    )}
+                </div>
+
+                <div>
+                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">
+                    Descrição <span className="text-primary-600">*</span>
+                  </Label>
+                  <Textarea
+                    placeholder="Escreva uma descrição para a esfera"
+                    className="resize-none mt-2"
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                    maxLength={200}
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
+                    {description.length}/200 caracteres
                   </div>
                 </div>
-              )}
-            </div>
-            <div className="flex flex-row gap-2 max-w-content-container m-auto justify-between mt-6">
-              <Button
-                className="mr-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/dashboard/levels");
-                }}
-                variant="ghost"
-                type="button">Voltar
-              </Button>
-              <Button onClick={() => {console.log("dasda")}}>{isEditing ? "Atualizar esfera" : "Criar esfera"}</Button>
-            </div>
-          </form>
-        </div>
+                <div>
+                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                    Tipo <span className="text-primary-600">*</span>
+                  </Label>
+                  <RadioGroup
+                    className="mt-2 flex flex-row gap-4"
+                    value={type}
+                    onValueChange={(value: "BUSINESS" | "EXTERNAL") => {
+                      setType(value);
+
+                      if(value !== "EXTERNAL") {
+                        setHasExistingApiKey(false);
+                      }
+                    }}
+                    disabled={isEditing}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="BUSINESS" id="BUSINESS" disabled={isEditing} />
+                      <Label htmlFor="BUSINESS">Negocial</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="EXTERNAL" id="EXTERNAL" disabled={isEditing} />
+                      <Label htmlFor="EXTERNAL">Externa</Label>
+                    </div>
+                  </RadioGroup>
+                  {isEditing && (
+                    <p className="text-xs text-blue-600 mt-2">O tipo da esfera não pode ser alterado após a criação.</p>
+                  )}
+                </div>
+                {type === "EXTERNAL" && (
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div className="lg:col-span-1">
+                      <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="endpoint">
+                        Endpoint <span className="text-primary-600">*</span>
+                      </Label>
+                      <Input
+                        placeholder="https://api.exemplo.com"
+                        className="mt-2"
+                        id="endpoint"
+                        value={endpoint}
+                        onChange={(e) => setEndpoint(e.target.value)}
+                        required />
+                      <div className="text-xs text-gray-500 font-normal flex items-center mt-3">
+                        <span><span className="bold text-primary-600 underline cursor-pointer font-bold">Clique aqui</span> Para mais informações sobre a criação do seu endpoint.</span>
+                      </div>
+                    </div>
+                    <div className="lg:col-span-1">
+                      <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="apiKey">
+                        API Key <span className="text-primary-600">*</span>
+                      </Label>
+                      <Input
+                        placeholder={isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
+                        className="mt-2"
+                        id="apiKey"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        required={!isEditing} />
+                      {isEditing && type === "EXTERNAL" && (
+                        <div className="text-xs text-blue-600 flex items-center mt-2">
+                          <Info className="min-w-5 min-h-5 mr-2" size="20" />
+                          {hasExistingApiKey
+                            ? "Deixe os asteriscos para manter a API Key atual ou digite uma nova para substituí-la."
+                            : "Nenhuma API Key configurada. Digite uma nova API Key."}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </form>
+          </div>
+        </ScrollArea>
+
+        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg- border-t">
+          <Button onClick={() => {handleSubmit()}}>
+            {isEditing ? "Atualizar esfera" : "Criar esfera"}
+          </Button>
+        </footer>
       </motion.div>
     </ScrollArea>
   );
