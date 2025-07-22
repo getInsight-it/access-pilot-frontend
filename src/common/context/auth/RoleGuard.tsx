@@ -22,23 +22,14 @@ interface RoleGuardProps {
 const hasRequiredRoles = (roles: string[] | undefined, authData: AuthContextType): boolean => {
   if(!roles || roles.length === 0) return true;
 
-  if(!authData.user) {
-    console.log('user is null inside');
-  }
-
   const userRoles: string[] = [];
 
   const isAdmin: boolean = authData.roles?.clientRoles
     ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloackSystemsEnum.ACCESS_PILOT)
     ?.[KeycloackSystemsEnum.ACCESS_PILOT].includes(UserRoleEnum.ADMIN) ?? false;
 
-  console.log('admin', isAdmin);
-
   if(isAdmin) userRoles.push(UserRoleEnum.ADMIN);
   if(authData.isApprover) userRoles.push(UserRoleEnum.APPROVER);
-
-  console.log('userRoles', roles);
-  console.log('userRoles', userRoles);
 
   return roles
     ? roles.every((role) => userRoles.some(userRole => userRole === role))
