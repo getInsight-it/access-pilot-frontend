@@ -3,7 +3,16 @@ import { Button, buttonVariants } from "../../../../components/ui/button.tsx";
 import { ChevronDown, ChevronRight, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
 import { toast } from "../../../../components/ui/use-toast.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../components/ui/dialog.tsx";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "../../../../components/ui/dialog.tsx";
 import { motion } from "framer-motion";
 import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
@@ -70,8 +79,6 @@ export const LevelList = () => {
     BUILT_IN_SPHERES.forEach((sphere) => initialExpanded.add(sphere));
     return initialExpanded;
   });
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [sphereToDelete, setSphereToDelete] = useState<SphereItem | null>(null);
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
@@ -207,57 +214,24 @@ export const LevelList = () => {
     });
   };
 
-  const handleDelete = (item: SphereItem) => {
-    if(item.isBuiltIn) {
-      toast({ title: "Erro", description: "Esferas built-in não podem ser excluídas", variant: "destructive" });
-      return;
-    }
-
-    setSphereToDelete(item);
-    setDeleteModalOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if(!sphereToDelete) return;
-
+  const excludeItem = async (item: any) => {
     try {
-      const success = await levelService.deleteLevel(sphereToDelete.id);
+      await levelService.deleteLevel(item.id);
+      await fetchSpheres();
 
-      if(success) {
-        toast({
-          title: "Sucesso",
-          description: `Esfera "${sphereToDelete.name}" excluída com sucesso!`
-        });
-        await fetchSpheres();
-      } else {
-        throw new Error("Falha ao excluir esfera");
-      }
+      toast({ title: "Sucesso", description: `Esfera "${item.name}" excluída com sucesso!` });
     } catch (err) {
-      console.error("Erro ao excluir esfera:", err);
+      console.error(err);
       toast({
         title: "Erro",
-        description:
-          "Não foi possível excluir a esfera. Verifique se ela não possui esferas filhas ou outros itens associados.",
+        description: "Erro ao excluir esfera.",
         variant: "destructive"
       });
-    } finally {
-      setDeleteModalOpen(false);
-      setSphereToDelete(null);
     }
   };
 
   const handleViewItems = async (item: SphereItem) => {
-    try {
-      navigate(`/dashboard/levels/${item.id}/items`);
-    } catch (error) {
-      console.error("Erro ao verificar itens:", error);
-      toast({
-        title: "Aviso",
-        description: "Não foi possível verificar os itens. Redirecionando para criar novo item.",
-        variant: "default"
-      });
-      navigate(`/dashboard/levels/${item.id}/items/create`);
-    }
+    navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(":id", item.id));
   };
 
   useEffect(() => {
@@ -267,9 +241,15 @@ export const LevelList = () => {
     }
   }, [expandedItems, spheres]);
 
-  if(loading) return <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
-    <HighlightLoader /></div>;
-  if(error) return <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>;
+  if(loading) {
+    return (
+      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
+        <HighlightLoader />
+      </div>
+    );
+  }
+
+  if(error) return (<div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>);
 
   return (
     <motion.div
@@ -362,10 +342,48 @@ export const LevelList = () => {
                                 <span>Editar</span>
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="flex flex-row gap-2" onClick={() => handleDelete(item)}>
-                              <Trash size={16} />
-                              <span>Excluir</span>
-                            </DropdownMenuItem>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <DropdownMenuItem
+                                  className="flex flex-row gap-2"
+                                  onSelect={(e) => { e.preventDefault(); }}>
+                                  <Trash size={16} />
+                                  <span>Excluir</span>
+                                </DropdownMenuItem>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Confirmar exclusão</DialogTitle>
+                                  <DialogDescription>
+                                    Confirme se deseja excluir permanentemente esta esfera do sistema.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <p>
+                                  Tem certeza que deseja excluir a esfera
+                                  <strong> "{item.name}"</strong>?
+                                </p>
+                                <p className="mt-2">Esta ação não pode ser desfeita. A esfera será permanentemente
+                                  removida do sistema.</p>
+                                <p className="mt-2 text-red-500 font-semibold">
+                                  Atenção: Certifique-se de que esta esfera não possui esferas filhas ou outros itens
+                                  associados.
+                                </p>
+                                <DialogFooter>
+                                  <DialogClose asChild>
+                                    <Button variant="outline">
+                                      Cancelar
+                                    </Button>
+                                  </DialogClose>
+                                  <DialogClose asChild>
+                                    <Button
+                                      variant="destructive"
+                                      onClick={() => excludeItem(item)}>
+                                      Excluir
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
                           </>
                         )}
                         {item.isBuiltIn && (
@@ -389,30 +407,6 @@ export const LevelList = () => {
           </Table>
         </div>
       </ScrollArea>
-
-      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar exclusão</DialogTitle>
-          </DialogHeader>
-          <p>
-            Tem certeza que deseja excluir a esfera
-            {sphereToDelete && <strong> "{sphereToDelete.name}"</strong>}?
-          </p>
-          <p className="mt-2">Esta ação não pode ser desfeita. A esfera será permanentemente removida do sistema.</p>
-          <p className="mt-2 text-red-500 font-semibold">
-            Atenção: Certifique-se de que esta esfera não possui esferas filhas ou outros itens associados.
-          </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
-              Excluir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </motion.div>
   );
 };

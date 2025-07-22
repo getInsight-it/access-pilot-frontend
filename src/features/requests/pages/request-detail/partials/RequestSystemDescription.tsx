@@ -1,4 +1,3 @@
-import { Card } from "../../../../../components/ui/card.tsx";
 import { MonitorIcon as MonitorCog } from "lucide-react";
 import { ShuffleLoader } from "../../../../../components/shuffle-loader/ShuffleLoader.tsx";
 import TruncatedText from "../../../../../common/components/TruncatedText.tsx";
@@ -14,35 +13,32 @@ const RequestSystemDescription = ({
   clientDescription,
   isContentLoading
 }: RequestSystemDescriptionProps) => {
-  return (
-    <div className="w-full">
-      <p className="font-bold mb-3 text-lg md:text-xl">Sistema:</p>
-      <Card
-        className="border-primary bg-[(--system-card)] p-5 grid items-center h-auto transition-all rounded-[var(--card-border-radius)] min-h-[170px]">
-        <div className="flex flex-row items-center">
-          <MonitorCog className="w-6 h-6 mr-4" />
-          <p className="font-bold text-lg md:text-xl">
-            {clientName}
-          </p>
-        </div>
+  if (isContentLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[100px]">
+        <ShuffleLoader />
+      </div>
+    );
+  }
 
-        {isContentLoading ? (
-          <div className="grid justify-center items-center">
-            <ShuffleLoader />
-          </div>
-        ) : (
-          <div className="mt-2 h-auto">
-            <TruncatedText
-              text={clientDescription}
-              maxChars={150}
-              fontSize="text-sm md:text-base"
-              autoManage={true}
-              maxLines={3}
-              className="h-auto"
-            />
-          </div>
-        )}
-      </Card>
+  return (
+    <div className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
+      <div className="flex-shrink-0 mr-4">
+        <MonitorCog size={20} className="text-gray-600 dark:text-gray-400" />
+      </div>
+      <div className="flex flex-col">
+        <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+          {clientName || "Sistema não informado"}
+        </p>
+        <div className="mt-1 relative">
+          <TruncatedText
+            text={clientDescription}
+            autoManage={true}
+            maxLines={3}
+            fontSize="text-sm font-normal text-gray-600 dark:text-gray-400"
+          />
+        </div>
+      </div>
     </div>
   );
 };

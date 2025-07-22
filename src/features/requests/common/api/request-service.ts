@@ -39,13 +39,11 @@ export class RequestService {
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${REQUEST_API.ME_REQUESTS}?${queryParams.toString()}`);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<RequestInterface>;
-    } else {
-      console.error("Erro ao buscar clients paginados");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as PaginatedResponse<RequestInterface>;
   }
 
   async createRequest(formData: FormData): Promise<void> {

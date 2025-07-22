@@ -1,14 +1,13 @@
 import { Navigate, useRoutes } from "react-router-dom";
 import Login from "./features/auth/pages/Login.tsx";
 import Dashboard from "./features/summary/pages/Dashboard.tsx";
-import MyAccessRequests from "./features/requests/pages/MyAccessRequests.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import DashboardLayout from "./layouts/DashboardLayout.tsx";
 import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from "./common/constants/routes.ts";
 import ErrorLayout from "./layouts/ErrorLayout.tsx";
 import Error from "./features/error/Error.tsx";
 import React, { Suspense } from "react";
-import ManageRequests from "./features/requests/pages/ManageRequests.tsx";
+import RequestList from "./features/requests/pages/RequestList.tsx";
 import RequestAccess from "./features/requests/pages/request-access/RequestAccess.tsx";
 import RolesPage from "./features/role/pages/RolesPage.tsx";
 import SystemList from "./features/client/pages/SystemList.tsx";
@@ -20,7 +19,6 @@ import NewRole from "./features/role/pages/NewRole.tsx";
 import LevelItems from "./features/level/pages/item/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/CreateLevel.tsx";
 import { SystemDetail } from "./features/client/pages/client-detail/SystemDetail.tsx";
-import { RoleEdit } from "./features/role/pages/RoleEdit.tsx";
 import { RoleDetail } from "./features/role/pages/RoleDetail.tsx";
 import { CreateItem } from "./features/level/pages/item/CreateItem.tsx";
 import { EditItem } from "./features/level/pages/item/EditItem.tsx";
@@ -59,7 +57,7 @@ const appRoutes = [
           </Suspense>
         ),
         children: [
-          { path: PRIVATE_ROUTES.MY_ACCESS_REQUESTS, element: <MyAccessRequests /> },
+          { path: PRIVATE_ROUTES.MY_ACCESS_REQUESTS, element: <RequestList /> },
           { path: PRIVATE_ROUTES.REQUEST_ACCESS, element: <RequestAccess /> },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
@@ -122,7 +120,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.ROLES_EDIT,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <RoleEdit />
+                <NewRole></NewRole>
               </RoleGuard>
             )
           },
@@ -146,7 +144,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.ACCESS_REQUESTS,
             element: (
               <RoleGuard roles={[UserRoleEnum.APPROVER]}>
-                <ManageRequests />
+                <RequestList />
               </RoleGuard>
             )
           },

@@ -87,37 +87,15 @@ export class LevelService {
     }
   }
 
-  // Método para deletar um level (a ser implementado quando necessário)
-  async deleteLevel(id: string): Promise<boolean> {
-    try {
-      console.log(`Iniciando exclusão da esfera com ID: ${id}`);
-      const url = `${LEVEL_API.LEVELS}/${id}`;
-      console.log(`URL da requisição de exclusão: ${url}`);
+  async deleteLevel(id: string): Promise<void> {
+    const url = `${LEVEL_API.LEVELS}/${id}`;
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.delete(url);
 
-      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.delete(url);
-
-      if(response instanceof HttpRequestResponse) {
-        console.log(`Exclusão bem-sucedida da esfera ${id}, status: ${response.status}`);
-
-        // Verificar se a resposta tem conteúdo
-        if(response.data && response.data.trim() !== "") {
-          try {
-            const responseData = JSON.parse(response.data);
-            console.log("Resposta da exclusão:", responseData);
-          } catch (parseError) {
-            console.warn("Resposta não contém JSON válido:", response.data);
-          }
-        }
-
-        return true;
-      } else {
-        console.error(`Erro ao excluir esfera ${id}:`, response.status, response.message || "Sem mensagem de erro");
-        return false;
-      }
-    } catch (error) {
-      console.error(`Erro ao excluir esfera ${id}:`, error);
-      return false;
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
+
+    return;
   }
 
   async getLevelItems(

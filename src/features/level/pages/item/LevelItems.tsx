@@ -397,6 +397,7 @@ export default function LevelItems() {
                 {sphere?.type !== "BUILT_IN" && (
                   <>
                     <TableHead width="calc(25% - 25px)">Descrição</TableHead>
+                    {/* nao existe se nao for negocial */}
                     <TableHead width="calc(25% - 25px)">Código externo</TableHead>
                     <TableHead width="calc(25% - 25px)">Item da esfera pai</TableHead>
                     <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>

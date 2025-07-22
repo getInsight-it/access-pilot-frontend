@@ -1,4 +1,3 @@
-// import useAuthStore from "../../../store/authStore.ts";
 import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
 import { Separator } from "../../../components/ui/separator.tsx";
@@ -16,69 +15,263 @@ import {
   Clock,
   EllipsisVertical,
   FileText,
-  LaptopMinimal,
-  Plus,
   ReceiptText,
-  SquareArrowOutUpRight,
   TrendingUp,
   Users,
   XCircle
 } from "lucide-react";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
-import { Button } from "../../../components/ui/button.tsx";
-import { Input } from "../../../components/ui/input.tsx";
 import { RequestStatusBadge } from "../../requests/common/components/RequestStatusBadge.tsx";
-import { REQUEST_STATUS_ENUM } from "../../requests/common/types/request.enum.ts";
+import { SummaryModel } from "../common/model/summary.model.ts";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { summaryService } from "../common/api/summary-service.ts";
+import { toast } from "../../../components/ui/use-toast.ts";
+import { useNavigate } from "react-router-dom";
+import { RequestInterface } from "../../requests/common/types/request.model.ts";
+import { requestService } from "../../requests/common/api/request-service.ts";
+import { clientService } from "../../client/common/service/client-service.ts";
+import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
+import HighlightLoader from "../../../components/highlightloader/HighLightLoader.tsx";
+import { ClientCard } from "./partials/ClientCard.tsx";
+import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
+import { SummaryCardData } from "./types/status-card-data.model.ts";
+import { StatusCardData } from "./types/summary-card-data.model.ts";
+import { EmptyState } from "./partials/EmptyState.tsx";
+
+const REQUEST_PAGINATION = {
+  PAGE: 1,
+  SIZE: 10,
+  SORT_FIELD: "id",
+  SORT_ORDER: "desc" as const,
+  FILTER: "assigned"
+};
+
+const useDashboardData = () => {
+  const [requests, setRequests] = useState<RequestInterface[]>([]);
+  const [summary, setSummary] = useState<SummaryModel | null>(null);
+  const [attachedClients, setAttachedClients] = useState<ClientResponseInterface[]>([]);
+  const [detachedClients, setDetachedClients] = useState<ClientResponseInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRequests = useCallback(async (): Promise<void> => {
+    try {
+      const pageResponse = await requestService.getRequestsMePaginated(
+        REQUEST_PAGINATION.PAGE,
+        REQUEST_PAGINATION.SIZE,
+        REQUEST_PAGINATION.SORT_FIELD,
+        REQUEST_PAGINATION.SORT_ORDER,
+        REQUEST_PAGINATION.FILTER
+      );
+      setRequests(pageResponse?.items || []);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar as solicitações",
+        variant: "destructive"
+      });
+    }
+  }, []);
+
+  const fetchClients = useCallback(async (
+    attached: boolean,
+    setter: (clients: ClientResponseInterface[]) => void
+  ): Promise<void> => {
+    try {
+      const clients = await clientService.getClientsAssociates(attached);
+      setter(clients || []);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao buscar sistemas.",
+        variant: "destructive"
+      });
+    }
+  }, []);
+
+  const fetchSummary = useCallback(async (): Promise<void> => {
+    try {
+      const summaryData = await summaryService.getSummary();
+      setSummary(summaryData);
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao buscar sumário.",
+        variant: "destructive"
+      });
+    }
+  }, []);
+
+  const loadAllData = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchClients(true, setAttachedClients),
+        fetchClients(false, setDetachedClients),
+        fetchSummary(),
+        fetchRequests()
+      ]);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchClients, fetchSummary, fetchRequests]);
+
+  return {
+    requests,
+    summary,
+    attachedClients,
+    detachedClients,
+    loading,
+    loadAllData
+  };
+};
+
+const useNavigation = () => {
+  const navigate = useNavigate();
+
+  const handleRequestAccess = useCallback((): void => {
+    navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+  }, [navigate]);
+
+  const handleSeeClientDetails = useCallback((clientId: string): void => {
+    savePreviousRoute(PRIVATE_ROUTES.DASHBOARD);
+    navigate(PRIVATE_ROUTES.SYSTEMS_DETAILS.replace(":clientId", clientId));
+  }, [navigate]);
+
+  const handleNavigateToRequestDetails = useCallback((requestId: number): void => {
+    savePreviousRoute(PRIVATE_ROUTES.DASHBOARD, "assigned");
+    navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", requestId.toString()));
+  }, [navigate]);
+
+  return {
+    handleRequestAccess,
+    handleSeeClientDetails,
+    handleNavigateToRequestDetails
+  };
+};
+
+const LoadingState = () => (
+  <motion.div
+    className="flex flex-col h-full"
+    {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+    <div className="flex-none">
+      <HeaderContainer>
+        <div className="pl-1 flex items-start justify-between">
+          <Heading title="Olá, teste" />
+        </div>
+      </HeaderContainer>
+      <Separator />
+    </div>
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <HighlightLoader />
+    </div>
+  </motion.div>
+);
 
 export default function Dashboard() {
+  const {
+    requests,
+    summary,
+    attachedClients,
+    detachedClients,
+    loading,
+    loadAllData
+  } = useDashboardData();
 
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  // const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const {
+    handleRequestAccess,
+    handleSeeClientDetails,
+    handleNavigateToRequestDetails
+  } = useNavigation();
 
-  // Dados fictícios para a tabela
-  const tableData = [
-    { sistema: "Sistema A", papel: "Admin", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema B", papel: "User", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema C", papel: "Viewer", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema D", papel: "Admin", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema E", papel: "User", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema F", papel: "Viewer", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema G", papel: "Admin", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema H", papel: "User", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema I", papel: "Viewer", status: REQUEST_STATUS_ENUM.PENDING },
-    { sistema: "Sistema J", papel: "Admin", status: REQUEST_STATUS_ENUM.PENDING }
-  ];
+  useEffect(() => {
+    loadAllData();
+  }, [loadAllData]);
 
-  // Dados fictícios para os cards da direita
-  const rightCardItems = [
+  const summaryCards = useMemo((): SummaryCardData[] => [
     {
-      title: "Configurações do Sistema",
-      description: "Gerenciar configurações gerais",
+      title: "Total de Usuários",
+      value: summary?.totalRegisteredUsers || 0,
+      icon: Users,
+      bgColor: "bg-success-25",
+      iconBg: "bg-success-100",
+      iconColor: "text-success-700",
+      textColor: "text-success-900",
+      valueColor: "text-success-700"
     },
     {
-      title: "Backup e Restauração",
-      description: "Gerenciar backups do sistema",
+      title: "Usuários Pendentes",
+      value: summary?.totalPendingUsers || 0,
+      icon: FileText,
+      bgColor: "bg-warning-50",
+      iconBg: "bg-warning-100",
+      iconColor: "text-warning-700",
+      textColor: "text-warning-900",
+      valueColor: "text-warning-700"
     },
     {
-      title: "Segurança",
-      description: "Configurações de segurança",
-    },
-    {
-      title: "Usuários",
-      description: "Gerenciar usuários do sistema",
-    },
-    {
-      title: "Relatórios",
-      description: "Visualizar relatórios detalhados",
+      title: "Total de Clientes",
+      value: summary?.totalClients || 0,
+      icon: TrendingUp,
+      bgColor: "bg-indigo-25",
+      iconBg: "bg-indigo-100",
+      iconColor: "text-indigo-700",
+      textColor: "text-indigo-900",
+      valueColor: "text-indigo-700"
     }
-  ];
+  ], [summary]);
+
+  const statusCards = useMemo((): StatusCardData[] => [
+    {
+      label: `${summary?.totalActiveUsers || 0} usuários ativos`,
+      icon: CheckCircle,
+      bgColor: "bg-success-50",
+      borderColor: "border-success-200",
+      iconColor: "text-success-500",
+      textColor: "text-success-700"
+    },
+    {
+      label: `${summary?.totalRoles || 0} papéis`,
+      icon: Clock,
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
+      iconColor: "text-blue-500",
+      textColor: "text-blue-700"
+    },
+    {
+      label: `${summary?.totalClients || 0} sistemas`,
+      icon: AlertCircle,
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
+      iconColor: "text-purple-500",
+      textColor: "text-purple-700"
+    },
+    {
+      label: `${summary?.totalInactiveUsers || 0} usuários inativos`,
+      icon: XCircle,
+      bgColor: "bg-error-50",
+      borderColor: "border-error-200",
+      iconColor: "text-red-500",
+      textColor: "text-error-700"
+    }
+  ], [summary]);
+
+  const displayedAttachedClients = useMemo(() => attachedClients, [attachedClients]);
+  const displayedDetachedClients = useMemo(() => detachedClients, [detachedClients]);
+
+  if(loading) {
+    return <LoadingState />;
+  }
 
   return (
     <motion.div
       className="flex flex-col h-full"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
 
       <div className="flex-none">
         <HeaderContainer>
@@ -86,7 +279,6 @@ export default function Dashboard() {
             <Heading title="Olá, teste" />
           </div>
         </HeaderContainer>
-
         <Separator />
       </div>
 
@@ -94,90 +286,47 @@ export default function Dashboard() {
         <ScrollArea className="flex-grow border-r px-6 pt-6">
           <div className="flex flex-col">
             <div className="flex flex-row gap-6 mb-6">
-              <div className="bg-success-25 rounded-xl flex flex-row items-center justify-between p-4 h-20 flex-1">
-                <div className="flex items-center gap-3">
-                  <div className="bg-success-100 rounded-full min-w-10 min-h-10 flex items-center justify-center">
-                    <Users size={20} className="text-success-700" />
+              {summaryCards.map((card) => {
+                const Icon = card.icon;
+                return (
+                  <div
+                    key={card.title}
+                    className={`${card.bgColor} rounded-xl flex flex-row items-center justify-between p-4 h-20 flex-1`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
+                        <Icon size={20} className={card.iconColor} />
+                      </div>
+                      <span className={`${card.textColor} text-base font-normal`}>
+                        {card.title}
+                      </span>
+                    </div>
+                    <span className={`${card.valueColor} text-xl font-bold`}>
+                      {card.value}
+                    </span>
                   </div>
-                  <span className="text-success-900 text-base font-normal">
-                    Total de Usuários
-                  </span>
-                </div>
-                <span className="text-success-700 text-xl font-bold">
-                  1,234
-                </span>
-              </div>
-
-              <div className="bg-warning-50 rounded-xl flex flex-row items-center justify-between p-4 h-20 flex-1">
-                <div className="flex items-center gap-3">
-                  <div className="bg-warning-100 rounded-full min-w-10 min-h-10 flex items-center justify-center">
-                    <FileText size={20} className="text-warning-700" />
-                  </div>
-                  <span className="text-warning-900 text-base font-normal">
-                    Solicitações Ativas
-                  </span>
-                </div>
-                <span className="text-warning-700 text-xl font-bold">
-                  89
-                </span>
-              </div>
-
-              <div className="bg-indigo-25 rounded-xl flex flex-row items-center justify-between p-4 h-20 flex-1">
-                <div className="flex items-center gap-3">
-                  <div className="bg-indigo-100 rounded-full min-w-10 min-h-10 flex items-center justify-center">
-                    <TrendingUp size={20} className="text-indigo-700" />
-                  </div>
-                  <span className="text-indigo-900 text-base font-normal">
-                    Sistemas Ativos
-                  </span>
-                </div>
-                <span className="text-indigo-700 text-xl font-bold">
-                  45
-                </span>
-              </div>
+                );
+              })}
             </div>
 
             <div className="flex flex-row gap-6 mb-6">
-              <div className="w-full flex items-center justify-center gap-2 h-7 px-3 rounded border border-success-200 bg-success-50 text-success-50">
-                <CheckCircle size={12} className="text-success-500" />
-                <span className="text-sm font-medium text-success-700">
-                  3 usuários ativos
-                </span>
-              </div>
-
-              <div className="w-full flex items-center justify-center gap-2 h-7 px-3 rounded border border-blue-200 bg-blue-50">
-                <Clock size={12} className="text-blue-500" />
-                <span className="text-sm font-medium text-blue-700">
-                  21 papéis
-                </span>
-              </div>
-
-              <div className="w-full flex items-center justify-center gap-2 h-7 px-3 rounded border border-purple-200 bg-purple-50">
-                <AlertCircle size={12} className="text-purple-500" />
-                <span className="text-sm font-medium text-purple-700">
-                  31 sistemas
-                </span>
-              </div>
-
-              <div className="w-full flex items-center justify-center gap-2 h-7 px-3 rounded border border-error-200 bg-error-50">
-                <XCircle size={12} className="text-red-500" />
-                <span className="text-sm font-medium text-error-700">
-                  usuários inativos
-                </span>
-              </div>
+              {statusCards.map((card) => {
+                const Icon = card.icon;
+                return (
+                  <div
+                    key={card.label}
+                    className={`w-full flex items-center justify-center gap-2 h-7 px-3 rounded border ${card.borderColor} ${card.bgColor}`}>
+                    <Icon size={12} className={card.iconColor} />
+                    <span className={`text-sm font-medium ${card.textColor}`}>
+                      {card.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
-            <h3 className="text-lg font-semibold mb-4">Ultimas solicitações</h3>
+            <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
 
-            <Table auxiliaryHeader={
-                <div className="p-4 w-96">
-                  <Input
-                    variant="dark"
-                    placeholder="Buscar solicitação..."
-                    className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                  />
-                </div>
-              }>
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
@@ -187,91 +336,85 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tableData.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell width="calc(33.3% - 33px)">{item.sistema}</TableCell>
-                    <TableCell width="calc(33.3% - 33px)">{item.papel}</TableCell>
-                    <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(item.status)}</TableCell>
-                    <TableCell width="100px" className="flex items-center justify-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="flex flex-row gap-2">
-                            <ReceiptText size={16} />
-                            <span onClick={() => {
-                              savePreviousRoute(PRIVATE_ROUTES.DASHBOARD);
-                              // navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", request.id.toString()));
-                            }}>Detalhes</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {requests.length > 0 ? (
+                  requests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
+                      <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
+                      <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
+                      <TableCell width="100px" className="flex items-center justify-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => handleNavigateToRequestDetails(request.id)}>
+                              <ReceiptText size={16} />
+                              <span>Detalhes</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell>
+                      <EmptyState message="Nenhuma solicitação encontrada" />
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>
         </ScrollArea>
 
         <div className="flex flex-col w-[356px]">
-          <ScrollArea className="h-1/2 border-b">
-            <div className="flex flex-col p-4">
+          <div className="h-1/2 border-b flex flex-col">
+            <div className="p-4 pb-0">
               <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
-
-              {rightCardItems.slice(0, 3).map((item, index) => (
-                <div key={index} className="h-[70px] bg-white border border-md flex flex-row items-center justify-between p-3 hover:bg-gray-50 rounded-lg mb-2">
-                  <div className="flex flex-row gap-3">
-                    <div className="min-w-9 min-h-9 flex items-center justify-center bg-success-100 rounded-full">
-                      <LaptopMinimal size={16} className="text-success-600" />
-                    </div>
-                    <div className="flex flex-col justify-between">
-                      <span className="text-xs font-medium text-gray-900">
-                        {item.title}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {item.description}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center border border-blue-500 rounded-md w-[28px] h-[28px] cursor-pointer">
-                    <SquareArrowOutUpRight size={16} className="text-blue-500" />
-                  </div>
-                </div>
-              ))}
             </div>
-          </ScrollArea>
+            <ScrollArea className="flex-1">
+              <div className="flex flex-col px-4 pb-4">
+                {displayedAttachedClients.length > 0 ? (
+                  displayedAttachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={true}
+                      onActionClick={() => handleSeeClientDetails(client.clientId)}
+                    />
+                  ))
+                ) : (
+                  <EmptyState message="Nenhum sistema com acesso encontrado" />
+                )}
+              </div>
+            </ScrollArea>
+          </div>
 
-          <ScrollArea className="h-1/2">
-            <div className="flex flex-col p-4">
+          <div className="h-1/2 flex flex-col">
+            <div className="p-4 pb-0">
               <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
-
-              {rightCardItems.slice(0, 3).map((item, index) => (
-                <div key={index} className="bg-white border border-md flex flex-col p-3 hover:bg-gray-50 rounded-lg mb-4 gap-3">
-                  <div className="flex flex-row gap-3">
-                    <div className="min-w-9 min-h-9 flex items-center justify-center bg-warning-100 rounded-full">
-                      <LaptopMinimal size={16} className="text-warning-600" />
-                    </div>
-                    <div className="flex flex-col justify-between">
-                      <span className="text-xs font-medium text-gray-900">
-                        {item.title}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {item.description}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex w-full justify-end items-center">
-                    <Button variant="ghost" className="flex items-center gap-2">
-                      <Plus size={16} className="text-blue-500"></Plus>
-                      <span className="text-primary-600">Solicitar acesso</span>
-                    </Button>
-                  </div>
-                </div>
-              ))}
             </div>
-          </ScrollArea>
+            <ScrollArea className="flex-1">
+              <div className="flex flex-col px-4 pb-4">
+                {displayedDetachedClients.length > 0 ? (
+                  displayedDetachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={false}
+                      onActionClick={handleRequestAccess}
+                    />
+                  ))
+                ) : (
+                  <EmptyState message="Nenhum sistema disponível para solicitação" />
+                )}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </div>
     </motion.div>

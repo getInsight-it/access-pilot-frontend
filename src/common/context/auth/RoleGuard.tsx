@@ -22,24 +22,31 @@ interface RoleGuardProps {
 const hasRequiredRoles = (roles: string[] | undefined, authData: AuthContextType): boolean => {
   if(!roles || roles.length === 0) return true;
 
+  if(!authData.user) {
+    console.log('user is null inside');
+  }
+
   const userRoles: string[] = [];
 
   const isAdmin: boolean = authData.roles?.clientRoles
     ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloackSystemsEnum.ACCESS_PILOT)
     ?.[KeycloackSystemsEnum.ACCESS_PILOT].includes(UserRoleEnum.ADMIN) ?? false;
 
+  console.log('admin', isAdmin);
+
   if(isAdmin) userRoles.push(UserRoleEnum.ADMIN);
   if(authData.isApprover) userRoles.push(UserRoleEnum.APPROVER);
 
+  console.log('userRoles', roles);
+  console.log('userRoles', userRoles);
+
   return roles
-    ? roles.some((role) => userRoles.includes(role))
+    ? roles.every((role) => userRoles.some(userRole => userRole === role))
     : true;
 }
 
 export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
   const authData = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasTimedOut, setHasTimedOut] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -48,36 +55,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
     }
   }, [location]);
 
-  useEffect(() => {
-    let timeoutId: number;
-    let maxWaitTimeoutId: number;
-
-    if(authData.isAuthenticated !== undefined && authData.user !== null) {
-      setIsLoading(false);
-    } else {
-      timeoutId = window.setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-
-      maxWaitTimeoutId = window.setTimeout(() => {
-        setHasTimedOut(true);
-        setIsLoading(false);
-      }, 10000);
-    }
-
-    return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(maxWaitTimeoutId);
-    };
-  }, [authData.isAuthenticated, authData.user]);
-
-  useEffect(() => {
-    if(authData.isAuthenticated !== undefined && authData.user !== null) {
-      setIsLoading(false);
-    }
-  }, [authData.isAuthenticated, authData.user]);
-
-  if(isLoading) {
+  if(!authData.isAuthenticated || !authData.user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <HighlightLoader />
@@ -85,12 +63,12 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
     );
   }
 
-  if(hasTimedOut) {
-    return <Navigate to={ERROR_ROUTES.ERROR} replace />;
-  }
-
   if(!authData.isAuthenticated) {
     return <Navigate to={AUTH_ROUTES.LOGIN} replace />;
+  }
+
+  if(!authData.user) {
+    console.log('user is null');
   }
 
   if(!hasRequiredRoles(roles, authData)) {

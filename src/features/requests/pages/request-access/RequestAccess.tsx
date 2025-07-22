@@ -1,9 +1,7 @@
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
-import { Heading } from "../../../../common/components/header/heading.tsx";
-import { Separator } from "@radix-ui/react-separator";
+import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
 import { motion } from "framer-motion";
-import { PilotoForm } from "../../../../components/canvas/PilotoForm.tsx";
 import { cn } from "../../../../config/lib/utils.ts";
 import { Check } from "lucide-react";
 import { AutoHeight } from "../../../../common/components/AutoHeigth.tsx";
@@ -28,13 +26,11 @@ import AttachmentStep, { FileAttachment } from "./partials/AttachmentStep.tsx";
 import { DetailsStep } from "./partials/DetailsStep.tsx";
 import { RequestService } from "../../common/api/request-service.ts";
 import { httpClient } from "../../../../config/http/http.ts";
+import { Separator } from "../../../../components/ui/separator.tsx";
 
 const breadcrumbItems = [
-  { title: "Dashboard", link: "/dashboard" },
   { title: "Solicitar acesso", link: "/dashboard/request-access/create" }
 ];
-
-type ActionName = "idle" | "headshake" | "hiphop";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -62,7 +58,6 @@ export default function RequestAccess() {
     4: "pending"
   });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const [currentAnimation, setCurrentAnimation] = useState<ActionName>("idle");
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
   const { toast } = useToast();
   const location = useLocation();
@@ -317,7 +312,6 @@ export default function RequestAccess() {
     setCurrentStep(1);
     setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
     setIsFormSubmitted(false);
-    setCurrentAnimation("idle");
   };
 
   const handleLoaderClose = () => {
@@ -336,28 +330,29 @@ export default function RequestAccess() {
   };
 
   return (
-    <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-        <Breadcrumbs items={breadcrumbItems} />
-        <>
-          <div className="flex items-center justify-between">
-            <Heading title={"Solicitar acesso"} description={"Preencha o formulário e solicite acesso a um sistema."} />
+    <motion.div
+      className="flex flex-col h-full"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+
+      <div className="flex-none">
+        <HeaderContainer>
+          <Breadcrumbs items={breadcrumbItems} />
+
+          <div className="pl-1 flex items-start justify-between">
+            <Heading
+              title="Solicitar acesso"
+              description="Preencha o formulário e solicite o acesso a um sistema."
+            />
           </div>
+        </HeaderContainer>
 
-          <Separator />
+        <Separator />
+      </div>
 
-          <div className="space-y-8 relative">
-            <motion.div
-              initial={{ opacity: 0, x: -500 }}
-              animate={{
-                opacity: 1,
-                x: 0,
-                transition: { duration: 0.8, delay: 0.3, ease: "easeOut" }
-              }}
-              className={`absolute h-[500px] bottom-0 -left-60 lg:-bottom-20 lg:-left-72 z-10 pointer-events-none ${hasError ? "hidden lg:-bottom-60 lg:-left-32" : ""} ${!showContent && !hasError ? "-bottom-80 -left-96 lg:-bottom-40 lg:left-2" : ""}`}>
-              <PilotoForm currentAnimation={currentAnimation} />
-            </motion.div>
-
+      <ScrollArea className="flex-grow">
+        <div className="py-6 max-w-content-container m-auto">
+          <div className="px-6">
             {showContent && !hasError && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -488,19 +483,19 @@ export default function RequestAccess() {
             )}
 
             <StepLoader loading={loading} onClose={handleLoaderClose} />
-          </div>
 
-          <ConfirmRequestDialog
-            isOpen={isConfirmModalOpen}
-            onOpenChange={setIsConfirmModalOpen}
-            reason={customForm["reason"].value}
-            clientId={customForm["clientId"].value}
-            roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
-            attachments={customForm["attachments"].value}
-            onConfirm={handleSubmitForm}
-          />
-        </>
-      </div>
-    </ScrollArea>
+            <ConfirmRequestDialog
+              isOpen={isConfirmModalOpen}
+              onOpenChange={setIsConfirmModalOpen}
+              reason={customForm["reason"].value}
+              clientId={customForm["clientId"].value}
+              roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
+              attachments={customForm["attachments"].value}
+              onConfirm={handleSubmitForm}
+            />
+          </div>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 }

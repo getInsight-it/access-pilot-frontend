@@ -33,20 +33,15 @@ export class ClientService {
     return null;
   }
 
-  async getClientsAssociates(attached: boolean): Promise<ClientResponseInterface[] | null> {
-    const queryParams = new URLSearchParams({
-      attached: attached?.toString()
-    });
-
+  async getClientsAssociates(attached: boolean): Promise<ClientResponseInterface[]> {
+    const queryParams = new URLSearchParams({ attached: attached?.toString() });
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_ME_ASSOCIATIONS}?${queryParams.toString()}`);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as ClientResponseInterface[];
-    } else {
-      console.error("Erro ao buscar clients");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as ClientResponseInterface[];;
   }
 
   async getClientsPaginated(

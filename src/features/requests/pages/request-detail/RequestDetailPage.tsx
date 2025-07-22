@@ -1,10 +1,10 @@
 import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
-import { Heading } from "../../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../../../store/authStore.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { requestService } from "../../common/api/request-service.ts";
 import { useToast } from "../../../../components/ui/use-toast.ts";
 import {
@@ -14,37 +14,42 @@ import { downloadFile } from "../../../storage/common/api/storage-service.ts";
 import RequestStatus from "./partials/RequestStatus.tsx";
 import RequestSystemDescription from "./partials/RequestSystemDescription.tsx";
 import RequestSphere from "./partials/RequestSphere.tsx";
-import RequestGeneralInformation from "./partials/RequestGeneralInformation.tsx";
-import RequestAttachmentFiles from "./partials/RequestAttachmentFiles.tsx";
 import { OPTIONS } from "../../../../components/request-detail/options.tsx";
 import { format } from "date-fns";
 import { RequestAttachmentInterface } from "../../common/types/request-attachment.model.ts";
 import { RequestInterface } from "../../common/types/request.model.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
 import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarchy.model.ts";
-import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import AttachmentConfigurationPresentation
+  from "../../../../common/components/AttachmentConfiguration/AttachmentConfigurationPresentation.tsx";
+import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
+import { getPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constants/animation.ts";
+import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "APPROVED";
 
-const breadcrumbItems = [
-  { title: "Dashboard", link: "/dashboard" },
+interface RequestStatusParams {
+  status: RequestStatusType;
+  description?: string;
+  finalReason?: string;
+}
+
+const BREADCRUMB_ITEMS = [
   { title: "Minhas solicitações", link: "/dashboard/access-requests" },
   { title: "Detalhe da solicitação", link: "/dashboard/request-access" }
 ];
 
-export default function RequestDetailPage() {
-  const { id } = useParams();
-  const { toast } = useToast();
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+const useRequestData = (requestId: string | undefined) => {
   const [request, setRequest] = useState<RequestInterface>();
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
-  const [loading, setLoading] = useState(false);
-  const selected: any = OPTIONS.filter((o) => o.value === request?.status).map((o) => o.value)[0];
-  const userInfo = useAuthStore((state) => state.user);
   const [itemHierarchy, setItemHierarchy] = useState<ItemHierarchyInterface[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const generatePresentationAttachments = (requestAttachments: RequestAttachmentInterface[]) => {
+  const generatePresentationAttachments = useCallback((requestAttachments: RequestAttachmentInterface[]): FileAttachment[] => {
     const attachmentsByConfig = new Map<string, any[]>();
 
     requestAttachments.forEach(attachment => {
@@ -58,27 +63,28 @@ export default function RequestDetailPage() {
       });
     });
 
-    const presentationAttahcments: FileAttachment[] = [];
+    const presentationAttachments: FileAttachment[] = [];
     attachmentsByConfig.forEach((files, key) => {
-      presentationAttahcments.push({
+      presentationAttachments.push({
         key,
         files,
         fileName: requestAttachments.find(a => a.configuration.key === key)?.configuration.description || key
       });
     });
 
-    return presentationAttahcments;
-  };
+    return presentationAttachments;
+  }, []);
 
-  const getData = async () => {
-    if(!id) return;
+  const fetchRequestData = useCallback(async (): Promise<void> => {
+    if(!requestId) return;
 
     setLoading(true);
-
     try {
-      const requestPromise = requestService.findRequestById(id);
-      const attachmentsPromise = requestService.getClientAttachments(Number(id));
-      const [request, requestAttachments] = await Promise.all([requestPromise, attachmentsPromise]);
+      const [request, requestAttachments] = await Promise.all([
+        requestService.findRequestById(requestId),
+        requestService.getClientAttachments(Number(requestId))
+      ]);
+
       const hierarchy = await levelService.getItemHierarchy(request.level.id, request.codeItem);
       const presentationAttachments = generatePresentationAttachments(requestAttachments);
 
@@ -95,9 +101,57 @@ export default function RequestDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [requestId, generatePresentationAttachments, toast]);
 
-  const handleDownload = async (file: any) => {
+  const updateRequestStatus = useCallback(async (
+    params: RequestStatusParams,
+    successMessage: string,
+    errorMessage: string
+  ): Promise<void> => {
+    if(!requestId) return;
+
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("request", JSON.stringify(params));
+
+      await requestService.updateRequest(Number(requestId), formData);
+
+      toast({ title: "Sucesso!", description: successMessage });
+      await fetchRequestData();
+    } catch (error) {
+      console.error(`Erro ao ${errorMessage.toLowerCase()}:`, error);
+      toast({ title: "Erro!", description: errorMessage, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }, [requestId, fetchRequestData, toast]);
+
+  const handleCancel = useCallback(async (finalReason: string): Promise<void> => {
+    await updateRequestStatus(
+      { status: "CANCELED", description: request?.description, finalReason },
+      "Solicitação cancelada com sucesso.",
+      "Erro ao cancelar solicitação."
+    );
+  }, [updateRequestStatus, request?.description]);
+
+  const handleReject = useCallback(async (description: string, finalReason: string): Promise<void> => {
+    await updateRequestStatus(
+      { status: "REJECTED", description, finalReason },
+      "Solicitação rejeitada com sucesso.",
+      "Erro ao rejeitar solicitação."
+    );
+  }, [updateRequestStatus]);
+
+  const handleApprove = useCallback(async (description: string): Promise<void> => {
+    await updateRequestStatus(
+      { status: "APPROVED", description },
+      "Solicitação aprovada com sucesso.",
+      "Erro ao aprovar solicitação."
+    );
+  }, [updateRequestStatus]);
+
+  const handleDownload = useCallback(async (file: any): Promise<void> => {
     try {
       const response = await downloadFile(file.id);
       const url = window.URL.createObjectURL(response.data as Blob);
@@ -116,122 +170,173 @@ export default function RequestDetailPage() {
         variant: "destructive"
       });
     }
+  }, [toast]);
+
+  return {
+    request,
+    attachments,
+    itemHierarchy,
+    loading,
+    fetchRequestData,
+    handleCancel,
+    handleReject,
+    handleApprove,
+    handleDownload
   };
+};
 
-  const handleUpdateStatus = async (
-    params: { status: RequestStatusType; description?: string; finalReason?: string },
-    successMessage: string,
-    errorMessage: string
-  ) => {
-    if(!id) return;
+const useRequestNavigation = () => {
+  const navigate = useNavigate();
 
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("request", JSON.stringify(params));
+  const handleReturnClick = useCallback((): void => {
+    navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
+  }, [navigate]);
 
-      await requestService.updateRequest(Number(id), formData);
+  return { handleReturnClick };
+};
 
-      toast({ title: "Sucesso!", description: successMessage });
+const useRequestDerivedData = (request: RequestInterface | undefined) => {
+  const userInfo = useAuthStore((state) => state.user);
+  const requestType = getPreviousRoute()?.data;
 
-      getData();
-    } catch (error) {
-      console.error(`Erro ao ${errorMessage.toLowerCase()}:`, error);
-      toast({ title: "Erro!", description: errorMessage, variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
+  const selectedStatus = useMemo(() => {
+    return OPTIONS.filter((o) => o.value === request?.status).map((o) => o.value)[0];
+  }, [request?.status]);
+
+  const formattedDate = useMemo(() => {
+    return request ? format(new Date(request.criacao), "dd/MM/yyyy") : "";
+  }, [request]);
+
+  const canCancel = useMemo(() => {
+    return ["CREATED", "PENDING"].includes(request?.status || "") &&
+      userInfo?.id === request?.requestingUser?.externalId;
+  }, [request?.status, request?.requestingUser?.externalId, userInfo?.id]);
+
+  return {
+    selectedStatus,
+    formattedDate,
+    canCancel,
+    requestType
   };
+};
 
-  const handleCancel = async (finalReason: string) => {
-    await handleUpdateStatus(
-      { status: "CANCELED", description: request?.description, finalReason },
-      "Solicitação cancelada com sucesso.",
-      "Erro ao cancelar solicitação."
-    );
-  };
+export default function RequestDetailPage() {
+  const { id } = useParams();
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
-  const handleReject = async (description: string, finalReason: string) => {
-    await handleUpdateStatus(
-      { status: "REJECTED", description, finalReason },
-      "Solicitação rejeitada com sucesso.",
-      "Erro ao rejeitar solicitação."
-    );
-  };
+  const {
+    request,
+    attachments,
+    itemHierarchy,
+    loading,
+    fetchRequestData,
+    handleCancel,
+    handleReject,
+    handleApprove,
+    handleDownload
+  } = useRequestData(id);
 
-  const handleApprove = async (description: string) => {
-    await handleUpdateStatus(
-      { status: "APPROVED", description },
-      "Solicitação aprovada com sucesso.",
-      "Erro ao aprovar solicitação."
-    );
-  };
+  const { handleReturnClick } = useRequestNavigation();
+
+  const {
+    selectedStatus,
+    formattedDate,
+    canCancel
+  } = useRequestDerivedData(request);
 
   useEffect(() => {
-    if(isAuthenticated && id) getData();
-  }, [isAuthenticated, id]);
+    if(isAuthenticated && id) {
+      fetchRequestData();
+    }
+  }, [isAuthenticated, id, fetchRequestData]);
+
+  const isDataLoading = loading || !request || !attachments || !itemHierarchy;
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
-      className="flex-1 flex flex-col space-y-4 p-4 pt-6 md:p-8">
+      className="flex flex-col h-full"
+      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
 
-      <Breadcrumbs items={breadcrumbItems} />
+      <div className="flex-none">
+        <HeaderContainer>
+          <Breadcrumbs items={BREADCRUMB_ITEMS} />
 
-      <div className="flex items-start justify-between">
-        <Heading title={`Detalhe da solicitação`} description="Gerenciar solicitações de acesso." />
+          <div className="pl-1 flex items-start justify-between">
+            <Heading
+              title="Detalhes da solicitação"
+              description="Gerenciar solicitações de acesso para sistemas."
+              returnButton={true}
+              onReturnClick={handleReturnClick}
+            />
+          </div>
+        </HeaderContainer>
+
+        <Separator />
       </div>
 
-      <Separator />
-
-      <ScrollArea className="flex-1 h-full relative">
-        <div className="h-full flex items-center justify-center">
-          {loading || !request || !attachments || !itemHierarchy
-            ? <div className="flex items-center justify-center min-h-[60vh]">
-              <HighlightLoader />
-            </div>
-            : <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
-              className="relative max-w-content-container mx-auto">
+      <ScrollArea className="flex-grow bg-white">
+        {isDataLoading ? (
+          <ContentLoader />
+        ) : (
+          <div className="max-w-content-container m-auto">
+            <DetailContainer
+              background="highlight"
+              border={true}
+              titleContent={
+                <span className="text-sm font-semibold">Informações da solicitação</span>
+              }>
               <RequestStatus
-                status={selected}
+                status={selectedStatus}
                 protocolCode={request.protocolCode}
-                formattedDate={format(new Date(request.criacao), "dd/MM/yyyy")}
+                formattedDate={formattedDate}
                 finalReason={request.finalReason}
                 data={request}
-                canCancel={["CREATED", "PENDING"].includes(request.status) && userInfo?.id === request.requestingUser?.externalId}
+                canCancel={canCancel}
                 onCancel={handleCancel}
                 onReject={handleReject}
                 onApprove={handleApprove}
+                roleName={request.role?.name}
+                requestingUserName={request?.requestingUser?.firstName}
+                requestDescription={request.description}
               />
+            </DetailContainer>
 
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <RequestSystemDescription
-                  clientName={request.role?.client?.name}
-                  clientDescription={request.role?.client?.description}
-                  isContentLoading={false}
-                />
+            <DetailContainer
+              titleContent={
+                <span className="text-sm font-semibold">Sistema</span>
+              }>
+              <RequestSystemDescription
+                clientName={request.role?.client?.name}
+                clientDescription={request.role?.client?.description}
+                isContentLoading={false}
+              />
+            </DetailContainer>
 
-                <RequestSphere itemHierarchy={itemHierarchy} />
-              </div>
+            <DetailContainer
+              background="highlight"
+              border={true}
+              titleContent={
+                <span className="text-sm font-semibold">Hierarquia</span>
+              }>
+              <RequestSphere itemHierarchy={itemHierarchy} />
+            </DetailContainer>
 
-              <div className="flex flex-col gap-8 mt-10">
-                <RequestGeneralInformation
-                  roleName={request.role?.name}
-                  requestingUserName={request?.requestingUser?.firstName}
-                  description={request.description}
-                />
-
-                <RequestAttachmentFiles
-                  attachments={attachments}
-                  onDownload={handleDownload}
-                />
-              </div>
-            </motion.div>
-          }
-        </div>
+            <DetailContainer
+              titleContent={
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold">Anexos da solicitação</span>
+                  <span className="text-xs font-normal">Anexos enviados para esta solicitação de acesso.</span>
+                </div>
+              }>
+              <AttachmentConfigurationPresentation
+                attachments={attachments}
+                direction="row"
+                onDownload={handleDownload}
+                collapsible={true}
+              />
+            </DetailContainer>
+          </div>
+        )}
       </ScrollArea>
     </motion.div>
   );

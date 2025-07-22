@@ -181,7 +181,11 @@ export default function RolesPage() {
                                 <Edit size={16} />
                                 <span onClick={() => {
                                   savePreviousRoute(location.pathname + location.search);
-                                  navigate(PRIVATE_ROUTES.ROLES_EDIT.replace(":id", role.id.toString()));
+                                  navigate(
+                                    PRIVATE_ROUTES.ROLES_EDIT
+                                      .replace(":clientId", clientId!)
+                                      .replace(":id", role.id.toString())
+                                  );
                                 }}>Editar</span>
                               </DropdownMenuItem>
                             </DropdownMenuContent>

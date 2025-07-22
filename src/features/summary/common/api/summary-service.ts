@@ -15,14 +15,13 @@ export class SummaryService {
   }
 
   async getSummary(): Promise<SummaryModel> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get<SummaryModel>(SUMMARY_API.SUMMARIES);
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(SUMMARY_API.SUMMARIES);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data);
-    } else {
-      console.error("Deu ruim!");
+    if(response instanceof HttpRequestError) {
+      throw response
     }
-    return {} as SummaryModel;
+
+    return JSON.parse(response.data) as SummaryModel;
   }
 }
 
