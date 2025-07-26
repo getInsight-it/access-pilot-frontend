@@ -24,6 +24,26 @@
   }
 }
 
+
+@layer components {
+  .table-card {
+    @apply py-2 px-2 font-semibold rounded-lg shadow-sm border border-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75;
+
+    &__header {
+      @apply text-lg font-bold mb-2;
+    }
+    &__row {
+      @apply flex items-start justify-between py-2 px-4 rounded-lg mb-2;
+    }
+    &__label {
+      @apply text-sm font-medium text-gray-600;
+    }
+    &__value {
+      @apply text-sm text-gray-800;
+    }
+  }
+}
+
 /* Aplica estilos às barras de rolagem */
 ::-webkit-scrollbar {
   width: 12px; /* Largura da barra vertical */
