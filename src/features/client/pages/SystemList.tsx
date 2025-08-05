@@ -120,7 +120,7 @@ export default function SystemList() {
   return (
     <>
       <motion.div
-        className="flex flex-col h-full"
+        className="flex flex-col h-full w-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
@@ -128,7 +128,7 @@ export default function SystemList() {
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div className="pl-1 flex flex-wrap items-start justify-between gap-4">
               <Heading
                 title="Sistemas"
                 badgeValue={totalUsers}
@@ -148,7 +148,91 @@ export default function SystemList() {
 
         <ScrollArea className="px-6 flex-grow">
           <div className="py-6 max-w-content-container m-auto">
-            <Table auxiliaryHeader={
+            <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+              <div className="w-96">
+                <Input
+                  variant="dark"
+                  placeholder="Filtrar por Sistema..."
+                  value={searchFilter}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                />
+              </div>
+              { clients && clients.map((client) => (
+                <div className="table-card">
+                  <div className="table-card__header">
+                    <div className="flex items-center justify-between">
+                      <span className="mr-2">Ações</span>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <EllipsisVertical size={20} className="cursor-pointer" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="flex flex-row gap-2"
+                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
+                            <MonitorCog size={16} />
+                            <span>Detalhes</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex flex-row gap-2"
+                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
+                            <Edit size={16} />
+                            <span>Editar</span>
+                          </DropdownMenuItem>
+                          {client.managed && (
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
+                              <UserCog size={16}/>
+                              Gerenciar Papéis
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                            <RefreshCw size={16}/>
+                            Sincronizar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                            <Cog size={16}/>
+                            {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                  <div className="table-card__content">
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Sistema</span>
+                      <span className="table-card__value">{client.clientId}</span>
+                    </div>
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Descrição</span>
+                      <span className="table-card__value">{client.description || '-'}</span>
+                    </div>
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Status</span>
+                      <span className="table-card__value">
+                        {!client.status
+                          ? (<Badge variant="secondary">Desconhecido</Badge>)
+                          : (client.status === ClientStatusEnum.PUBLISHED
+                            ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
+                            : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div className="p-4">
+                <PaginationWrapper
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => handlePageChange(page)}
+                />
+              </div>
+            </div>
+            <div className="hidden lg:flex">
+              <Table auxiliaryHeader={
               <div className="p-4 w-96">
                 <Input
                   variant="dark"
@@ -230,6 +314,7 @@ export default function SystemList() {
                 </div>
               </TableFooter>
             </Table>
+            </div>
           </div>
         </ScrollArea>
       </motion.div>
