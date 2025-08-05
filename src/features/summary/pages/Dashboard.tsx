@@ -282,16 +282,14 @@ export default function Dashboard() {
         <Separator />
       </div>
 
-      <div className="flex flex-grow">
-        <ScrollArea className="flex-grow border-r px-6 pt-6">
-          <div className="flex flex-col">
-            <div className="flex flex-row gap-6 mb-6">
+      <ScrollArea className="flex-grow border-r px-2 sm:px-6 pt-6">
+            <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
               {summaryCards.map((card) => {
                 const Icon = card.icon;
                 return (
                   <div
                     key={card.title}
-                    className={`${card.bgColor} rounded-xl flex flex-row items-center justify-between p-4 h-20 flex-1`}>
+                    className={`${card.bgColor} rounded-xl flex flex-row flex-wrap items-center justify-between gap-4 p-4 flex-1`}>
                     <div className="flex items-center gap-3">
                       <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
                         <Icon size={20} className={card.iconColor} />
@@ -300,7 +298,7 @@ export default function Dashboard() {
                         {card.title}
                       </span>
                     </div>
-                    <span className={`${card.valueColor} text-xl font-bold`}>
+                    <span className={`${card.valueColor} text-xl font-bold break-all`}>
                       {card.value}
                     </span>
                   </div>
@@ -308,15 +306,15 @@ export default function Dashboard() {
               })}
             </div>
 
-            <div className="flex flex-row gap-6 mb-6">
+            <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
               {statusCards.map((card) => {
                 const Icon = card.icon;
                 return (
                   <div
                     key={card.label}
-                    className={`w-full flex items-center justify-center gap-2 h-7 px-3 rounded border ${card.borderColor} ${card.bgColor}`}>
+                    className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
                     <Icon size={12} className={card.iconColor} />
-                    <span className={`text-sm font-medium ${card.textColor}`}>
+                    <span className={`text-sm font-medium ${card.textColor} break-all`}>
                       {card.label}
                     </span>
                   </div>
@@ -326,7 +324,53 @@ export default function Dashboard() {
 
             <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
 
-            <Table>
+            <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+                {requests.length > 0 ? (
+                  requests.map((request) => (
+                    <div className="table-card">
+                      <div className="table-card__header">
+                        <span className="mr-2">Ações</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => handleNavigateToRequestDetails(request.id)}>
+                              <ReceiptText size={16} />
+                              <span>Detalhes</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      <div className="table-card__content">
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Sistema:</span>
+                          <span className="table-card__value">{request.role?.client?.name}</span>
+                        </div>
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Papel:</span>
+                          <span className="table-card__value">{request.role?.name}</span>
+                        </div>
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Status:</span>
+                          {RequestStatusBadge(request.status)}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell>
+                      <EmptyState message="Nenhuma solicitação encontrada" />
+                    </TableCell>
+                  </TableRow>
+                )}
+            </div>
+
+            <div className="hidden lg:flex">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
@@ -367,39 +411,35 @@ export default function Dashboard() {
                   </TableRow>
                 )}
               </TableBody>
-            </Table>
-          </div>
-        </ScrollArea>
-
-        <div className="flex flex-col w-[356px]">
-          <div className="h-1/2 border-b flex flex-col">
-            <div className="p-4 pb-0">
-              <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
+              </Table>
             </div>
-            <ScrollArea className="flex-1">
-              <div className="flex flex-col px-4 pb-4">
-                {displayedAttachedClients.length > 0 ? (
-                  displayedAttachedClients.map((client) => (
-                    <ClientCard
-                      key={client.clientId}
-                      client={client}
-                      hasAccess={true}
-                      onActionClick={() => handleSeeClientDetails(client.clientId)}
-                    />
-                  ))
-                ) : (
-                  <EmptyState message="Nenhum sistema com acesso encontrado" />
-                )}
+            <div className="flex flex-row justify-between ">
+              <div className="flex flex-col w-full">
+                <div className="pt-4 pb-0">
+                  <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {displayedAttachedClients.length > 0 ? (
+                    displayedAttachedClients.map((client) => (
+                      <ClientCard
+                          key={client.clientId}
+                          client={client}
+                          hasAccess={true}
+                          onActionClick={() => handleSeeClientDetails(client.clientId)}
+                      />
+                    ))
+                  ) : (
+                    <EmptyState message="Nenhum sistema com acesso encontrado" />
+                  )}
+                </div>
               </div>
-            </ScrollArea>
-          </div>
-
-          <div className="h-1/2 flex flex-col">
-            <div className="p-4 pb-0">
-              <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
             </div>
-            <ScrollArea className="flex-1">
-              <div className="flex flex-col px-4 pb-4">
+
+            <div className="h-1/2 flex flex-col">
+              <div className="pt-4 pb-0">
+                <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
+              </div>
+              <div className="flex flex-col">
                 {displayedDetachedClients.length > 0 ? (
                   displayedDetachedClients.map((client) => (
                     <ClientCard
@@ -413,10 +453,8 @@ export default function Dashboard() {
                   <EmptyState message="Nenhum sistema disponível para solicitação" />
                 )}
               </div>
-            </ScrollArea>
-          </div>
-        </div>
-      </div>
+            </div>
+        </ScrollArea>
     </motion.div>
   );
 }

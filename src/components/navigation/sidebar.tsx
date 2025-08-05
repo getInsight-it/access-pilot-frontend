@@ -21,7 +21,7 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <nav
       className={cn(
-        `relative hidden flex-none border-r z-10 md:flex pt-6 pb-6 flex flex-col justify-between`,
+        `relative hidden flex-none border-r z-10 none pt-6 pb-6 flex flex-col justify-between`,
         status && "duration-300",
         !isMinimized ? "w-[296px]" : "!w-[72px]",
         className

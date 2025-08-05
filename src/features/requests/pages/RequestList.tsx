@@ -213,7 +213,7 @@ export default function RequestList() {
         <HeaderContainer>
           <Breadcrumbs items={BREADCRUMB_ITEMS} />
 
-          <div className="pl-1 flex items-start justify-between">
+          <div className="pl-1 flex flex-col gap-4 md:flex-row items-start justify-between">
             <Heading
               title="Solicitações"
               badgeValue={totalRequests}
@@ -236,57 +236,52 @@ export default function RequestList() {
           <ContentLoader />
         ) : (
           <div className="py-6 max-w-content-container m-auto">
-            <Table
-              auxiliaryHeader={
-                <div className="p-4 w-96">
-                  <Input
-                    variant="dark"
-                    placeholder="Buscar solicitação..."
-                    className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                    value={searchFilter}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                  />
-                </div>
-              }
-            >
-              <TableHeader>
-                <TableRow>
-                  <TableHead width="calc(20% - 20px)">Protocolo</TableHead>
-                  <TableHead width="calc(20% - 20px)">Sistema</TableHead>
-                  <TableHead width="calc(20% - 20px)">Papel</TableHead>
-                  <TableHead width="calc(20% - 20px)">Data de submissão</TableHead>
-                  <TableHead width="calc(20% - 20px)">Status</TableHead>
-                  <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+              <div className="flex flex-col gap-4 lg:hidden">
                 {requests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
-                    <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
-                    <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
-                    <TableCell width="calc(20% - 20px)">{formatDate(request.criacao)}</TableCell>
-                    <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
-                    <TableCell className="flex align-center justify-center" width="100px">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <EllipsisVertical size={20} className="cursor-pointer" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => handleNavigateToDetails(request.id)}
-                          >
-                            <ReceiptText size={16} />
-                            <span>Detalhes</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                  <div className="table-card">
+                    <div className="table-card__header">
+                      <span className="mr-2">Ações</span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => handleNavigateToDetails(request.id)}
+                            >
+                              <ReceiptText size={16} />
+                              <span>Detalhes</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className="table-card__content">
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Protocolo:</span>
+                        <span className="table-card__value">{request.protocolCode}</span>
+                      </div>
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Sistema:</span>
+                        <span className="table-card__value">{request.role?.client?.name}</span>
+                      </div>
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Papel:</span>
+                        <span className="table-card__value">{request.role?.label}</span>
+                      </div>
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Data de submissão:</span>
+                        <span className="table-card__value">{formatDate(request.criacao)}</span>
+                      </div>
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Status:</span>
+                        <span className="table-card__value">
+                          {RequestStatusBadge(request.status)}
+                        </span> 
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-              <TableFooter>
                 <div className="p-4">
                   <PaginationWrapper
                     currentPage={currentPage}
@@ -294,8 +289,70 @@ export default function RequestList() {
                     onPageChange={handlePaginationChange}
                   />
                 </div>
-              </TableFooter>
-            </Table>
+              </div>
+              <div className="hidden lg:flex">
+                <Table
+                auxiliaryHeader={
+                  <div className="p-4 w-96">
+                    <Input
+                      variant="dark"
+                      placeholder="Buscar solicitação..."
+                      className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                      value={searchFilter}
+                      onChange={(e) => handleSearchChange(e.target.value)}
+                    />
+                  </div>
+                }
+              >
+                <TableHeader>
+                  <TableRow>
+                    <TableHead width="calc(20% - 20px)">Protocolo</TableHead>
+                    <TableHead width="calc(20% - 20px)">Sistema</TableHead>
+                    <TableHead width="calc(20% - 20px)">Papel</TableHead>
+                    <TableHead width="calc(20% - 20px)">Data de submissão</TableHead>
+                    <TableHead width="calc(20% - 20px)">Status</TableHead>
+                    <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {requests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
+                      <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
+                      <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
+                      <TableCell width="calc(20% - 20px)">{formatDate(request.criacao)}</TableCell>
+                      <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
+                      <TableCell className="flex align-center justify-center" width="100px">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} className="cursor-pointer" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => handleNavigateToDetails(request.id)}
+                            >
+                              <ReceiptText size={16} />
+                              <span>Detalhes</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <div className="p-4">
+                    <PaginationWrapper
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePaginationChange}
+                    />
+                  </div>
+                </TableFooter>
+                </Table>
+              </div>
+            
           </div>
         )}
       </ScrollArea>
