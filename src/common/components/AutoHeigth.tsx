@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Card } from "../../components/ui/card.tsx";
+import { Card } from "../external/ui/card.tsx";
 
 interface AutoHeightProps {
   children: React.ReactNode;

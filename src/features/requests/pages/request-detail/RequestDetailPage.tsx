@@ -1,12 +1,12 @@
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../components/ui/separator.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../../../store/authStore.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { requestService } from "../../common/api/request-service.ts";
-import { useToast } from "../../../../components/ui/use-toast.ts";
+import { useToast } from "../../../../common/external/ui/use-toast.ts";
 import {
   FileAttachment
 } from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
@@ -19,7 +19,7 @@ import { RequestAttachmentInterface } from "../../common/types/request-attachmen
 import { RequestInterface } from "../../common/types/request.model.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
 import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarchy.model.ts";
-import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import AttachmentConfigurationPresentation
   from "../../../../common/components/AttachmentConfigurationPresentation.tsx";

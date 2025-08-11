@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button } from "../../../../../components/ui/button.tsx";
+import { Button } from "../../../../../common/external/ui/button.tsx";
 import { ChevronDown, ChevronRight, User } from "lucide-react";
-import { Table, TableBody, TableCell, TableRow } from "../../../../../components/ui/table.tsx";
-import { Badge } from "../../../../../components/ui/badge.tsx";
+import { Table, TableBody, TableCell, TableRow } from "../../../../../common/external/ui/table.tsx";
+import { Badge } from "../../../../../common/external/ui/badge.tsx";
 import { RoleResponseInterface } from "../../../../role/common/types/role.model.ts";
 
 interface RoleItemType {

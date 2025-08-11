@@ -4,7 +4,7 @@ import { cn } from "../../../../../config/lib/utils.ts";
 import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../components/ui/tooltip.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../external/ui/tooltip.tsx";
 import { useTheme } from "../../../../../theme/theme-provider.tsx";
 import { RoleComponentGuard } from "../../../../context/auth/RoleGuard.tsx";
 

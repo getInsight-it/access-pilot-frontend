@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Button } from "../../../../components/ui/button.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
 import {
   Table,
   TableBody,
@@ -10,16 +10,16 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../../components/ui/table.tsx";
+} from "../../../../common/external/ui/table.tsx";
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../components/ui/separator.tsx";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../components/ui/dialog.tsx";
-import { toast } from "../../../../components/ui/use-toast.ts";
-import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../common/external/ui/dialog.tsx";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
 import useAuthStore from "../../../../store/authStore.ts";
-import { Input } from "../../../../components/ui/input.tsx";
+import { Input } from "../../../../common/external/ui/input.tsx";
 
 import { motion } from "framer-motion";
 import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
@@ -32,7 +32,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../../components/ui/dropdown-menu.tsx";
+} from "../../../../common/external/ui/dropdown-menu.tsx";
 
 interface Item {
   id: number;

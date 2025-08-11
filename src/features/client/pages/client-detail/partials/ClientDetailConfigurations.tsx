@@ -1,6 +1,6 @@
 import { InfoIcon } from "lucide-react";
 import { AttachmentConfigurationInterface } from "../../../common/model/configuration.model.ts";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../../common/external/ui/popover.tsx";
 import { useState } from "react";
 
 interface ClientDetailConfigurationsProps {

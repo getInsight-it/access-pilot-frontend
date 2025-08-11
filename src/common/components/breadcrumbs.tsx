@@ -5,7 +5,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
-} from "../../components/ui/breadcrumb.tsx";
+} from "../external/ui/breadcrumb.tsx";
 import { Fragment } from "react";
 
 type BreadcrumbItemProps = {

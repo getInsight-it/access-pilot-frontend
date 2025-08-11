@@ -6,12 +6,14 @@ import { BUILT_IN_THEMES } from "./constant/theme.constant.ts";
 
 interface ThemeContextType {
   theme: string;
+  themeType: 'light' | 'dark';
   changeTheme: (theme: string) => Promise<void>;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = 'selected-theme';
+const THEME_TYPE_STORAGE_KEY = 'selected-theme-type';
 
 const applyColorPalette = () => {
   const root = document.documentElement;
@@ -57,6 +59,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return localStorage.getItem(THEME_STORAGE_KEY) || 'light';
   });
 
+  const [themeType, setThemeType] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem(THEME_TYPE_STORAGE_KEY) as 'light' | 'dark') || 'light';
+  });
+
   const [themeCache] = useState<Map<string, Theme>>(new Map());
 
   useLayoutEffect(() => {
@@ -86,19 +92,23 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
       applyTheme(themeData, themeData['theme-type']);
       setTheme(selectedTheme);
+      setThemeType(themeData['theme-type']);
       localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+      localStorage.setItem(THEME_TYPE_STORAGE_KEY, themeData['theme-type']);
     } catch (error) {
       console.error('Error loading theme:', error);
       if (selectedTheme !== 'light') {
         applyTheme(LIGHT_THEME, 'light');
         setTheme('light');
+        setThemeType('light');
         localStorage.setItem(THEME_STORAGE_KEY, 'light');
+        localStorage.setItem(THEME_TYPE_STORAGE_KEY, 'light');
       }
     }
   }, [themeCache]);
 
   return (
-    <ThemeContext.Provider value={{ theme, changeTheme }}>
+    <ThemeContext.Provider value={{ theme, themeType, changeTheme }}>
       {children}
     </ThemeContext.Provider>
   );

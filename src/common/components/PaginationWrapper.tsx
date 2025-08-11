@@ -7,7 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious
-} from "../../components/ui/pagination.tsx";
+} from "../external/ui/pagination.tsx";
 
 interface PaginationWrapperProps {
   currentPage: number;

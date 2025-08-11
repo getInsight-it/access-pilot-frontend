@@ -1,6 +1,6 @@
 import { Cog, FolderSync, Pen, User } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../components/ui/tooltip.tsx";
-import { Button } from "../../../../../components/ui/button.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../common/external/ui/tooltip.tsx";
+import { Button } from "../../../../../common/external/ui/button.tsx";
 import { ClientResponseInterface } from "../../../common/model/client.model.ts";
 
 interface ClientDetailActionsProps {

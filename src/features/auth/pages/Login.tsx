@@ -1,5 +1,5 @@
 import { Logo } from "../../../common/components/Logo.tsx";
-import { Button } from "../../../components/ui/button.tsx";
+import { Button } from "../../../common/external/ui/button.tsx";
 import { authService } from "../common/AuthService.ts";
 import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 

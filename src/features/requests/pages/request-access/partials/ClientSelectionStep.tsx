@@ -1,9 +1,9 @@
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
-import { CustomInput } from "../../../../../components/ui/custom-input.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../../common/external/ui/popover.tsx";
+import { CustomInput } from "../../../../../common/external/ui/custom-input.tsx";
 import { TruncatedDescription } from "../../../../../common/components/TruncateDescription.tsx";
 import { Check, MonitorIcon, Plus } from "lucide-react";
 import { cn } from "../../../../../config/lib/utils.ts";
-import { ScrollArea } from "../../../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { ClientResponseInterface } from "../../../../client/common/model/client.model.ts";
 import { useEffect, useState } from "react";
 import { BasicFormFieldInterface, RequestFormFieldType } from "../RequestAccess.tsx";

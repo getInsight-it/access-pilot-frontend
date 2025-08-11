@@ -1,6 +1,6 @@
 import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import TreeRole from "./partials/TreeRole.tsx";
-import { Separator } from "../../../components/ui/separator.tsx";
+import { Separator } from "../../../common/external/ui/separator.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuthStore from "../../../store/authStore.ts";
@@ -9,10 +9,10 @@ import { roleService } from "../common/service/role-service.ts";
 import { RoleResponseInterface } from "../common/types/role.model.ts";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
-import { Button } from "../../../components/ui/button.tsx";
+import { Button } from "../../../common/external/ui/button.tsx";
 import { Edit, EllipsisVertical, Plus } from "lucide-react";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
-import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import {
   Table,
   TableBody,
@@ -21,17 +21,17 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../components/ui/table.tsx";
-import { Input } from "../../../components/ui/input.tsx";
+} from "../../../common/external/ui/table.tsx";
+import { Input } from "../../../common/external/ui/input.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../components/ui/dropdown-menu.tsx";
+} from "../../../common/external/ui/dropdown-menu.tsx";
 import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs.tsx";
-import { toast } from "../../../components/ui/use-toast.ts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../common/external/ui/tabs.tsx";
+import { toast } from "../../../common/external/ui/use-toast.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar Sistemas", link: "/dashboard/systems" },

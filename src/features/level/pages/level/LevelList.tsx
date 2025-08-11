@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, buttonVariants } from "../../../../components/ui/button.tsx";
+import { Button, buttonVariants } from "../../../../common/external/ui/button.tsx";
 import { ChevronDown, ChevronRight, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
-import { toast } from "../../../../components/ui/use-toast.ts";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -12,10 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "../../../../components/ui/dialog.tsx";
+} from "../../../../common/external/ui/dialog.tsx";
 import { motion } from "framer-motion";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../components/ui/separator.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { cn } from "../../../../config/lib/utils.ts";
 import {
@@ -23,10 +23,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../../components/ui/dropdown-menu.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/table.tsx";
-import { Badge } from "../../../../components/ui/badge.tsx";
-import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
+} from "../../../../common/external/ui/dropdown-menu.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../common/external/ui/table.tsx";
+import { Badge } from "../../../../common/external/ui/badge.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import useAuthStore from "../../../../store/authStore.ts";
 import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
 import { levelService } from "../../common/api/level-service.ts";

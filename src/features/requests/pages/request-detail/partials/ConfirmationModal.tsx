@@ -1,7 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../../components/ui/dialog.tsx"
-import { Button } from "../../../../../components/ui/button.tsx"
-import { Textarea } from "../../../../../components/ui/textarea.tsx"
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "../../../../../components/ui/form.tsx"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../../common/external/ui/dialog.tsx"
+import { Button } from "../../../../../common/external/ui/button.tsx"
+import { Textarea } from "../../../../../common/external/ui/textarea.tsx"
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "../../../../../common/external/ui/form.tsx"
 import { UseFormReturn } from "react-hook-form"
 
 interface ConfirmationModalProps {

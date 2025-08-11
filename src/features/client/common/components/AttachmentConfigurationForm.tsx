@@ -1,25 +1,25 @@
 import React, { useRef, useState } from "react";
 import { Plus, Settings, Upload, X } from "lucide-react";
-import { Input } from "../../../../components/ui/input.tsx";
-import { Button } from "../../../../components/ui/button.tsx";
-import { Switch } from "../../../../components/ui/switch.tsx";
-import { Textarea } from "../../../../components/ui/textarea.tsx";
+import { Input } from "../../../../common/external/ui/input.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
+import { Switch } from "../../../../common/external/ui/switch.tsx";
+import { Textarea } from "../../../../common/external/ui/textarea.tsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from "../../../../components/ui/accordion.tsx";
-import { Label } from "../../../../components/ui/label.tsx";
-import { Card } from "../../../../components/ui/card.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover.tsx";
+} from "../../../../common/external/ui/accordion.tsx";
+import { Label } from "../../../../common/external/ui/label.tsx";
+import { Card } from "../../../../common/external/ui/card.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../common/external/ui/popover.tsx";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from "../../../../components/ui/dialog.tsx";
+} from "../../../../common/external/ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";

@@ -1,6 +1,6 @@
-import { Badge } from "../../components/ui/badge.tsx";
+import { Badge } from "../external/ui/badge.tsx";
 import React, { ReactNode } from 'react';
-import { Button } from "../../components/ui/button.tsx";
+import { Button } from "../external/ui/button.tsx";
 import { ArrowLeft } from "lucide-react";
 
 interface HeadingProps {

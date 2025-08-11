@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip.tsx"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../external/ui/tooltip.tsx"
 
 interface TruncatedDescriptionProps {
   description: string | undefined | null

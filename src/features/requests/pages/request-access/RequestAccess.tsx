@@ -1,12 +1,12 @@
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { motion } from "framer-motion";
 import { cn } from "../../../../config/lib/utils.ts";
 import { Check } from "lucide-react";
 import { AutoHeight } from "../../../../common/components/AutoHeigth.tsx";
-import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card.tsx";
-import { Button } from "../../../../components/ui/button.tsx";
+import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../common/external/ui/card.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
 import { ErrorFeedback } from "./partials/ErrorFeedbackComponent.tsx";
 import { SuccessFeedback } from "./partials/SuccessFeedbackForm.tsx";
 import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
 import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 import useAuthStore from "../../../../store/authStore.ts";
-import { useToast } from "../../../../components/ui/use-toast.ts";
+import { useToast } from "../../../../common/external/ui/use-toast.ts";
 import { clientService } from "../../../client/common/service/client-service.ts";
 import { roleService } from "../../../role/common/service/role-service.ts";
 import useWindowSize from "../../../../common/hooks/use-window-size.ts";
@@ -26,7 +26,7 @@ import AttachmentStep, { FileAttachment } from "./partials/AttachmentStep.tsx";
 import { DetailsStep } from "./partials/DetailsStep.tsx";
 import { RequestService } from "../../common/api/request-service.ts";
 import { httpClient } from "../../../../config/http/http.ts";
-import { Separator } from "../../../../components/ui/separator.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
 
 const breadcrumbItems = [
   { title: "Solicitar acesso", link: "/dashboard/request-access/create" }

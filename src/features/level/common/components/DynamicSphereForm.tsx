@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../common/external/ui/select.tsx";
 import { levelService } from "../api/level-service.ts";
 import { LevelInterface } from "../types/level.model.ts";
 import { LevelItemInterface } from "../types/level-item.model.ts";

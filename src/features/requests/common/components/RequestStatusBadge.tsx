@@ -1,5 +1,5 @@
 import { REQUEST_STATUS_ENUM, REQUEST_STATUS_PRESENTATION_NAME_ENUM } from "../types/request.enum.ts";
-import { Badge } from "../../../../components/ui/badge.tsx";
+import { Badge } from "../../../../common/external/ui/badge.tsx";
 
 export const RequestStatusBadge = (status: string) => {
   const presentationName = REQUEST_STATUS_PRESENTATION_NAME_ENUM[status as keyof typeof REQUEST_STATUS_PRESENTATION_NAME_ENUM];

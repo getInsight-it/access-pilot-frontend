@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "../common/external/ui/button";
 
 const ErrorLayout = () => {
   const navigate = useNavigate();

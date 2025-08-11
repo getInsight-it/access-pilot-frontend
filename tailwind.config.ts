@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss"
-import { THEME_COLOR_PALETTE } from "./src/theme/constant/theme-color-palette.constant";
 
 const APP_COLORS = {
   primary: {
@@ -254,7 +253,7 @@ const config = {
       colors: {
         ...APP_COLORS,
         ...APP_COLORS_VARIABLE_COLORS,
-        // ...SHADCN_VARIABLES
+        ...SHADCN_VARIABLES
       },
       borderRadius: {
         lg: 'var(--border-radius)',
@@ -268,7 +267,6 @@ const config = {
       }
     }
   },
-  plugins: [require("tailwindcss-animate")]
 } satisfies Config
 
 export default config

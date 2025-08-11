@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Bell, Check, CheckCheck, SquareArrowOutUpRight } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
-import { Button } from "../../../../../components/ui/button.tsx";
-import { Separator } from "../../../../../components/ui/separator.tsx";
-import { toast } from "../../../../../components/ui/use-toast.ts";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../external/ui/popover.tsx";
+import { Button } from "../../../../external/ui/button.tsx";
+import { Separator } from "../../../../external/ui/separator.tsx";
+import { toast } from "../../../../external/ui/use-toast.ts";
 import { useAuth } from "../../../../context/auth/AuthContext.tsx";
 
 import type { NotificationModel } from "../../../../types/notification/notification.model.ts";

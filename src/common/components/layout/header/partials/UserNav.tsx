@@ -1,6 +1,6 @@
 import { ChevronDown, HelpCircle, LogOut, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../../../../components/ui/avatar.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../../../../../components/ui/dropdown-menu.tsx";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../external/ui/avatar.tsx";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../../../../external/ui/dropdown-menu.tsx";
 import { Link } from "react-router-dom";
 import { authService } from "../../../../../features/auth/common/AuthService.ts";
 

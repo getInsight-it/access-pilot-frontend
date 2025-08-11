@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 
 import "./index.scss";
-import { Toaster } from "./components/ui/toaster.tsx";
+import { Toaster } from "./common/external/ui/toaster.tsx";
 import { AuthProvider } from "./common/context/auth/AuthContext.tsx";
 
 createRoot(document.getElementById("root")!).render(

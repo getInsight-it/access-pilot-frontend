@@ -1,10 +1,10 @@
 import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../components/ui/separator.tsx";
+import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { useEffect, useState } from "react";
-import { buttonVariants } from "../../../components/ui/button.tsx";
+import { buttonVariants } from "../../../common/external/ui/button.tsx";
 import { cn } from "../../../config/lib/utils.ts";
 import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog } from "lucide-react";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
@@ -12,8 +12,8 @@ import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { motion } from "framer-motion";
 import { clientService } from "../common/service/client-service.ts";
 import { ClientResponseInterface } from "../common/model/client.model.ts";
-import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
-import { Input } from "../../../components/ui/input.tsx";
+import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
+import { Input } from "../../../common/external/ui/input.tsx";
 import {
   Table,
   TableBody,
@@ -22,18 +22,18 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../components/ui/table.tsx";
+} from "../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../components/ui/dropdown-menu.tsx";
+} from "../../../common/external/ui/dropdown-menu.tsx";
 import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
-import { toast } from "../../../components/ui/use-toast.ts";
+import { toast } from "../../../common/external/ui/use-toast.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "../common/enum/client-status.enum.ts";
-import { Badge } from "../../../components/ui/badge.tsx";
+import { Badge } from "../../../common/external/ui/badge.tsx";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: "/dashboard/systems" }

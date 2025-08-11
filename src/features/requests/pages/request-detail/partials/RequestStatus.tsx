@@ -17,10 +17,10 @@ import * as z from "zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { Button } from "../../../../../components/ui/button.tsx";
+import { Button } from "../../../../../common/external/ui/button.tsx";
 import { ConfirmationModal } from "./ConfirmationModal.tsx";
 import { getPreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../components/ui/tooltip.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../common/external/ui/tooltip.tsx";
 import TruncatedText from "../../../../../common/components/TruncatedText.tsx";
 
 interface RequestStatusContainerProps {

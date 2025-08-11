@@ -1,5 +1,5 @@
-import { Button } from "../../../../../components/ui/button.tsx";
-import { FlipWords } from "../../../../../components/ui/flip-words.tsx";
+import { Button } from "../../../../../common/external/ui/button.tsx";
+import { FlipWords } from "../../../../../common/external/ui/flip-words.tsx";
 import { Link } from "react-router-dom";
 import { FileAttachment } from "./AttachmentStep.tsx";
 

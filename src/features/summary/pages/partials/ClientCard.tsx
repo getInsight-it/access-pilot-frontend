@@ -1,6 +1,6 @@
 import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 import { LaptopMinimal, Plus, SquareArrowOutUpRight } from "lucide-react";
-import { Button } from "../../../../components/ui/button.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
 import TruncatedText from "../../../../common/components/TruncatedText.tsx";
 
 interface ClientCardProps {

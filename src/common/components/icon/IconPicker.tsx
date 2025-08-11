@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { icons } from "lucide-react";
-import { Button } from "../../../components/ui/button.tsx";
-import { Input } from "../../../components/ui/input.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../components/ui/popover.tsx";
+import { Button } from "../../external/ui/button.tsx";
+import { Input } from "../../external/ui/input.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
 import { ShuffleLoader } from "../loading/ShuffleLoader.tsx";
 import { iconTranslations } from "./constant/iconTranslations.ts";
 

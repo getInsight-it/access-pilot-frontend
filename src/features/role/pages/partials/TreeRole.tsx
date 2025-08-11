@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { StaticTreeDataProvider, Tree, UncontrolledTreeEnvironment } from "react-complex-tree";
 import "react-complex-tree/lib/style-modern.css";
-import { toast } from "../../../../components/ui/use-toast.ts";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { catchError, finalize, from, tap } from "rxjs";
 import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
-import { Button } from "../../../../components/ui/button.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
 import { roleService } from "../../common/service/role-service.ts";
 import { RoleResponseInterface } from "../../common/types/role.model.ts";
 

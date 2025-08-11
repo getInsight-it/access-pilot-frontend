@@ -1,17 +1,17 @@
 import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../components/ui/separator.tsx";
+import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { buttonVariants } from "../../../components/ui/button.tsx";
+import { buttonVariants } from "../../../common/external/ui/button.tsx";
 import { cn } from "../../../config/lib/utils.ts";
 import { EllipsisVertical, Plus, ReceiptText } from "lucide-react";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { motion } from "framer-motion";
 import { requestService } from "../common/api/request-service.ts";
 import { RequestInterface } from "../common/types/request.model.ts";
-import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
-import { Input } from "../../../components/ui/input.tsx";
+import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
+import { Input } from "../../../common/external/ui/input.tsx";
 import {
   Table,
   TableBody,
@@ -20,17 +20,17 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../components/ui/table.tsx";
+} from "../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../components/ui/dropdown-menu.tsx";
+} from "../../../common/external/ui/dropdown-menu.tsx";
 import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 import { RequestStatusBadge } from "../common/components/RequestStatusBadge.tsx";
-import { toast } from "../../../components/ui/use-toast.ts";
+import { toast } from "../../../common/external/ui/use-toast.ts";
 import { useDebounce } from "../../../common/hooks/use-debounce.ts";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../common/components/ContentLoader.tsx";

@@ -1,27 +1,27 @@
 import { AttachmentConfigurationForm } from "../common/components/AttachmentConfigurationForm.tsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "../../../components/ui/use-toast.ts";
+import { useToast } from "../../../common/external/ui/use-toast.ts";
 import { AttachmentConfigurationInterface } from "../common/model/configuration.model.ts";
 import { clientService } from "../common/service/client-service.ts";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormControl, FormField, FormItem } from "../../../components/ui/form.tsx";
-import { Input } from "../../../components/ui/input.tsx";
+import { FormControl, FormField, FormItem } from "../../../common/external/ui/form.tsx";
+import { Input } from "../../../common/external/ui/input.tsx";
 import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../components/ui/separator.tsx";
+import { Separator } from "../../../common/external/ui/separator.tsx";
 import { useEffect, useState } from "react";
-import { Button } from "../../../components/ui/button.tsx";
+import { Button } from "../../../common/external/ui/button.tsx";
 import { ArrowRight, Loader2, Save } from "lucide-react";
 import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
-import { Textarea } from "../../../components/ui/textarea.tsx";
+import { Textarea } from "../../../common/external/ui/textarea.tsx";
 import { ClientStatusEnum } from "../common/enum/client-status.enum.ts";
-import { Switch } from "../../../components/ui/switch.tsx";
-import { Label } from "../../../components/ui/label.tsx";
+import { Switch } from "../../../common/external/ui/switch.tsx";
+import { Label } from "../../../common/external/ui/label.tsx";
 import { ClientResponseInterface } from "../common/model/client.model.ts";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 

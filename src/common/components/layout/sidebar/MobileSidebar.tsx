@@ -1,4 +1,4 @@
-import { Sheet, SheetContent, SheetTrigger } from "../../../../components/ui/sheet.tsx";
+import { Sheet, SheetContent, SheetTrigger } from "../../../external/ui/sheet.tsx";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 import { navItems } from "./constant/sidebar.constant.ts";

@@ -1,14 +1,14 @@
-import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
+import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
-import { Separator } from "../../../components/ui/separator.tsx";
+import { Separator } from "../../../common/external/ui/separator.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../components/ui/dropdown-menu.tsx";
+} from "../../../common/external/ui/dropdown-menu.tsx";
 import {
   AlertCircle,
   CheckCircle,
@@ -26,7 +26,7 @@ import { RequestStatusBadge } from "../../requests/common/components/RequestStat
 import { SummaryModel } from "../common/model/summary.model.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { summaryService } from "../common/api/summary-service.ts";
-import { toast } from "../../../components/ui/use-toast.ts";
+import { toast } from "../../../common/external/ui/use-toast.ts";
 import { useNavigate } from "react-router-dom";
 import { RequestInterface } from "../../requests/common/types/request.model.ts";
 import { requestService } from "../../requests/common/api/request-service.ts";
