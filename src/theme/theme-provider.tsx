@@ -84,28 +84,27 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       } else if (themeCache.has(selectedTheme)) {
         themeData = themeCache.get(selectedTheme)!;
       } else {
-        //TODO create service
         const response = await fetch(`http://localhost:3001/${selectedTheme}`);
         themeData = await response.json();
         themeCache.set(selectedTheme, themeData);
       }
 
-      applyTheme(themeData, themeData['theme-type']);
-      setTheme(selectedTheme);
-      setThemeType(themeData['theme-type']);
-      localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
-      localStorage.setItem(THEME_TYPE_STORAGE_KEY, themeData['theme-type']);
+      executeApplyTheme(themeData, selectedTheme);
     } catch (error) {
       console.error('Error loading theme:', error);
       if (selectedTheme !== 'light') {
-        applyTheme(LIGHT_THEME, 'light');
-        setTheme('light');
-        setThemeType('light');
-        localStorage.setItem(THEME_STORAGE_KEY, 'light');
-        localStorage.setItem(THEME_TYPE_STORAGE_KEY, 'light');
+        executeApplyTheme(LIGHT_THEME, 'light');
       }
     }
   }, [themeCache]);
+
+  const executeApplyTheme = (themeData: Theme, selectedTheme: string) => {
+    applyTheme(themeData, themeData['theme-type']);
+    setTheme(selectedTheme);
+    setThemeType(themeData['theme-type']);
+    localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+    localStorage.setItem(THEME_TYPE_STORAGE_KEY, themeData['theme-type']);
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, themeType, changeTheme }}>
