@@ -1,5 +1,5 @@
 import { MonitorIcon as MonitorCog } from "lucide-react";
-import { ShuffleLoader } from "../../../../../components/shuffle-loader/ShuffleLoader.tsx";
+import { ShuffleLoader } from "../../../../../common/components/loading/ShuffleLoader.tsx";
 import TruncatedText from "../../../../../common/components/TruncatedText.tsx";
 
 interface RequestSystemDescriptionProps {

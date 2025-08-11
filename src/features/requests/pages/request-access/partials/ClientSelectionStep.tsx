@@ -1,7 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
-import { CardShine } from "../../../../../components/CardShine.tsx";
 import { CustomInput } from "../../../../../components/ui/custom-input.tsx";
-import { TruncatedDescription } from "../../../../../components/TruncateDescription.tsx";
+import { TruncatedDescription } from "../../../../../common/components/TruncateDescription.tsx";
 import { Check, MonitorIcon, Plus } from "lucide-react";
 import { cn } from "../../../../../config/lib/utils.ts";
 import { ScrollArea } from "../../../../../components/ui/scroll-area.tsx";
@@ -41,30 +40,31 @@ export const ClientStep = ({
         <Popover>
           <PopoverTrigger asChild>
             <div className={`max-w-96 w-full cursor-pointer ${selectedClient ? " text-primary " : ""}`}>
-              <CardShine>
-                <div
-                  className={cn(
-                    "border border-dashed p-5 grid items-center min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative",
-                    selectedClient && "border-2 border-primary border-double rounded-[var(--card-border-radius)]",
-                    showError && "border border-dashed border-red-500 rounded-[var(--card-border-radius)]"
-                  )}>
-                  {!selectedClient && !showError && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
-                  {!selectedClient && showError && <Plus className="w-8 h-8 mt-2 mx-auto text-red-500" />}
-                  {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
-                  {selectedClient &&
-                    <>
-                      <div className="flex flex-row items-center">
-                        {selectedClient && <MonitorIcon className="w-6 h-6 mr-4" />}
-                        <p className="font-bold text-lg">
-                          {selectedClient}
-                        </p>
-                      </div>
 
-                      <TruncatedDescription description={clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"} />
-                    </>
-                  }
-                </div>
-              </CardShine>
+              <div
+                className={cn(
+                  "border border-dashed p-5 grid items-center min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative shadow-md",
+                  selectedClient && "border-2 border-primary border-double rounded-[var(--card-border-radius)]",
+                  showError && "border border-dashed border-red-500 rounded-[var(--card-border-radius)]"
+                )}>
+                {!selectedClient && !showError && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
+                {!selectedClient && showError && <Plus className="w-8 h-8 mt-2 mx-auto text-red-500" />}
+                {selectedClient && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                {selectedClient &&
+                  <>
+                    <div className="flex flex-row items-center">
+                      {selectedClient && <MonitorIcon className="w-6 h-6 mr-4" />}
+                      <p className="font-bold text-lg">
+                        {selectedClient}
+                      </p>
+                    </div>
+
+                    <TruncatedDescription
+                      description={clients.find(client => client.clientId === selectedClient)?.description || "Sem função atribuída"} />
+                  </>
+                }
+              </div>
+
               {showError && !selectedClient && (
                 <p className="text-red-500 text-sm mt-4">Por favor, selecione um sistema</p>
               )}
@@ -99,28 +99,27 @@ export const ClientStep = ({
                     client.clientId.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((client) => (
-                    <CardShine key={client.id}>
-                      <div
-                        className={cn(
-                          "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
-                          selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
-                        )}
-                        onClick={() => {
-                          handlerSelectedClient(client);
-                        }}>
-                        {selectedClient === client.clientId &&
-                          <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                    <div
+                      key={client.id}
+                      className={cn(
+                        "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
+                        selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                      )}
+                      onClick={() => {
+                        handlerSelectedClient(client);
+                      }}>
+                      {selectedClient === client.clientId &&
+                        <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
-                        <div className="flex flex-row items-center">
-                          <MonitorIcon className="w-6 h-6 mr-4" />
-                          <p className="font-bold text-lg">
-                            {client.clientId}
-                          </p>
-                        </div>
-
-                        <TruncatedDescription description={client.description} />
+                      <div className="flex flex-row items-center">
+                        <MonitorIcon className="w-6 h-6 mr-4" />
+                        <p className="font-bold text-lg">
+                          {client.clientId}
+                        </p>
                       </div>
-                    </CardShine>
+
+                      <TruncatedDescription description={client.description} />
+                    </div>
                   ))}
               </div>
             </ScrollArea>

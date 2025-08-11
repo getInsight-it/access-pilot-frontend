@@ -1,7 +1,7 @@
-import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "../../config/lib/utils.ts"
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../../config/lib/utils.ts";
 
 const tabsListVariants = cva(
   "inline-flex items-center justify-center rounded-lg p-[3px] w-fit",
@@ -23,7 +23,7 @@ const tabsListVariants = cva(
       size: "default"
     }
   }
-)
+);
 
 const tabsTriggerVariants = cva(
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -45,9 +45,9 @@ const tabsTriggerVariants = cva(
       size: "default"
     }
   }
-)
+);
 
-export interface TabsProps extends React.ComponentProps<typeof TabsPrimitive.Root> {}
+export type TabsProps = React.ComponentProps<typeof TabsPrimitive.Root>;
 
 function Tabs({ className, ...props }: TabsProps) {
   return (
@@ -56,12 +56,13 @@ function Tabs({ className, ...props }: TabsProps) {
       className={cn("flex flex-col gap-2", className)}
       {...props}
     />
-  )
+  );
 }
 
 export interface TabsListProps
   extends React.ComponentProps<typeof TabsPrimitive.List>,
-    VariantProps<typeof tabsListVariants> {}
+    VariantProps<typeof tabsListVariants> {
+}
 
 function TabsList({ className, variant, size, ...props }: TabsListProps) {
   return (
@@ -70,12 +71,13 @@ function TabsList({ className, variant, size, ...props }: TabsListProps) {
       className={cn(tabsListVariants({ variant, size }), className)}
       {...props}
     />
-  )
+  );
 }
 
 export interface TabsTriggerProps
   extends React.ComponentProps<typeof TabsPrimitive.Trigger>,
-    VariantProps<typeof tabsTriggerVariants> {}
+    VariantProps<typeof tabsTriggerVariants> {
+}
 
 function TabsTrigger({ className, variant, size, ...props }: TabsTriggerProps) {
   return (
@@ -84,10 +86,10 @@ function TabsTrigger({ className, variant, size, ...props }: TabsTriggerProps) {
       className={cn(tabsTriggerVariants({ variant, size }), className)}
       {...props}
     />
-  )
+  );
 }
 
-export interface TabsContentProps extends React.ComponentProps<typeof TabsPrimitive.Content> {}
+export type TabsContentProps = React.ComponentProps<typeof TabsPrimitive.Content>;
 
 function TabsContent({ className, ...props }: TabsContentProps) {
   return (
@@ -96,7 +98,7 @@ function TabsContent({ className, ...props }: TabsContentProps) {
       className={cn("flex-1 outline-none", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsTriggerVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsTriggerVariants };

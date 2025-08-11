@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,12 +9,11 @@ import { requestService } from "../../common/api/request-service.ts";
 import { useToast } from "../../../../components/ui/use-toast.ts";
 import {
   FileAttachment
-} from "../../../../common/components/AttachmentConfiguration/AttachmentConfigurationPresentation";
+} from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
 import { downloadFile } from "../../../storage/common/api/storage-service.ts";
 import RequestStatus from "./partials/RequestStatus.tsx";
 import RequestSystemDescription from "./partials/RequestSystemDescription.tsx";
 import RequestSphere from "./partials/RequestSphere.tsx";
-import { OPTIONS } from "../../../../components/request-detail/options.tsx";
 import { format } from "date-fns";
 import { RequestAttachmentInterface } from "../../common/types/request-attachment.model.ts";
 import { RequestInterface } from "../../common/types/request.model.ts";
@@ -23,11 +22,12 @@ import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarc
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import AttachmentConfigurationPresentation
-  from "../../../../common/components/AttachmentConfiguration/AttachmentConfigurationPresentation.tsx";
+  from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
 import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
 import { getPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
+import { STATUS } from "./constant/status.ts";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "APPROVED";
 
@@ -200,7 +200,7 @@ const useRequestDerivedData = (request: RequestInterface | undefined) => {
   const requestType = getPreviousRoute()?.data;
 
   const selectedStatus = useMemo(() => {
-    return OPTIONS.filter((o) => o.value === request?.status).map((o) => o.value)[0];
+    return STATUS.filter((o) => o.value === request?.status).map((o) => o.value)[0];
   }, [request?.status]);
 
   const formattedDate = useMemo(() => {
@@ -274,11 +274,11 @@ export default function RequestDetailPage() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-white">
+      <ScrollArea className="flex-grow bg-background">
         {isDataLoading ? (
           <ContentLoader />
         ) : (
-          <div className="max-w-content-container m-auto">
+          <div className="max-w-content-container m-auto flex flex-col h-full">
             <DetailContainer
               background="highlight"
               border={true}
@@ -322,6 +322,7 @@ export default function RequestDetailPage() {
             </DetailContainer>
 
             <DetailContainer
+              grow={true}
               titleContent={
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">Anexos da solicitação</span>

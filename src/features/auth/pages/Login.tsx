@@ -1,7 +1,7 @@
-import App from "../../../components/canvas/App.tsx";
-import { Logo } from "../../../components/Logo.tsx";
+import { Logo } from "../../../common/components/Logo.tsx";
 import { Button } from "../../../components/ui/button.tsx";
 import { authService } from "../common/AuthService.ts";
+import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 
 export default function Login() {
   const signIn = async () => {
@@ -19,7 +19,7 @@ export default function Login() {
         </div>
         <div className="relative hidden h-full flex-col bg-background text-white lg:flex">
           <div className="absolute inset-0" />
-          <App />
+          <LoginBandCanvas />
         </div>
         <div className="flex h-full items-center p-4 lg:p-8 bg-secondary">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">

@@ -12,7 +12,7 @@ interface ClientDetailDescriptionProps {
 export const ClientDetailDescription = ({ clientId, description }: ClientDetailDescriptionProps) => {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
+      <div className="flex flex-row items-start border bg-zebra-background-2 rounded-[12px] p-4">
         <div className="flex-shrink-0 mr-4">
           <MonitorIcon size={20} />
         </div>

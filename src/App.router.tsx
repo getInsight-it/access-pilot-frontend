@@ -1,31 +1,40 @@
-import { Navigate, useRoutes } from "react-router-dom";
+import React, { Suspense } from "react";
+import { Navigate, Outlet, useRoutes } from "react-router-dom";
+import { SystemDetail } from "./features/client/pages/client-detail/SystemDetail.tsx";
+import { CreateItem } from "./features/level/pages/item/CreateItem.tsx";
+import { EditItem } from "./features/level/pages/item/EditItem.tsx";
+import { RoleGuard } from "./common/context/auth/RoleGuard.tsx";
+import { UserRoleEnum } from "./common/types/user/user.model.ts";
+import { LevelList } from "./features/level/pages/level/LevelList.tsx";
+import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from "./common/constants/routes.ts";
+
+import ErrorLayout from "./layouts/ErrorLayout.tsx";
+import Error from "./features/error/Error.tsx";
+import RequestList from "./features/requests/pages/RequestList.tsx";
+import RequestAccess from "./features/requests/pages/request-access/RequestAccess.tsx";
+import ManageRoles from "./features/role/pages/ManageRoles.tsx";
+import SystemList from "./features/client/pages/SystemList.tsx";
+import SystemForm from "./features/client/pages/SystemForm.tsx";
 import Login from "./features/auth/pages/Login.tsx";
 import Dashboard from "./features/summary/pages/Dashboard.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import DashboardLayout from "./layouts/DashboardLayout.tsx";
-import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from "./common/constants/routes.ts";
-import ErrorLayout from "./layouts/ErrorLayout.tsx";
-import Error from "./features/error/Error.tsx";
-import React, { Suspense } from "react";
-import RequestList from "./features/requests/pages/RequestList.tsx";
-import RequestAccess from "./features/requests/pages/request-access/RequestAccess.tsx";
-import RolesPage from "./features/role/pages/RolesPage.tsx";
-import SystemList from "./features/client/pages/SystemList.tsx";
-import SystemForm from "./features/client/pages/SystemForm.tsx";
-import PrivateRoute from "./components/PrivateRoute";
-import NotificationsPage from "./features/notification/NotificationsPage.tsx";
-import useAuthStore from "./store/authStore.ts";
 import NewRole from "./features/role/pages/NewRole.tsx";
 import LevelItems from "./features/level/pages/item/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/CreateLevel.tsx";
-import { SystemDetail } from "./features/client/pages/client-detail/SystemDetail.tsx";
-import { RoleDetail } from "./features/role/pages/RoleDetail.tsx";
-import { CreateItem } from "./features/level/pages/item/CreateItem.tsx";
-import { EditItem } from "./features/level/pages/item/EditItem.tsx";
-import { RoleGuard } from "./common/context/auth/RoleGuard.tsx";
 import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
-import { UserRoleEnum } from "./common/types/user/user.model.ts";
-import { LevelList } from "./features/level/pages/level/LevelList.tsx";
+
+import useAuthStore from "./store/authStore.ts";
+
+const PrivateRoute = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if(!isAuthenticated) {
+    return <Navigate to={AUTH_ROUTES.LOGIN} replace />;
+  }
+
+  return <Outlet />;
+};
 
 const authRoutes = [
   {
@@ -62,10 +71,6 @@ const appRoutes = [
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
             element: <RequestDetailPage />
-          },
-          {
-            path: PRIVATE_ROUTES.NOTIFICATIONS,
-            element: <NotificationsPage />
           },
           {
             path: PRIVATE_ROUTES.DASHBOARD,
@@ -112,7 +117,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.ROLES,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <RolesPage />
+                <ManageRoles />
               </RoleGuard>
             )
           },
@@ -120,7 +125,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.ROLES_EDIT,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <NewRole></NewRole>
+                <NewRole />
               </RoleGuard>
             )
           },
@@ -128,7 +133,7 @@ const appRoutes = [
             path: PRIVATE_ROUTES.ROLES_DETAILS,
             element: (
               <RoleGuard roles={[UserRoleEnum.ADMIN]}>
-                <RoleDetail />
+                <NewRole />
               </RoleGuard>
             )
           },

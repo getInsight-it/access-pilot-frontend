@@ -1,7 +1,7 @@
 import { ClipboardList, FileText, User } from "lucide-react";
 import { FileAttachment } from "./AttachmentStep.tsx";
 import AttachmentConfigurationPresentation
-  from "../../../../../common/components/AttachmentConfiguration/AttachmentConfigurationPresentation.tsx";
+  from "../../../../../common/components/AttachmentConfigurationPresentation.tsx";
 import { RoleResponseInterface } from "../../../../role/common/types/role.model.ts";
 
 interface DetailsStepProps {

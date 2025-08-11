@@ -9,56 +9,36 @@ const Table = React.forwardRef<
   auxiliaryHeader?: React.ReactNode
 }
 >(({ className, auxiliaryHeader, ...props }, ref) => (
-  <div className="relative w-full overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+  <div className="relative w-full overflow-auto rounded-xl border bg-table-background">
     {auxiliaryHeader && (
-      <div className="w-full bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 rounded-t-xl">
+      <div className="w-full border-b rounded-t-xl">
         {auxiliaryHeader}
       </div>
     )}
     <div
       ref={ref}
-      className={cn("w-full text-sm flex flex-col", className)}
+      className={cn("w-full text-sm flex flex-col text-text-default", className)}
       {...props}
     />
   </div>
 ))
 Table.displayName = "Table"
 
-const tableHeaderVariants = cva(
-  "",
-  {
-    variants: {
-      variant: {
-        default: "bg-gray-50 dark:bg-gray-800",
-        primary: "bg-primary-50 dark:bg-primary-900/20",
-        secondary: "bg-gray-50 dark:bg-gray-700",
-        none: "bg-transparent"
-      }
-    },
-    defaultVariants: {
-      variant: "default"
-    }
-  }
-)
-
-export interface TableHeaderProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof tableHeaderVariants> {
+export interface TableHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   hasAuxHeader?: boolean
 }
 
 const TableHeader = React.forwardRef<
   HTMLDivElement,
   TableHeaderProps
->(({ className, variant, hasAuxHeader, ...props }, ref) => (
+>(({ className, hasAuxHeader, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      tableHeaderVariants({ variant }),
-      "flex flex-col",
+      "flex flex-col bg-table-background text-text-default",
       !hasAuxHeader && "[&>div:first-child>div:first-child]:rounded-tl-xl",
       !hasAuxHeader && "[&>div:first-child>div:last-child]:rounded-tr-xl",
-      "[&>div]:border-b [&>div]:border-gray-200 dark:[&>div]:border-gray-700",
+      "[&>div]:border-b",
       className
     )}
     {...props}
@@ -73,7 +53,7 @@ const TableBody = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col",
+      "flex flex-col text-text-default",
       "[&>div:last-child]:border-b-0",
       "[&>div:last-child>div:first-child]:rounded-bl-xl",
       "[&>div:last-child>div:last-child]:rounded-br-xl",
@@ -92,7 +72,7 @@ const TableFooter = React.forwardRef<
     ref={ref}
     className={cn(
       "flex flex-col",
-      "border-t border-gray-200 bg-gray-50 font-medium dark:border-gray-700 dark:bg-gray-800",
+      "border-t font-medium bg-table-background",
       "[&>div:last-child>div:first-child]:rounded-bl-xl",
       "[&>div:last-child>div:last-child]:rounded-br-xl",
       "[&>div]:last:border-b-0",
@@ -110,10 +90,7 @@ const TableRow = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex w-full",
-      "border-b border-gray-200 dark:border-gray-700",
-      "transition-colors hover:bg-gray-100 dark:hover:bg-gray-700/50",
-      "data-[state=selected]:bg-primary-50 dark:data-[state=selected]:bg-primary-900/20",
+      "flex w-full text-text-default border-b bg-table-row text-table-row-text transition-colors hover:bg-table-row-hover",
       className
     )}
     {...props}
@@ -122,7 +99,7 @@ const TableRow = React.forwardRef<
 TableRow.displayName = "TableRow"
 
 const tableHeadVariants = cva(
-  "flex items-center text-left font-semibold text-gray-900 dark:text-gray-100 [&:has([role=checkbox])]:pr-0",
+  "flex items-center text-left font-semibold text-text-default dark:text-gray-100 [&:has([role=checkbox])]:pr-0",
   {
     variants: {
       size: {
@@ -137,9 +114,7 @@ const tableHeadVariants = cva(
   }
 )
 
-export interface TableHeadProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof tableHeadVariants> {
+export interface TableHeadProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof tableHeadVariants> {
   width?: string
 }
 
@@ -159,7 +134,7 @@ const TableHead = React.forwardRef<
 TableHead.displayName = "TableHead"
 
 const tableCellVariants = cva(
-  "flex items-center text-gray-900 dark:text-gray-100 [&:has([role=checkbox])]:pr-0",
+  "flex items-center text-text-default dark:text-gray-100 [&:has([role=checkbox])]:pr-0",
   {
     variants: {
       size: {
@@ -249,7 +224,6 @@ export {
   TableCell,
   TableCaption,
   TableSortableHead,
-  tableHeaderVariants,
   tableHeadVariants,
   tableCellVariants
 }

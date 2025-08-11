@@ -1,6 +1,6 @@
-import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { motion } from "framer-motion";
 import { cn } from "../../../../config/lib/utils.ts";
 import { Check } from "lucide-react";
@@ -9,7 +9,7 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../comp
 import { Button } from "../../../../components/ui/button.tsx";
 import { ErrorFeedback } from "./partials/ErrorFeedbackComponent.tsx";
 import { SuccessFeedback } from "./partials/SuccessFeedbackForm.tsx";
-import { StepLoader } from "../../../../components/steploader/StepLoader.tsx";
+import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
 import { ConfirmRequestDialog } from "./partials/ConfirmRequestDialog.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -442,9 +442,7 @@ export default function RequestAccess() {
                     <Separator />
                   </CardHeader>
 
-                  <CardContent>
-                    {steps[currentStep - 1].content}
-                  </CardContent>
+                  <CardContent>{steps[currentStep - 1].content}</CardContent>
 
                   <CardFooter className="flex gap-x-4 mt-4">
                     <Button
@@ -455,15 +453,10 @@ export default function RequestAccess() {
                       disabled={currentStep === 1}>
                       Voltar
                     </Button>
-                    {currentStep < steps.length ? (
-                      <Button className="w-40 bg-primary text-primary-foreground" onClick={goToNextStep}>
-                        Próximo
-                      </Button>
-                    ) : (
-                      <Button className="w-40 bg-emerald-500 text-primary-foreground" onClick={handleFinalSubmit}>
-                        Enviar
-                      </Button>
-                    )}
+                    {currentStep < steps.length
+                      ? (<Button onClick={goToNextStep}>Próximo</Button>)
+                      : (<Button onClick={handleFinalSubmit}>Enviar</Button>)
+                    }
                   </CardFooter>
                 </AutoHeight>
               </motion.div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { STATUS } from "../../../../../components/request-detail/status.ts";
+import { STATUS } from "../constant/status.ts";
 import {
   Calendar,
   Check,
@@ -18,7 +18,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Button } from "../../../../../components/ui/button.tsx";
-import { ConfirmationModal } from "../../../../../components/request-detail/ConfirmationModal.tsx";
+import { ConfirmationModal } from "./ConfirmationModal.tsx";
 import { getPreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../components/ui/tooltip.tsx";
 import TruncatedText from "../../../../../common/components/TruncatedText.tsx";

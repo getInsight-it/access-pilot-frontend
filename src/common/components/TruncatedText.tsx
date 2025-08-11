@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { cn } from "../../config/lib/utils";
 
 interface TruncatedTextProps {
@@ -11,10 +11,10 @@ interface TruncatedTextProps {
 }
 
 const TruncatedText: FC<TruncatedTextProps> = ({
-  text = '',
+  text = "",
   maxChars = 100,
-  className = '',
-  fontSize = 'text-base',
+  className = "",
+  fontSize = "text-base",
   autoManage = false,
   maxLines = 3
 }) => {
@@ -25,10 +25,10 @@ const TruncatedText: FC<TruncatedTextProps> = ({
   const wasTruncated = useRef(false);
 
   const checkTruncation = () => {
-    if (!textRef.current) return;
+    if(!textRef.current) return;
 
     let truncated = false;
-    if (autoManage) {
+    if(autoManage) {
       const contentHeight = textRef.current.scrollHeight;
       const containerHeight = textRef.current.clientHeight;
       truncated = contentHeight > containerHeight;
@@ -36,9 +36,9 @@ const TruncatedText: FC<TruncatedTextProps> = ({
       truncated = text.length > maxChars;
     }
 
-    if (truncated) {
+    if(truncated) {
       wasTruncated.current = true;
-    } else if (!showFullText) {
+    } else if(!showFullText) {
       wasTruncated.current = false;
     }
 
@@ -56,13 +56,13 @@ const TruncatedText: FC<TruncatedTextProps> = ({
   useEffect(() => {
     checkTruncation();
 
-    if (autoManage && textRef.current) {
+    if(autoManage && textRef.current) {
       let resizeTimer: number;
 
       const handleResize = () => {
         window.clearTimeout(resizeTimer);
         resizeTimer = window.setTimeout(() => {
-          if (!showFullText) {
+          if(!showFullText) {
             checkTruncation();
           }
         }, 100);
@@ -71,17 +71,17 @@ const TruncatedText: FC<TruncatedTextProps> = ({
       resizeObserverRef.current = new ResizeObserver(handleResize);
 
       const parentElement = textRef.current.parentElement;
-      if (parentElement) {
+      if(parentElement) {
         resizeObserverRef.current.observe(parentElement);
       }
 
-      window.addEventListener('resize', handleResize);
+      window.addEventListener("resize", handleResize);
 
       return () => {
-        if (resizeObserverRef.current) {
+        if(resizeObserverRef.current) {
           resizeObserverRef.current.disconnect();
         }
-        window.removeEventListener('resize', handleResize);
+        window.removeEventListener("resize", handleResize);
         window.clearTimeout(resizeTimer);
       };
     }
@@ -91,7 +91,7 @@ const TruncatedText: FC<TruncatedTextProps> = ({
     setShowFullText(prev => !prev);
   };
 
-  if (!text) return null;
+  if(!text) return null;
 
   const shouldShowButton = wasTruncated.current;
 
@@ -100,10 +100,10 @@ const TruncatedText: FC<TruncatedTextProps> = ({
       <div
         ref={textRef}
         style={!showFullText && autoManage ? {
-          display: '-webkit-box',
+          display: "-webkit-box",
           WebkitLineClamp: maxLines,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden'
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden"
         } : undefined}
         className={cn(
           fontSize,
@@ -114,7 +114,7 @@ const TruncatedText: FC<TruncatedTextProps> = ({
 
       {shouldShowButton && (
         <span className="text-xs text-primary cursor-pointer mt-1 block" onClick={toggleFullText}>
-          {showFullText ? 'Ver menos' : 'Ver mais'}
+          {showFullText ? "Ver menos" : "Ver mais"}
         </span>
       )}
     </div>

@@ -1,25 +1,22 @@
-import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
+import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
 import useAuthStore from "../../../store/authStore.ts";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { useToast } from "../../../components/ui/use-toast.ts";
-
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { Button } from "../../../components/ui/button.tsx";
 import { FormControl, FormField, FormItem } from "../../../components/ui/form.tsx";
 import { Input } from "../../../components/ui/input.tsx";
 import { Textarea } from "../../../components/ui/textarea.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select.tsx";
-import { IconPicker } from "../../../components/icon-picker/IconPicker.tsx";
+import { IconPicker } from "../../../common/components/icon/IconPicker.tsx";
 import { Label } from "../../../components/ui/label.tsx";
-
 import { clientService } from "../../client/common/service/client-service.ts";
 import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
 import { roleService } from "../common/service/role-service.ts";
@@ -28,7 +25,10 @@ import { LevelInterface } from "../../level/common/types/level.model.ts";
 import { levelService } from "../../level/common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { goToPreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
-import HighlightLoader from "../../../components/highlightloader/HighLightLoader.tsx";
+
+import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
+
+import * as z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),

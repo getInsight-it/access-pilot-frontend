@@ -14,9 +14,9 @@ import {
   DialogTrigger
 } from "../../../../components/ui/dialog.tsx";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
-import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { cn } from "../../../../config/lib/utils.ts";
 import {
   DropdownMenu,
@@ -28,7 +28,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../../../../components/ui/badge.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import useAuthStore from "../../../../store/authStore.ts";
-import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
+import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
 import { levelService } from "../../common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";

@@ -1,0 +1,92 @@
+import { Badge } from "../../components/ui/badge.tsx";
+import React, { ReactNode } from 'react';
+import { Button } from "../../components/ui/button.tsx";
+import { ArrowLeft } from "lucide-react";
+
+interface HeadingProps {
+  title: string;
+  description?: string;
+  badgeValue?: string | number
+  customDescription?: ReactNode;
+  returnButton?: boolean;
+  onReturnClick?: () => void;
+  headerStepper?: boolean;
+  headerStepperActiveIndex?: number;
+  headerStepperItems?: string[];
+}
+
+interface HeaderContainerProps {
+  children?: ReactNode;
+}
+
+interface HeaderStepperProps {
+  activeIndex: number;
+  items: string[];
+}
+
+const HeaderStepper: React.FC<HeaderStepperProps> = ({ items, activeIndex }) => {
+  return (
+    <div className="flex flex-row no-wrap items-center w-full mt-6">
+      {(items && items.length) && items.map((item, index) => {
+        const color = index <= activeIndex ? "primary" : "gray";
+        const active = index === activeIndex;
+        return (
+          <div className="flex flex-col w-full gap-2" key={index}>
+            <div className={`h-[4px] w-full ${color === "primary" ? "bg-primary-500" : "bg-gray-300"}`}></div>
+            <span className={`text-sm font-semibold ${active ? "text-primary-500" : "text-gray-400"}`}>{item}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export const HeaderContainer: React.FC<HeaderContainerProps> = ({ children }) => {
+  return (
+    <div className="p-6 flex flex-col gap-4">
+      {children}
+    </div>
+  );
+};
+
+export const Heading: React.FC<HeadingProps> = ({
+  title,
+  description,
+  badgeValue,
+  customDescription,
+  returnButton,
+  onReturnClick,
+  headerStepper = false,
+  headerStepperActiveIndex,
+  headerStepperItems
+}) => {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-row gap-4 w-full">
+        {returnButton && (
+          <Button
+            variant="outline"
+            className="border-primary-600 w-8 h-8 p-0"
+            onClick={onReturnClick}
+          >
+            <ArrowLeft className="text-primary-700" size={18}></ArrowLeft>
+          </Button>
+        )}
+        <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-row items-center gap-3">
+            <h2 className="text-2xl font-bold tracking-tight text-text-default">{title}</h2>
+            {badgeValue !== undefined && (<Badge variant="outline" className="h-[28px] flex items-center justify-center">{badgeValue}</Badge>)}
+          </div>
+          {description && (<p className="text-sm text-muted-foreground">{description}</p>)}
+          {customDescription}
+        </div>
+      </div>
+      {headerStepper && headerStepperActiveIndex !== undefined && (headerStepperItems && headerStepperItems.length) && (
+        <HeaderStepper
+          activeIndex={headerStepperActiveIndex}
+          items={headerStepperItems}
+        />
+      )}
+    </div>
+  );
+};

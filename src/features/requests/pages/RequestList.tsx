@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
+import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -237,8 +237,8 @@ export default function RequestList() {
         ) : (
           <div className="py-6 max-w-content-container m-auto">
               <div className="flex flex-col gap-4 lg:hidden">
-                {requests.map((request) => (
-                  <div className="table-card">
+                {requests.map((request, index) => (
+                  <div className="table-card" key={`request-table-card-${index}`}>
                     <div className="table-card__header">
                       <span className="mr-2">Ações</span>
                         <DropdownMenu>
@@ -277,7 +277,7 @@ export default function RequestList() {
                         <span className="table-card__label">Status:</span>
                         <span className="table-card__value">
                           {RequestStatusBadge(request.status)}
-                        </span> 
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -352,7 +352,7 @@ export default function RequestList() {
                 </TableFooter>
                 </Table>
               </div>
-            
+
           </div>
         )}
       </ScrollArea>

@@ -1,0 +1,143 @@
+@mixin app-theme(
+  $background,
+  $border-color,
+  $border-radius,
+  $table-border-radius,
+  $table-background-color,
+  $table-header-text-color,
+  $table-row-color,
+  $table-row-text-color,
+  $table-row-hover-color,
+  $paginator-value-background-color,
+  $paginator-text-color,
+  $paginator-button-background-color,
+  $paginator-button-disabled-background-color,
+  $button-background-color,
+  $button-background-hover-color,
+  $button-text-color,
+  $badge-border-color,
+  $badge-value-color,
+  $input-background-color,
+  $input-border-color,
+  $input-text-color,
+  $input-placeholder-color,
+  $input-disabled-background-color,
+  $input-disabled-border-color,
+  $input-disabled-text-color,
+  $input-disabled-placeholder-color,
+  $input-focus-border-color,
+  $input-focus-text-color,
+  $input-focus-placeholder-color,
+  $modal-background-color,
+  $modal-border-color,
+  $toast-background-color,
+  $toast-text-color,
+  $toast-border-color,
+  $popover-background-color,
+  $popover-border-color,
+  $popover-text-color,
+  $breadcrumb-item-text-color,
+  $breadcrumb-item-hover-text-color,
+  $breadcrumb-item-hover-background-color,
+  $breadcrumb-selected-item-text-color,
+  $breadcrumb-selected-item-background-color,
+  $select-options-container-background-color,
+  $select-options-container-border-color,
+  $select-options-selected-background-color,
+  $radio-selected-color,
+  $radio-border-color,
+  $menu-background-color,
+  $menu-item-text-color,
+  $menu-item-selected-background-color,
+  $card-border-radius,
+  $tree-table-background-color,
+  $tree-item-text-color,
+  $tree-item-hover-background-color,
+  $zebra-background-1,
+  $zebra-background-2,
+  $text-default-color,
+  $text-muted-color,
+) {
+  --background: #{$background};
+  --border-color: #{$border-color};
+  --border-radius: #{$border-radius};
+
+  --table-background-color: #{$table-background-color};
+  --table-header-text-color: #{$table-header-text-color};
+  --table-row-color: #{$table-row-color};
+  --table-row-text-color: #{$table-row-text-color};
+  --table-row-hover-color: #{$table-row-hover-color};
+
+  --paginator-value-background-color: #{$paginator-value-background-color};
+  --paginator-text-color: #{$paginator-text-color};
+  --paginator-button-background-color: #{$paginator-button-background-color};
+  --paginator-button-disabled-background-color: #{$paginator-button-disabled-background-color};
+
+  --button-background-color: #{$button-background-color};
+  --button-text-color: #{$button-text-color};
+  --button-background-hover-color: #{$button-background-hover-color};
+
+  --badge-border-color: #{$badge-border-color};
+  --badge-value-color: #{$badge-value-color};
+
+  --input-background-color: #{$input-background-color};
+  --input-border-color: #{$input-border-color};
+  --input-text-color: #{$input-text-color};
+  --input-placeholder-color: #{$input-placeholder-color};
+  --input-disabled-background-color: #{$input-disabled-background-color};
+  --input-disabled-border-color: #{$input-disabled-border-color};
+  --input-disabled-text-color: #{$input-disabled-text-color};
+  --input-disabled-placeholder-color: #{$input-disabled-placeholder-color};
+  --input-focus-border-color: #{$input-focus-border-color};
+  --input-focus-text-color: #{$input-focus-text-color};
+  --input-focus-placeholder-color: #{$input-focus-placeholder-color};
+
+  --modal-background-color: #{$modal-background-color};
+  --modal-border-color: #{$modal-border-color};
+
+  --toast-background-color: #{$toast-background-color};
+  --toast-text-color: #{$toast-text-color};
+  --toast-border-color: #{$toast-border-color};
+
+  --popover-background-color: #{$popover-background-color};
+  --popover-border-color: #{$popover-border-color};
+  --popover-text-color: #{$popover-text-color};
+
+  --breadcrumb-item-text-color: #{$breadcrumb-item-text-color};
+  --breadcrumb-item-hover-text-color: #{$breadcrumb-item-hover-text-color};
+  --breadcrumb-item-hover-background-color: #{$breadcrumb-item-hover-background-color};
+  --breadcrumb-selected-item-text-color: #{$breadcrumb-selected-item-text-color};
+  --breadcrumb-selected-item-background-color: #{$breadcrumb-selected-item-background-color};
+
+  --select-options-container-background-color: #{$select-options-container-background-color};
+  --select-options-container-border-color: #{$select-options-container-border-color};
+  --select-options-selected-background-color: #{$select-options-selected-background-color};
+
+  --radio-selected-color: #{$radio-selected-color};
+  --radio-border-color: #{$radio-border-color};
+
+  --menu-background-color: #{$menu-background-color};
+  --menu-item-text-color: #{$menu-item-text-color};
+  --menu-item-selected-background-color: #{$menu-item-selected-background-color};
+
+  --card-border-radius: #{$card-border-radius};
+
+  --tree-table-background-color: #{$tree-table-background-color};
+  --tree-item-text-color: #{$tree-item-text-color};
+  --tree-item-hover-background-color: #{$tree-item-hover-background-color};
+
+  --zebra-background-1: #{$zebra-background-1};
+  --zebra-background-2: #{$zebra-background-2};
+
+  --text-default-color: #{$text-default-color};
+  --text-muted-color: #{$text-muted-color};
+}
+
+@mixin app-theme--fixed-variables() {
+  --success: var(--color-success-500);
+  --success-foreground: var(--color-gray-50);
+  --warning: var(--color-warning-500);
+  --warning-foreground: var(--color-gray-950);
+  --info: var(--color-primary-500);
+  --info-foreground: var(--color-gray-50);
+}

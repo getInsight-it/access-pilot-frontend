@@ -6,6 +6,7 @@ export interface DetailContainerProps {
   background?: "highlight" | "default";
   border?: boolean;
   description?: string;
+  grow?: boolean;
 }
 
 export const DetailContainer: React.FC<DetailContainerProps> = ({
@@ -13,18 +14,19 @@ export const DetailContainer: React.FC<DetailContainerProps> = ({
   titleContent,
   background,
   border,
-  description
+  description,
+  grow = false
 }: DetailContainerProps) => {
   const getBgClass = () => {
-    if(background === "highlight") return "bg-gray-50 dark:bg-gray-800";
+    if(background === "highlight") return "bg-zebra-background-1";
 
-    return "bg-white dark:bg-gray-900";
+    return "bg-zebra-background-2";
   };
 
   const borderClass = border ? "border-t border-b border-gray-200 dark:border-gray-700" : "";
 
   return (
-    <div className={`p-6 ${getBgClass()} ${borderClass}`}>
+    <div className={`p-6 ${getBgClass()} ${borderClass} ${grow ? "flex-1" : ""}`}>
       <div className="flex flex-col xl:flex-row gap-8">
         {titleContent && (
           <div className="w-full xl:w-[300px] xl:min-w-[300px] xl:max-w-[300px] text-gray-900 dark:text-gray-100">

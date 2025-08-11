@@ -1,5 +1,5 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../config/lib/utils.ts";
 
 const badgeVariants = cva(
@@ -14,12 +14,12 @@ const badgeVariants = cva(
         destructive: "bg-error-100 text-error-800 border border-error-200 dark:bg-error-900/20 dark:text-error-400 dark:border-error-800",
         info: "bg-primary-100 text-primary-800 border border-primary-200 dark:bg-primary-900/20 dark:text-primary-400 dark:border-primary-800",
         outline: "bg-transparent border border-primary-600 text-primary-700 dark:text-primary-100",
-        dot: "bg-gray-100 text-gray-800 pl-2 pr-2.5 dark:bg-gray-800 dark:text-gray-200",
+        dot: "bg-gray-100 text-gray-800 pl-2 pr-2.5 dark:bg-gray-800 dark:text-gray-200"
       },
       size: {
         sm: "px-2 py-0.5 text-xs",
         default: "px-2.5 py-0.5 text-xs",
-        lg: "px-3 py-1 text-sm",
+        lg: "px-3 py-1 text-sm"
       }
     },
     defaultVariants: {
@@ -27,7 +27,7 @@ const badgeVariants = cva(
       size: "default"
     }
   }
-)
+);
 
 const BadgeDot = ({ color = "gray", className }: { color?: string, className?: string }) => (
   <span
@@ -38,17 +38,17 @@ const BadgeDot = ({ color = "gray", className }: { color?: string, className?: s
         "bg-primary-500": color === "primary",
         "bg-success-500": color === "success",
         "bg-warning-500": color === "warning",
-        "bg-error-500": color === "error",
+        "bg-error-500": color === "error"
       },
       className
     )}
   />
-)
+);
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
-  dotColor?: "gray" | "primary" | "success" | "warning" | "error"
+  dotColor?: "gray" | "primary" | "success" | "warning" | "error";
 }
 
 function Badge({ className, variant, size, dotColor, children, ...props }: BadgeProps) {
@@ -57,7 +57,7 @@ function Badge({ className, variant, size, dotColor, children, ...props }: Badge
       {variant === "dot" && <BadgeDot color={dotColor} />}
       {children}
     </div>
-  )
+  );
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };

@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "../../../components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
+import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { Separator } from "../../../components/ui/separator.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
@@ -128,7 +128,7 @@ export default function SystemList() {
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex flex-wrap items-start justify-between gap-4">
+            <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
                 title="Sistemas"
                 badgeValue={totalUsers}
@@ -158,8 +158,8 @@ export default function SystemList() {
                   className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
                 />
               </div>
-              { clients && clients.map((client) => (
-                <div className="table-card">
+              {clients && clients.map((client, index) => (
+                <div className="table-card" key={`mobile-table-card-${index}`}>
                   <div className="table-card__header">
                     <div className="flex items-center justify-between">
                       <span className="mr-2">Ações</span>

@@ -1,7 +1,3 @@
-@import 'scss/main';
-@import 'scss/themes/light';
-@import 'scss/themes/dark';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,7 +8,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background;
+    color: var(--text-default-color);
     font-family: 'Inter', sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow: hidden;
@@ -23,7 +20,6 @@
     scroll-behavior: smooth;
   }
 }
-
 
 @layer components {
   .table-card {

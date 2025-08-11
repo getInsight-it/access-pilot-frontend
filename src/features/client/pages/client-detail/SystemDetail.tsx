@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
-import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
 import { motion } from "framer-motion";
@@ -27,7 +27,6 @@ const breadcrumbItems = [
 export const SystemDetail = () => {
   const { clientId } = useParams();
   const [data, setData] = useState<ClientResponseInterface>();
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [roleItems, setRoleItems] = useState<RoleResponseInterface[]>([]);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
@@ -48,7 +47,6 @@ export const SystemDetail = () => {
 
   const getRoles = async () => {
     if(!clientId) return;
-    setLoading(true);
 
     try {
       const response = await roleService.getRolesByClientIdV2(clientId);
@@ -63,8 +61,6 @@ export const SystemDetail = () => {
         variant: "destructive"
       });
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -113,9 +109,9 @@ export const SystemDetail = () => {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-white">
+      <ScrollArea className="flex-grow bg-background">
         {data && (
-          <div className="max-w-content-container m-auto">
+          <div className="max-w-content-container m-auto flex flex-col h-full">
             <DetailContainer
               background={"highlight"}
               border={true}
@@ -153,6 +149,7 @@ export const SystemDetail = () => {
             </DetailContainer>
 
             <DetailContainer
+              grow={true}
               titleContent={
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">Papéis do sistema</span>

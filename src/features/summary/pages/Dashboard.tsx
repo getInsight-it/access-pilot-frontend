@@ -1,7 +1,7 @@
 import { ScrollArea } from "../../../components/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
 import { Separator } from "../../../components/ui/separator.tsx";
-import { HeaderContainer, Heading } from "../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table.tsx";
 import {
   DropdownMenu,
@@ -32,7 +32,7 @@ import { RequestInterface } from "../../requests/common/types/request.model.ts";
 import { requestService } from "../../requests/common/api/request-service.ts";
 import { clientService } from "../../client/common/service/client-service.ts";
 import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
-import HighlightLoader from "../../../components/highlightloader/HighLightLoader.tsx";
+import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
 import { ClientCard } from "./partials/ClientCard.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { SummaryCardData } from "./types/status-card-data.model.ts";
@@ -283,178 +283,178 @@ export default function Dashboard() {
       </div>
 
       <ScrollArea className="flex-grow border-r px-2 sm:px-6 pt-6">
-            <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
-              {summaryCards.map((card) => {
-                const Icon = card.icon;
-                return (
-                  <div
-                    key={card.title}
-                    className={`${card.bgColor} rounded-xl flex flex-row flex-wrap items-center justify-between gap-4 p-4 flex-1`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
-                        <Icon size={20} className={card.iconColor} />
-                      </div>
-                      <span className={`${card.textColor} text-base font-normal`}>
+        <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
+          {summaryCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.title}
+                className={`${card.bgColor} rounded-xl flex flex-row flex-wrap items-center justify-between gap-4 p-4 flex-1`}>
+                <div className="flex items-center gap-3">
+                  <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
+                    <Icon size={20} className={card.iconColor} />
+                  </div>
+                  <span className={`${card.textColor} text-base font-normal`}>
                         {card.title}
                       </span>
-                    </div>
-                    <span className={`${card.valueColor} text-xl font-bold break-all`}>
+                </div>
+                <span className={`${card.valueColor} text-xl font-bold break-all`}>
                       {card.value}
                     </span>
-                  </div>
-                );
-              })}
-            </div>
+              </div>
+            );
+          })}
+        </div>
 
-            <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
-              {statusCards.map((card) => {
-                const Icon = card.icon;
-                return (
-                  <div
-                    key={card.label}
-                    className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
-                    <Icon size={12} className={card.iconColor} />
-                    <span className={`text-sm font-medium ${card.textColor} break-all`}>
+        <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
+          {statusCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.label}
+                className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
+                <Icon size={12} className={card.iconColor} />
+                <span className={`text-sm font-medium ${card.textColor} break-all`}>
                       {card.label}
                     </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
+
+        <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+          {requests.length > 0 ? (
+            requests.map((request, index) => (
+              <div className="table-card" key={`dashboard-table-card-${index}`}>
+                <div className="table-card__header">
+                  <span className="mr-2">Ações</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <EllipsisVertical size={20} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="flex flex-row gap-2"
+                        onClick={() => handleNavigateToRequestDetails(request.id)}>
+                        <ReceiptText size={16} />
+                        <span>Detalhes</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="table-card__content">
+                  <div className="table-card__content__row">
+                    <span className="table-card__label">Sistema:</span>
+                    <span className="table-card__value">{request.role?.client?.name}</span>
                   </div>
-                );
-              })}
-            </div>
+                  <div className="table-card__content__row">
+                    <span className="table-card__label">Papel:</span>
+                    <span className="table-card__value">{request.role?.name}</span>
+                  </div>
+                  <div className="table-card__content__row">
+                    <span className="table-card__label">Status:</span>
+                    {RequestStatusBadge(request.status)}
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell>
+                <EmptyState message="Nenhuma solicitação encontrada" />
+              </TableCell>
+            </TableRow>
+          )}
+        </div>
 
-            <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
-
-            <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-                {requests.length > 0 ? (
-                  requests.map((request) => (
-                    <div className="table-card">
-                      <div className="table-card__header">
-                        <span className="mr-2">Ações</span>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => handleNavigateToRequestDetails(request.id)}>
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      <div className="table-card__content">
-                        <div className="table-card__content__row">
-                          <span className="table-card__label">Sistema:</span>
-                          <span className="table-card__value">{request.role?.client?.name}</span>
-                        </div>
-                        <div className="table-card__content__row">
-                          <span className="table-card__label">Papel:</span>
-                          <span className="table-card__value">{request.role?.name}</span>
-                        </div>
-                        <div className="table-card__content__row">
-                          <span className="table-card__label">Status:</span>
-                          {RequestStatusBadge(request.status)}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell>
-                      <EmptyState message="Nenhuma solicitação encontrada" />
+        <div className="hidden lg:flex">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
+                <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
+                <TableHead width="calc(33.4% - 34px)">Status</TableHead>
+                <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {requests.length > 0 ? (
+                requests.map((request) => (
+                  <TableRow key={request.id}>
+                    <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
+                    <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
+                    <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
+                    <TableCell width="100px" className="flex items-center justify-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="flex flex-row gap-2"
+                            onClick={() => handleNavigateToRequestDetails(request.id)}>
+                            <ReceiptText size={16} />
+                            <span>Detalhes</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                )}
-            </div>
-
-            <div className="hidden lg:flex">
-              <Table>
-              <TableHeader>
+                ))
+              ) : (
                 <TableRow>
-                  <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
-                  <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
-                  <TableHead width="calc(33.4% - 34px)">Status</TableHead>
-                  <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
+                  <TableCell>
+                    <EmptyState message="Nenhuma solicitação encontrada" />
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requests.length > 0 ? (
-                  requests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
-                      <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
-                      <TableCell width="100px" className="flex items-center justify-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => handleNavigateToRequestDetails(request.id)}>
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell>
-                      <EmptyState message="Nenhuma solicitação encontrada" />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex flex-row justify-between ">
+          <div className="flex flex-col w-full">
+            <div className="pt-4 pb-0">
+              <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
             </div>
-            <div className="flex flex-row justify-between ">
-              <div className="flex flex-col w-full">
-                <div className="pt-4 pb-0">
-                  <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {displayedAttachedClients.length > 0 ? (
-                    displayedAttachedClients.map((client) => (
-                      <ClientCard
-                          key={client.clientId}
-                          client={client}
-                          hasAccess={true}
-                          onActionClick={() => handleSeeClientDetails(client.clientId)}
-                      />
-                    ))
-                  ) : (
-                    <EmptyState message="Nenhum sistema com acesso encontrado" />
-                  )}
-                </div>
-              </div>
+            <div className="grid grid-cols-2 gap-4">
+              {displayedAttachedClients.length > 0 ? (
+                displayedAttachedClients.map((client) => (
+                  <ClientCard
+                    key={client.clientId}
+                    client={client}
+                    hasAccess={true}
+                    onActionClick={() => handleSeeClientDetails(client.clientId)}
+                  />
+                ))
+              ) : (
+                <EmptyState message="Nenhum sistema com acesso encontrado" />
+              )}
             </div>
+          </div>
+        </div>
 
-            <div className="h-1/2 flex flex-col">
-              <div className="pt-4 pb-0">
-                <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
-              </div>
-              <div className="flex flex-col">
-                {displayedDetachedClients.length > 0 ? (
-                  displayedDetachedClients.map((client) => (
-                    <ClientCard
-                      key={client.clientId}
-                      client={client}
-                      hasAccess={false}
-                      onActionClick={handleRequestAccess}
-                    />
-                  ))
-                ) : (
-                  <EmptyState message="Nenhum sistema disponível para solicitação" />
-                )}
-              </div>
-            </div>
-        </ScrollArea>
+        <div className="h-1/2 flex flex-col">
+          <div className="pt-4 pb-0">
+            <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
+          </div>
+          <div className="flex flex-col">
+            {displayedDetachedClients.length > 0 ? (
+              displayedDetachedClients.map((client) => (
+                <ClientCard
+                  key={client.clientId}
+                  client={client}
+                  hasAccess={false}
+                  onActionClick={handleRequestAccess}
+                />
+              ))
+            ) : (
+              <EmptyState message="Nenhum sistema disponível para solicitação" />
+            )}
+          </div>
+        </div>
+      </ScrollArea>
     </motion.div>
   );
 }

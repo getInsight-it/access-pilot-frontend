@@ -34,7 +34,7 @@ export const ClientDetailConfigurations = ({
         {configurations.map((config: AttachmentConfigurationInterface) => (
           <Popover key={config.key} open={openPopoverId === config.key}>
             <div
-              className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4 relative">
+              className="flex flex-row items-start border bg-zebra-background-2 rounded-[12px] p-4 relative">
               <div className="flex flex-col flex-grow">
                 <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300 line-clamp-1 pr-8">
                   {config.name}

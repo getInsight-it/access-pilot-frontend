@@ -1,13 +1,12 @@
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../components/ui/popover.tsx";
-import { CardShine } from "../../../../../components/CardShine.tsx";
 import { CustomInput } from "../../../../../components/ui/custom-input.tsx";
-import { TruncatedDescription } from "../../../../../components/TruncateDescription.tsx";
+import { TruncatedDescription } from "../../../../../common/components/TruncateDescription.tsx";
 import { Check, Plus, User } from "lucide-react";
 import { cn } from "../../../../../config/lib/utils.ts";
 import { ScrollArea } from "../../../../../components/ui/scroll-area.tsx";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RoleResponseInterface } from "../../../../role/common/types/role.model.ts";
-import IconRenderer from "../../../../../components/icons/IconRenderer.tsx";
+import IconRenderer from "../../../../../common/components/icon/IconRenderer.tsx";
 import DynamicSphereForm from "../../../../level/common/components/DynamicSphereForm.tsx";
 import { BasicFormFieldInterface, RequestFormFieldType } from "../RequestAccess.tsx";
 
@@ -49,32 +48,25 @@ export const RoleStep = ({
     setCodeItemHasError(!!form[codeItemField]?.error);
   }, [form[codeItemField]?.error]);
 
-  // Atualizar a referência quando o valor de codeItem mudar
   useEffect(() => {
     currentCodeItemRef.current = form[codeItemField]?.value || "";
   }, [form[codeItemField]?.value]);
 
-  // Handler para notificar quando a hierarquia não está completa
   const handleHierarchyNotCompleted = () => {
-    // Só limpar o valor se existir um valor definido
-    // e não tivermos limpado recentemente
-    if (currentCodeItemRef.current && !hierarchyNotCompletedRef.current) {
+    if(currentCodeItemRef.current && !hierarchyNotCompletedRef.current) {
       hierarchyNotCompletedRef.current = true;
       handlerSelectedSphere("");
     }
   };
 
-  // Resetar a flag quando o papel é alterado
   useEffect(() => {
     hierarchyNotCompletedRef.current = false;
   }, [selectedRole]);
 
-  // Handler para quando a hierarquia estiver completa
   const handleHierarchyComplete = (codeItem: number) => {
     const codeItemStr = codeItem.toString();
 
-    // Só atualizar se o valor for diferente do atual
-    if (currentCodeItemRef.current !== codeItemStr) {
+    if(currentCodeItemRef.current !== codeItemStr) {
       hierarchyNotCompletedRef.current = false;
       handlerSelectedSphere(codeItemStr);
     }
@@ -87,34 +79,32 @@ export const RoleStep = ({
         <Popover>
           <PopoverTrigger asChild>
             <div className={`max-w-96 w-full cursor-pointer ${selectedRole ? " text-primary " : ""}`}>
-              <CardShine>
-                <div
-                  className={cn(
-                    "border border-dashed p-5 grid items-center min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative",
-                    selectedRole && "border-2 border-primary border-double rounded-[var(--card-border-radius)]",
-                    showError && "border border-dashed border-red-500 rounded-[var(--card-border-radius)]"
-                  )}>
-                  {!selectedRole && !showError && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
-                  {!selectedRole && showError && <Plus className="w-8 h-8 mt-2 mx-auto text-red-500" />}
-                  {selectedRole && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+              <div
+                className={cn(
+                  "border border-dashed p-5 grid items-center min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative shadow-md",
+                  selectedRole && "border-2 border-primary border-double rounded-[var(--card-border-radius)]",
+                  showError && "border border-dashed border-red-500 rounded-[var(--card-border-radius)]"
+                )}>
+                {!selectedRole && !showError && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
+                {!selectedRole && showError && <Plus className="w-8 h-8 mt-2 mx-auto text-red-500" />}
+                {selectedRole && <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
-                  <div className="flex flex-row items-center">
-                    {selectedRole && (
-                      <>
-                        <IconRenderer className={`${selectedRoleObject!.icon} w-6 h-6 mr-4`} />
-                        <p className="font-bold text-lg">
-                          {selectedRoleObject!.label}
-                        </p>
-                      </>
-                    )}
-                  </div>
-
-                  {selectedRole &&
-                    <TruncatedDescription
-                      description={roles.find(role => role.id.toString() === selectedRole)?.description || "Sem descrição disponível"} />
-                  }
+                <div className="flex flex-row items-center">
+                  {selectedRole && (
+                    <>
+                      <IconRenderer className={`${selectedRoleObject!.icon} w-6 h-6 mr-4`} />
+                      <p className="font-bold text-lg">
+                        {selectedRoleObject!.label}
+                      </p>
+                    </>
+                  )}
                 </div>
-              </CardShine>
+
+                {selectedRole &&
+                  <TruncatedDescription
+                    description={roles.find(role => role.id.toString() === selectedRole)?.description || "Sem descrição disponível"} />
+                }
+              </div>
               {showError && !selectedRole && (
                 <p className="text-red-500 text-sm mt-4">Por favor, selecione um tipo de acesso</p>
               )}
@@ -150,26 +140,26 @@ export const RoleStep = ({
                     (role.description && role.description.toLowerCase().includes(searchTerm.toLowerCase()))
                   )
                   .map((role) => (
-                    <CardShine key={role.id}>
-                      <div
-                        className={cn(
-                          "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)]",
-                          selectedRole === role.id.toString() && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
-                        )}
-                        onClick={() => {
-                          handlerSelectedRole(role);
-                        }}>
-                        {(selectedRole === role.id.toString()) &&
-                          <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                    <div
+                      key={role.id}
+                      className={cn(
+                        "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
+                        selectedRole === role.id.toString() && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
+                      )}
+                      onClick={() => {
+                        handlerSelectedRole(role);
+                      }}>
+                      {(selectedRole === role.id.toString()) &&
+                        <Check className="absolute top-4 right-4 flex-shrink-0" />}
 
-                        <div className="flex flex-row items-center">
-                          {role.icon ? <IconRenderer className={`${role.icon} w-6 h-6 mr-4 `} /> : <User className="w-6 h-6 mr-4" />}
-                          <p className="font-bold text-lg">{role.label}</p>
-                        </div>
-
-                        <TruncatedDescription description={role.description || "Sem descrição disponível"} />
+                      <div className="flex flex-row items-center">
+                        {role.icon ? <IconRenderer className={`${role.icon} w-6 h-6 mr-4 `} /> :
+                          <User className="w-6 h-6 mr-4" />}
+                        <p className="font-bold text-lg">{role.label}</p>
                       </div>
-                    </CardShine>
+
+                      <TruncatedDescription description={role.description || "Sem descrição disponível"} />
+                    </div>
                   ))}
               </div>
             </ScrollArea>

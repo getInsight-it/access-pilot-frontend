@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
 import { AUTH_ROUTES, ERROR_ROUTES } from "../../constants/routes.ts";
-import HighlightLoader from "../../../components/highlightloader/HighLightLoader.tsx";
+import HighlightLoader from "../../components/loading/HighLightLoader.tsx";
 import { KeycloakClientRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
 import { UserRoleEnum } from "../../types/user/user.model.ts";
 import { KeycloackSystemsEnum } from "../../types/keycloack/keycloack-systems.enum.ts";

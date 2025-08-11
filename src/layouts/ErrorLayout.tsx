@@ -1,7 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-// import Scene from '../components/canvas/error/Scene';
 import { Button } from "../components/ui/button";
-import Head from "../components/canvas/Head";
 
 const ErrorLayout = () => {
   const navigate = useNavigate();

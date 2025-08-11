@@ -15,16 +15,15 @@ export class RoleService {
     this.httpClient = httpClient;
   }
 
-  async getRoleById(id?: string): Promise<RoleResponseInterface | null> {
+  async getRoleById(id?: string): Promise<RoleResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}/${id}`);
 
-    if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as RoleResponseInterface;
-    } else {
-      console.error("Erro ao buscar role");
+
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return JSON.parse(response.data) as RoleResponseInterface;
   }
 
   async getRolesByClientId(clientId: string): Promise<RoleResponseInterface[] | null> {

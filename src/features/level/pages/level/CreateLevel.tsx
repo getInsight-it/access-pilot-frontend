@@ -8,13 +8,13 @@ import { RadioGroup, RadioGroupItem } from "../../../../components/ui/radio-grou
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../components/ui/select.tsx";
 import { Textarea } from "../../../../components/ui/textarea.tsx";
 import { toast } from "../../../../components/ui/use-toast.ts";
-import { Breadcrumbs } from "../../../../components/breadcrumbs.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../components/ui/scroll-area.tsx";
 import { Separator } from "../../../../components/ui/separator.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/header/heading.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { Info } from "lucide-react";
 import useAuthStore from "../../../../store/authStore.ts";
-import HighlightLoader from "../../../../components/highlightloader/HighLightLoader.tsx";
+import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
 import { motion } from "framer-motion";
 import { levelService } from "../../common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";

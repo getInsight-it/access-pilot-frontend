@@ -4,7 +4,9 @@ import {
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-  PaginationLink, PaginationNext, PaginationPrevious
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
 } from "../../components/ui/pagination.tsx";
 
 interface PaginationWrapperProps {
@@ -17,14 +19,14 @@ interface PaginationWrapperProps {
 export function PaginationWrapper({
   currentPage,
   totalPages,
-  onPageChange,
+  onPageChange
 }: PaginationWrapperProps) {
   const renderPaginationItems = () => {
     const items = [];
     const maxVisiblePages = 3;
 
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) {
+    if(totalPages <= 7) {
+      for(let i = 1; i <= totalPages; i++) {
         items.push(
           <PaginationItem key={i}>
             <PaginationLink
@@ -68,7 +70,7 @@ export function PaginationWrapper({
         </PaginationItem>
       );
 
-      if (currentPage > maxVisiblePages + 1) {
+      if(currentPage > maxVisiblePages + 1) {
         items.push(
           <PaginationItem key="ellipsis-start">
             <PaginationEllipsis />
@@ -79,7 +81,7 @@ export function PaginationWrapper({
       const startPage = Math.max(2, currentPage - 1);
       const endPage = Math.min(totalPages - 1, currentPage + 1);
 
-      for (let i = startPage; i <= endPage; i++) {
+      for(let i = startPage; i <= endPage; i++) {
         items.push(
           <PaginationItem key={i}>
             <PaginationLink
@@ -102,7 +104,7 @@ export function PaginationWrapper({
         );
       }
 
-      if (currentPage < totalPages - maxVisiblePages) {
+      if(currentPage < totalPages - maxVisiblePages) {
         items.push(
           <PaginationItem key="ellipsis-end">
             <PaginationEllipsis />
@@ -110,7 +112,7 @@ export function PaginationWrapper({
         );
       }
 
-      if (totalPages > 1) {
+      if(totalPages > 1) {
         items.push(
           <PaginationItem key={totalPages}>
             <PaginationLink
@@ -145,7 +147,7 @@ export function PaginationWrapper({
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage > 1) {
+              if(currentPage > 1) {
                 onPageChange(currentPage - 1);
               }
             }}
@@ -166,7 +168,7 @@ export function PaginationWrapper({
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage < totalPages) {
+              if(currentPage < totalPages) {
                 onPageChange(currentPage + 1);
               }
             }}

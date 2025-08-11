@@ -12,8 +12,7 @@ export const ClientDetailGeneralInformation = ({
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-[12px] p-4">
+        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
           <div className="flex-shrink-0 mr-4">
             <FileTextIcon size={20} />
           </div>
@@ -31,8 +30,7 @@ export const ClientDetailGeneralInformation = ({
           </div>
         </div>
 
-        <div
-          className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-[12px] p-4">
+        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
           <div className="flex-shrink-0 mr-4">
             <GlobeIcon size={20} />
           </div>
@@ -55,8 +53,7 @@ export const ClientDetailGeneralInformation = ({
           </div>
         </div>
 
-        <div
-          className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-[12px] p-4">
+        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
           <div className="flex-shrink-0 mr-4">
             <SettingsIcon size={20} />
           </div>
@@ -72,8 +69,7 @@ export const ClientDetailGeneralInformation = ({
           </div>
         </div>
 
-        <div
-          className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-[12px] p-4">
+        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
           <div className="flex-shrink-0 mr-4">
             <ActivityIcon size={20} />
           </div>
