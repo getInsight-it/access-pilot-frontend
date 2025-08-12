@@ -316,7 +316,7 @@ export default function RequestList() {
                 </TableHeader>
                 <TableBody>
                   {requests.map((request) => (
-                    <TableRow key={request.id}>
+                    <TableRow className="break-all" key={request.id}>
                       <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
                       <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
                       <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
