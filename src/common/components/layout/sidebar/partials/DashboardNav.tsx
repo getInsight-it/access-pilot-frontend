@@ -28,11 +28,16 @@ export function DashboardNav({
     return null;
   }
 
+  const isActiveItem = (itemHref: string) => {
+    return path.includes(itemHref) && itemHref !== "/";
+  };
+
   return (
     <nav className="grid items-start gap-1">
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon as keyof typeof Icons || "arrowRight"];
+          const isActive = isActiveItem(item.href!);
 
           const content = (
             <Tooltip key={index}>
@@ -47,7 +52,7 @@ export function DashboardNav({
                     "text-gray-700 dark:text-gray-300",
                     "hover:bg-primary-100 hover:text-primary-800 dark:hover:bg-primary-900/20 dark:hover:text-primary-800",
                     "transition-colors duration-200",
-                    path === item.href ?
+                    isActive ?
                       "bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-800" :
                       "transparent",
                     item.disabled && "cursor-not-allowed opacity-80",
@@ -62,7 +67,7 @@ export function DashboardNav({
                       "size-5",
                       "text-gray-500 dark:text-gray-100",
                       "group-hover:text-primary-800",
-                      path === item.href && "text-primary-800 dark:text-primary-800"
+                      isActive && "text-primary-800 dark:text-primary-800"
                     )}
                   />
                   {theme === "gov" && (

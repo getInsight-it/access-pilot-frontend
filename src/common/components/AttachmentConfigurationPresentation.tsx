@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Download, FileText, Folder } from "lucide-react";
+import { Download, Folder } from "lucide-react";
 import { FileIcon } from "./FileIcon.tsx";
 import { cn } from "../../config/lib/utils.ts";
 

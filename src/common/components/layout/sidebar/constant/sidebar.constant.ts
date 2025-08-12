@@ -16,7 +16,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/dashboard/general-info",
     icon: "dashboard",
     label: "Dashboard",
     protected: true,

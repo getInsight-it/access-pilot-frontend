@@ -3,7 +3,7 @@ export const AUTH_ROUTES = {
 };
 
 export const PRIVATE_ROUTES = {
-  DASHBOARD: '/dashboard',
+  DASHBOARD: '/dashboard/general-info',
   MY_ACCESS_REQUESTS: '/dashboard/my-access-requests',
   ACCESS_REQUESTS: '/dashboard/access-requests',
   ACCESS_REQUESTS_WITH_ID: '/dashboard/access-requests/:id',
