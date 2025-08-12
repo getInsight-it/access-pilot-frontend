@@ -5,12 +5,17 @@ import { Button } from "../../../../external/ui/button.tsx";
 import { Separator } from "../../../../external/ui/separator.tsx";
 import { toast } from "../../../../external/ui/use-toast.ts";
 import { useAuth } from "../../../../context/auth/AuthContext.tsx";
+import { useNavigate } from "react-router-dom";
 
 import type { NotificationModel } from "../../../../types/notification/notification.model.ts";
 
 import { notificationService } from "../../../../service/notification-service.ts";
+import { PRIVATE_ROUTES } from "../../../../constants/routes.ts";
+import { savePreviousRoute } from "../../../../utils/NavigationStateManager.ts";
 
 export default function Notifications() {
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationModel[]>([]);
   const [page, setPage] = useState(1);
@@ -90,7 +95,14 @@ export default function Notifications() {
                       ? <CheckCheck className="h-4 w-4 text-blue-500" />
                       : <Check className="h-4 w-4 text-gray-400 cursor-pointer" />
                     }
-                    <SquareArrowOutUpRight className="h-4 w-4 text-blue-500 cursor-pointer" />
+                    <SquareArrowOutUpRight
+                      className="h-4 w-4 text-blue-500 cursor-pointer"
+                      onClick={() => {
+                        setIsOpen(false);
+                        savePreviousRoute(PRIVATE_ROUTES.ACCESS_REQUESTS, "assigned");
+                        navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", notification.requestId.toString()));
+                      }}
+                    />
                   </div>
                 </div>
               ))}
