@@ -82,7 +82,7 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
         return (
           <div key={attachment.key} className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
             <div className="flex flex-col flex-grow">
-              <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+              <p className="text-[14px] font-medium text-text-default">
                 {attachment.fileName}
               </p>
               <div className="mt-3">
@@ -100,7 +100,7 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
                         <div className="min-w-4 min-h-4 flex-shrink-0">
                           <FileIcon fileName={file.name} />
                         </div>
-                        <span className="text-sm font-normal text-gray-600 dark:text-gray-400 truncate">
+                        <span className="text-sm font-normal text-gray-700 dark:text-text-default truncate">
                           {file.name}
                         </span>
                       </div>

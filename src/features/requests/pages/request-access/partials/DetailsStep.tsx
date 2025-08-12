@@ -16,9 +16,9 @@ export const DetailsStep = ({ selectedClient, selectedRole, reason, roles, attac
   return (
     <div className="bg-background shadow-lg rounded-[var(--card-border-radius)] p-6">
       <h3 className="text-lg font-semibold">Resumo da solicitação</h3>
-      <p className="mt-1 mb-4 text-gray-900">Revise suas escolhas antes de enviar:</p>
+      <p className="mt-1 mb-4 text-muted-foreground">Revise suas escolhas antes de enviar:</p>
       <ul className="space-y-4">
-        <li className="flex items-center gap-3">
+        <li className="flex gap-3">
           <ClipboardList className="text-blue-500 w-5 h-5 " />
           <div>
             <strong>Sistema</strong>
@@ -33,14 +33,14 @@ export const DetailsStep = ({ selectedClient, selectedRole, reason, roles, attac
             )}
           </div>
         </li>
-        <li className="flex items-center gap-3">
+        <li className="flex gap-3">
           <User className="text-blue-500 w-5 h-5" />
           <div>
             <strong>Papel</strong>
             <p>{roles.find(role => role.id.toString() === selectedRole)!.name}</p>
           </div>
         </li>
-        <li className="flex items-center gap-3">
+        <li className="flex gap-3">
           <FileText className="text-blue-500 w-5 h-5" />
           <div>
             <strong>Motivo</strong>

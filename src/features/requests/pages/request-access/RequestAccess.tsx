@@ -378,7 +378,7 @@ export default function RequestAccess() {
                           step.id === currentStep
                             ? "hover:bg-primary-500 bg-primary-500 text-gray-100"
                             : stepsState[step.id] === "completed"
-                              ? "bg-green-500 hover:bg-green-600 text-white"
+                              ? "hover:bg-primary-500 bg-primary-500 text-white"
                               : "bg-gray-400 text-gray-100"
                         )}
                         initial={{ opacity: 0, x: -500 }}
@@ -419,9 +419,9 @@ export default function RequestAccess() {
                       {index < steps.length - 1 && (
                         <motion.div
                           className="absolute left-4 top-8 w-[2px] h-[calc(100%+24px)]"
-                          initial={{ backgroundColor: "#b2b2b2", y: -500 }}
+                          initial={{ backgroundColor: "var(--color-primary-500)", y: -500 }}
                           animate={{
-                            backgroundColor: stepsState[step.id] === "completed" && stepsState[step.id + 1] === "completed" ? "#22c55e" : "#b2b2b2",
+                            backgroundColor: stepsState[step.id] === "completed" ? "var(--color-primary-500)" : "var(--color-gray-200)",
                             opacity: step.id < currentStep ? 1 : 0,
                             y: 0
                           }}
@@ -434,7 +434,7 @@ export default function RequestAccess() {
 
                 <AutoHeight>
                   <CardHeader>
-                    <CardTitle className="text-gray-600">
+                    <CardTitle>
                       Passo {currentStep}/{steps.length}
                     </CardTitle>
                     <Separator />

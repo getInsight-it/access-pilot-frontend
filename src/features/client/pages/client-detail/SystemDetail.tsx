@@ -18,6 +18,7 @@ import { ClientDetailGeneralInformation } from "./partials/ClientDetailGeneralIn
 import { ClientDetailConfigurations } from "./partials/ClientDetailConfigurations.tsx";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
+import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: "/dashboard/systems" },
@@ -84,6 +85,13 @@ export const SystemDetail = () => {
       }
       return next;
     });
+  };
+
+  const navigateToClientRoles = () => {
+    if(clientId) {
+      savePreviousRoute(PRIVATE_ROUTES.SYSTEMS);
+      navigate(PRIVATE_ROUTES.ROLES.replace(":clientId", clientId));
+    }
   };
 
   return (
@@ -154,7 +162,7 @@ export const SystemDetail = () => {
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">Papéis do sistema</span>
                   <span className="text-xs font-normal">
-                    Papeis relacionados a este sistema. <span className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
+                    Papeis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
                   </span>
                 </div>
               }>
