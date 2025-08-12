@@ -31,6 +31,7 @@ export const RoleStep = ({
 }: RoleStepProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showError, setShowError] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const hierarchyNotCompletedRef = useRef(false);
   const currentCodeItemRef = useRef<string>("");
 
@@ -72,11 +73,16 @@ export const RoleStep = ({
     }
   };
 
+  const handleRoleSelection = (role: RoleResponseInterface) => {
+    setIsPopoverOpen(false);
+    handlerSelectedRole(role);
+  };
+
   return (
     <>
       <div className="space-y-1">
         <h4 className="text-lg font-semibold mb-4">Escolha o tipo de acesso que você precisa:</h4>
-        <Popover>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <div className={`max-w-96 w-full cursor-pointer ${selectedRole ? " text-primary " : ""}`}>
               <div
@@ -113,11 +119,7 @@ export const RoleStep = ({
           <PopoverContent
             side={isLargeScreen ? "right" : "bottom"}
             align={isLargeScreen ? "start" : "end"}
-            className={`
-                  w-[26em]
-                  ${isLargeScreen ? "ml-[20px]" : ""}
-                  ${isLargeScreen ? "" : " mb-10"}
-                `}>
+            className={`w-[26em] ${isLargeScreen ? "ml-[20px]" : ""} ${isLargeScreen ? "" : " mb-10"}`}>
             <div className="relative">
               <CustomInput
                 value={searchTerm}
@@ -146,16 +148,13 @@ export const RoleStep = ({
                         "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
                         selectedRole === role.id.toString() && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                       )}
-                      onClick={() => {
-                        handlerSelectedRole(role);
-                      }}>
-                      {(selectedRole === role.id.toString()) &&
-                        <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                      onClick={() => handleRoleSelection(role)}>
 
                       <div className="flex flex-row items-center">
                         {role.icon ? <IconRenderer className={`${role.icon} w-6 h-6 mr-4 `} /> :
                           <User className="w-6 h-6 mr-4" />}
                         <p className="font-bold text-lg">{role.label}</p>
+                        {(selectedRole === role.id.toString()) && <Check className="ml-auto top-4 right-4 flex-shrink-0" />}
                       </div>
 
                       <TruncatedDescription description={role.description || "Sem descrição disponível"} />

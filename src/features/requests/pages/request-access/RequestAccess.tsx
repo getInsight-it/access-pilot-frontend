@@ -374,14 +374,12 @@ export default function RequestAccess() {
                       }}>
                       <motion.div
                         className={cn(
-                          "w-8 h-8 hover:bg-gray-200 rounded-full flex items-center justify-center z-10",
+                          "w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center z-10",
                           step.id === currentStep
-                            ? "hover:bg-primary bg-primary text-primary-foreground"
+                            ? "hover:bg-primary-500 bg-primary-500 text-gray-100"
                             : stepsState[step.id] === "completed"
                               ? "bg-green-500 hover:bg-green-600 text-white"
-                              : stepsState[step.id] === "error"
-                                ? "bg-red-500 hover:bg-red-700 text-white"
-                                : "bg-[var(--bg-indicator)]"
+                              : "bg-gray-400 text-gray-100"
                         )}
                         initial={{ opacity: 0, x: -500 }}
                         animate={{

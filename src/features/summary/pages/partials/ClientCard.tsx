@@ -10,13 +10,13 @@ interface ClientCardProps {
 }
 
 export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps) => (
-  <div className={`bg-white border border-md flex flex-${hasAccess ? 'row' : 'col'} justify-between p-3 hover:bg-gray-50 max-w-96 rounded-lg mb-${hasAccess ? '2' : '4'} ${!hasAccess ? 'gap-3' : ''} ${hasAccess ? 'items-center' : ''}`}>
+  <div className={`bg-white dark:bg-zebra-background-2 border border-md flex flex-${hasAccess ? 'row' : 'col'} justify-between p-3 hover:bg-gray-50 max-w-96 rounded-lg mb-${hasAccess ? '2' : '4'} ${!hasAccess ? 'gap-3' : ''} ${hasAccess ? 'items-center' : ''}`}>
     <div className="flex flex-row gap-3 items-center">
       <div className={`min-w-9 min-h-9 max-h-9 flex items-center justify-center ${hasAccess ? 'bg-success-100' : 'bg-warning-100'} rounded-full`}>
         <LaptopMinimal size={16} className={hasAccess ? 'text-success-600' : 'text-warning-600'} />
       </div>
       <div className="flex flex-col justify-between">
-        <span className="text-xs font-medium text-gray-900">
+        <span className="text-xs font-medium text-text-default">
           {client.name}
         </span>
         <span className="text-xs text-gray-500">

@@ -25,6 +25,7 @@ export const ClientStep = ({
 }: ClientStepProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showError, setShowError] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const field: RequestFormFieldType = "clientId";
   const selectedClient = form[field].value;
@@ -33,11 +34,16 @@ export const ClientStep = ({
     setShowError(!!form[field].error);
   }, [form[field].error]);
 
+  const handleClientSelection = (client: ClientResponseInterface) => {
+    setIsPopoverOpen(false);
+    handlerSelectedClient(client);
+  };
+
   return (
     <>
       <div className="space-y-1">
         <h4 className="text-lg font-semibold mb-4">Escolha o sistema que você precisa de acesso:</h4>
-        <Popover>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <div className={`max-w-96 w-full cursor-pointer ${selectedClient ? " text-primary " : ""}`}>
 
@@ -105,17 +111,14 @@ export const ClientStep = ({
                         "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
                         selectedClient === client.clientId && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                       )}
-                      onClick={() => {
-                        handlerSelectedClient(client);
-                      }}>
-                      {selectedClient === client.clientId &&
-                        <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                      onClick={() => handleClientSelection(client)}>
 
                       <div className="flex flex-row items-center">
                         <MonitorIcon className="w-6 h-6 mr-4" />
                         <p className="font-bold text-lg">
                           {client.clientId}
                         </p>
+                        {selectedClient === client.clientId && <Check className="ml-auto top-4 right-4 flex-shrink-0" />}
                       </div>
 
                       <TruncatedDescription description={client.description} />

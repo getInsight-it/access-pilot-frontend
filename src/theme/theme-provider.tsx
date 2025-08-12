@@ -3,6 +3,7 @@ import { Theme } from "./theme.model.ts";
 import { THEME_COLOR_PALETTE } from "./constant/theme-color-palette.constant.ts";
 import { LIGHT_THEME } from "./constant/light.constant.ts";
 import { BUILT_IN_THEMES } from "./constant/theme.constant.ts";
+import { TREE_COMPONENT_DARK_STYLES, TREE_COMPONENT_LIGHT_STYLES } from "./constant/tree-component.constant.ts";
 
 interface ThemeContextType {
   theme: string;
@@ -14,6 +15,20 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = 'selected-theme';
 const THEME_TYPE_STORAGE_KEY = 'selected-theme-type';
+
+const applyTreeComponentPalette = (themeType: 'light' | 'dark') => {
+  const styles = themeType === 'light'
+    ? TREE_COMPONENT_LIGHT_STYLES
+    : TREE_COMPONENT_DARK_STYLES;
+
+  requestAnimationFrame(() => {
+    const root = document.documentElement;
+
+    Object.entries(styles).forEach(([prop, value]) => {
+      root.style.setProperty(prop, value);
+    });
+  });
+}
 
 const applyColorPalette = () => {
   const root = document.documentElement;
@@ -68,6 +83,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useLayoutEffect(() => {
     applyColorPalette();
     const initialTheme = BUILT_IN_THEMES[theme] || LIGHT_THEME;
+    applyTreeComponentPalette(initialTheme['theme-type']);
     applyTheme(initialTheme, initialTheme['theme-type']);
 
     if (!BUILT_IN_THEMES[theme]) {
@@ -99,6 +115,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [themeCache]);
 
   const executeApplyTheme = (themeData: Theme, selectedTheme: string) => {
+    applyTreeComponentPalette(themeData['theme-type']);
     applyTheme(themeData, themeData['theme-type']);
     setTheme(selectedTheme);
     setThemeType(themeData['theme-type']);

@@ -295,12 +295,12 @@ export default function Dashboard() {
                     <Icon size={20} className={card.iconColor} />
                   </div>
                   <span className={`${card.textColor} text-base font-normal`}>
-                        {card.title}
-                      </span>
+                    {card.title}
+                  </span>
                 </div>
                 <span className={`${card.valueColor} text-xl font-bold break-all`}>
-                      {card.value}
-                    </span>
+                  {card.value}
+                </span>
               </div>
             );
           })}
@@ -315,8 +315,8 @@ export default function Dashboard() {
                 className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
                 <Icon size={12} className={card.iconColor} />
                 <span className={`text-sm font-medium ${card.textColor} break-all`}>
-                      {card.label}
-                    </span>
+                  {card.label}
+                </span>
               </div>
             );
           })}

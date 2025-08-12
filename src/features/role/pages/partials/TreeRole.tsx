@@ -111,7 +111,7 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   return (
     <>
       <div
-        className="w-full max-w-xl flex justify-between items-start bg-gray-50 rounded-xl border py-8 px-8 h-auto min-h-[220px] ">
+        className="w-full max-w-xl flex justify-between items-start bg-zebra-background-2 rounded-xl border py-8 px-8 h-auto min-h-[220px] ">
         <div className="w-96">
           <div>
             <UncontrolledTreeEnvironment<string>
@@ -140,6 +140,3 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
 }
 
 export default TreeRole;
-
-// continuo na parte do access pilot, estava tocando no modulo de roles a feature de arvore de roles, consegui fazer funcionar,
-// so fazer mais alguns testes aqui e
