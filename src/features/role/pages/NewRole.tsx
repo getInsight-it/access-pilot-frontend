@@ -82,7 +82,7 @@ export default function NewRole() {
         name: role.name || "",
         label: role.label || "",
         description: role.description || "",
-        levelId: role.levelId ? role.levelId.toString() : ""
+        levelId: role.level?.id ? role.level.id.toString() : ""
       };
 
       setInitialData(formData);
@@ -160,14 +160,12 @@ export default function NewRole() {
 
     try {
       if(initialData?.id) {
-        // Edição
         await roleService.updateRole(initialData.id, role);
         toast({
           title: "Papel atualizado",
           description: `O papel ${role.name} foi atualizado com sucesso.`
         });
       } else {
-        // Criação
         await roleService.createRole(role);
         toast({
           title: "Papel criado",

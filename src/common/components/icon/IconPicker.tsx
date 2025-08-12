@@ -59,12 +59,8 @@ export function IconPicker() {
   useEffect(() => {
     setVisibleIconCount(INITIAL_ICON_COUNT);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 300); // Simula um breve carregamento
-  }, [searchTerm]); //Corrected dependency array
-
-//   useEffect(() => {
-//     console.log("Filtered Icons:", filteredIcons)
-//   }, [filteredIcons])
+    setTimeout(() => setIsLoading(false), 300);
+  }, [searchTerm]);
 
   return (
     <div>
