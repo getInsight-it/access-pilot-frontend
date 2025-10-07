@@ -11,6 +11,10 @@ items:
   - apiVersion: v1
     data:
       API_URL: ${API_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
     kind: ConfigMap
     metadata:
       name: ${CI_PROJECT_NAME}
