@@ -51,6 +51,7 @@ build-docker:
     - echo $KUBE_CONFIG | base64 --decode > ~/.kube/config
     - envsubst < ./public/assets/env/env.js.tpl > ./public/assets/env/env.js
   script:
+    - kubectl create configmap envjs --from-file ./public/assets/env/env.js --dry-run=client --namespace=${NAMESPACE} -o yaml | kubectl apply -f -
     - envsubst < ./k8s/deployment.yaml | kubectl apply -f -
 
 deploy-dev:

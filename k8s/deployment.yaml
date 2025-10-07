@@ -86,6 +86,10 @@ items:
                 successThreshold: 1
                 timeoutSeconds: 1
               name: container-0
+              volumeMounts:
+                - mountPath: /usr/share/nginx/html/public/assets/env/env.js
+                  name: envjs-volume
+                  readOnly: true
               ports:
                 - containerPort: 80
                   name: http-80
@@ -120,6 +124,10 @@ items:
           securityContext: { }
           terminationGracePeriodSeconds: 30
           volumes:
+            - configMap:
+                defaultMode: 420
+                name: envjs
+              name: envjs-volume
             - configMap:
                 defaultMode: 420
                 name: ${CI_PROJECT_NAME}
