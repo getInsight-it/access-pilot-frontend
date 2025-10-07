@@ -49,8 +49,8 @@ build-docker:
   before_script:
     - mkdir ~/.kube || true
     - echo $KUBE_CONFIG | base64 --decode > ~/.kube/config
-  script:
     - envsubst < ./public/assets/env/env.js.tpl > ./public/assets/env/env.js
+  script:
     - envsubst < ./k8s/deployment.yaml | kubectl apply -f -
 
 deploy-dev:
