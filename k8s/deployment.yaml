@@ -87,7 +87,7 @@ items:
                 timeoutSeconds: 1
               name: container-0
               volumeMounts:
-                - mountPath: /usr/share/nginx/html/public/assets/env/env.js
+                - mountPath: /usr/share/nginx/html/assets/env/env.js
                   subPath: env.js
                   name: envjs-volume
                   readOnly: true
