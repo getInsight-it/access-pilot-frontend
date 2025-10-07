@@ -1,28 +1,38 @@
 export interface Theme {
-  "theme-type": "light" | "dark",
+  "theme-type": ThemeType,
   "primary": ThemeColorConfiguration,
   "custom-attributes": ThemeCustomAttributes
 }
 
+export type ThemeType = 'light' | 'dark' | 'gov';
+
 export interface ThemeColorConfiguration {
-  "25": string,
-  "50": string,
-  "100": string,
-  "200": string,
-  "300": string,
-  "400": string,
-  "500": string,
-  "600": string,
-  "700": string,
-  "800": string,
-  "900": string,
-  "950": string,
+  "10"?: string,
+  "25"?: string,
+  "50"?: string,
+  "100"?: string,
+  "200"?: string,
+  "300"?: string,
+  "400"?: string,
+  "500"?: string,
+  "600"?: string,
+  "700"?: string,
+  "800"?: string,
+  "900"?: string,
+  "950"?: string,
 }
 
 export interface ThemeCustomAttributes {
+  "font-family"?: string,
   "background"?: string,
   "border-color"?: string,
   "border-radius"?: string,
+  "button-border-radius"?: string,
+  "outline-button-border-color"?: string,
+  "outline-button-text-color"?: string,
+  "outline-button-hover-background-color"?: string,
+  "outline-button-hover-border-color"?: string,
+  "outline-button-hover-text-color"?: string,
   "table-border-radius"?: string,
   "table-background-color"?: string,
   "table-header-text-color"?: string,
@@ -69,6 +79,13 @@ export interface ThemeCustomAttributes {
   "radio-border-color"?: string,
   "switch-unchecked-background-color"?: string,
   "switch-unchecked-border-color"?: string,
+  'switch-thumb-background-color'?: string,
+  'switch-thumb-border-color'?: string,
+  'switch-thumb-size'?: string,
+  'switch-thumb-padding'?: string,
+  'switch-checked-background-color'?: string,
+  'switch-checked-border-color'?: string,
+  'switch-checked-thumb-background-color'?: string,
   "menu-background-color"?: string,
   "menu-item-text-color"?: string,
   "menu-item-selected-background-color"?: string,
@@ -90,13 +107,25 @@ export interface ThemeCustomAttributes {
 
 export interface ThemeColorPalette {
   primary: ThemeColorConfiguration,
+  info: ThemeColorConfiguration,
   gray: ThemeColorConfiguration,
+  error: ThemeColorConfiguration,
+  warning: ThemeColorConfiguration,
+  success: ThemeColorConfiguration,
+}
+
+export interface DefaultThemeColorPalette extends ThemeColorPalette {
   blue: ThemeColorConfiguration,
   purple: ThemeColorConfiguration,
   pink: ThemeColorConfiguration,
   indigo: ThemeColorConfiguration,
   yellow: ThemeColorConfiguration,
-  error: ThemeColorConfiguration,
-  warning: ThemeColorConfiguration,
-  success: ThemeColorConfiguration,
+}
+
+export interface GovbrThemeColorPalette extends ThemeColorPalette {
+  red: ThemeColorConfiguration,
+  blueWarmVivid: ThemeColorConfiguration,
+  green: ThemeColorConfiguration,
+  yellowVivid: ThemeColorConfiguration,
+  goldVivid: ThemeColorConfiguration,
 }

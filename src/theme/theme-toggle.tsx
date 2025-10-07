@@ -26,29 +26,8 @@ export default function ThemeToggle() {
         <DropdownMenuItem onClick={() => changeTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("blue")}>
-          Soft blue
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("red")}>
-          Red
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("green")}>
-          Green
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("purple")}>
-          Purple
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => changeTheme("govbr")}>
           GovBr
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("apple")}>
-          Apple (Dark)
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("cyberpunk")}>
-          Cyberpunk (Dark)
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("neon")}>
-          Neon (Dark)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

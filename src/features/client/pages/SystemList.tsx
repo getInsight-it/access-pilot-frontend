@@ -126,7 +126,7 @@ export default function SystemList() {
 
         <div className="flex-none">
           <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
+            {/* <Breadcrumbs items={breadcrumbItems} /> */}
 
             <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
@@ -142,8 +142,6 @@ export default function SystemList() {
               </Link>
             </div>
           </HeaderContainer>
-
-          <Separator />
         </div>
 
         <ScrollArea className="px-6 flex-grow">

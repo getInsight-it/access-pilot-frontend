@@ -82,6 +82,7 @@ const PaginationNext = ({
   <PaginationLink
     aria-label="Go to next page"
     size="default"
+    isActive={true}
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >

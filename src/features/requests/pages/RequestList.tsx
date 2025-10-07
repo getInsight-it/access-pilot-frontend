@@ -211,7 +211,7 @@ export default function RequestList() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={BREADCRUMB_ITEMS} />
+          {/* <Breadcrumbs items={BREADCRUMB_ITEMS} /> */}
 
           <div className="pl-1 flex flex-col gap-4 md:flex-row items-start justify-between">
             <Heading
@@ -227,8 +227,6 @@ export default function RequestList() {
             </Link>
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
       <ScrollArea className="px-6 flex-grow">

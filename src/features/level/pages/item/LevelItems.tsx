@@ -374,8 +374,6 @@ export default function LevelItems() {
             </div>
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
       <ScrollArea className="px-6 flex-grow">

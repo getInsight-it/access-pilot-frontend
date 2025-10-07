@@ -259,7 +259,7 @@ export default function RequestDetailPage() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={BREADCRUMB_ITEMS} />
+          {/* <Breadcrumbs items={BREADCRUMB_ITEMS} /> */}
 
           <div className="pl-1 flex items-start justify-between">
             <Heading
@@ -270,8 +270,6 @@ export default function RequestDetailPage() {
             />
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
       <ScrollArea className="flex-grow bg-background">

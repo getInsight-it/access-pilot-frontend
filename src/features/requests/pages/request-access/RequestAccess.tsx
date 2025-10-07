@@ -337,7 +337,7 @@ export default function RequestAccess() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={breadcrumbItems} />
+          {/* <Breadcrumbs items={breadcrumbItems} /> */}
 
           <div className="pl-1 flex items-start justify-between">
             <Heading
@@ -346,8 +346,6 @@ export default function RequestAccess() {
             />
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
       <ScrollArea className="flex-grow">

@@ -10,7 +10,7 @@
   body {
     @apply bg-background;
     color: var(--text-default-color);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family);
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow: hidden;
   }
