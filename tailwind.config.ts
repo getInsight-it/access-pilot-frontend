@@ -205,7 +205,12 @@ const APP_COLORS_VARIABLE_COLORS = {
   'select-options-selected-background': 'var(--select-options-selected-background-color)',
 
   'table-background': 'var(--table-background-color)',
+  'table-border': 'var(--table-border-color)',
+  'table-header-background': 'var(--table-header-background-color)',
   'table-header-text': 'var(--table-header-text-color)',
+  'table-header-input-background': 'var(--table-header-input-background-color)',
+  'table-footer-background': 'var(--table-footer-background-color)',
+  'table-separator': 'var(--table-separator-color)',
   'table-row': 'var(--table-row-color)',
   'table-row-hover': 'var(--table-row-hover-color)',
   'table-row-text': 'var(--table-row-text-color)',

@@ -7,6 +7,7 @@ export interface Theme {
 export type ThemeType = 'light' | 'dark' | 'gov';
 
 export interface ThemeColorConfiguration {
+  "0"?: string,
   "10"?: string,
   "25"?: string,
   "50"?: string,
@@ -34,8 +35,13 @@ export interface ThemeCustomAttributes {
   "outline-button-hover-border-color"?: string,
   "outline-button-hover-text-color"?: string,
   "table-border-radius"?: string,
+  "table-border-color"?: string,
   "table-background-color"?: string,
+  "table-header-background-color"?: string,
   "table-header-text-color"?: string,
+  "table-header-input-background-color"?: string,
+  "table-footer-background-color"?: string,
+  "table-separator-color"?: string,
   "table-row-color"?: string,
   "table-row-text-color"?: string,
   "table-row-hover-color"?: string,

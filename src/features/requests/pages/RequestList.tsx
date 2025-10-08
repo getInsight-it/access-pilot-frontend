@@ -288,20 +288,16 @@ export default function RequestList() {
                   />
                 </div>
               </div>
-              <div className="hidden lg:flex">
-                <Table
-                auxiliaryHeader={
-                  <div className="p-4 w-96">
-                    <Input
-                      variant="dark"
-                      placeholder="Buscar solicitação..."
-                      className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                      value={searchFilter}
-                      onChange={(e) => handleSearchChange(e.target.value)}
-                    />
-                  </div>
-                }
-              >
+              <div className="hidden lg:flex flex-col gap-4">
+                <div className="w-96">
+                  <Input
+                    placeholder="Buscar solicitação..."
+                    className="h-10 w-full"
+                    value={searchFilter}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                  />
+                </div>
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead width="calc(20% - 20px)">Protocolo</TableHead>

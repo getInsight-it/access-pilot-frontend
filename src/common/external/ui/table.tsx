@@ -5,16 +5,9 @@ import { cn } from "../../../config/lib/utils.ts"
 
 const Table = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-  auxiliaryHeader?: React.ReactNode
-}
->(({ className, auxiliaryHeader, ...props }, ref) => (
-  <div className="relative w-full overflow-auto rounded-xl border bg-table-background">
-    {auxiliaryHeader && (
-      <div className="w-full border-b rounded-t-xl">
-        {auxiliaryHeader}
-      </div>
-    )}
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto rounded-table border border-table-border bg-table-background">
     <div
       ref={ref}
       className={cn("w-full text-sm flex flex-col text-text-default", className)}
@@ -35,10 +28,11 @@ const TableHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col bg-table-background text-text-default",
+      "flex flex-col bg-table-header-background text-table-header-text",
       !hasAuxHeader && "[&>div:first-child>div:first-child]:rounded-tl-xl",
       !hasAuxHeader && "[&>div:first-child>div:last-child]:rounded-tr-xl",
-      "[&>div]:border-b",
+      "[&>div]:border-b [&>div]:border-table-separator",
+      "[&>div]:hover:bg-table-header-background",
       className
     )}
     {...props}
@@ -57,6 +51,8 @@ const TableBody = React.forwardRef<
       "[&>div:last-child]:border-b-0",
       "[&>div:last-child>div:first-child]:rounded-bl-xl",
       "[&>div:last-child>div:last-child]:rounded-br-xl",
+      "[&>div:nth-child(odd)]:bg-zebra-background-1",
+      "[&>div:nth-child(even)]:bg-zebra-background-2",
       className
     )}
     {...props}
@@ -72,7 +68,7 @@ const TableFooter = React.forwardRef<
     ref={ref}
     className={cn(
       "flex flex-col",
-      "border-t font-medium bg-table-background",
+      "border-t border-table-separator font-medium bg-table-footer-background",
       "[&>div:last-child>div:first-child]:rounded-bl-xl",
       "[&>div:last-child>div:last-child]:rounded-br-xl",
       "[&>div]:last:border-b-0",
@@ -90,7 +86,7 @@ const TableRow = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex w-full text-text-default border-b bg-table-row text-table-row-text transition-colors hover:bg-table-row-hover",
+      "flex w-full text-text-default border-b border-table-separator text-table-row-text transition-colors hover:bg-table-row-hover",
       className
     )}
     {...props}
@@ -99,7 +95,7 @@ const TableRow = React.forwardRef<
 TableRow.displayName = "TableRow"
 
 const tableHeadVariants = cva(
-  "flex items-center text-left font-semibold text-text-default dark:text-gray-100 [&:has([role=checkbox])]:pr-0",
+  "flex items-center text-left font-semibold text-table-header-text [&:has([role=checkbox])]:pr-0",
   {
     variants: {
       size: {
@@ -194,7 +190,7 @@ const TableSortableHead = React.forwardRef<
       ref={ref}
       className={cn(
         tableHeadVariants({ size }),
-        width ? "cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors" : "flex-1 cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors",
+        width ? "cursor-pointer select-none" : "flex-1 cursor-pointer select-none",
         className
       )}
       style={{ width: width || undefined, flexShrink: width ? 0 : 1, ...style }}
@@ -204,7 +200,7 @@ const TableSortableHead = React.forwardRef<
       <div className="flex items-center space-x-2">
         <span>{children}</span>
         {sortDirection && (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs">
             {sortDirection === "asc" ? "↑" : "↓"}
           </span>
         )}

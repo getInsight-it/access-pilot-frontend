@@ -377,18 +377,16 @@ export default function LevelItems() {
       </div>
 
       <ScrollArea className="px-6 flex-grow">
-        <div className="py-6 max-w-content-container m-auto">
-          <Table auxiliaryHeader={
-            <div className="p-4 w-96">
-              <Input
-                variant="dark"
-                placeholder="Pesquisar itens..."
-                className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-            </div>
-          }>
+        <div className="py-6 max-w-content-container m-auto flex flex-col gap-4">
+          <div className="w-96">
+            <Input
+              placeholder="Pesquisar itens..."
+              className="h-10 w-full"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <Table>
             <TableHeader>
               <TableRow className="uppercase">
                 <TableHead width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>Nome</TableHead>

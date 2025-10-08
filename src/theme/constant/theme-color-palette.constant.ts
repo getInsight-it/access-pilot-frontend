@@ -272,6 +272,7 @@ export const GOV_COLOR_PALETTE: GovbrThemeColorPalette = {
     '800': "#5C1111",
   },
   gray: {
+    '0': '#FFFFFF',
     '10': '#FCFCFC',
     '25': '#F5F5F0',
     '50': '#F0F0EC',

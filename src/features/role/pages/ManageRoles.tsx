@@ -141,16 +141,14 @@ export default function ManageRoles() {
                 <TabsTrigger value="roles">Papéis</TabsTrigger>
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
-              <TabsContent value="roles">
-                <Table auxiliaryHeader={
-                  <div className="p-4 w-96">
-                    <Input
-                      variant="dark"
-                      placeholder="Buscar solicitação..."
-                      className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                    />
-                  </div>
-                }>
+              <TabsContent value="roles" className="flex flex-col gap-4">
+                <div className="w-96">
+                  <Input
+                    placeholder="Buscar solicitação..."
+                    className="h-10 w-full"
+                  />
+                </div>
+                <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead width="calc(25% - 25px)">Label</TableHead>

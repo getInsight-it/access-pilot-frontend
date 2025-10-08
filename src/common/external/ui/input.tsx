@@ -12,7 +12,7 @@ const inputVariants = cva(
         filled: "border border-gray-200 bg-white hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-500",
         ghost: "border-0 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-800",
         outline: "border border-gray-300 bg-transparent hover:border-primary-400 dark:border-gray-600 dark:hover:border-primary-500",
-        dark: "!border border-gray-300 !bg-white text-gray-900 placeholder:text-gray-500 hover:border-gray-400 focus-visible:ring-primary-500 focus-visible:ring-offset-0"
+        dark: "!border border-gray-300 !bg-table-header-input-background text-gray-900 placeholder:text-gray-500 hover:border-gray-400 focus-visible:ring-primary-500 focus-visible:ring-offset-0 dark:!bg-table-header-input-background dark:text-gray-100 dark:border-gray-600 dark:placeholder:text-gray-400"
       },
       size: {
         sm: "h-8 px-2 py-1 text-xs",
