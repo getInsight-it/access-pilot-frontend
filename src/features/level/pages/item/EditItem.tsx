@@ -150,13 +150,13 @@ export const EditItem: React.FC = () => {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="px-6 py-6 max-w-content-container m-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-content-container m-auto">
               <div className="space-y-4 pb-10">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome</Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="name"
@@ -182,8 +182,7 @@ export const EditItem: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código
-                      externo</Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código externo <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="externalCode"
@@ -211,7 +210,7 @@ export const EditItem: React.FC = () => {
 
                 <div>
                   <Label className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                         htmlFor="description">Descrição</Label>
+                         htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
                   <div className="relative">
                     <Textarea
                       id="description"

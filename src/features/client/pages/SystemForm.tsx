@@ -237,7 +237,7 @@ export default function SystemForm() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="h-full flex items-center justify-center">
             <div className="flex items-center justify-center min-h-[60vh]">
               <HighlightLoader />
@@ -285,7 +285,7 @@ export default function SystemForm() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
         <div className="py-6 max-w-content-container m-auto">
           {activeIndex === 1 && (
             <motion.div

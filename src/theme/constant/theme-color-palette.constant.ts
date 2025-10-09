@@ -86,6 +86,7 @@ export const THEME_COLOR_PALETTE: DefaultThemeColorPalette = {
     '950': 'oklch(27.2% 0.071 257.6)'
   },
   gray: {
+    '0': 'oklch(98.5% 0 263.3)',
     '25': 'oklch(99.4% 0 263.3)',
     '50': 'oklch(98.5% 0 263.3)',
     '100': 'oklch(97% 0 263.3)',

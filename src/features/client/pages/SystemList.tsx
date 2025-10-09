@@ -144,7 +144,7 @@ export default function SystemList() {
           </HeaderContainer>
         </div>
 
-        <ScrollArea className="px-6 flex-grow">
+        <ScrollArea className="flex-grow">
           <div className="py-6 max-w-content-container m-auto">
             <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
               <div className="w-96">
@@ -153,7 +153,7 @@ export default function SystemList() {
                   placeholder="Filtrar por Sistema..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                  className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
                 />
               </div>
               {clients && clients.map((client, index) => (
@@ -225,6 +225,7 @@ export default function SystemList() {
                 <PaginationWrapper
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  totalItems={totalUsers}
                   onPageChange={(page) => handlePageChange(page)}
                 />
               </div>
@@ -305,6 +306,7 @@ export default function SystemList() {
                   <PaginationWrapper
                     currentPage={currentPage}
                     totalPages={totalPages}
+                    totalItems={totalUsers}
                     onPageChange={(page) => handlePageChange(page)}
                   />
                 </div>

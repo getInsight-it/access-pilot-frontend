@@ -367,7 +367,7 @@ export default function CreateOrEditLevel() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="px-6 py-6 max-w-content-container m-auto">
             <form onSubmit={handleSubmit} className="w-full mt-4 max-w-content-container m-auto">
               <div className="space-y-4 pb-10">

@@ -229,7 +229,7 @@ export default function RequestList() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="px-6 flex-grow">
+      <ScrollArea className="flex-grow">
         {loading ? (
           <ContentLoader />
         ) : (
@@ -340,6 +340,7 @@ export default function RequestList() {
                     <PaginationWrapper
                       currentPage={currentPage}
                       totalPages={totalPages}
+                      totalItems={totalRequests}
                       onPageChange={handlePaginationChange}
                     />
                   </div>
