@@ -64,7 +64,7 @@ export function UserNav() {
           <User className="w-4 h-4 mr-2" />
           Perfil
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/help">
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/help-and-support">
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
         </Link>
