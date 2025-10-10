@@ -120,9 +120,8 @@ export const ClientRoleDetails = ({ roles }: ClientRoleDetailsProps) => {
 
   if(roleItems.length === 0) {
     return (
-      <div>
-        <p className="font-bold mb-3 text-lg">Papéis do sistema:</p>
-        <p className="text-center text-gray-500 dark:text-gray-400">Nenhum papel encontrado para este sistema.</p>
+      <div className="flex items-center justify-center h-full">
+        <p className="text-center text-gray-500 dark:text-gray-400">Nenhum papel cadastrado para este sistema.</p>
       </div>
     );
   }

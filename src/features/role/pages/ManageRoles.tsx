@@ -32,6 +32,7 @@ import {
 import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../common/external/ui/tabs.tsx";
 import { toast } from "../../../common/external/ui/use-toast.ts";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar Sistemas", link: "/dashboard/systems" },
@@ -58,11 +59,11 @@ export default function ManageRoles() {
         setTotalPages(totalPages);
         updatePaginatedRoles(roles || [], currentPage);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao buscar papéis.",
+        title: "Erro ao buscar papéis",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -119,7 +120,7 @@ export default function ManageRoles() {
                       onClick={() => {
                         navigate(PRIVATE_ROUTES.SYSTEMS_DETAILS.replace(":clientId", clientId!));
                       }}
-                      className="text-primary-600 cursor-pointer underline">app-gerenciado-accesspilot-1</span>
+                      className="text-primary-600 cursor-pointer underline">{clientId}</span>
                   </span>
                 }
               />
@@ -134,7 +135,7 @@ export default function ManageRoles() {
           <Separator></Separator>
         </div>
 
-        <ScrollArea className="px-6 flex-grow">
+        <ScrollArea className="flex-grow" viewportClassName="px-6">
           <div className="py-6 max-w-content-container m-auto">
             <Tabs defaultValue="roles">
               <TabsList className="mb-4">

@@ -10,7 +10,7 @@
     "preview": "vite preview --port 8080"
   },
   "dependencies": {
-    "@getinsight.it/getinsight-common": "1.14.1",
+    "@getinsight.it/getinsight-common": "1.19.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -33,7 +33,7 @@
     "@react-three/rapier": "^1.4.0",
     "@sentry/react": "^8.35.0",
     "@tanstack/react-table": "^8.20.5",
-    "axios": "^1.7.7",
+    "axios": "^1.12.2",
     "camera-controls": "^2.9.0",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",

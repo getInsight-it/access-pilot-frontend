@@ -1,6 +1,4 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../../../store/authStore.ts";
@@ -28,6 +26,7 @@ import { getPreviousRoute } from "../../../../common/utils/NavigationStateManage
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
 import { STATUS } from "./constant/status.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "APPROVED";
 
@@ -36,11 +35,6 @@ interface RequestStatusParams {
   description?: string;
   finalReason?: string;
 }
-
-const BREADCRUMB_ITEMS = [
-  { title: "Minhas solicitações", link: "/dashboard/access-requests" },
-  { title: "Detalhe da solicitação", link: "/dashboard/request-access" }
-];
 
 const useRequestData = (requestId: string | undefined) => {
   const [request, setRequest] = useState<RequestInterface>();
@@ -92,10 +86,10 @@ const useRequestData = (requestId: string | undefined) => {
       setItemHierarchy(hierarchy);
       setAttachments(presentationAttachments);
     } catch (error: any) {
-      console.error("Erro ao buscar detalhes da solicitação:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar os detalhes da solicitação",
+        title: "Erro ao buscar detalhes da solicitação",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -119,9 +113,9 @@ const useRequestData = (requestId: string | undefined) => {
 
       toast({ title: "Sucesso!", description: successMessage });
       await fetchRequestData();
-    } catch (error) {
-      console.error(`Erro ao ${errorMessage.toLowerCase()}:`, error);
-      toast({ title: "Erro!", description: errorMessage, variant: "destructive" });
+    } catch (error: any) {
+      const formattedErrorMessage: string = formatErrorMessages(error.error);
+      toast({ title: errorMessage, description: formattedErrorMessage, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -162,11 +156,11 @@ const useRequestData = (requestId: string | undefined) => {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Erro ao fazer download do arquivo:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível fazer o download do arquivo",
+        title: "Erro ao fazer download do arquivo",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -272,7 +266,7 @@ export default function RequestDetailPage() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow bg-background">
+      <ScrollArea className="flex-grow bg-background" viewportClassName="px-7">
         {isDataLoading ? (
           <ContentLoader />
         ) : (

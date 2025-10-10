@@ -1,4 +1,3 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { motion } from "framer-motion";
@@ -27,10 +26,7 @@ import { DetailsStep } from "./partials/DetailsStep.tsx";
 import { RequestService } from "../../common/api/request-service.ts";
 import { httpClient } from "../../../../config/http/http.ts";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
-
-const breadcrumbItems = [
-  { title: "Solicitar acesso", link: "/dashboard/request-access/create" }
-];
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -147,8 +143,14 @@ export default function RequestAccess() {
     try {
       const fetchedClients = await clientService.getClients();
       setClients(fetchedClients as any);
-    } catch (error) {
-      console.error("Erro ao carregar clients:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao carregar sistemas",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -156,8 +158,14 @@ export default function RequestAccess() {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles as any);
-    } catch (error) {
-      console.error("Erro ao carregar roles:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao carregar papéis",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -297,11 +305,17 @@ export default function RequestAccess() {
 
       await requestService.createRequest(payloadFormData);
 
-      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada.." });
+      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada." });
       navigate("/dashboard/my-access-requests");
       setShowContent(false);
     } catch (error: any) {
-      toast({ title: "Erro ao processar solicitação de acesso", description: error.message, variant: "destructive" });
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao processar solicitação de acesso",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -337,8 +351,6 @@ export default function RequestAccess() {
 
       <div className="flex-none">
         <HeaderContainer>
-          {/* <Breadcrumbs items={breadcrumbItems} /> */}
-
           <div className="pl-1 flex items-start justify-between">
             <Heading
               title="Solicitar acesso"

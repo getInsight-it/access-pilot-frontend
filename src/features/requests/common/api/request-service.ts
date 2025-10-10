@@ -43,7 +43,7 @@ export class RequestService {
       throw response;
     }
 
-    return JSON.parse(response.data) as PaginatedResponse<RequestInterface>;
+    return response.data as PaginatedResponse<RequestInterface>;
   }
 
   async createRequest(formData: FormData): Promise<void> {
@@ -80,7 +80,7 @@ export class RequestService {
       throw response;
     }
 
-    return JSON.parse(response.data) as RequestInterface;
+    return response.data as RequestInterface;
   }
 
   async getClientAttachments(id: number): Promise<RequestAttachmentInterface[]> {
@@ -90,7 +90,7 @@ export class RequestService {
       throw response;
     }
 
-    return JSON.parse(response.data) as RequestAttachmentInterface[];
+    return response.data as RequestAttachmentInterface[];
   }
 }
 

@@ -7,6 +7,7 @@ import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { roleService } from "../../common/service/role-service.ts";
 import { RoleResponseInterface } from "../../common/types/role.model.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 type TreeRoleType = {
   index: string,
@@ -90,18 +91,18 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     from(roleService.update(rolePayload as any)).pipe(
       tap(() => {
         toast({
-          title: "Roles atualizados",
-          description: "Os roles foram atualizados com sucesso"
+          title: "Papéis atualizados",
+          description: "Os papéis foram atualizados com sucesso"
         });
         onSuccess?.();
       }),
       catchError((error) => {
+        const errorMessage: string = formatErrorMessages(error.error);
         toast({
-          title: "Erro ao atualizar roles",
-          description: "Ocorreu um erro ao atualizar os roles",
+          title: "Erro ao atualizar papéis",
+          description: errorMessage,
           variant: "destructive"
         });
-        console.error(error);
         return [];
       }),
       finalize(() => setLoading(false))

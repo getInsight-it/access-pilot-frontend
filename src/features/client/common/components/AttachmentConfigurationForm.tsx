@@ -23,6 +23,8 @@ import {
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
 
 export interface AttachmentConfigSectionProps {
   configurations: AttachmentConfigurationInterface[];
@@ -130,7 +132,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     await clientService.clientConfigurationPreview(file)
       .then((response: HttpRequestResponse | HttpRequestError) => {
         if(response instanceof HttpRequestResponse) {
-          const importedConfigurations = JSON.parse(response.data) as AttachmentConfigurationInterface[];
+          const importedConfigurations = response.data as AttachmentConfigurationInterface[];
           const duplicates = importedConfigurations.filter(
             importedConfig => configurations.some(
               existingConfig => existingConfig.name === importedConfig.name
@@ -148,9 +150,13 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           }
         }
       })
-      .catch((error: HttpRequestError) => {
-        console.error("Erro ao importar configurações:", error);
-        alert("Ocorreu um erro ao importar as configurações.");
+      .catch((error: any) => {
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao importar configurações",
+          description: errorMessage,
+          variant: "destructive"
+        });
       })
       .finally(() => {
         setLoading(false);

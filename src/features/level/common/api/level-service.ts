@@ -10,7 +10,6 @@ const LEVEL_API = {
 
 export class LevelService {
   httpClient: HttpClient;
-  baseUrl = "https://api.accesspilot.dev.getinsight.tech";
 
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
@@ -21,7 +20,7 @@ export class LevelService {
       const url = `${LEVEL_API.LEVELS}?pageIndex=${pageIndex}&pageSize=${pageSize}&sortField=${sortField}&sortType=${sortType}`;
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
       return response instanceof HttpRequestResponse
-        ? JSON.parse(response.data)
+        ? response.data
         : null;
     } catch (error) {
       console.error("Erro ao buscar levels:", error);
@@ -33,7 +32,7 @@ export class LevelService {
     try {
       const url = `${LEVEL_API.LEVELS}/${id}/hierarchy`;
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
-      return JSON.parse(response.data as any);
+      return response.data as any;
     } catch (error) {
       console.error("Erro ao buscar levels:", error);
       return null;
@@ -49,7 +48,7 @@ export class LevelService {
     try {
       const url = `${LEVEL_API.LEVELS}/${levelId}/items/${itemId}/subitems?pageSize=${pageSize}&pageIndex=${page}`;
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
-      return JSON.parse(response.data) as LevelSubItemResponseInterface;
+      return response.data as LevelSubItemResponseInterface;
     } catch (error) {
       console.error("Erro ao buscar sub itens:", error);
       throw error;
@@ -63,20 +62,13 @@ export class LevelService {
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${LEVEL_API.LEVELS}/${id}`);
 
       if(response instanceof HttpRequestResponse) {
-        // Verificar se a resposta tem conteúdo antes de fazer o parse
-        if(!response.data || response.data.trim() === "") {
+        // Verificar se a resposta tem conteúdo
+        if(!response.data) {
           console.warn(`Resposta vazia ao buscar esfera ${id}`);
           return null;
         }
 
-        try {
-          const data = JSON.parse(response.data) as LevelInterface;
-
-          return data;
-        } catch (parseError) {
-          console.error(`Erro ao fazer parse da resposta para esfera ${id}:`, parseError);
-          return null;
-        }
+        return response.data as LevelInterface;
       } else {
         console.error(`Erro ao buscar level ${id}:`, response.status, response.message || "Sem mensagem de erro");
         return null;
@@ -111,7 +103,7 @@ export class LevelService {
 
       if(response instanceof HttpRequestResponse) {
         console.log("Resposta bem-sucedida:", response.status);
-        return JSON.parse(response.data);
+        return response.data;
       } else {
         console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro");
         return null;
@@ -131,7 +123,7 @@ export class LevelService {
 
       if(response instanceof HttpRequestResponse) {
         console.log("Resposta bem-sucedida:", response.status);
-        return JSON.parse(response.data);
+        return response.data;
       } else {
         console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro");
         return null;
@@ -177,17 +169,12 @@ export class LevelService {
         console.log("Resposta bem-sucedida:", response.status);
         console.log("Corpo da resposta:", response.data);
 
-        // Verificar se a resposta tem conteúdo antes de fazer o parse
-        if(response.status === 204 || !response.data || response.data.trim() === "") {
+        // Verificar se a resposta tem conteúdo
+        if(response.status === 204 || !response.data) {
           return { success: true, ...formattedData };
         }
 
-        try {
-          return JSON.parse(response.data);
-        } catch (parseError) {
-          console.warn("Resposta não contém JSON válido:", response.data);
-          return { success: true, ...formattedData };
-        }
+        return response.data;
       } else {
         console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro");
         if(response.data) {
@@ -255,16 +242,11 @@ export class LevelService {
           if(createResponse instanceof HttpRequestResponse) {
             console.log("Criação bem-sucedida do novo item, status:", createResponse.status);
 
-            try {
-              const newItemData = createResponse.data
-                ? JSON.parse(createResponse.data)
-                : { ...createData, id: Number(itemId) };
-              console.log("Dados do novo item criado:", newItemData);
-              return { success: true, ...newItemData };
-            } catch (parseError) {
-              console.warn("Resposta não contém JSON válido:", createResponse.data);
-              return { success: true, ...createData, id: Number(itemId) };
-            }
+            const newItemData = createResponse.data
+              ? createResponse.data
+              : { ...createData, id: Number(itemId) };
+            console.log("Dados do novo item criado:", newItemData);
+            return { success: true, ...newItemData };
           }
         }
       } catch (deleteCreateError) {
@@ -389,18 +371,13 @@ export class LevelService {
       if(response instanceof HttpRequestResponse) {
         console.log("Resposta bem-sucedida:", response.status);
 
-        // Verificar se a resposta tem conteúdo antes de fazer o parse
-        if(response.status === 204 || !response.data || response.data.trim() === "") {
+        // Verificar se a resposta tem conteúdo
+        if(response.status === 204 || !response.data) {
           // Resposta 204 (No Content) ou sem dados - retornar sucesso com os dados enviados
           return { success: true, ...data };
         }
 
-        try {
-          return JSON.parse(response.data);
-        } catch (parseError) {
-          console.warn("Resposta não contém JSON válido:", response.data);
-          return { success: true, ...data };
-        }
+        return response.data;
       } else {
         console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro");
         return null;
@@ -478,8 +455,8 @@ export class LevelService {
         console.log("Resposta bem-sucedida:", response.status);
         console.log("Headers da resposta:", response.headers);
 
-        // Verificar se a resposta tem conteúdo antes de fazer o parse
-        if(response.status === 204 || !response.data || response.data.trim() === "") {
+        // Verificar se a resposta tem conteúdo
+        if(response.status === 204 || !response.data) {
           // Resposta 204 (No Content) ou sem dados - retornar sucesso com os dados enviados
           console.log("Resposta sem conteúdo, verificando se a atualização foi bem-sucedida...");
 
@@ -487,7 +464,7 @@ export class LevelService {
           try {
             const verifyResponse = await this.httpClient.get(`${LEVEL_API.LEVELS}/${levelId}`);
             if(verifyResponse instanceof HttpRequestResponse) {
-              const verifyData = JSON.parse(verifyResponse.data);
+              const verifyData = verifyResponse.data;
               console.log("Dados após atualização:", JSON.stringify(verifyData, null, 2));
               console.log("Parent após atualização:", verifyData.parent ? verifyData.parent.id : "nenhum");
               return { success: true, ...verifyData };
@@ -499,12 +476,7 @@ export class LevelService {
           return { success: true, ...data };
         }
 
-        try {
-          return JSON.parse(response.data);
-        } catch (parseError) {
-          console.warn("Resposta não contém JSON válido:", response.data);
-          return { success: true, ...data };
-        }
+        return response.data;
       } else {
         console.error("Erro na resposta:", response.status, response.message || "Sem mensagem de erro");
         return null;
@@ -568,7 +540,7 @@ export class LevelService {
         try {
           const verifyResponse = await this.httpClient.get(`${LEVEL_API.LEVELS}/${levelId}`);
           if(verifyResponse instanceof HttpRequestResponse) {
-            const verifyData = JSON.parse(verifyResponse.data);
+            const verifyData = verifyResponse.data;
             console.log("Dados após atualização de parent:", JSON.stringify(verifyData, null, 2));
             console.log("Parent após atualização:", verifyData.parent ? verifyData.parent.id : "nenhum");
             return { success: true, ...verifyData };
@@ -599,7 +571,7 @@ export class LevelService {
       throw response;
     }
 
-    return JSON.parse(response.data) as ItemHierarchyInterface[];
+    return response.data as ItemHierarchyInterface[];
   }
 }
 

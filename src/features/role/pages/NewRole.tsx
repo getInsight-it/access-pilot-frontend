@@ -27,6 +27,7 @@ import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { goToPreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 
 import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 import * as z from "zod";
 
@@ -89,10 +90,10 @@ export default function NewRole() {
       methods.reset(formData as any);
 
     } catch (error: any) {
-      console.error(error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Falha ao buscar dados do papel.",
+        title: "Erro ao buscar dados do papel",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -109,7 +110,12 @@ export default function NewRole() {
         }
       }),
       catchError((error) => {
-        console.error(error);
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao buscar dados do sistema",
+          description: errorMessage,
+          variant: "destructive"
+        });
         return [];
       })
     ).subscribe();
@@ -122,11 +128,11 @@ export default function NewRole() {
       if (response && response.items) {
         setLevels(response.items);
       }
-    } catch (error) {
-      console.error("Erro ao carregar esferas:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
         title: "Erro ao carregar esferas",
-        description: "Não foi possível carregar as esferas disponíveis.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -175,19 +181,12 @@ export default function NewRole() {
 
       navigate(`/dashboard/systems/${client?.clientId}/roles`);
     } catch (error: any) {
-      if(error.response) {
-        toast({
-          title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
-          description: error.response.data.message,
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
-          description: `O papel ${role.name} não foi ${isEditing ? 'atualizado' : 'criado'}.`,
-          variant: "destructive"
-        });
-      }
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
+        description: errorMessage,
+        variant: "destructive"
+      });
       console.error(error);
     } finally {
       setLoading(false);
@@ -217,7 +216,7 @@ export default function NewRole() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
           <div className="h-full flex items-center justify-center">
             <div className="flex items-center justify-center min-h-[60vh]">
               <HighlightLoader />
@@ -235,7 +234,7 @@ export default function NewRole() {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full" viewportClassName="px-7">
       <motion.div
         className="flex flex-col h-full"
         initial={{ opacity: 0 }}
@@ -266,8 +265,8 @@ export default function NewRole() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="px-6 py-6 max-w-content-container m-auto">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-6">
+          <div className="py-6 max-w-content-container m-auto">
             <FormProvider {...methods}>
               <form onSubmit={methods.handleSubmit(onSubmit)} className="w-full mt-4 max-w-content-container m-auto">
                 <div className="space-y-4 pb-10">

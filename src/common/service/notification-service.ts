@@ -40,7 +40,7 @@ export class NotificationService {
       throw response;
     }
 
-    return JSON.parse(response.data) as PaginatedResponse<NotificationModel>;
+    return response.data as PaginatedResponse<NotificationModel>;
   }
 
   async updateOpenNotification(notificationId: number, isOpened: boolean): Promise<void> {
@@ -60,7 +60,7 @@ export class NotificationService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${NOTIFICATION_API.NOTIFICATIONS_SUMMARY}?externalId=${externalId}&type=${type}`);
 
     if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as NotificationSummaryModel;
+      return response.data as NotificationSummaryModel;
     } else {
       console.error("Deu ruim!");
     }

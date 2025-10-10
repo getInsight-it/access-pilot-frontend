@@ -18,6 +18,7 @@ import HighlightLoader from "../../../../common/components/loading/HighLightLoad
 import { motion } from "framer-motion";
 import { levelService } from "../../common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface SphereItem {
   id: string;
@@ -145,13 +146,15 @@ export default function CreateOrEditLevel() {
       }
 
       setLoading(false);
-    } catch (err) {
-      console.error("Error fetching sphere data:", err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
       toast({
-        title: "Error",
-        description: "Failed to fetch sphere data",
+        title: "Erro ao buscar dados da esfera.",
+        description: errorMessage,
         variant: "destructive"
       });
+
       navigate("/dashboard/levels");
     }
   };
@@ -167,8 +170,13 @@ export default function CreateOrEditLevel() {
         setHasItems(false);
         console.log(`Esfera ${sphereId} não tem itens.`);
       }
-    } catch (error) {
-      console.error(`Erro ao verificar itens da esfera ${sphereId}:`, error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao verificar itens da esfera",
+        description: errorMessage,
+        variant: "destructive"
+      });
       setHasItems(false);
     }
   };
@@ -201,11 +209,11 @@ export default function CreateOrEditLevel() {
 
       setAllSpheres(processedData);
       return Promise.resolve();
-    } catch (err) {
-      console.error("Erro ao carregar todas as esferas:", err);
+    } catch (err: any) {
+      const errorMessage: string = formatErrorMessages(err.error);
       toast({
-        title: "Erro",
-        description: "Falhou ao carregar a esfera pai",
+        title: "Erro ao carregar esferas",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -305,16 +313,10 @@ export default function CreateOrEditLevel() {
         setTimeout(() => {
           navigate("/dashboard/levels");
         }, 500);
-      } catch (err) {
-        console.error("Erro ao criar/editar a esfera:", err);
-
-        let errorMessage = "Ocorreu um erro enquanto a esfera foi criada/atualizada";
-        if(err instanceof Error) {
-          errorMessage = err.message;
-        }
-
+      } catch (err: any) {
+        const errorMessage: string = formatErrorMessages(err.error);
         toast({
-          title: "Erro",
+          title: isEditing ? "Erro ao atualizar esfera" : "Erro ao criar esfera",
           description: errorMessage,
           variant: "destructive"
         });

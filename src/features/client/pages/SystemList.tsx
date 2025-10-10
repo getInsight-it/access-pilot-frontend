@@ -1,6 +1,4 @@
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { useEffect, useState } from "react";
@@ -34,10 +32,7 @@ import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.
 import { toast } from "../../../common/external/ui/use-toast.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "../common/enum/client-status.enum.ts";
 import { Badge } from "../../../common/external/ui/badge.tsx";
-
-const breadcrumbItems = [
-  { title: "Gerenciar sistemas", link: "/dashboard/systems" }
-];
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
@@ -53,10 +48,19 @@ export default function SystemList() {
   };
 
   const getData = async (page: number, size: number, searchFilter: string = "") => {
-    const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
-    setClients(pageResponse?.items || []);
-    setTotalUsers(pageResponse?.total ?? 0);
-    setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
+    try {
+      const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
+      setClients(pageResponse?.items || []);
+      setTotalUsers(pageResponse?.total ?? 0);
+      setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao carregar sistemas",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
   };
 
   const syncClient = async (client: ClientResponseInterface) => {
@@ -67,10 +71,10 @@ export default function SystemList() {
         description: "O sistema foi sincronizado com sucesso"
       });
     } catch (error: any) {
-      console.error("Erro ao sincronizar sistema:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi sincronizar o sistema.",
+        title: "Erro ao sincronizar sistema",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -87,10 +91,10 @@ export default function SystemList() {
         description: `O sistema foi ${toastMessage} com sucesso!`
       });
     } catch (error: any) {
-      console.error("Erro ao sincronizar sistema:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: `Não foi ${toastMessage} o sistema.`,
+        title: `Erro ao ${toastMessage} sistema`,
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -144,7 +148,7 @@ export default function SystemList() {
           </HeaderContainer>
         </div>
 
-        <ScrollArea className="flex-grow">
+        <ScrollArea className="flex-grow" viewportClassName="px-7">
           <div className="py-6 max-w-content-container m-auto">
             <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
               <div className="w-96">

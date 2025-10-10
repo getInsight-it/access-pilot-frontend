@@ -12,6 +12,7 @@ import type { NotificationModel } from "../../../../types/notification/notificat
 import { notificationService } from "../../../../service/notification-service.ts";
 import { PRIVATE_ROUTES } from "../../../../constants/routes.ts";
 import { savePreviousRoute } from "../../../../utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "../../../../utils/error-utils.ts";
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -53,11 +54,13 @@ export default function Notifications() {
       setPage(page + 1);
       setNotifications(newNotifications);
       setHasMoreItems(notificationsResponse.total > newNotifications.length);
-    } catch {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
       toast({
-        variant: "default",
-        title: "Erro",
-        description: "Erro ao carregar notificações."
+        title: "Erro ao buscar notificações.",
+        description: errorMessage,
+        variant: "destructive"
       });
     }
   };

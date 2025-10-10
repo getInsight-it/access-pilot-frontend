@@ -24,6 +24,7 @@ import { Switch } from "../../../common/external/ui/switch.tsx";
 import { Label } from "../../../common/external/ui/label.tsx";
 import { ClientResponseInterface } from "../common/model/client.model.ts";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
@@ -41,7 +42,7 @@ const formSchema = z.object({
     .string()
     .min(3, { message: "O baseUrl do sistema deve conter no mínimo 3 caracteres" })
     .regex(/^(https|http?:\/\/)?([\w.-:?-]+)$/, { message: "baseUrl inválido" }),
-  managed: z.boolean().default(false),
+  managed: z.boolean().default(true),
   status: z.string().optional().nullable().default(ClientStatusEnum.UNPUBLISHED)
 });
 
@@ -85,10 +86,10 @@ export default function SystemForm() {
       }
 
     } catch (error: any) {
-      console.error(error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Falha ao buscar dados do sistema.",
+        title: "Erro ao buscar dados do sistema",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -194,14 +195,12 @@ export default function SystemForm() {
         navigate("/dashboard/systems/" + form.clientId + "/details");
       }
     } catch (error: any) {
-      if(error.response) {
-        toast({
-          title: "Erro ao realizar operação sistema",
-          description: error.response.data.message,
-          variant: "destructive"
-        });
-      }
-      console.error(error);
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao realizar operação no sistema",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -237,7 +236,7 @@ export default function SystemForm() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
           <div className="h-full flex items-center justify-center">
             <div className="flex items-center justify-center min-h-[60vh]">
               <HighlightLoader />
@@ -285,7 +284,7 @@ export default function SystemForm() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
+      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
         <div className="py-6 max-w-content-container m-auto">
           {activeIndex === 1 && (
             <motion.div

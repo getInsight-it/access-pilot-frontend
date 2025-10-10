@@ -13,7 +13,6 @@ import {
 } from "../../../../common/external/ui/table.tsx";
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../common/external/ui/dialog.tsx";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
@@ -33,6 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "../../../../common/external/ui/dropdown-menu.tsx";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface Item {
   id: number;
@@ -71,6 +71,7 @@ interface SphereHierarchy {
 
 export default function LevelItems() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const [items, setItems] = useState<Item[]>([]);
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -159,8 +160,14 @@ export default function LevelItems() {
         setTotalItems(0);
         setTotalPages(1);
       }
-    } catch (err) {
-      console.error("Erro ao buscar esfera e itens:", err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao buscar esferas e itens.",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -229,8 +236,14 @@ export default function LevelItems() {
           ];
         }
       }
-    } catch (error) {
-      console.error("Erro ao buscar esferas pais:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao processar solicitação de acesso",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -255,8 +268,13 @@ export default function LevelItems() {
         });
 
         currentId = sphere.parent ? sphere.parent.id.toString() : "";
-      } catch (error) {
-        console.error(`Erro ao buscar esfera ${currentId}:`, error);
+      } catch (error: any) {
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao fazer download do arquivo",
+          description: errorMessage,
+          variant: "destructive"
+        });
         break;
       }
     }
@@ -281,23 +299,20 @@ export default function LevelItems() {
     if(!itemToDelete || !sphere || !id) return;
 
     try {
-      const success = await levelService.deleteLevelItem(id, itemToDelete.id.toString());
+      await levelService.deleteLevelItem(id, itemToDelete.id.toString());
 
-      if(success) {
-        toast({
-          title: "Sucesso",
-          description: "Item excluído com sucesso!"
-        });
-
-        fetchSphereAndItems();
-      } else {
-        throw new Error("Falha ao excluir o item");
-      }
-    } catch (error) {
-      console.error("Erro ao excluir item:", error);
       toast({
-        title: "Erro",
-        description: "Falha ao excluir o item. Por favor, tente novamente.",
+        title: "Sucesso",
+        description: "Item excluído com sucesso!"
+      });
+
+      fetchSphereAndItems();
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao excluir item",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -329,8 +344,6 @@ export default function LevelItems() {
       <HighlightLoader />
     </div>
   );
-
-  const location = useLocation();
 
   return (
     <motion.div
@@ -376,7 +389,7 @@ export default function LevelItems() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="px-6 flex-grow">
+      <ScrollArea className="flex-grow" viewportClassName="px-7">
         <div className="py-6 max-w-content-container m-auto flex flex-col gap-4">
           <div className="w-96">
             <Input

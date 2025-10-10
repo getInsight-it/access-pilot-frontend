@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
 import { AUTH_ROUTES, ERROR_ROUTES } from "../../constants/routes.ts";

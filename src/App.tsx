@@ -30,7 +30,10 @@ function App() {
       const user = {
         id: fetchedUserData.externalId,
         email: fetchedUserData.email,
-        isApprover: fetchedUserData.isApprover
+        isApprover: fetchedUserData.isApprover,
+        firstName: fetchedUserData.firstName,
+        lastName: fetchedUserData.lastName,
+        username: fetchedUserData.username
       };
       if(user) {
         setUserInfo(user);

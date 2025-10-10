@@ -1,6 +1,4 @@
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { buttonVariants } from "../../../common/external/ui/button.tsx";
@@ -34,6 +32,7 @@ import { toast } from "../../../common/external/ui/use-toast.ts";
 import { useDebounce } from "../../../common/hooks/use-debounce.ts";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../common/components/ContentLoader.tsx";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 interface PaginationParams {
   page: number;
@@ -42,10 +41,6 @@ interface PaginationParams {
   sortOrder: "asc" | "desc";
   filter?: string;
 }
-
-const BREADCRUMB_ITEMS = [
-  { title: "Gerenciar solicitações de acesso", link: "/dashboard/access-requests" }
-];
 
 const DEFAULT_PAGINATION = {
   PAGE_SIZE: 10,
@@ -103,10 +98,10 @@ const useRequestListData = (requestType: string) => {
       setTotalRequests(pageResponse?.total ?? 0);
       setTotalPages(Math.ceil((pageResponse?.total ?? 0) / params.size));
     } catch (error: any) {
-      console.error("Error fetching requests:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar as solicitações",
+        title: "Erro ao buscar solicitações",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -229,7 +224,7 @@ export default function RequestList() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow">
+      <ScrollArea className="flex-grow" viewportClassName="px-7">
         {loading ? (
           <ContentLoader />
         ) : (

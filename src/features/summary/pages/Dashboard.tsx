@@ -38,6 +38,7 @@ import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/a
 import { SummaryCardData } from "./types/status-card-data.model.ts";
 import { StatusCardData } from "./types/summary-card-data.model.ts";
 import { EmptyState } from "./partials/EmptyState.tsx";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 const REQUEST_PAGINATION = {
   PAGE: 1,
@@ -64,11 +65,11 @@ const useDashboardData = () => {
         REQUEST_PAGINATION.FILTER
       );
       setRequests(pageResponse?.items || []);
-    } catch (error) {
-      console.error("Error fetching requests:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar as solicitações",
+        title: "Erro ao carregar solicitações",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -81,11 +82,11 @@ const useDashboardData = () => {
     try {
       const clients = await clientService.getClientsAssociates(attached);
       setter(clients || []);
-    } catch (error) {
-      console.error("Error fetching clients:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Erro ao buscar sistemas.",
+        title: "Erro ao buscar sistemas",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -95,11 +96,11 @@ const useDashboardData = () => {
     try {
       const summaryData = await summaryService.getSummary();
       setSummary(summaryData);
-    } catch (error) {
-      console.error("Error fetching summary:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Erro ao buscar sumário.",
+        title: "Erro ao buscar sumário",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -114,8 +115,13 @@ const useDashboardData = () => {
         fetchSummary(),
         fetchRequests()
       ]);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao carregar dados do dashboard",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -282,7 +288,7 @@ export default function Dashboard() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow border-r px-2 sm:px-6 pt-6">
+      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-2 sm:px-6">
         <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
           {summaryCards.map((card) => {
             const Icon = card.icon;

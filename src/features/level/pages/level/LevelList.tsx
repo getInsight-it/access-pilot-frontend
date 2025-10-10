@@ -15,8 +15,6 @@ import {
 } from "../../../../common/external/ui/dialog.tsx";
 import { motion } from "framer-motion";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { cn } from "../../../../config/lib/utils.ts";
 import {
   DropdownMenu,
@@ -32,6 +30,7 @@ import HighlightLoader from "../../../../common/components/loading/HighLightLoad
 import { levelService } from "../../common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface SphereItem {
   id: string;
@@ -51,10 +50,6 @@ interface SphereItem {
 }
 
 const BUILT_IN_SPHERES = ["FEDERAL", "ESTADUAL", "MUNICIPAL"];
-
-const breadcrumbItems = [
-  { title: "Gerenciar esferas", link: "/dashboard/levels" }
-];
 
 const getTypeDisplayName = (type: string): string => {
   switch(type) {
@@ -134,9 +129,14 @@ export const LevelList = () => {
       });
 
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Ocorreu um erro enquanto as esferas eram carregadas");
-      console.error("Erro ao carregar esferas:", err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao carregar esferas.",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -220,11 +220,11 @@ export const LevelList = () => {
       await fetchSpheres();
 
       toast({ title: "Sucesso", description: `Esfera "${item.name}" excluída com sucesso!` });
-    } catch (err) {
-      console.error(err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Erro ao excluir esfera.",
+        title: "Erro ao excluir esfera",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -276,7 +276,7 @@ export const LevelList = () => {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="px-6 flex-grow">
+      <ScrollArea className="flex-grow" viewportClassName="px-7">
         <div className="py-6 max-w-content-container m-auto">
           <Table>
             <TableHeader>

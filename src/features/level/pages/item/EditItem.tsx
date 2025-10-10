@@ -17,6 +17,7 @@ import HighlightLoader from "../../../../common/components/loading/HighLightLoad
 import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface FormData {
   name: string;
@@ -38,10 +39,11 @@ export const EditItem: React.FC = () => {
     try {
       const levelResponse = await levelService.getLevelById(id);
       setLevel(levelResponse);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao buscar informações da esfera.",
+        title: "Erro ao buscar informações da esfera",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -63,10 +65,11 @@ export const EditItem: React.FC = () => {
       if(itemData.parent) {
         setValue("parentId", itemData.parent.id.toString());
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao carregar dados do item.",
+        title: "Erro ao carregar dados do item",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -87,10 +90,11 @@ export const EditItem: React.FC = () => {
 
       toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Falha ao atualizar o item. Por favor, tente novamente.",
+        title: "Erro ao atualizar item",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

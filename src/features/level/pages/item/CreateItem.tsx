@@ -19,6 +19,7 @@ import { LevelInterface } from "../../common/types/level.model.ts";
 import { LevelItemInterface } from "../../common/types/level-item.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface FormData {
   name: string;
@@ -53,10 +54,11 @@ export const CreateItem: React.FC = () => {
     try {
       const levelResponse = await levelService.getLevelById(id);
       setLevel(levelResponse);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao buscar informações da esfera.",
+        title: "Erro ao buscar informações da esfera",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -85,10 +87,11 @@ export const CreateItem: React.FC = () => {
           page: 2
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao buscar opções de itens pais.",
+        title: "Erro ao buscar opções de itens pais",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -109,10 +112,11 @@ export const CreateItem: React.FC = () => {
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Falha ao adicionar o item. Por favor, tente novamente.",
+        title: "Erro ao adicionar item",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

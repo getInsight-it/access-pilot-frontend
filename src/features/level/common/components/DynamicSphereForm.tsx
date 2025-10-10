@@ -7,6 +7,8 @@ import { LevelSubItemInterface } from "../types/level-subitem.model.ts";
 import { ItemHierarchyInterface } from "../types/item-hierarchy.model.ts";
 import { Label } from "@radix-ui/react-label";
 import { cn } from "../../../../config/lib/utils.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
 
 interface DynamicSphereInterface {
   sphere: LevelInterface;
@@ -147,8 +149,13 @@ const DynamicSphereForm = ({
       setSpheresData(newSpheresData);
       setSelectedValues(newSelectedValues);
       setIsHierarchyLoaded(true);
-    } catch (err: any) {
-      console.error("Erro ao carregar hierarquia de itens:", err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao carregar hierarquia de itens",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -229,8 +236,13 @@ const DynamicSphereForm = ({
             data[index + 1] = { ...data[index + 1], items: newPageableItems.items, totalItems: newPageableItems.total };
             return data;
           });
-        } catch (err) {
-          console.error("Erro ao buscar subitems:", err);
+        } catch (error: any) {
+          const errorMessage: string = formatErrorMessages(error.error);
+          toast({
+            title: "Erro ao buscar itens filho",
+            description: errorMessage,
+            variant: "destructive"
+          });
         }
       }
     }
@@ -278,8 +290,13 @@ const DynamicSphereForm = ({
             };
             return data;
           });
-        } catch (err) {
-          console.error("Erro ao carregar mais itens:", err);
+        } catch (error: any) {
+          const errorMessage: string = formatErrorMessages(error.error);
+          toast({
+            title: "Erro ao buscar mais itens",
+            description: errorMessage,
+            variant: "destructive"
+          });
         }
 
         return;
@@ -321,8 +338,13 @@ const DynamicSphereForm = ({
             return data;
           });
         }
-      } catch (err) {
-        console.error("Erro ao buscar subitems:", err);
+      } catch (error: any) {
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao buscar itens filho",
+          description: errorMessage,
+          variant: "destructive"
+        });
       }
     }
   };
