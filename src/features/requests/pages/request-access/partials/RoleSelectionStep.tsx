@@ -98,7 +98,10 @@ export const RoleStep = ({
                 <div className="flex flex-row items-center">
                   {selectedRole && (
                     <>
-                      <IconRenderer className={`${selectedRoleObject!.icon} w-6 h-6 mr-4`} />
+                      <IconRenderer
+                        className={`${selectedRoleObject!.icon} w-6 h-6 mr-4`}
+                        showPlaceholder={true}
+                      />
                       <p className="font-bold text-lg">
                         {selectedRoleObject!.label}
                       </p>
@@ -151,8 +154,10 @@ export const RoleStep = ({
                       onClick={() => handleRoleSelection(role)}>
 
                       <div className="flex flex-row items-center">
-                        {role.icon ? <IconRenderer className={`${role.icon} w-6 h-6 mr-4 `} /> :
-                          <User className="w-6 h-6 mr-4" />}
+                        <IconRenderer
+                          className={`${role.icon} w-6 h-6 mr-4`}
+                          showPlaceholder={true}
+                        />
                         <p className="font-bold text-lg">{role.label}</p>
                         {(selectedRole === role.id.toString()) && <Check className="ml-auto top-4 right-4 flex-shrink-0" />}
                       </div>

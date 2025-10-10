@@ -18,7 +18,7 @@ const RequestSphere = ({ itemHierarchy }: RequestSphereProps) => {
         <div className="mt-1">
           {!itemHierarchy || itemHierarchy.length === 0 ? (
             <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
-              Hierarquia não disponível
+              Nenhuma hierarquia encontrada para esta solicitação
             </span>
           ) : (
             <div className="flex flex-wrap items-center gap-1">

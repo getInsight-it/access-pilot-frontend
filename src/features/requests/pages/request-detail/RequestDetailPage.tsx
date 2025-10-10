@@ -79,7 +79,15 @@ const useRequestData = (requestId: string | undefined) => {
         requestService.getClientAttachments(Number(requestId))
       ]);
 
-      const hierarchy = await levelService.getItemHierarchy(request.level.id, request.codeItem);
+      let hierarchy: ItemHierarchyInterface[] = [];
+      if (request.level?.id && request.codeItem) {
+        try {
+          hierarchy = await levelService.getItemHierarchy(request.level.id, request.codeItem);
+        } catch (error) {
+          console.warn("Não foi possível carregar a hierarquia:", error);
+        }
+      }
+
       const presentationAttachments = generatePresentationAttachments(requestAttachments);
 
       setRequest(request);
@@ -253,8 +261,6 @@ export default function RequestDetailPage() {
 
       <div className="flex-none">
         <HeaderContainer>
-          {/* <Breadcrumbs items={BREADCRUMB_ITEMS} /> */}
-
           <div className="pl-1 flex items-start justify-between">
             <Heading
               title="Detalhes da solicitação"
@@ -266,7 +272,7 @@ export default function RequestDetailPage() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow bg-background" viewportClassName="px-7">
+      <ScrollArea className="flex-grow bg-background">
         {isDataLoading ? (
           <ContentLoader />
         ) : (

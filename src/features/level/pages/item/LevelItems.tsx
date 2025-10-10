@@ -300,12 +300,21 @@ export default function LevelItems() {
     try {
       await levelService.deleteLevelItem(id, itemToDelete.id.toString());
 
+      setItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete.id));
+      setFilteredItems((prevItems) => prevItems.filter((item) => item.id !== itemToDelete.id));
+      setTotalItems((prevTotal) => prevTotal - 1);
+
+      const newTotalPages = Math.ceil((totalItems - 1) / pageSize);
+      setTotalPages(newTotalPages > 0 ? newTotalPages : 1);
+
+      if (filteredItems.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+
       toast({
         title: "Sucesso",
         description: "Item excluído com sucesso!"
       });
-
-      fetchSphereAndItems();
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error.error);
 

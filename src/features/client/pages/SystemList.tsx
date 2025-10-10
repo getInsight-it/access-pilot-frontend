@@ -82,12 +82,17 @@ export default function SystemList() {
 
   const handlePublicationChange = async (client: ClientResponseInterface) => {
     const newStatus = client.status === ClientStatusEnum.PUBLISHED ? ClientStatusEnum.UNPUBLISHED : ClientStatusEnum.PUBLISHED;
-    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "publicado" : "despublicado";
+    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "despublicado" : "publicado";
 
     try {
-      await clientService.updateSystemPublication(client.id!, newStatus);
+      const updatedClient = await clientService.updateSystemPublication(client.id!, newStatus);
+
+      setClients(prevClients =>
+        prevClients.map(c => c.id === updatedClient.id ? updatedClient : c)
+      );
+
       toast({
-        title: "Sistema publicado",
+        title: "Sistema atualizado",
         description: `O sistema foi ${toastMessage} com sucesso!`
       });
     } catch (error: any) {
@@ -295,10 +300,12 @@ export default function SystemList() {
                             <RefreshCw size={16}/>
                             Sincronizar
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
-                            <Cog size={16}/>
-                            {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
-                          </DropdownMenuItem>
+                          {client.managed && (
+                            <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                              <Cog size={16}/>
+                              {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
