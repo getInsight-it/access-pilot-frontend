@@ -11,7 +11,7 @@ build-app:
   stage: build
   tags:
     - docker
-  image: node:latest
+  image: node:22
   script:
     - yarn
     - yarn build
@@ -41,6 +41,8 @@ build-docker:
 
 .deploy:
   stage: deploy
+  variables:
+    NS: ${NAMESPACE}-${CI_ENVIRONMENT_NAME}
   needs:
     - build-docker
   tags:
@@ -49,7 +51,9 @@ build-docker:
   before_script:
     - mkdir ~/.kube || true
     - echo $KUBE_CONFIG | base64 --decode > ~/.kube/config
+    - envsubst < ./public/assets/env/env.js.tpl > ./public/assets/env/env.js
   script:
+    - kubectl create configmap envjs --from-file ./public/assets/env/env.js --dry-run=client --namespace=${NS} -o yaml | kubectl apply -f -
     - envsubst < ./k8s/deployment.yaml | kubectl apply -f -
 
 deploy-dev:
