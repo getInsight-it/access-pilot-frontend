@@ -58,10 +58,6 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
     return <Navigate to={AUTH_ROUTES.LOGIN} replace />;
   }
 
-  if(!authData.user) {
-    console.log('user is null');
-  }
-
   if(!hasRequiredRoles(roles, authData)) {
     return <Navigate to={ERROR_ROUTES.NOT_FOUND} replace />;
   }

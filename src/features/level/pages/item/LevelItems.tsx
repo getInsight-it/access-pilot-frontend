@@ -90,7 +90,6 @@ export default function LevelItems() {
     if(isAuthenticated && id) {
       fetchSphereAndItems();
       const handleItemUpdated = () => {
-        console.log("Detectada atualização de item, recarregando lista...");
         fetchSphereAndItems();
       };
 

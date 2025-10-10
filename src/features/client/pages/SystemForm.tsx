@@ -137,7 +137,6 @@ export default function SystemForm() {
     });
   };
   const handleDeleteAttachmentConfig = (name: string) => {
-    console.log(name);
     setAttachmentConfigs(prev => {
       return prev.filter(config => config.name !== name);
     });

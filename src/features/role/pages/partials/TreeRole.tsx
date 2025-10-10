@@ -28,7 +28,6 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   useEffect(() => {
     if(data) {
       setItems(buildTreeObject(data));
-      console.log("data", items);
     }
   }, [data]);
 

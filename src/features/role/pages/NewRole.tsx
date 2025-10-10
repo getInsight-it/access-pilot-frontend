@@ -72,7 +72,6 @@ export default function NewRole() {
   ];
 
   const getRoleToEdit = async () => {
-    console.log("getRoleToEdit");
     if(!roleId || !params.clientId) return;
 
     try {

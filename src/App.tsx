@@ -25,7 +25,6 @@ function App() {
 
   const getUserInfo = async () => {
     const fetchedUserData = await userService.getUser();
-    console.log("User info:", fetchedUserData);
     if(fetchedUserData) {
       const user = {
         id: fetchedUserData.externalId,
@@ -50,7 +49,6 @@ function App() {
 
         getUserInfo();
         setUserRoles(authService.getRoles());
-        console.log(useAuthStore.getState().roles);
         // TODO remove this comment
         //getNotifications()
 

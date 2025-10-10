@@ -108,23 +108,16 @@ export default function CreateOrEditLevel() {
       let newParentId = "0";
       if(data.parent) {
         newParentId = data.parent.id.toString();
-        console.log("Parent encontrado no objeto parent:", data.parent);
       } else if(data.parentId) {
         newParentId = data.parentId.toString();
-        console.log("Parent encontrado na propriedade parentId:", data.parentId);
-      } else {
-        console.log("Nenhum parent encontrado no objeto");
       }
 
       setParentId(newParentId);
       setOriginalParentId(newParentId);
-      console.log("Parent carregado e definido como:", newParentId);
 
       setUuid(data.uuid || "");
 
       if(data.type === "EXTERNAL") {
-        console.log("Carregando dados de esfera externa:", data);
-        console.log("API Key recebido da API:", data.apiKey);
         setEndpoint(data.externalUrl || "");
 
         const hasApiKey = true;
@@ -135,7 +128,6 @@ export default function CreateOrEditLevel() {
         } else {
           setApiKey("");
         }
-        console.log("API Key existente assumida:", hasApiKey);
         setHasItems(false);
       } else {
         setEndpoint("");
@@ -165,10 +157,8 @@ export default function CreateOrEditLevel() {
 
       if(itemsData && itemsData.items && itemsData.items.length > 0) {
         setHasItems(true);
-        console.log(`Esfera ${sphereId} tem itens. Desabilitando campo de esfera pai.`);
       } else {
         setHasItems(false);
-        console.log(`Esfera ${sphereId} não tem itens.`);
       }
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error.error);
@@ -257,7 +247,6 @@ export default function CreateOrEditLevel() {
         let result;
 
         if(onlyParentChanged) {
-          console.log(`Atualizando apenas o parentId de ${originalParentId} para ${parentId}`);
           result = await levelService.updateParent(sphereId, parentId);
         } else {
           const sphereData: any = {
@@ -272,36 +261,20 @@ export default function CreateOrEditLevel() {
 
           if(type === "EXTERNAL") {
             sphereData.apiKey = apiKey;
-            console.log("Enviando apiKey:", apiKey || "(vazio)");
           }
-
-          console.log("Sending data to API:", JSON.stringify(sphereData, null, 2));
-          console.log("Parent ID value:", parentId, "converted to:", sphereData.parent);
 
           if(isEditing && sphereId) {
             result = await levelService.updateLevel(sphereId, sphereData);
           } else {
-            console.log("Criando nova esfera");
             result = await levelService.createLevel(sphereData);
           }
         }
-
-        console.log("Resultado da operação:", JSON.stringify(result, null, 2));
 
         if(!result) {
           throw new Error(isEditing ? "Falha ao atualizar esfera" : "Falha ao criar esfera");
         }
 
-        if(result.parent) {
-          console.log("Parent no resultado:", result.parent);
-        } else if(result.parentId) {
-          console.log("ParentId no resultado:", result.parentId);
-        } else {
-          console.log("Nenhum parent ou parentId no resultado");
-        }
-
         if(isEditing) {
-          console.log("Disparando evento sphere-updated");
           window.dispatchEvent(new Event("sphere-updated"));
         }
 
