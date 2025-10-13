@@ -25,12 +25,14 @@ function App() {
 
   const getUserInfo = async () => {
     const fetchedUserData = await userService.getUser();
-    console.log("User info:", fetchedUserData);
     if(fetchedUserData) {
       const user = {
         id: fetchedUserData.externalId,
         email: fetchedUserData.email,
-        isApprover: fetchedUserData.isApprover
+        isApprover: fetchedUserData.isApprover,
+        firstName: fetchedUserData.firstName,
+        lastName: fetchedUserData.lastName,
+        username: fetchedUserData.username
       };
       if(user) {
         setUserInfo(user);
@@ -47,7 +49,6 @@ function App() {
 
         getUserInfo();
         setUserRoles(authService.getRoles());
-        console.log(useAuthStore.getState().roles);
         // TODO remove this comment
         //getNotifications()
 

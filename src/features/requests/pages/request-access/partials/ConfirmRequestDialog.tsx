@@ -30,27 +30,27 @@ export const ConfirmRequestDialog = ({
 }: ConfirmRequestDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Confirmar envio</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">Confirmar envio</DialogTitle>
+          <DialogDescription className="text-sm">
             Você tem certeza que deseja enviar esta solicitação?
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
-          <h4 className="text-sm font-medium mb-2">Resumo da solicitação:</h4>
-          <ul className="space-y-1 text-sm">
-            <li><strong>Sistema:</strong> {clientId}</li>
-            <li>
+        <div className="py-3 sm:py-4">
+          <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-3">Resumo da solicitação:</h4>
+          <ul className="space-y-2 text-sm">
+            <li className="break-words"><strong>Sistema:</strong> {clientId}</li>
+            <li className="break-words">
               <strong>Papel:</strong> {roleLabel}
             </li>
-            <li><strong>Motivo:</strong> {reason}</li>
+            <li className="break-words"><strong>Motivo:</strong> {reason}</li>
             {attachments.length > 0 && (
               <li>
                 <strong>Anexos:</strong>
-                <ul className="">
+                <ul className="mt-1 space-y-1">
                   {attachments.map((file, index) => (
-                    <li key={index}>- {file.fileName}</li>
+                    <li key={index} className="break-words ml-2">- {file.fileName}</li>
                   ))}
                 </ul>
               </li>
@@ -58,10 +58,10 @@ export const ConfirmRequestDialog = ({
           </ul>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
             Cancelar
           </Button>
-          <Button onClick={onConfirm}>Confirmar</Button>
+          <Button onClick={onConfirm} className="w-full sm:w-auto">Confirmar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

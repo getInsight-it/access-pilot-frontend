@@ -17,7 +17,7 @@ export class UserService {
   async getUser(): Promise<UserModel | null> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(USER_API.USER);
     if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as UserModel;
+      return response.data as UserModel;
     } else {
       console.error("Erro ao buscar usuário");
     }

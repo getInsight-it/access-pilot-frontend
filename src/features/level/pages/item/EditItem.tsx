@@ -17,6 +17,7 @@ import HighlightLoader from "../../../../common/components/loading/HighLightLoad
 import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface FormData {
   name: string;
@@ -38,10 +39,11 @@ export const EditItem: React.FC = () => {
     try {
       const levelResponse = await levelService.getLevelById(id);
       setLevel(levelResponse);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao buscar informações da esfera.",
+        title: "Erro ao buscar informações da esfera",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -63,10 +65,11 @@ export const EditItem: React.FC = () => {
       if(itemData.parent) {
         setValue("parentId", itemData.parent.id.toString());
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao carregar dados do item.",
+        title: "Erro ao carregar dados do item",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -87,10 +90,11 @@ export const EditItem: React.FC = () => {
 
       toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Falha ao atualizar o item. Por favor, tente novamente.",
+        title: "Erro ao atualizar item",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -150,13 +154,13 @@ export const EditItem: React.FC = () => {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="px-6 py-6 max-w-content-container m-auto">
             <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-content-container m-auto">
               <div className="space-y-4 pb-10">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome</Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="name"
@@ -182,8 +186,7 @@ export const EditItem: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código
-                      externo</Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código externo <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="externalCode"
@@ -211,7 +214,7 @@ export const EditItem: React.FC = () => {
 
                 <div>
                   <Label className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                         htmlFor="description">Descrição</Label>
+                         htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
                   <div className="relative">
                     <Textarea
                       id="description"

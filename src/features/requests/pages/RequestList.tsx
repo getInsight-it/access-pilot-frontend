@@ -1,6 +1,4 @@
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { buttonVariants } from "../../../common/external/ui/button.tsx";
@@ -34,6 +32,7 @@ import { toast } from "../../../common/external/ui/use-toast.ts";
 import { useDebounce } from "../../../common/hooks/use-debounce.ts";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../common/components/ContentLoader.tsx";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 interface PaginationParams {
   page: number;
@@ -42,10 +41,6 @@ interface PaginationParams {
   sortOrder: "asc" | "desc";
   filter?: string;
 }
-
-const BREADCRUMB_ITEMS = [
-  { title: "Gerenciar solicitações de acesso", link: "/dashboard/access-requests" }
-];
 
 const DEFAULT_PAGINATION = {
   PAGE_SIZE: 10,
@@ -103,10 +98,10 @@ const useRequestListData = (requestType: string) => {
       setTotalRequests(pageResponse?.total ?? 0);
       setTotalPages(Math.ceil((pageResponse?.total ?? 0) / params.size));
     } catch (error: any) {
-      console.error("Error fetching requests:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar as solicitações",
+        title: "Erro ao buscar solicitações",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -211,7 +206,7 @@ export default function RequestList() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={BREADCRUMB_ITEMS} />
+          {/* <Breadcrumbs items={BREADCRUMB_ITEMS} /> */}
 
           <div className="pl-1 flex flex-col gap-4 md:flex-row items-start justify-between">
             <Heading
@@ -227,83 +222,88 @@ export default function RequestList() {
             </Link>
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
-      <ScrollArea className="px-6 flex-grow">
+      <ScrollArea className="flex-grow" viewportClassName="px-7">
         {loading ? (
           <ContentLoader />
         ) : (
           <div className="py-6 max-w-content-container m-auto">
               <div className="flex flex-col gap-4 lg:hidden">
-                {requests.map((request, index) => (
-                  <div className="table-card" key={`request-table-card-${index}`}>
-                    <div className="table-card__header">
-                      <span className="mr-2">Ações</span>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => handleNavigateToDetails(request.id)}
-                            >
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                {requests.length > 0 ? (
+                  <>
+                    {requests.map((request, index) => (
+                      <div className="table-card" key={`request-table-card-${index}`}>
+                        <div className="table-card__header">
+                          <span className="mr-2">Ações</span>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <EllipsisVertical size={20} />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  className="flex flex-row gap-2"
+                                  onClick={() => handleNavigateToDetails(request.id)}
+                                >
+                                  <ReceiptText size={16} />
+                                  <span>Detalhes</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                        <div className="table-card__content">
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Protocolo:</span>
+                            <span className="table-card__value">{request.protocolCode}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Sistema:</span>
+                            <span className="table-card__value">{request.role?.client?.name}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Papel:</span>
+                            <span className="table-card__value">{request.role?.label}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Data de submissão:</span>
+                            <span className="table-card__value">{formatDate(request.criacao)}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Status:</span>
+                            <span className="table-card__value">
+                              {RequestStatusBadge(request.status)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="p-4">
+                      <PaginationWrapper
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePaginationChange}
+                      />
                     </div>
-                    <div className="table-card__content">
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Protocolo:</span>
-                        <span className="table-card__value">{request.protocolCode}</span>
-                      </div>
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Sistema:</span>
-                        <span className="table-card__value">{request.role?.client?.name}</span>
-                      </div>
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Papel:</span>
-                        <span className="table-card__value">{request.role?.label}</span>
-                      </div>
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Data de submissão:</span>
-                        <span className="table-card__value">{formatDate(request.criacao)}</span>
-                      </div>
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Status:</span>
-                        <span className="table-card__value">
-                          {RequestStatusBadge(request.status)}
-                        </span>
-                      </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                      <ReceiptText size={24} className="text-gray-400" />
                     </div>
+                    <span className="text-sm text-gray-500">Nenhuma solicitação encontrada</span>
                   </div>
-                ))}
-                <div className="p-4">
-                  <PaginationWrapper
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePaginationChange}
+                )}
+              </div>
+              <div className="hidden lg:flex flex-col gap-4">
+                <div className="w-96 max-w-full">
+                  <Input
+                    placeholder="Buscar solicitação..."
+                    className="h-10 w-full"
+                    value={searchFilter}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="hidden lg:flex">
-                <Table
-                auxiliaryHeader={
-                  <div className="p-4 w-96">
-                    <Input
-                      variant="dark"
-                      placeholder="Buscar solicitação..."
-                      className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-                      value={searchFilter}
-                      onChange={(e) => handleSearchChange(e.target.value)}
-                    />
-                  </div>
-                }
-              >
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead width="calc(20% - 20px)">Protocolo</TableHead>
@@ -315,37 +315,51 @@ export default function RequestList() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {requests.map((request) => (
-                    <TableRow className="break-all" key={request.id}>
-                      <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
-                      <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
-                      <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
-                      <TableCell width="calc(20% - 20px)">{formatDate(request.criacao)}</TableCell>
-                      <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
-                      <TableCell className="flex align-center justify-center" width="100px">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} className="cursor-pointer" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => handleNavigateToDetails(request.id)}
-                            >
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                  {requests.length > 0 ? (
+                    requests.map((request) => (
+                      <TableRow className="break-all" key={request.id}>
+                        <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
+                        <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
+                        <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
+                        <TableCell width="calc(20% - 20px)">{formatDate(request.criacao)}</TableCell>
+                        <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
+                        <TableCell className="flex align-center justify-center" width="100px">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <EllipsisVertical size={20} className="cursor-pointer" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => handleNavigateToDetails(request.id)}
+                              >
+                                <ReceiptText size={16} />
+                                <span>Detalhes</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-12">
+                        <div className="flex flex-col items-center justify-center text-center w-full">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                            <ReceiptText size={24} className="text-gray-400" />
+                          </div>
+                          <span className="text-sm text-gray-500">Nenhuma solicitação encontrada</span>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
                 <TableFooter>
                   <div className="p-4">
                     <PaginationWrapper
                       currentPage={currentPage}
                       totalPages={totalPages}
+                      totalItems={totalRequests}
                       onPageChange={handlePaginationChange}
                     />
                   </div>

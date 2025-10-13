@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
 import { AUTH_ROUTES, ERROR_ROUTES } from "../../constants/routes.ts";
@@ -56,10 +56,6 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
 
   if(!authData.isAuthenticated) {
     return <Navigate to={AUTH_ROUTES.LOGIN} replace />;
-  }
-
-  if(!authData.user) {
-    console.log('user is null');
   }
 
   if(!hasRequiredRoles(roles, authData)) {

@@ -18,6 +18,7 @@ import HighlightLoader from "../../../../common/components/loading/HighLightLoad
 import { motion } from "framer-motion";
 import { levelService } from "../../common/api/level-service.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 interface SphereItem {
   id: string;
@@ -37,10 +38,7 @@ interface SphereItem {
   sigla?: string;
 }
 
-const breadcrumbItems = [
-  { title: "Gerenciar Esferas", link: "/dashboard/levels" },
-  { title: "Criar esfera", link: "" }
-];
+
 
 export default function CreateOrEditLevel() {
   const navigate = useNavigate();
@@ -63,6 +61,11 @@ export default function CreateOrEditLevel() {
   const [sigla, setSigla] = useState("");
   const [uuid, setUuid] = useState("");
   const [hasItems, setHasItems] = useState(false);
+
+  const breadcrumbItems = [
+    { title: "Gerenciar Esferas", link: "/dashboard/levels" },
+    { title: isEditing ? "Editar esfera" : "Criar esfera", link: "" }
+  ];
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -107,23 +110,16 @@ export default function CreateOrEditLevel() {
       let newParentId = "0";
       if(data.parent) {
         newParentId = data.parent.id.toString();
-        console.log("Parent encontrado no objeto parent:", data.parent);
       } else if(data.parentId) {
         newParentId = data.parentId.toString();
-        console.log("Parent encontrado na propriedade parentId:", data.parentId);
-      } else {
-        console.log("Nenhum parent encontrado no objeto");
       }
 
       setParentId(newParentId);
       setOriginalParentId(newParentId);
-      console.log("Parent carregado e definido como:", newParentId);
 
       setUuid(data.uuid || "");
 
       if(data.type === "EXTERNAL") {
-        console.log("Carregando dados de esfera externa:", data);
-        console.log("API Key recebido da API:", data.apiKey);
         setEndpoint(data.externalUrl || "");
 
         const hasApiKey = true;
@@ -134,7 +130,6 @@ export default function CreateOrEditLevel() {
         } else {
           setApiKey("");
         }
-        console.log("API Key existente assumida:", hasApiKey);
         setHasItems(false);
       } else {
         setEndpoint("");
@@ -145,13 +140,15 @@ export default function CreateOrEditLevel() {
       }
 
       setLoading(false);
-    } catch (err) {
-      console.error("Error fetching sphere data:", err);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
       toast({
-        title: "Error",
-        description: "Failed to fetch sphere data",
+        title: "Erro ao buscar dados da esfera.",
+        description: errorMessage,
         variant: "destructive"
       });
+
       navigate("/dashboard/levels");
     }
   };
@@ -162,13 +159,16 @@ export default function CreateOrEditLevel() {
 
       if(itemsData && itemsData.items && itemsData.items.length > 0) {
         setHasItems(true);
-        console.log(`Esfera ${sphereId} tem itens. Desabilitando campo de esfera pai.`);
       } else {
         setHasItems(false);
-        console.log(`Esfera ${sphereId} não tem itens.`);
       }
-    } catch (error) {
-      console.error(`Erro ao verificar itens da esfera ${sphereId}:`, error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao verificar itens da esfera",
+        description: errorMessage,
+        variant: "destructive"
+      });
       setHasItems(false);
     }
   };
@@ -201,11 +201,11 @@ export default function CreateOrEditLevel() {
 
       setAllSpheres(processedData);
       return Promise.resolve();
-    } catch (err) {
-      console.error("Erro ao carregar todas as esferas:", err);
+    } catch (err: any) {
+      const errorMessage: string = formatErrorMessages(err.error);
       toast({
-        title: "Erro",
-        description: "Falhou ao carregar a esfera pai",
+        title: "Erro ao carregar esferas",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -249,7 +249,6 @@ export default function CreateOrEditLevel() {
         let result;
 
         if(onlyParentChanged) {
-          console.log(`Atualizando apenas o parentId de ${originalParentId} para ${parentId}`);
           result = await levelService.updateParent(sphereId, parentId);
         } else {
           const sphereData: any = {
@@ -264,36 +263,20 @@ export default function CreateOrEditLevel() {
 
           if(type === "EXTERNAL") {
             sphereData.apiKey = apiKey;
-            console.log("Enviando apiKey:", apiKey || "(vazio)");
           }
-
-          console.log("Sending data to API:", JSON.stringify(sphereData, null, 2));
-          console.log("Parent ID value:", parentId, "converted to:", sphereData.parent);
 
           if(isEditing && sphereId) {
             result = await levelService.updateLevel(sphereId, sphereData);
           } else {
-            console.log("Criando nova esfera");
             result = await levelService.createLevel(sphereData);
           }
         }
-
-        console.log("Resultado da operação:", JSON.stringify(result, null, 2));
 
         if(!result) {
           throw new Error(isEditing ? "Falha ao atualizar esfera" : "Falha ao criar esfera");
         }
 
-        if(result.parent) {
-          console.log("Parent no resultado:", result.parent);
-        } else if(result.parentId) {
-          console.log("ParentId no resultado:", result.parentId);
-        } else {
-          console.log("Nenhum parent ou parentId no resultado");
-        }
-
         if(isEditing) {
-          console.log("Disparando evento sphere-updated");
           window.dispatchEvent(new Event("sphere-updated"));
         }
 
@@ -305,16 +288,10 @@ export default function CreateOrEditLevel() {
         setTimeout(() => {
           navigate("/dashboard/levels");
         }, 500);
-      } catch (err) {
-        console.error("Erro ao criar/editar a esfera:", err);
-
-        let errorMessage = "Ocorreu um erro enquanto a esfera foi criada/atualizada";
-        if(err instanceof Error) {
-          errorMessage = err.message;
-        }
-
+      } catch (err: any) {
+        const errorMessage: string = formatErrorMessages(err.error);
         toast({
-          title: "Erro",
+          title: isEditing ? "Erro ao atualizar esfera" : "Erro ao criar esfera",
           description: errorMessage,
           variant: "destructive"
         });
@@ -357,7 +334,7 @@ export default function CreateOrEditLevel() {
 
             <div className="pl-1 flex items-start justify-between">
               <Heading
-                title="Nova esfera"
+                title={isEditing ? "Editar esfera" : "Nova esfera"}
                 returnButton={true}
                 onReturnClick={() => {navigate(PRIVATE_ROUTES.LEVELS)}}
               />
@@ -367,7 +344,7 @@ export default function CreateOrEditLevel() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-50 dark:bg-gray-900 border-b">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="px-6 py-6 max-w-content-container m-auto">
             <form onSubmit={handleSubmit} className="w-full mt-4 max-w-content-container m-auto">
               <div className="space-y-4 pb-10">

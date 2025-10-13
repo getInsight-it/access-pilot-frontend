@@ -1,4 +1,3 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { motion } from "framer-motion";
@@ -27,10 +26,7 @@ import { DetailsStep } from "./partials/DetailsStep.tsx";
 import { RequestService } from "../../common/api/request-service.ts";
 import { httpClient } from "../../../../config/http/http.ts";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
-
-const breadcrumbItems = [
-  { title: "Solicitar acesso", link: "/dashboard/request-access/create" }
-];
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -147,8 +143,14 @@ export default function RequestAccess() {
     try {
       const fetchedClients = await clientService.getClients();
       setClients(fetchedClients as any);
-    } catch (error) {
-      console.error("Erro ao carregar clients:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao carregar sistemas",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -156,8 +158,14 @@ export default function RequestAccess() {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles as any);
-    } catch (error) {
-      console.error("Erro ao carregar roles:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao carregar papéis",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
@@ -177,6 +185,14 @@ export default function RequestAccess() {
 
   function handlerSelectedClient(client: ClientResponseInterface) {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
+    setBasicFormFieldValue({ field: "roleId", value: "", error: null });
+    setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
+    setBasicFormFieldValue({ field: "reason", value: "", error: null });
+    setBasicFormFieldValue({ field: "attachments", value: [], error: null });
+
+    setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
+
+    setCurrentStep(1);
     getRolesByClientId(client.clientId);
   }
 
@@ -297,11 +313,17 @@ export default function RequestAccess() {
 
       await requestService.createRequest(payloadFormData);
 
-      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada.." });
+      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada." });
       navigate("/dashboard/my-access-requests");
       setShowContent(false);
     } catch (error: any) {
-      toast({ title: "Erro ao processar solicitação de acesso", description: error.message, variant: "destructive" });
+      const errorMessage: string = formatErrorMessages(error.error);
+
+      toast({
+        title: "Erro ao processar solicitação de acesso",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -337,8 +359,6 @@ export default function RequestAccess() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={breadcrumbItems} />
-
           <div className="pl-1 flex items-start justify-between">
             <Heading
               title="Solicitar acesso"
@@ -346,13 +366,11 @@ export default function RequestAccess() {
             />
           </div>
         </HeaderContainer>
-
-        <Separator />
       </div>
 
       <ScrollArea className="flex-grow">
-        <div className="py-6 max-w-content-container m-auto">
-          <div className="px-6">
+        <div className="py-4 sm:py-6 max-w-content-container m-auto">
+          <div className="px-4 sm:px-6">
             {showContent && !hasError && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -360,13 +378,13 @@ export default function RequestAccess() {
                   opacity: 1,
                   transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
                 }}
-                className="grid grid-cols-1 lg:grid-cols-[360px,1fr] xl:grid-cols-[400px,1fr] gap-4 ">
+                className="grid grid-cols-1 lg:grid-cols-[340px,1fr] xl:grid-cols-[400px,1fr] gap-4 lg:gap-6">
 
-                <div className="relative py-8 rounded-xl space-y-10 sm:space-y-12 md:min-h-[600px] min-h-[500px]">
+                <div className="relative py-4 sm:py-8 rounded-xl space-y-8 sm:space-y-10 md:space-y-12">
                   {steps.map((step, index) => (
                     <motion.div
                       key={step.id}
-                      className="block sm:flex items-start relative"
+                      className="flex items-start relative"
                       initial={false}
                       animate={{
                         opacity: step.id <= currentStep ? 1 : 0.5,
@@ -374,7 +392,7 @@ export default function RequestAccess() {
                       }}>
                       <motion.div
                         className={cn(
-                          "w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center z-10",
+                          "w-8 h-8 sm:w-9 sm:h-9 bg-gray-500 rounded-full flex items-center justify-center z-10 flex-shrink-0",
                           step.id === currentStep
                             ? "hover:bg-primary-500 bg-primary-500 text-gray-100"
                             : stepsState[step.id] === "completed"
@@ -394,7 +412,7 @@ export default function RequestAccess() {
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}>
                           {stepsState[step.id] === "completed" ? (
-                            <Check className="w-6 h-6" />
+                            <Check className="w-5 h-5 sm:w-6 sm:h-6" />
                           ) : (
                             <span
                               className={stepsState[step.id] === "completed" ? "text-white" : ""}>{step.number}</span>
@@ -402,9 +420,9 @@ export default function RequestAccess() {
                         </motion.span>
                       </motion.div>
 
-                      <div className="ml-14 sm:mt-0 sm:ml-4">
+                      <div className="ml-3 sm:ml-4 flex-1 min-w-0">
                         <h3
-                          className={`text-md xl:text-lg -mt-8 sm:mt-1 ${step.id === currentStep ? "font-bold" : ""}`}>
+                          className={`text-sm sm:text-md lg:text-lg mt-1 ${step.id === currentStep ? "font-bold" : ""}`}>
                           {step.title}
                         </h3>
                       </div>
@@ -442,18 +460,18 @@ export default function RequestAccess() {
 
                   <CardContent>{steps[currentStep - 1].content}</CardContent>
 
-                  <CardFooter className="flex gap-x-4 mt-4">
+                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:gap-x-4 mt-4">
                     <Button
                       type="button"
                       variant="ghost"
-                      className="bg-secondary text-primary"
+                      className="bg-secondary text-primary w-full sm:w-auto"
                       onClick={handleBack}
                       disabled={currentStep === 1}>
                       Voltar
                     </Button>
                     {currentStep < steps.length
-                      ? (<Button onClick={goToNextStep}>Próximo</Button>)
-                      : (<Button onClick={handleFinalSubmit}>Enviar</Button>)
+                      ? (<Button onClick={goToNextStep} className="w-full sm:w-auto">Próximo</Button>)
+                      : (<Button onClick={handleFinalSubmit} className="w-full sm:w-auto">Enviar</Button>)
                     }
                   </CardFooter>
                 </AutoHeight>

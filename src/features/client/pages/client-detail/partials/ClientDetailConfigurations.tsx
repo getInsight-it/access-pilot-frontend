@@ -8,14 +8,9 @@ interface ClientDetailConfigurationsProps {
   truncateText: (text: string, maxLength: number) => string;
 }
 
-export const ClientDetailConfigurations = ({
-  configurations
-}: ClientDetailConfigurationsProps) => {
-  if(!configurations || configurations.length === 0) {
-    return null;
-  }
-
+export const ClientDetailConfigurations = ({ configurations }: ClientDetailConfigurationsProps) => {
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
+
   const handleTogglePopover = (configKey: string) => {
     setOpenPopoverId(prevId => prevId === configKey ? null : configKey);
   };
@@ -27,6 +22,14 @@ export const ClientDetailConfigurations = ({
   const handleMouseLeave = () => {
     setOpenPopoverId(null);
   };
+
+  if(!configurations || configurations.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-center text-gray-500 dark:text-gray-400">Nenhum anexo cadastrado para este sistema.</p>
+      </div>
+    );
+  }
 
   return (
     <div>

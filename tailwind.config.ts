@@ -144,6 +144,7 @@ const APP_COLORS = {
 }
 
 const APP_COLORS_VARIABLE_COLORS = {
+  'font-family': 'var(--font-family)',
   'background': 'var(--background)',
   'secondary': 'var(--secondary)',
   'border': 'var(--border-color)',
@@ -160,6 +161,13 @@ const APP_COLORS_VARIABLE_COLORS = {
   'button-background': 'var(--button-background-color)',
   'button-background-hover': 'var(--button-background-hover-color)',
   'button-text': 'var(--button-text-color)',
+  'button-border-radius': 'var(--button-border-radius)',
+
+  'outline-button-border': 'var(--outline-button-border-color)',
+  'outline-button-text': 'var(--outline-button-text-color)',
+  'outline-button-hover-background': 'var(--outline-button-hover-background-color)',
+  'outline-button-hover-border': 'var(--outline-button-hover-border-color)',
+  'outline-button-hover-text': 'var(--outline-button-hover-text-color)',
 
   'input-background': 'var(--input-background-color)',
   'input-border': 'var(--input-border-color)',
@@ -197,13 +205,26 @@ const APP_COLORS_VARIABLE_COLORS = {
   'select-options-selected-background': 'var(--select-options-selected-background-color)',
 
   'table-background': 'var(--table-background-color)',
+  'table-border': 'var(--table-border-color)',
+  'table-header-background': 'var(--table-header-background-color)',
   'table-header-text': 'var(--table-header-text-color)',
+  'table-header-input-background': 'var(--table-header-input-background-color)',
+  'table-footer-background': 'var(--table-footer-background-color)',
+  'table-separator': 'var(--table-separator-color)',
   'table-row': 'var(--table-row-color)',
   'table-row-hover': 'var(--table-row-hover-color)',
   'table-row-text': 'var(--table-row-text-color)',
 
   'switch-unchecked-background': 'var(--switch-unchecked-background-color)',
   'switch-unchecked-border': 'var(--switch-unchecked-border-color)',
+  'switch-unchecked-thumb': 'var(--switch-thumb-background-color)',
+  'switch-thumb-background': 'var(--switch-thumb-background-color)',
+  'switch-thumb-border': 'var(--switch-thumb-border-color)',
+  'switch-thumb-padding': 'var(--switch-thumb-padding)',
+  'switch-thumb-size': 'var(--switch-thumb-size)',
+  'switch-checked-background': 'var(--switch-checked-background-color)',
+  'switch-checked-border': 'var(--switch-checked-border-color)',
+  'switch-checked-thumb': 'var(--switch-checked-thumb-background-color)',
 
   'text-default': 'var(--text-default-color)',
   'text-muted': 'var(--text-muted-color)',
@@ -260,7 +281,8 @@ const config = {
         md: 'calc(var(--border-radius) - 2px)',
         sm: 'calc(var(--border-radius) - 4px)',
         table: 'var(--table-border-radius)',
-        card: 'var(--card-border-radius)'
+        card: 'var(--card-border-radius)',
+        button: 'var(--button-border-radius)',
       },
       maxWidth: {
         'content-container': '2440px'

@@ -25,7 +25,7 @@ export class ClientService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(CLIENT_API.CLIENTS_PUBLISHES);
 
     if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as ClientResponseInterface[];
+      return response.data as ClientResponseInterface[];
     } else {
       console.error("Erro ao buscar clients");
     }
@@ -41,7 +41,7 @@ export class ClientService {
       throw response;
     }
 
-    return JSON.parse(response.data) as ClientResponseInterface[];;
+    return response.data as ClientResponseInterface[];;
   }
 
   async getClientsPaginated(
@@ -66,7 +66,7 @@ export class ClientService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);
 
     if(response instanceof HttpRequestResponse) {
-      return JSON.parse(response.data) as PaginatedResponse<ClientResponseInterface>;
+      return response.data as PaginatedResponse<ClientResponseInterface>;
     } else {
       console.error("Erro ao buscar clients paginados");
     }
@@ -81,7 +81,7 @@ export class ClientService {
       throw response;
     }
 
-    return JSON.parse(response.data) as ClientResponseInterface;
+    return response.data as ClientResponseInterface;
   }
 
   async updateClient(clientId: number, clientData: ClientResponseInterface): Promise<void> {
@@ -101,7 +101,7 @@ export class ClientService {
       throw response
     }
 
-    return JSON.parse(response.data) as ClientResponseInterface;
+    return response.data as ClientResponseInterface;
   }
 
   async syncClient(clientId: string): Promise<void> {
@@ -122,7 +122,7 @@ export class ClientService {
       throw response
     }
 
-    return JSON.parse(response.data) as ClientResponseInterface;
+    return response.data as ClientResponseInterface;
   }
 
   async clientConfigurationPreview(csv: File): Promise<HttpRequestResponse | HttpRequestError> {

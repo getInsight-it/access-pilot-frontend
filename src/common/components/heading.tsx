@@ -66,7 +66,7 @@ export const Heading: React.FC<HeadingProps> = ({
         {returnButton && (
           <Button
             variant="outline"
-            className="border-primary-600 w-8 h-8 p-0"
+            className="!border-primary-600 min-w-8 min-h-8 w-8 h-8 p-0"
             onClick={onReturnClick}
           >
             <ArrowLeft className="text-primary-700" size={18}></ArrowLeft>

@@ -38,6 +38,8 @@ import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/a
 import { SummaryCardData } from "./types/status-card-data.model.ts";
 import { StatusCardData } from "./types/summary-card-data.model.ts";
 import { EmptyState } from "./partials/EmptyState.tsx";
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
+import useAuthStore from "../../../store/authStore.ts";
 
 const REQUEST_PAGINATION = {
   PAGE: 1,
@@ -64,11 +66,11 @@ const useDashboardData = () => {
         REQUEST_PAGINATION.FILTER
       );
       setRequests(pageResponse?.items || []);
-    } catch (error) {
-      console.error("Error fetching requests:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi possível carregar as solicitações",
+        title: "Erro ao carregar solicitações",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -81,11 +83,11 @@ const useDashboardData = () => {
     try {
       const clients = await clientService.getClientsAssociates(attached);
       setter(clients || []);
-    } catch (error) {
-      console.error("Error fetching clients:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Erro ao buscar sistemas.",
+        title: "Erro ao buscar sistemas",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -95,11 +97,11 @@ const useDashboardData = () => {
     try {
       const summaryData = await summaryService.getSummary();
       setSummary(summaryData);
-    } catch (error) {
-      console.error("Error fetching summary:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Erro ao buscar sumário.",
+        title: "Erro ao buscar sumário",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -114,8 +116,13 @@ const useDashboardData = () => {
         fetchSummary(),
         fetchRequests()
       ]);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao carregar dados do dashboard",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -155,25 +162,46 @@ const useNavigation = () => {
   };
 };
 
-const LoadingState = () => (
-  <motion.div
-    className="flex flex-col h-full"
-    {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
-    <div className="flex-none">
-      <HeaderContainer>
-        <div className="pl-1 flex items-start justify-between">
-          <Heading title="Olá, teste" />
-        </div>
-      </HeaderContainer>
-      <Separator />
-    </div>
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <HighlightLoader />
-    </div>
-  </motion.div>
-);
+const getUserDisplayName = (user: any) => {
+  if (user?.firstName && user?.lastName) {
+    return `${user.firstName} ${user.lastName}`;
+  }
+  if (user?.firstName) {
+    return user.firstName;
+  }
+  if (user?.username) {
+    return user.username;
+  }
+  return "Usuário";
+};
+
+const LoadingState = () => {
+  const user = useAuthStore((state) => state.user);
+  const displayName = getUserDisplayName(user);
+
+  return (
+    <motion.div
+      className="flex flex-col h-full"
+      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+      <div className="flex-none">
+        <HeaderContainer>
+          <div className="pl-1 flex items-start justify-between">
+            <Heading title={`Olá, ${displayName}`} />
+          </div>
+        </HeaderContainer>
+        <Separator />
+      </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <HighlightLoader />
+      </div>
+    </motion.div>
+  );
+};
 
 export default function Dashboard() {
+  const user = useAuthStore((state) => state.user);
+  const displayName = getUserDisplayName(user);
+
   const {
     requests,
     summary,
@@ -276,13 +304,13 @@ export default function Dashboard() {
       <div className="flex-none">
         <HeaderContainer>
           <div className="pl-1 flex items-start justify-between">
-            <Heading title="Olá, teste" />
+            <Heading title={`Olá, ${displayName}`} />
           </div>
         </HeaderContainer>
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow border-r px-2 sm:px-6 pt-6">
+      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-7">
         <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
           {summaryCards.map((card) => {
             const Icon = card.icon;
@@ -361,11 +389,7 @@ export default function Dashboard() {
               </div>
             ))
           ) : (
-            <TableRow>
-              <TableCell>
-                <EmptyState message="Nenhuma solicitação encontrada" />
-              </TableCell>
-            </TableRow>
+            <EmptyState message="Nenhuma solicitação encontrada" />
           )}
         </div>
 
@@ -405,8 +429,10 @@ export default function Dashboard() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell>
-                    <EmptyState message="Nenhuma solicitação encontrada" />
+                  <TableCell colSpan={4} className="py-6">
+                    <div className="flex justify-center w-full">
+                      <EmptyState message="Nenhuma solicitação encontrada" />
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
@@ -418,20 +444,22 @@ export default function Dashboard() {
             <div className="pt-4 pb-0">
               <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {displayedAttachedClients.length > 0 ? (
-                displayedAttachedClients.map((client) => (
+            {displayedAttachedClients.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {displayedAttachedClients.map((client) => (
                   <ClientCard
                     key={client.clientId}
                     client={client}
                     hasAccess={true}
                     onActionClick={() => handleSeeClientDetails(client.clientId)}
                   />
-                ))
-              ) : (
+                ))}
+              </div>
+            ) : (
+              <div className="flex justify-center w-full">
                 <EmptyState message="Nenhum sistema com acesso encontrado" />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 

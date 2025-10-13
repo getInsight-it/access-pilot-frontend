@@ -1,13 +1,13 @@
 import React, { createContext, ReactNode, useContext, useState, useLayoutEffect, useCallback } from "react";
-import { Theme } from "./theme.model.ts";
-import { THEME_COLOR_PALETTE } from "./constant/theme-color-palette.constant.ts";
+import { Theme, ThemeType } from "./theme.model.ts";
+import { THEME_COLOR_PALETTE, GOV_COLOR_PALETTE } from "./constant/theme-color-palette.constant.ts";
 import { LIGHT_THEME } from "./constant/light.constant.ts";
 import { BUILT_IN_THEMES } from "./constant/theme.constant.ts";
 import { TREE_COMPONENT_DARK_STYLES, TREE_COMPONENT_LIGHT_STYLES } from "./constant/tree-component.constant.ts";
 
 interface ThemeContextType {
   theme: string;
-  themeType: 'light' | 'dark';
+  themeType: ThemeType;
   changeTheme: (theme: string) => Promise<void>;
 }
 
@@ -16,25 +16,29 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'selected-theme';
 const THEME_TYPE_STORAGE_KEY = 'selected-theme-type';
 
-const applyTreeComponentPalette = (themeType: 'light' | 'dark') => {
-  const styles = themeType === 'light'
+const getThreeComponentStyles = (themeType: ThemeType) => {
+  return themeType === "light" || themeType === "gov"
     ? TREE_COMPONENT_LIGHT_STYLES
     : TREE_COMPONENT_DARK_STYLES;
+}
+
+const applyTreeComponentPalette = (themeType: ThemeType) => {
+  const styles = getThreeComponentStyles(themeType);
 
   requestAnimationFrame(() => {
     const root = document.documentElement;
 
     Object.entries(styles).forEach(([prop, value]) => {
-      root.style.setProperty(prop, value);
+      root.style.setProperty(prop, value as any);
     });
   });
 }
 
-const applyColorPalette = () => {
+const applyColorPalette = (palette: any) => {
   const root = document.documentElement;
   const properties: Record<string, string> = {};
 
-  Object.entries(THEME_COLOR_PALETTE).forEach(([colorName, shades]: [string, any]) => {
+  Object.entries(palette).forEach(([colorName, shades]: [string, any]) => {
     Object.entries(shades).forEach(([shade, value]) => {
       properties[`--color-${colorName}-${shade}`] = value as string;
     });
@@ -47,7 +51,10 @@ const applyColorPalette = () => {
   });
 };
 
-const applyTheme = (theme: Theme, themeType: 'light' | 'dark') => {
+const applyTheme = (theme: Theme, themeType: ThemeType) => {
+  const colorPalette = themeType === 'gov' ? GOV_COLOR_PALETTE : THEME_COLOR_PALETTE;
+  applyColorPalette(colorPalette);
+
   requestAnimationFrame(() => {
     const root = document.documentElement;
 
@@ -74,14 +81,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return localStorage.getItem(THEME_STORAGE_KEY) || 'light';
   });
 
-  const [themeType, setThemeType] = useState<'light' | 'dark'>(() => {
+  const [themeType, setThemeType] = useState<ThemeType>(() => {
     return (localStorage.getItem(THEME_TYPE_STORAGE_KEY) as 'light' | 'dark') || 'light';
   });
 
   const [themeCache] = useState<Map<string, Theme>>(new Map());
 
   useLayoutEffect(() => {
-    applyColorPalette();
     const initialTheme = BUILT_IN_THEMES[theme] || LIGHT_THEME;
     applyTreeComponentPalette(initialTheme['theme-type']);
     applyTheme(initialTheme, initialTheme['theme-type']);

@@ -6,6 +6,6 @@ export const THEME_BASE_CUSTOM_PROPERTIES: ThemeCustomAttributes = {
   'success-foreground': THEME_COLOR_PALETTE.gray['50'],
   'warning': THEME_COLOR_PALETTE.warning['500'],
   'warning-foreground': THEME_COLOR_PALETTE.gray['950'],
-  'info': THEME_COLOR_PALETTE.blue['500'],
+  'info': THEME_COLOR_PALETTE.info['500'],
   'info-foreground': THEME_COLOR_PALETTE.gray['50'],
 }

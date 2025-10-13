@@ -23,6 +23,8 @@ import {
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { toast } from "../../../../common/external/ui/use-toast.ts";
 
 export interface AttachmentConfigSectionProps {
   configurations: AttachmentConfigurationInterface[];
@@ -130,7 +132,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     await clientService.clientConfigurationPreview(file)
       .then((response: HttpRequestResponse | HttpRequestError) => {
         if(response instanceof HttpRequestResponse) {
-          const importedConfigurations = JSON.parse(response.data) as AttachmentConfigurationInterface[];
+          const importedConfigurations = response.data as AttachmentConfigurationInterface[];
           const duplicates = importedConfigurations.filter(
             importedConfig => configurations.some(
               existingConfig => existingConfig.name === importedConfig.name
@@ -148,9 +150,13 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           }
         }
       })
-      .catch((error: HttpRequestError) => {
-        console.error("Erro ao importar configurações:", error);
-        alert("Ocorreu um erro ao importar as configurações.");
+      .catch((error: any) => {
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao importar configurações",
+          description: errorMessage,
+          variant: "destructive"
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -364,25 +370,25 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       </div>
 
       <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
               Confirmação de Importação
             </DialogTitle>
           </DialogHeader>
 
-          <div className="py-4 space-y-4">
+          <div className="py-3 sm:py-4 space-y-3 sm:space-y-4">
             <div>
-              <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Configurações duplicadas
               </h4>
-              <div className="border border-amber-200 dark:border-amber-800 rounded-md p-3 bg-amber-50 dark:bg-amber-950/30">
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+              <div className="border border-amber-200 dark:border-amber-800 rounded-md p-2 sm:p-3 bg-amber-50 dark:bg-amber-950/30">
+                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2">
                   As seguintes configurações já existem e serão sobrescritas:
                 </p>
-                <ul className="list-disc pl-5 space-y-1">
+                <ul className="list-disc pl-4 sm:pl-5 space-y-1">
                   {duplicateNames.map(name => (
-                    <li key={name} className="text-sm text-gray-900 dark:text-gray-100">
+                    <li key={name} className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 break-words">
                       <strong>{name}</strong>
                     </li>
                   ))}
@@ -391,27 +397,27 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
 
             <div>
-              <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Configurações a serem importadas
               </h4>
-              <div className="max-h-[200px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-3 bg-gray-50 dark:bg-gray-800">
-                <ul className="space-y-3">
+              <div className="max-h-[200px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 sm:p-3 bg-gray-50 dark:bg-gray-800">
+                <ul className="space-y-2 sm:space-y-3">
                   {importedConfigs.map(config => (
-                    <li key={config.name} className="pb-3 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
+                    <li key={config.name} className="pb-2 sm:pb-3 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
                       <div className="space-y-1">
-                        <div className="text-sm">
+                        <div className="text-xs sm:text-sm break-words">
                           <span className="font-medium text-gray-700 dark:text-gray-300">Nome:</span>{" "}
                           <span className="text-gray-900 dark:text-gray-100">{config.name}</span>
                         </div>
-                        <div className="text-sm">
+                        <div className="text-xs sm:text-sm break-words">
                           <span className="font-medium text-gray-700 dark:text-gray-300">Descrição:</span>{" "}
                           <span className="text-gray-900 dark:text-gray-100">{config.description}</span>
                         </div>
-                        <div className="text-sm">
+                        <div className="text-xs sm:text-sm">
                           <span className="font-medium text-gray-700 dark:text-gray-300">Obrigatório:</span>{" "}
                           <span className="text-gray-900 dark:text-gray-100">{config.required ? "Sim" : "Não"}</span>
                         </div>
-                        <div className="text-sm">
+                        <div className="text-xs sm:text-sm break-words">
                           <span className="font-medium text-gray-700 dark:text-gray-300">Extensões:</span>{" "}
                           <span className="text-gray-900 dark:text-gray-100">{config.allowedExtensions.join(", ")}</span>
                         </div>
@@ -423,11 +429,11 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
           </div>
 
-          <DialogFooter className="flex justify-end space-x-2 mt-4">
-            <Button variant="outline" onClick={cancelImport}>
+          <DialogFooter className="mt-3 sm:mt-4">
+            <Button variant="outline" onClick={cancelImport} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={confirmImport}>
+            <Button onClick={confirmImport} className="w-full sm:w-auto">
               Confirmar Importação
             </Button>
           </DialogFooter>

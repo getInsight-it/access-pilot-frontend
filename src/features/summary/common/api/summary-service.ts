@@ -21,7 +21,7 @@ export class SummaryService {
       throw response
     }
 
-    return JSON.parse(response.data) as SummaryModel;
+    return response.data as SummaryModel;
   }
 }
 

@@ -7,6 +7,7 @@ import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { roleService } from "../../common/service/role-service.ts";
 import { RoleResponseInterface } from "../../common/types/role.model.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 type TreeRoleType = {
   index: string,
@@ -27,7 +28,6 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   useEffect(() => {
     if(data) {
       setItems(buildTreeObject(data));
-      console.log("data", items);
     }
   }, [data]);
 
@@ -90,18 +90,18 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     from(roleService.update(rolePayload as any)).pipe(
       tap(() => {
         toast({
-          title: "Roles atualizados",
-          description: "Os roles foram atualizados com sucesso"
+          title: "Papéis atualizados",
+          description: "Os papéis foram atualizados com sucesso"
         });
         onSuccess?.();
       }),
       catchError((error) => {
+        const errorMessage: string = formatErrorMessages(error.error);
         toast({
-          title: "Erro ao atualizar roles",
-          description: "Ocorreu um erro ao atualizar os roles",
+          title: "Erro ao atualizar papéis",
+          description: errorMessage,
           variant: "destructive"
         });
-        console.error(error);
         return [];
       }),
       finalize(() => setLoading(false))
@@ -112,7 +112,7 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     <>
       <div
         className="w-full max-w-xl flex justify-between items-start bg-zebra-background-2 rounded-xl border py-8 px-8 h-auto min-h-[220px] ">
-        <div className="w-96">
+        <div className="w-96 max-w-full">
           <div>
             <UncontrolledTreeEnvironment<string>
               dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({ ...item, data: newName }))}

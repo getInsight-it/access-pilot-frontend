@@ -81,25 +81,28 @@ export const RoleStep = ({
   return (
     <>
       <div className="space-y-1">
-        <h4 className="text-lg font-semibold mb-4">Escolha o tipo de acesso que você precisa:</h4>
+        <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Escolha o tipo de acesso que você precisa:</h4>
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
-            <div className={`max-w-96 w-full cursor-pointer ${selectedRole ? " text-primary " : ""}`}>
+            <div className={`max-w-full sm:max-w-md lg:max-w-96 w-full cursor-pointer ${selectedRole ? " text-primary " : ""}`}>
               <div
                 className={cn(
-                  "border border-dashed p-5 grid items-center min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative shadow-md",
+                  "border border-dashed p-4 sm:p-5 grid items-center min-h-[100px] sm:min-h-[120px] h-auto transition-all rounded-[var(--card-border-radius)] relative shadow-md",
                   selectedRole && "border-2 border-primary border-double rounded-[var(--card-border-radius)]",
                   showError && "border border-dashed border-red-500 rounded-[var(--card-border-radius)]"
                 )}>
-                {!selectedRole && !showError && <Plus className="w-8 h-8 mt-2 mx-auto text-gray-400" />}
-                {!selectedRole && showError && <Plus className="w-8 h-8 mt-2 mx-auto text-red-500" />}
-                {selectedRole && <Check className="absolute top-4 right-4 flex-shrink-0" />}
+                {!selectedRole && !showError && <Plus className="w-7 h-7 sm:w-8 sm:h-8 mt-2 mx-auto text-gray-400" />}
+                {!selectedRole && showError && <Plus className="w-7 h-7 sm:w-8 sm:h-8 mt-2 mx-auto text-red-500" />}
+                {selectedRole && <Check className="absolute top-3 right-3 sm:top-4 sm:right-4 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />}
 
                 <div className="flex flex-row items-center">
                   {selectedRole && (
                     <>
-                      <IconRenderer className={`${selectedRoleObject!.icon} w-6 h-6 mr-4`} />
-                      <p className="font-bold text-lg">
+                      <IconRenderer
+                        className={`${selectedRoleObject!.icon} w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0`}
+                        showPlaceholder={true}
+                      />
+                      <p className="font-bold text-base sm:text-lg break-words">
                         {selectedRoleObject!.label}
                       </p>
                     </>
@@ -112,14 +115,18 @@ export const RoleStep = ({
                 }
               </div>
               {showError && !selectedRole && (
-                <p className="text-red-500 text-sm mt-4">Por favor, selecione um tipo de acesso</p>
+                <p className="text-red-500 text-sm mt-2 sm:mt-4">Por favor, selecione um tipo de acesso</p>
               )}
             </div>
           </PopoverTrigger>
           <PopoverContent
             side={isLargeScreen ? "right" : "bottom"}
             align={isLargeScreen ? "start" : "end"}
-            className={`w-[26em] ${isLargeScreen ? "ml-[20px]" : ""} ${isLargeScreen ? "" : " mb-10"}`}>
+            className={cn(
+              "w-[calc(100vw-2rem)] sm:w-[26em]",
+              isLargeScreen && "ml-[20px]",
+              !isLargeScreen && "mb-10"
+            )}>
             <div className="relative">
               <CustomInput
                 value={searchTerm}
@@ -134,8 +141,8 @@ export const RoleStep = ({
               )}
             </div>
 
-            <ScrollArea className="h-[340px] mt-4 px-2">
-              <div className="space-y-2 grid grid-cols-1 gap-2 px-2">
+            <ScrollArea className="h-[300px] sm:h-[340px] mt-4 px-1 sm:px-2">
+              <div className="space-y-2 grid grid-cols-1 gap-2 px-1 sm:px-2">
                 {roles && roles
                   .filter((role) =>
                     role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,16 +152,18 @@ export const RoleStep = ({
                     <div
                       key={role.id}
                       className={cn(
-                        "border p-5 grid items-center min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
+                        "border p-4 sm:p-5 grid items-center min-h-[90px] sm:min-h-[106px] h-auto cursor-pointer transition-all rounded-[var(--card-border-radius)] shadow-md",
                         selectedRole === role.id.toString() && "border-2 border-primary border-double rounded-[var(--card-border-radius)]"
                       )}
                       onClick={() => handleRoleSelection(role)}>
 
                       <div className="flex flex-row items-center">
-                        {role.icon ? <IconRenderer className={`${role.icon} w-6 h-6 mr-4 `} /> :
-                          <User className="w-6 h-6 mr-4" />}
-                        <p className="font-bold text-lg">{role.label}</p>
-                        {(selectedRole === role.id.toString()) && <Check className="ml-auto top-4 right-4 flex-shrink-0" />}
+                        <IconRenderer
+                          className={`${role.icon} w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0`}
+                          showPlaceholder={true}
+                        />
+                        <p className="font-bold text-base sm:text-lg break-words flex-1 min-w-0">{role.label}</p>
+                        {(selectedRole === role.id.toString()) && <Check className="ml-2 flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6" />}
                       </div>
 
                       <TruncatedDescription description={role.description || "Sem descrição disponível"} />
@@ -167,8 +176,8 @@ export const RoleStep = ({
       </div>
 
       {selectedRole && selectedRoleObject?.level && (
-        <div className="mt-6">
-          <h4 className="text-lg font-semibold mb-4">Preencha os detalhes da esfera:</h4>
+        <div className="mt-4 sm:mt-6">
+          <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Preencha os detalhes da esfera:</h4>
           <DynamicSphereForm
             initialId={roles.find(role => role.id.toString() === selectedRole)!.level.id}
             onHierarchyNotCompleted={handleHierarchyNotCompleted}

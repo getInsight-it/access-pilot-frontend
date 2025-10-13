@@ -13,6 +13,9 @@ function ThemedLogo() {
       case "dark":
         setSrc("/img/accesspilot-w.svg");
         break;
+        case "gov":
+        setSrc("/govbr/logo.svg");
+        break;
       default:
         setSrc("/img/accesspilot.svg");
         break;

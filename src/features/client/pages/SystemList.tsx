@@ -1,12 +1,10 @@
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/authStore.ts";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "../../../common/external/ui/button.tsx";
 import { cn } from "../../../config/lib/utils.ts";
-import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog } from "lucide-react";
+import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal } from "lucide-react";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 
 import { motion } from "framer-motion";
@@ -34,10 +32,7 @@ import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.
 import { toast } from "../../../common/external/ui/use-toast.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "../common/enum/client-status.enum.ts";
 import { Badge } from "../../../common/external/ui/badge.tsx";
-
-const breadcrumbItems = [
-  { title: "Gerenciar sistemas", link: "/dashboard/systems" }
-];
+import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
@@ -53,10 +48,19 @@ export default function SystemList() {
   };
 
   const getData = async (page: number, size: number, searchFilter: string = "") => {
-    const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
-    setClients(pageResponse?.items || []);
-    setTotalUsers(pageResponse?.total ?? 0);
-    setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
+    try {
+      const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
+      setClients(pageResponse?.items || []);
+      setTotalUsers(pageResponse?.total ?? 0);
+      setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao carregar sistemas",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
   };
 
   const syncClient = async (client: ClientResponseInterface) => {
@@ -67,10 +71,10 @@ export default function SystemList() {
         description: "O sistema foi sincronizado com sucesso"
       });
     } catch (error: any) {
-      console.error("Erro ao sincronizar sistema:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: "Não foi sincronizar o sistema.",
+        title: "Erro ao sincronizar sistema",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -78,19 +82,24 @@ export default function SystemList() {
 
   const handlePublicationChange = async (client: ClientResponseInterface) => {
     const newStatus = client.status === ClientStatusEnum.PUBLISHED ? ClientStatusEnum.UNPUBLISHED : ClientStatusEnum.PUBLISHED;
-    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "publicado" : "despublicado";
+    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "despublicado" : "publicado";
 
     try {
-      await clientService.updateSystemPublication(client.id!, newStatus);
+      const updatedClient = await clientService.updateSystemPublication(client.id!, newStatus);
+
+      setClients(prevClients =>
+        prevClients.map(c => c.id === updatedClient.id ? updatedClient : c)
+      );
+
       toast({
-        title: "Sistema publicado",
+        title: "Sistema atualizado",
         description: `O sistema foi ${toastMessage} com sucesso!`
       });
     } catch (error: any) {
-      console.error("Erro ao sincronizar sistema:", error);
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
-        title: "Erro",
-        description: `Não foi ${toastMessage} o sistema.`,
+        title: `Erro ao ${toastMessage} sistema`,
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -126,7 +135,7 @@ export default function SystemList() {
 
         <div className="flex-none">
           <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
+            {/* <Breadcrumbs items={breadcrumbItems} /> */}
 
             <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
@@ -142,107 +151,115 @@ export default function SystemList() {
               </Link>
             </div>
           </HeaderContainer>
-
-          <Separator />
         </div>
 
-        <ScrollArea className="px-6 flex-grow">
+        <ScrollArea className="flex-grow" viewportClassName="px-7">
           <div className="py-6 max-w-content-container m-auto">
             <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-              <div className="w-96">
+              <div className="w-96 max-w-full">
                 <Input
                   variant="dark"
                   placeholder="Filtrar por Sistema..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                  className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
                 />
               </div>
-              {clients && clients.map((client, index) => (
-                <div className="table-card" key={`mobile-table-card-${index}`}>
-                  <div className="table-card__header">
-                    <div className="flex items-center justify-between">
-                      <span className="mr-2">Ações</span>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <EllipsisVertical size={20} className="cursor-pointer" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
-                            <MonitorCog size={16} />
-                            <span>Detalhes</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
-                            <Edit size={16} />
-                            <span>Editar</span>
-                          </DropdownMenuItem>
-                          {client.managed && (
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
-                              <UserCog size={16}/>
-                              Gerenciar Papéis
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
-                            <RefreshCw size={16}/>
-                            Sincronizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
-                            <Cog size={16}/>
-                            {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+              {clients && clients.length > 0 ? (
+                <>
+                  {clients.map((client, index) => (
+                    <div className="table-card" key={`mobile-table-card-${index}`}>
+                      <div className="table-card__header">
+                        <div className="flex items-center justify-between">
+                          <span className="mr-2">Ações</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <EllipsisVertical size={20} className="cursor-pointer" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
+                                <MonitorCog size={16} />
+                                <span>Detalhes</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
+                                <Edit size={16} />
+                                <span>Editar</span>
+                              </DropdownMenuItem>
+                              {client.managed && (
+                                <DropdownMenuItem
+                                  className="flex flex-row gap-2"
+                                  onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
+                                  <UserCog size={16}/>
+                                  Gerenciar Papéis
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                                <RefreshCw size={16}/>
+                                Sincronizar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                                <Cog size={16}/>
+                                {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                      <div className="table-card__content">
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Sistema</span>
+                          <span className="table-card__value">{client.clientId}</span>
+                        </div>
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Descrição</span>
+                          <span className="table-card__value">{client.description || '-'}</span>
+                        </div>
+                        <div className="table-card__content__row">
+                          <span className="table-card__label">Status</span>
+                          <span className="table-card__value">
+                            {!client.status
+                              ? (<Badge variant="secondary">Desconhecido</Badge>)
+                              : (client.status === ClientStatusEnum.PUBLISHED
+                                ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
+                                : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
+                            }
+                          </span>
+                        </div>
+                      </div>
                     </div>
+                  ))}
+                  <div className="p-4">
+                    <PaginationWrapper
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      totalItems={totalUsers}
+                      onPageChange={(page) => handlePageChange(page)}
+                    />
                   </div>
-                  <div className="table-card__content">
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Sistema</span>
-                      <span className="table-card__value">{client.clientId}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Descrição</span>
-                      <span className="table-card__value">{client.description || '-'}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Status</span>
-                      <span className="table-card__value">
-                        {!client.status
-                          ? (<Badge variant="secondary">Desconhecido</Badge>)
-                          : (client.status === ClientStatusEnum.PUBLISHED
-                            ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
-                            : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
-                        }
-                      </span>
-                    </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <LaptopMinimal size={24} className="text-gray-400" />
                   </div>
+                  <span className="text-sm text-gray-500">Nenhum sistema encontrado</span>
                 </div>
-              ))}
-              <div className="p-4">
-                <PaginationWrapper
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => handlePageChange(page)}
-                />
-              </div>
+              )}
             </div>
-            <div className="hidden lg:flex">
-              <Table auxiliaryHeader={
-              <div className="p-4 w-96">
+            <div className="hidden lg:flex flex-col gap-4">
+              <div className="w-96 max-w-full">
                 <Input
-                  variant="dark"
                   placeholder="Filtrar por Sistema..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="h-8 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                  className="h-10 w-full"
                 />
               </div>
-            }>
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead width="calc(40% - 33px)">Sistema</TableHead>
@@ -252,63 +269,79 @@ export default function SystemList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clients && clients.map((client) => (
-                  <TableRow key={client.id}>
-                    <TableCell width="calc(40% - 33px)">{client.clientId}</TableCell>
-                    <TableCell width="calc(40% - 33px)">{client.description || '-'}</TableCell>
-                    <TableCell width="calc(20% - 34px)">
-                      {!client.status
-                        ? (<Badge variant="secondary">Desconhecido</Badge>)
-                        : (client.status === ClientStatusEnum.PUBLISHED
-                          ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
-                          : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
-                      }
-                    </TableCell>
-                    <TableCell className="flex align-center justify-center" width="100px">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <EllipsisVertical size={20} className="cursor-pointer" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
-                            <MonitorCog size={16} />
-                            <span>Detalhes</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
-                            <Edit size={16} />
-                            <span>Editar</span>
-                          </DropdownMenuItem>
-                          {client.managed && (
+                {clients && clients.length > 0 ? (
+                  clients.map((client) => (
+                    <TableRow key={client.id}>
+                      <TableCell width="calc(40% - 33px)">{client.clientId}</TableCell>
+                      <TableCell width="calc(40% - 33px)">{client.description || '-'}</TableCell>
+                      <TableCell width="calc(20% - 34px)">
+                        {!client.status
+                          ? (<Badge variant="secondary">Desconhecido</Badge>)
+                          : (client.status === ClientStatusEnum.PUBLISHED
+                            ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
+                            : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
+                        }
+                      </TableCell>
+                      <TableCell className="flex align-center justify-center" width="100px">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} className="cursor-pointer" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               className="flex flex-row gap-2"
-                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
-                              <UserCog size={16}/>
-                              Gerenciar Papéis
+                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
+                              <MonitorCog size={16} />
+                              <span>Detalhes</span>
                             </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
-                            <RefreshCw size={16}/>
-                            Sincronizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
-                            <Cog size={16}/>
-                            {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
+                              <Edit size={16} />
+                              <span>Editar</span>
+                            </DropdownMenuItem>
+                            {client.managed && (
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
+                                <UserCog size={16}/>
+                                Gerenciar Papéis
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                              <RefreshCw size={16}/>
+                              Sincronizar
+                            </DropdownMenuItem>
+                            {client.managed && (
+                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                                <Cog size={16}/>
+                                {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-12">
+                      <div className="flex flex-col items-center justify-center text-center w-full">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                          <LaptopMinimal size={24} className="text-gray-400" />
+                        </div>
+                        <span className="text-sm text-gray-500">Nenhum sistema encontrado</span>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
               <TableFooter>
                 <div className="p-4">
                   <PaginationWrapper
                     currentPage={currentPage}
                     totalPages={totalPages}
+                    totalItems={totalUsers}
                     onPageChange={(page) => handlePageChange(page)}
                   />
                 </div>

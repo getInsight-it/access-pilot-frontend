@@ -19,6 +19,7 @@ import { ClientDetailConfigurations } from "./partials/ClientDetailConfiguration
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: "/dashboard/systems" },
@@ -39,11 +40,18 @@ export const SystemDetail = () => {
         if(response) {
           setData(response);
         }
-      }), catchError((error) => {
-          console.error(error);
-          return [];
-        }
-      )).subscribe();
+      }),
+      catchError((error) => {
+        console.error(error);
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao buscar dados do sistema",
+          description: errorMessage,
+          variant: "destructive"
+        });
+        return [];
+      }
+    )).subscribe();
   };
 
   const getRoles = async () => {
@@ -52,16 +60,16 @@ export const SystemDetail = () => {
     try {
       const response = await roleService.getRolesByClientIdV2(clientId);
       if(response instanceof HttpRequestResponse) {
-        const rolesData = JSON.parse(response.data) as RoleResponseInterface[];
+        const rolesData = response.data as RoleResponseInterface[];
         setRoleItems(rolesData);
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
       toast({
         title: "Erro ao buscar papéis",
-        description: "Não foi possível carregar os papéis do sistema",
+        description: errorMessage,
         variant: "destructive"
       });
-      console.error(error);
     }
   };
 
@@ -117,7 +125,7 @@ export const SystemDetail = () => {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-background">
+      <ScrollArea className="flex-grow bg-background" viewportClassName="px-7">
         {data && (
           <div className="max-w-content-container m-auto flex flex-col h-full">
             <DetailContainer

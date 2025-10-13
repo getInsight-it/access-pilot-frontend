@@ -10,7 +10,7 @@
   body {
     @apply bg-background;
     color: var(--text-default-color);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family);
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow: hidden;
   }
@@ -23,7 +23,7 @@
 
 @layer components {
   .table-card {
-    @apply font-semibold rounded-lg border border-gray-300;
+    @apply font-semibold rounded-lg border border-gray-400;
 
     &__header {
       @apply flex justify-end items-center font-bold p-2 border-b border-gray-200;
@@ -112,12 +112,11 @@
   height: 100vh;
 }
 
+.markdown > * {
+  all: revert;
+}
 
-
-
-
-
-
-
-
-
+.markdown a {
+  color: var(--color-blue-600);
+  text-decoration: underline;
+}

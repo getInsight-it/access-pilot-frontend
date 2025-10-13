@@ -25,6 +25,8 @@ import CreateOrEditLevel from "./features/level/pages/level/CreateLevel.tsx";
 import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
 
 import useAuthStore from "./store/authStore.ts";
+import HeaderLayout from "./layouts/HeaderLayout.tsx";
+import HelpAndSupport from "./features/help-and-support/HelpAndSupport.tsx";
 
 const PrivateRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -200,6 +202,29 @@ const appRoutes = [
   }
 ];
 
+const helpAndSupportRoutes = [
+  {
+    element: <PrivateRoute />,
+    children: [
+      {
+        element: (
+          <Suspense>
+            <HeaderLayout />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: PRIVATE_ROUTES.HELP_AND_SUPPORT,
+            element: (
+              <HelpAndSupport />
+            )
+          }
+        ]
+      }
+    ]
+  }
+];
+
 export const AppRouter: React.FC = () => {
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
@@ -207,6 +232,7 @@ export const AppRouter: React.FC = () => {
     ? [
       ...appRoutes,
       ...errorRoutes,
+      ...helpAndSupportRoutes,
       { path: "*", element: <Navigate to={ERROR_ROUTES.NOT_FOUND} replace /> }
     ]
     : [

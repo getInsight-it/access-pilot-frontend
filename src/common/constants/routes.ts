@@ -24,6 +24,7 @@ export const PRIVATE_ROUTES = {
   LEVEL_ITEMS: '/dashboard/levels/:id/items',
   CREATE_ITEM: '/dashboard/levels/:id/items/create',
   EDIT_ITEM: '/dashboard/levels/:id/items/:itemId/edit',
+  HELP_AND_SUPPORT: '/dashboard/help-and-support',
 };
 
 export const ERROR_ROUTES = {

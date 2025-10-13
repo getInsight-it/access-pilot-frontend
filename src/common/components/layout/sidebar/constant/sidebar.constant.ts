@@ -36,7 +36,7 @@ export const navItems: NavItem[] = [
     icon: "bookuser",
     label: "Gerenciar solicitações",
     protected: true,
-    roles: [UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]
+    roles: [UserRoleEnum.APPROVER]
   },
   {
     title: "Gerenciar esferas",

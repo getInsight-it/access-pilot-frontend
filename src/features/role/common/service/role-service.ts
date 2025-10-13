@@ -23,7 +23,7 @@ export class RoleService {
       throw response;
     }
 
-    return JSON.parse(response.data) as RoleResponseInterface;
+    return response.data as RoleResponseInterface;
   }
 
   async getRolesByClientId(clientId: string): Promise<RoleResponseInterface[] | null> {
@@ -38,8 +38,7 @@ export class RoleService {
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
 
       if(response instanceof HttpRequestResponse) {
-        const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
-        return data as RoleResponseInterface[];
+        return response.data as RoleResponseInterface[];
       } else {
         console.error("Erro ao buscar roles");
       }
@@ -78,7 +77,7 @@ export class RoleService {
       throw response;
     }
 
-    return JSON.parse(response.data) as RoleResponseInterface;
+    return response.data as RoleResponseInterface;
   }
 
   async updateRole(id?: number, roleData?: RoleResponseInterface): Promise<RoleResponseInterface> {
@@ -88,7 +87,7 @@ export class RoleService {
       throw response;
     }
 
-    return JSON.parse(response.data) as RoleResponseInterface;
+    return response.data as RoleResponseInterface;
   }
 }
 
