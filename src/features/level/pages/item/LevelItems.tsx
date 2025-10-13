@@ -99,22 +99,7 @@ export default function LevelItems() {
         window.removeEventListener("item-updated", handleItemUpdated);
       };
     }
-  }, [isAuthenticated, id, currentPage, pageSize]);
-
-  useEffect(() => {
-    if(searchTerm.trim() === "") {
-      setFilteredItems(items);
-    } else {
-      const lowercaseSearchTerm = searchTerm.toLowerCase();
-      const filtered = items.filter(
-        (item) =>
-          item.name.toLowerCase().includes(lowercaseSearchTerm) ||
-          item.description?.toLowerCase().includes(lowercaseSearchTerm) ||
-          item.externalCode?.toLowerCase().includes(lowercaseSearchTerm)
-      );
-      setFilteredItems(filtered);
-    }
-  }, [searchTerm, items]);
+  }, [isAuthenticated, id, currentPage, pageSize, searchTerm]);
 
   const fetchSphereAndItems = async () => {
     if(!id) return;
@@ -140,7 +125,7 @@ export default function LevelItems() {
       };
       setSphere(sphere);
 
-      const itemsData = await levelService.getLevelItems(id, currentPage, pageSize, "id", "ASC");
+      const itemsData = await levelService.getLevelItems(id, currentPage, pageSize, "id", "ASC", searchTerm);
 
       if(itemsData) {
         setItems(itemsData.items || []);
@@ -335,6 +320,7 @@ export default function LevelItems() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const renderParentItem = (item: Item) => {
@@ -346,12 +332,6 @@ export default function LevelItems() {
     { title: "Gerenciar esferas", link: "/dashboard/levels" },
     { title: "Itens", link: `/dashboard/levels/${id}/items` }
   ];
-
-  if(loading) return (
-    <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
-      <HighlightLoader />
-    </div>
-  );
 
   return (
     <motion.div
@@ -480,14 +460,14 @@ export default function LevelItems() {
                   />
                 </div>
               </>
-            ) : (
+            ) : !loading ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                   <Plus size={24} className="text-gray-400" />
                 </div>
                 <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Desktop View */}
@@ -516,18 +496,7 @@ export default function LevelItems() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredItems.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={sphere?.type !== "BUILT_IN" ? 5 : 1} className="py-12">
-                      <div className="flex flex-col items-center justify-center text-center w-full">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                          <Plus size={24} className="text-gray-400" />
-                        </div>
-                        <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
+                {filteredItems.length > 0 ? (
                   filteredItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>{item.name}</TableCell>
@@ -568,7 +537,18 @@ export default function LevelItems() {
                       )}
                     </TableRow>
                   ))
-                )}
+                ) : !loading ? (
+                  <TableRow>
+                    <TableCell colSpan={sphere?.type !== "BUILT_IN" ? 5 : 1} className="py-12">
+                      <div className="flex flex-col items-center justify-center text-center w-full">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                          <Plus size={24} className="text-gray-400" />
+                        </div>
+                        <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : null}
               </TableBody>
               <TableFooter>
                 <div className="p-4">
