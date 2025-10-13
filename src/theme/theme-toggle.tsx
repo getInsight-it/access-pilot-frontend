@@ -14,8 +14,8 @@ export default function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all text-default" />
+        <Button variant="outline" size="icon" className="h-8 w-8 sm:h-10 sm:w-10">
+          <Sun className="h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-0 scale-100 transition-all text-default" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

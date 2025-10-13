@@ -13,6 +13,7 @@ import { filter, from, interval, map, mergeMap, startWith } from "rxjs";
 import { authService } from "./features/auth/common/AuthService.ts";
 import { userService } from "./common/service/user-service.ts";
 import { notificationService } from "./common/service/notification-service.ts";
+import { initMobileViewportFix } from "./common/utils/mobileViewportFix.ts";
 
 function App() {
   const navigate = useNavigate();
@@ -88,6 +89,8 @@ function App() {
   useEffect(() => {
     console.log("Inicializando autenticação");
     init();
+
+    initMobileViewportFix();
   }, []);
 
   const getNotifications = async () => {
@@ -119,7 +122,8 @@ function App() {
   if(!isInitialized) {
     return (
       <motion.div
-        className="flex items-center justify-center h-screen bg-gray-100"
+        className="flex items-center justify-center h-dvh md:h-screen bg-gray-100"
+        style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}>

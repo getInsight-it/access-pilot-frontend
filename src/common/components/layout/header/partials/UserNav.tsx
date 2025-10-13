@@ -47,18 +47,18 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="relative rounded-full flex flex-row items-center cursor-pointer">
-          <Avatar className="h-10 w-10 md:mr-4">
+        <div className="relative rounded-full flex flex-row items-center cursor-pointer min-w-0">
+          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 md:mr-4 flex-shrink-0">
             <AvatarImage src="/img/ap.svg" alt={displayName} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
 
-          <div className="hidden md:flex flex-col space-y-1 mr-2">
-            <p className="text-sm font-medium leading-none">{displayName}</p>
-            <p className="text-xs leading-none text-muted-foreground">{email}</p>
+          <div className="hidden md:flex flex-col space-y-1 mr-2 min-w-0">
+            <p className="text-sm font-medium leading-none truncate">{displayName}</p>
+            <p className="text-xs leading-none text-muted-foreground truncate">{email}</p>
           </div>
 
-          <ChevronDown className="hidden md:block w-4 h-4 text-gray-400" />
+          <ChevronDown className="hidden md:block w-4 h-4 text-gray-400 flex-shrink-0" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

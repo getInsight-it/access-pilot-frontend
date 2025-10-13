@@ -286,6 +286,18 @@ const config = {
       },
       maxWidth: {
         'content-container': '2440px'
+      },
+      height: {
+        'screen-mobile': 'calc(var(--mobile-vh, 1vh) * 100)',
+        'dvh': '100dvh',
+      },
+      minHeight: {
+        'screen-mobile': 'calc(var(--mobile-vh, 1vh) * 100)',
+        'dvh': '100dvh',
+      },
+      maxHeight: {
+        'screen-mobile': 'calc(var(--mobile-vh, 1vh) * 100)',
+        'dvh': '100dvh',
       }
     }
   },
