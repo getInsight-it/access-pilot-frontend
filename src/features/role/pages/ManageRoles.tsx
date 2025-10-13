@@ -110,7 +110,7 @@ export default function ManageRoles() {
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
                 title="Gerenciar papéis"
                 badgeValue={allRoles.length.toString() || "0"}
@@ -143,81 +143,166 @@ export default function ManageRoles() {
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
               <TabsContent value="roles" className="flex flex-col gap-4">
-                <div className="w-96 max-w-full">
-                  <Input
-                    placeholder="Buscar solicitação..."
-                    className="h-10 w-full"
-                  />
+                {/* Mobile View */}
+                <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+                  <div className="w-96 max-w-full">
+                    <Input
+                      variant="dark"
+                      placeholder="Buscar papel..."
+                      className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+                    />
+                  </div>
+                  {paginatedRoles && paginatedRoles.length > 0 ? (
+                    <>
+                      {paginatedRoles.map((role, index) => (
+                        <div className="table-card" key={`mobile-table-card-${index}`}>
+                          <div className="table-card__header">
+                            <div className="flex items-center justify-between">
+                              <span className="mr-2">Ações</span>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <EllipsisVertical size={20} className="cursor-pointer" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    className="flex flex-row gap-2"
+                                    onClick={() => {
+                                      savePreviousRoute(location.pathname + location.search);
+                                      navigate(
+                                        PRIVATE_ROUTES.ROLES_EDIT
+                                          .replace(":clientId", clientId!)
+                                          .replace(":id", role.id.toString())
+                                      );
+                                    }}>
+                                    <Edit size={16} />
+                                    <span>Editar</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                          <div className="table-card__content">
+                            <div className="table-card__content__row">
+                              <span className="table-card__label">Label</span>
+                              <span className="table-card__value">{role.label}</span>
+                            </div>
+                            <div className="table-card__content__row">
+                              <span className="table-card__label">Label papel pai</span>
+                              <span className="table-card__value">
+                                {role.roleParent?.label || <span className="text-gray-400">Não informado</span>}
+                              </span>
+                            </div>
+                            <div className="table-card__content__row">
+                              <span className="table-card__label">Descrição</span>
+                              <span className="table-card__value">{role.description}</span>
+                            </div>
+                            <div className="table-card__content__row">
+                              <span className="table-card__label">Esfera</span>
+                              <span className="table-card__value">
+                                {role.level?.name || <span className="text-gray-400">Não informado</span>}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="p-4">
+                        <PaginationWrapper
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          totalItems={allRoles.length}
+                          onPageChange={(page) => handlePageChange(page)}
+                        />
+                      </div>
+                    </>
+                  ) : !loading ? (
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                        <UserCog size={24} className="text-gray-400" />
+                      </div>
+                      <span className="text-sm text-gray-500">Nenhum papel encontrado</span>
+                    </div>
+                  ) : null}
                 </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead width="calc(25% - 25px)">Label</TableHead>
-                      <TableHead width="calc(25% - 25px)">Label papel pai</TableHead>
-                      <TableHead width="calc(25% - 25px)">Descrição</TableHead>
-                      <TableHead width="calc(25% - 25px)">Esfera</TableHead>
-                      <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedRoles && paginatedRoles.length > 0 ? (
-                      paginatedRoles.map((role) => (
-                        <TableRow key={role.id}>
-                          <TableCell width="calc(25% - 25px)">{role.label}</TableCell>
-                          <TableCell width="calc(25% - 25px)">
-                            {role.roleParent?.label || <span className="text-gray-400">Não informado</span>}
-                          </TableCell>
-                          <TableCell width="calc(25% - 25px)">{role.description}</TableCell>
-                          <TableCell width="calc(25% - 25px)">
-                            {role.level?.name || <span className="text-gray-400">Não informado</span>}
-                          </TableCell>
-                          <TableCell className="flex align-center justify-center" width="100px">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <EllipsisVertical size={20} className="cursor-pointer" />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  className="flex flex-row gap-2"
-                                  onClick={() => {
-                                    savePreviousRoute(location.pathname + location.search);
-                                    navigate(
-                                      PRIVATE_ROUTES.ROLES_EDIT
-                                        .replace(":clientId", clientId!)
-                                        .replace(":id", role.id.toString())
-                                    );
-                                  }}>
-                                  <Edit size={16} />
-                                  <span>Editar</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+
+                {/* Desktop View */}
+                <div className="hidden lg:flex flex-col gap-4">
+                  <div className="w-96 max-w-full">
+                    <Input
+                      placeholder="Buscar papel..."
+                      className="h-10 w-full"
+                    />
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead width="calc(25% - 25px)">Label</TableHead>
+                        <TableHead width="calc(25% - 25px)">Label papel pai</TableHead>
+                        <TableHead width="calc(25% - 25px)">Descrição</TableHead>
+                        <TableHead width="calc(25% - 25px)">Esfera</TableHead>
+                        <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedRoles && paginatedRoles.length > 0 ? (
+                        paginatedRoles.map((role) => (
+                          <TableRow key={role.id}>
+                            <TableCell width="calc(25% - 25px)">{role.label}</TableCell>
+                            <TableCell width="calc(25% - 25px)">
+                              {role.roleParent?.label || <span className="text-gray-400">Não informado</span>}
+                            </TableCell>
+                            <TableCell width="calc(25% - 25px)">{role.description}</TableCell>
+                            <TableCell width="calc(25% - 25px)">
+                              {role.level?.name || <span className="text-gray-400">Não informado</span>}
+                            </TableCell>
+                            <TableCell className="flex align-center justify-center" width="100px">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <EllipsisVertical size={20} className="cursor-pointer" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    className="flex flex-row gap-2"
+                                    onClick={() => {
+                                      savePreviousRoute(location.pathname + location.search);
+                                      navigate(
+                                        PRIVATE_ROUTES.ROLES_EDIT
+                                          .replace(":clientId", clientId!)
+                                          .replace(":id", role.id.toString())
+                                      );
+                                    }}>
+                                    <Edit size={16} />
+                                    <span>Editar</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : !loading ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="py-12">
+                            <div className="flex flex-col items-center justify-center text-center w-full">
+                              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                                <UserCog size={24} className="text-gray-400" />
+                              </div>
+                              <span className="text-sm text-gray-500">Nenhum papel encontrado</span>
+                            </div>
                           </TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} className="py-12">
-                          <div className="flex flex-col items-center justify-center text-center w-full">
-                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                              <UserCog size={24} className="text-gray-400" />
-                            </div>
-                            <span className="text-sm text-gray-500">Nenhum papel encontrado</span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                  <TableFooter>
-                    <div className="p-4">
-                      <PaginationWrapper
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={(page) => handlePageChange(page)}
-                      />
-                    </div>
-                  </TableFooter>
-                </Table>
+                      ) : null}
+                    </TableBody>
+                    <TableFooter>
+                      <div className="p-4">
+                        <PaginationWrapper
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          totalItems={allRoles.length}
+                          onPageChange={(page) => handlePageChange(page)}
+                        />
+                      </div>
+                    </TableFooter>
+                  </Table>
+                </div>
               </TabsContent>
               <TabsContent value="roles_hierarchy">
                 <div>
