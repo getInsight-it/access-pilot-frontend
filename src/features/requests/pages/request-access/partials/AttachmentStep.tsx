@@ -169,12 +169,12 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
   };
 
   return (
-    <div className={clsx("w-full space-y-6", className)}>
+    <div className={clsx("w-full space-y-4 sm:space-y-6", className)}>
       <div className="flex flex-col gap-2">
         <Label
           htmlFor="request-reason"
           className={cn(
-            "text-xl font-bold",
+            "text-lg sm:text-xl font-bold",
             hasError.reason && "text-red-500"
           )}>
           Motivo da solicitação
@@ -185,7 +185,7 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
           value={reason}
           onChange={handleReasonChange}
           className={cn(
-            "resize-none",
+            "resize-none min-h-[100px] sm:min-h-[120px]",
             hasError.reason && "border-red-500 focus-visible:ring-red-500"
           )}
           placeholder="Descreva o motivo da sua solicitação" />
@@ -197,8 +197,8 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
       </div>
 
       <div className="pt-2">
-        <h3 className="text-xl font-bold mb-2">Anexos necessários:</h3>
-        <div className="space-y-4">
+        <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Anexos necessários:</h3>
+        <div className="space-y-3 sm:space-y-4">
           {requiredAttachments.map((item) => {
             const isMissing = isAttachmentMissing(item.key);
 
@@ -206,29 +206,29 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
               <Card
                 key={item.key}
                 className={cn(
-                  "flex flex-col gap-2 border rounded-md p-4 bg-[var(--system-card)]",
+                  "flex flex-col gap-2 sm:gap-3 border rounded-md p-3 sm:p-4 bg-[var(--system-card)]",
                   isMissing && "border-red-500"
                 )}>
                 <Label
                   htmlFor={`file-upload-${item.key}`}
-                  className={cn(isMissing && "text-red-500")}>
+                  className={cn("text-sm sm:text-base", isMissing && "text-red-500")}>
                   {item.name}
                   {item.required && <span className="text-red-500 ml-1">*</span>}
                 </Label>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 sm:gap-3">
                   {getAttachmentByName(item.key) && getAttachmentByName(item.key)!.files.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                       {getAttachmentByName(item.key)?.files.map((file, index) => (
                         <Card
                           key={`${item.key}-${index}`}
-                          className="relative w-full h-[70px] flex flex-col items-center justify-center p-2 bg-secondary">
+                          className="relative w-full h-[70px] sm:h-[80px] flex flex-col items-center justify-center p-2 bg-secondary">
                           <button
                             onClick={() => removeFile(item.key, index)}
-                            className="absolute top-1 right-1 text-gray-400 hover:text-red-500"
+                            className="absolute top-1 right-1 text-gray-400 hover:text-red-500 z-10"
                             aria-label="Remover arquivo"
                             type="button">
-                            <X className="h-3 w-3" />
+                            <X className="h-3 w-3 sm:h-4 sm:w-4" />
                           </button>
 
                           <Popover>
@@ -236,12 +236,12 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                               <div
                                 className="cursor-pointer gap-1 w-full h-full flex flex-col items-center justify-center">
                                 <FileIcon fileName={file.name}></FileIcon>
-                                <span className="text-[10px] text-center line-clamp-1 break-all">{file.name}</span>
+                                <span className="text-[9px] sm:text-[10px] text-center line-clamp-1 break-all px-1">{file.name}</span>
                               </div>
                             </PopoverTrigger>
-                            <PopoverContent className="w-80">
-                              <div className="space-y-2">
-                                <div>
+                            <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80">
+                              <div className="space-y-2 text-sm">
+                                <div className="break-words">
                                   <span className="font-medium">Nome:</span> {file.name}
                                 </div>
                                 <div>
@@ -258,11 +258,11 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                     </div>
                   )}
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
                     <Button
                       type="button"
                       variant="outline"
-                      className={"w-40 bg-primary text-primary-foreground"}
+                      className="w-full sm:w-40 bg-primary text-primary-foreground"
                       onClick={() => triggerFileInput(item.key)}>
                       Escolher arquivos
                     </Button>
@@ -275,12 +275,12 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                       className="hidden" />
                   </div>
 
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-500 break-words">
                     Formatos aceitos: {item.allowedExtensions.join(", ")}
                   </div>
 
                   {isMissing && (
-                    <p className="text-red-500 text-xs mt-1">
+                    <p className="text-red-500 text-xs sm:text-sm mt-1">
                       Este anexo é obrigatório
                     </p>
                   )}

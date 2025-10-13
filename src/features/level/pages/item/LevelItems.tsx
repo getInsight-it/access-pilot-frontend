@@ -363,7 +363,7 @@ export default function LevelItems() {
         <HeaderContainer>
           <Breadcrumbs items={breadcrumbItems} />
 
-          <div className="pl-1 flex items-start justify-between">
+          <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
             <Heading
               title={"Itens da esfera"}
               badgeValue={totalItems}
@@ -387,7 +387,8 @@ export default function LevelItems() {
                     }}>
                     <div>
                       <Plus className="mr-2 h-4 w-4" />
-                      <span>Adicionar novo item</span>
+                      <span className="hidden sm:inline">Adicionar novo item</span>
+                      <span className="sm:hidden">Adicionar</span>
                     </div>
                   </Button>
                 </>
@@ -398,47 +399,26 @@ export default function LevelItems() {
       </div>
 
       <ScrollArea className="flex-grow" viewportClassName="px-7">
-        <div className="py-6 max-w-content-container m-auto flex flex-col gap-4">
-          <div className="w-96">
-            <Input
-              placeholder="Pesquisar itens..."
-              className="h-10 w-full"
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow className="uppercase">
-                <TableHead width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>Nome</TableHead>
-                {sphere?.type !== "BUILT_IN" && (
-                  <>
-                    <TableHead width="calc(25% - 25px)">Descrição</TableHead>
-                    {/* nao existe se nao for negocial */}
-                    <TableHead width="calc(25% - 25px)">Código externo</TableHead>
-                    <TableHead width="calc(25% - 25px)">Item da esfera pai</TableHead>
-                    <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>
-                  </>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredItems.length === 0 ? (
-                <TableRow>
-                  <TableCell className="text-center py-6">
-                    Nenhum item encontrado para esta esfera.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>{item.name}</TableCell>
-                    {sphere?.type !== "BUILT_IN" && (
-                      <>
-                        <TableCell width="calc(25% - 25px)">{item.description}</TableCell>
-                        <TableCell width="calc(25% - 25px)">{item.externalCode}</TableCell>
-                        <TableCell width="calc(25% - 25px)">{renderParentItem(item)}</TableCell>
-                        <TableCell width="100px" className="flex align-center justify-center">
+        <div className="py-6 max-w-content-container m-auto">
+          {/* Mobile View */}
+          <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+            <div className="w-96 max-w-full">
+              <Input
+                variant="dark"
+                placeholder="Pesquisar itens..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
+              />
+            </div>
+            {filteredItems.length > 0 ? (
+              <>
+                {filteredItems.map((item, index) => (
+                  <div className="table-card" key={`mobile-table-card-${index}`}>
+                    <div className="table-card__header">
+                      <div className="flex items-center justify-between">
+                        <span className="mr-2">Ações</span>
+                        {sphere?.type !== "BUILT_IN" && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <EllipsisVertical size={20} className="cursor-pointer" />
@@ -465,23 +445,142 @@ export default function LevelItems() {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-            <TableFooter>
-              <div className="p-4">
-                <PaginationWrapper
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+                        )}
+                      </div>
+                    </div>
+                    <div className="table-card__content">
+                      <div className="table-card__content__row">
+                        <span className="table-card__label">Nome</span>
+                        <span className="table-card__value">{item.name}</span>
+                      </div>
+                      {sphere?.type !== "BUILT_IN" && (
+                        <>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Descrição</span>
+                            <span className="table-card__value">{item.description || '-'}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Código externo</span>
+                            <span className="table-card__value">{item.externalCode || '-'}</span>
+                          </div>
+                          <div className="table-card__content__row">
+                            <span className="table-card__label">Item da esfera pai</span>
+                            <span className="table-card__value">{renderParentItem(item)}</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div className="p-4">
+                  <PaginationWrapper
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <Plus size={24} className="text-gray-400" />
+                </div>
+                <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
               </div>
-            </TableFooter>
-          </Table>
+            )}
+          </div>
+
+          {/* Desktop View */}
+          <div className="hidden lg:flex flex-col gap-4">
+            <div className="w-96 max-w-full">
+              <Input
+                placeholder="Pesquisar itens..."
+                className="h-10 w-full"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow className="uppercase">
+                  <TableHead width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>Nome</TableHead>
+                  {sphere?.type !== "BUILT_IN" && (
+                    <>
+                      <TableHead width="calc(25% - 25px)">Descrição</TableHead>
+                      {/* nao existe se nao for negocial */}
+                      <TableHead width="calc(25% - 25px)">Código externo</TableHead>
+                      <TableHead width="calc(25% - 25px)">Item da esfera pai</TableHead>
+                      <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>
+                    </>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredItems.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={sphere?.type !== "BUILT_IN" ? 5 : 1} className="py-12">
+                      <div className="flex flex-col items-center justify-center text-center w-full">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                          <Plus size={24} className="text-gray-400" />
+                        </div>
+                        <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell width={sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>{item.name}</TableCell>
+                      {sphere?.type !== "BUILT_IN" && (
+                        <>
+                          <TableCell width="calc(25% - 25px)">{item.description}</TableCell>
+                          <TableCell width="calc(25% - 25px)">{item.externalCode}</TableCell>
+                          <TableCell width="calc(25% - 25px)">{renderParentItem(item)}</TableCell>
+                          <TableCell width="100px" className="flex align-center justify-center">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <EllipsisVertical size={20} className="cursor-pointer" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    savePreviousRoute(location.pathname + location.search);
+                                    navigate(
+                                      PRIVATE_ROUTES.EDIT_ITEM
+                                        .replace(":id", id!)
+                                        .replace(":itemId", item.id.toString())
+                                    );
+                                  }}
+                                  className="flex flex-row gap-2">
+                                  <Edit size={16} />
+                                  <span>Editar</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleDelete(item)}
+                                  className="flex flex-row gap-2">
+                                  <Trash size={16} />
+                                  <span>Excluir</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+              <TableFooter>
+                <div className="p-4">
+                  <PaginationWrapper
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </TableFooter>
+            </Table>
+          </div>
         </div>
       </ScrollArea>
 

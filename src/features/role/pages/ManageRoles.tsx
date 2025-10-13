@@ -10,7 +10,7 @@ import { RoleResponseInterface } from "../common/types/role.model.ts";
 import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 import { Button } from "../../../common/external/ui/button.tsx";
-import { Edit, EllipsisVertical, Plus } from "lucide-react";
+import { Edit, EllipsisVertical, Plus, UserCog } from "lucide-react";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import {
@@ -143,7 +143,7 @@ export default function ManageRoles() {
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
               <TabsContent value="roles" className="flex flex-col gap-4">
-                <div className="w-96">
+                <div className="w-96 max-w-full">
                   <Input
                     placeholder="Buscar solicitação..."
                     className="h-10 w-full"
@@ -160,38 +160,51 @@ export default function ManageRoles() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedRoles && paginatedRoles.map((role) => (
-                      <TableRow key={role.id}>
-                        <TableCell width="calc(25% - 25px)">{role.label}</TableCell>
-                        <TableCell width="calc(25% - 25px)">
-                          {role.roleParent?.label || <span className="text-gray-400">Não informado</span>}
-                        </TableCell>
-                        <TableCell width="calc(25% - 25px)">{role.description}</TableCell>
-                        <TableCell width="calc(25% - 25px)">
-                          {role.level?.name || <span className="text-gray-400">Não informado</span>}
-                        </TableCell>
-                        <TableCell className="flex align-center justify-center" width="100px">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <EllipsisVertical size={20} className="cursor-pointer" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem className="flex flex-row gap-2">
-                                <Edit size={16} />
-                                <span onClick={() => {
-                                  savePreviousRoute(location.pathname + location.search);
-                                  navigate(
-                                    PRIVATE_ROUTES.ROLES_EDIT
-                                      .replace(":clientId", clientId!)
-                                      .replace(":id", role.id.toString())
-                                  );
-                                }}>Editar</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                    {paginatedRoles && paginatedRoles.length > 0 ? (
+                      paginatedRoles.map((role) => (
+                        <TableRow key={role.id}>
+                          <TableCell width="calc(25% - 25px)">{role.label}</TableCell>
+                          <TableCell width="calc(25% - 25px)">
+                            {role.roleParent?.label || <span className="text-gray-400">Não informado</span>}
+                          </TableCell>
+                          <TableCell width="calc(25% - 25px)">{role.description}</TableCell>
+                          <TableCell width="calc(25% - 25px)">
+                            {role.level?.name || <span className="text-gray-400">Não informado</span>}
+                          </TableCell>
+                          <TableCell className="flex align-center justify-center" width="100px">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <EllipsisVertical size={20} className="cursor-pointer" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem className="flex flex-row gap-2">
+                                  <Edit size={16} />
+                                  <span onClick={() => {
+                                    savePreviousRoute(location.pathname + location.search);
+                                    navigate(
+                                      PRIVATE_ROUTES.ROLES_EDIT
+                                        .replace(":clientId", clientId!)
+                                        .replace(":id", role.id.toString())
+                                    );
+                                  }}>Editar</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="py-12">
+                          <div className="flex flex-col items-center justify-center text-center w-full">
+                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                              <UserCog size={24} className="text-gray-400" />
+                            </div>
+                            <span className="text-sm text-gray-500">Nenhum papel encontrado</span>
+                          </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                   <TableFooter>
                     <div className="p-4">

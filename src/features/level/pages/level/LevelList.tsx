@@ -261,7 +261,7 @@ export const LevelList = () => {
         <HeaderContainer>
           {/* <Breadcrumbs items={breadcrumbItems} /> */}
 
-          <div className="pl-1 flex items-start justify-between">
+          <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
             <Heading
               title="Gerenciar Esferas"
               description="Gerenciar esferas cadastradas no ambiente."

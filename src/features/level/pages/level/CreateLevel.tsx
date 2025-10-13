@@ -38,10 +38,7 @@ interface SphereItem {
   sigla?: string;
 }
 
-const breadcrumbItems = [
-  { title: "Gerenciar Esferas", link: "/dashboard/levels" },
-  { title: "Criar esfera", link: "" }
-];
+
 
 export default function CreateOrEditLevel() {
   const navigate = useNavigate();
@@ -64,6 +61,11 @@ export default function CreateOrEditLevel() {
   const [sigla, setSigla] = useState("");
   const [uuid, setUuid] = useState("");
   const [hasItems, setHasItems] = useState(false);
+
+  const breadcrumbItems = [
+    { title: "Gerenciar Esferas", link: "/dashboard/levels" },
+    { title: isEditing ? "Editar esfera" : "Criar esfera", link: "" }
+  ];
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -332,7 +334,7 @@ export default function CreateOrEditLevel() {
 
             <div className="pl-1 flex items-start justify-between">
               <Heading
-                title="Nova esfera"
+                title={isEditing ? "Editar esfera" : "Nova esfera"}
                 returnButton={true}
                 onReturnClick={() => {navigate(PRIVATE_ROUTES.LEVELS)}}
               />
