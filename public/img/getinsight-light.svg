@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1066 151" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(5.55556,0,0,5.55556,89.1645,27.3679)">
+        <path d="M0,-3.533C0.014,-0.835 0.054,0.625 0.121,0.885C0.217,1.259 0.454,1.399 0.627,1.183C0.812,0.954 0.837,0.006 0.72,-2.252C0.619,-4.2 0.466,-4.914 0.145,-4.926C0.005,-4.932 -0.007,-4.82 0,-3.533" style="fill:rgb(250,254,8);"/>
+    </g>
+  <g transform="matrix(5.55556,0,0,5.55556,9.7673,99.1323)">
+        <path d="M0,-0.448C-0.802,-0.349 -1.527,-0.235 -1.61,-0.195C-1.883,-0.067 -1.764,0.107 -1.373,0.154C-0.732,0.231 3.612,0.155 3.821,0.063C4.121,-0.07 4.059,-0.384 3.707,-0.514C3.261,-0.679 1.625,-0.65 0,-0.448" style="fill:rgb(250,254,8);"/>
+    </g>
+  <g transform="matrix(5.55556,0,0,5.55556,22.6545,46.7345)">
+        <path d="M0,-1.236C-0.597,-1.938 -1.117,-2.593 -1.157,-2.691C-1.285,-3.01 -1.049,-3.068 -0.683,-2.807C-0.084,-2.38 3.512,1.029 3.615,1.268C3.764,1.612 3.466,1.832 3.067,1.673C2.563,1.47 1.21,0.187 0,-1.236" style="fill:rgb(250,254,8);"/>
+    </g>
+  <g transform="matrix(1,0,0,1,-59.542,-215.485)">
+        <text x="109.288px" y="338.093px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:136.589px;fill:white;">g<tspan x="183.966px 258.645px 333.323px 408.001px 482.68px 557.358px 632.037px 706.715px 781.394px " y="338.093px 338.093px 338.093px 338.093px 338.093px 338.093px 338.093px 338.093px 338.093px ">etInsight</tspan></text>
+    <g transform="matrix(130.516,0,0,130.516,1141.9,338.093)">
+        </g>
+    <text x="856.072px" y="338.093px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:130.516px;fill:rgb(255,254,1);">(<tspan x="927.43px 998.788px 1070.15px " y="338.093px 338.093px 338.093px ">it)</tspan></text>
+    </g>
+</svg>

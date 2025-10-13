@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1194 169" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(5.55556,0,0,5.55556,99.8553,30.6511)">
+        <path d="M0,-3.956C0.016,-0.935 0.061,0.7 0.135,0.991C0.243,1.411 0.508,1.567 0.702,1.326C0.909,1.069 0.938,0.007 0.806,-2.522C0.693,-4.703 0.521,-5.502 0.162,-5.517C0.005,-5.523 -0.008,-5.397 0,-3.956" style="fill:rgb(0,0,255);"/>
+    </g>
+  <g transform="matrix(5.55556,0,0,5.55556,10.9387,111.03)">
+        <path d="M0,-0.503C-0.898,-0.392 -1.71,-0.264 -1.804,-0.22C-2.108,-0.076 -1.976,0.119 -1.538,0.171C-0.82,0.258 4.046,0.172 4.279,0.069C4.616,-0.08 4.546,-0.431 4.151,-0.577C3.652,-0.761 1.82,-0.729 0,-0.503" style="fill:rgb(0,0,255);"/>
+    </g>
+  <g transform="matrix(5.55556,0,0,5.55556,25.3715,52.3416)">
+        <path d="M0,-1.384C-0.668,-2.17 -1.251,-2.904 -1.296,-3.014C-1.439,-3.371 -1.175,-3.436 -0.765,-3.143C-0.094,-2.665 3.933,1.152 4.049,1.42C4.216,1.806 3.882,2.052 3.435,1.873C2.87,1.647 1.355,0.21 0,-1.384" style="fill:rgb(0,0,255);"/>
+    </g>
+  <g transform="matrix(1,0,0,1,-469.815,-185.293)">
+        <text x="525.53px" y="322.61px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:152.964px;">g<tspan x="609.162px 692.793px 776.425px 860.056px 943.688px 1027.32px 1110.95px 1194.58px 1278.21px " y="322.61px 322.61px 322.61px 322.61px 322.61px 322.61px 322.61px 322.61px 322.61px ">etInsight</tspan></text>
+    <g transform="matrix(146.163,0,0,146.163,1681.95,322.61)">
+        </g>
+    <text x="1361.85px" y="322.61px" style="font-family:'Consolas-Bold', 'Consolas', monospace;font-weight:700;font-size:146.163px;">(<tspan x="1441.76px 1521.67px 1601.59px " y="322.61px 322.61px 322.61px ">it)</tspan></text>
+    </g>
+</svg>
