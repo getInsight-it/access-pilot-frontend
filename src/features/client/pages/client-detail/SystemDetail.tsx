@@ -125,7 +125,7 @@ export const SystemDetail = () => {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-background" viewportClassName="px-7">
+      <ScrollArea className="flex-grow bg-background">
         {data && (
           <div className="max-w-content-container m-auto flex flex-col h-full">
             <DetailContainer

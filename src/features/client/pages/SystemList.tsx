@@ -42,12 +42,14 @@ export default function SystemList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchFilter, setSearchFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const init = () => {
     getData(currentPage, pageSize, searchFilter);
   };
 
   const getData = async (page: number, size: number, searchFilter: string = "") => {
+    setIsLoading(true);
     try {
       const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
       setClients(pageResponse?.items || []);
@@ -60,6 +62,8 @@ export default function SystemList() {
         description: errorMessage,
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -241,14 +245,14 @@ export default function SystemList() {
                     />
                   </div>
                 </>
-              ) : (
+              ) : !isLoading ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                     <LaptopMinimal size={24} className="text-gray-400" />
                   </div>
                   <span className="text-sm text-gray-500">Nenhum sistema encontrado</span>
                 </div>
-              )}
+              ) : null}
             </div>
             <div className="hidden lg:flex flex-col gap-4">
               <div className="w-96 max-w-full">
@@ -323,7 +327,7 @@ export default function SystemList() {
                       </TableCell>
                     </TableRow>
                   ))
-                ) : (
+                ) : !isLoading ? (
                   <TableRow>
                     <TableCell colSpan={4} className="py-12">
                       <div className="flex flex-col items-center justify-center text-center w-full">
@@ -334,7 +338,7 @@ export default function SystemList() {
                       </div>
                     </TableCell>
                   </TableRow>
-                )}
+                ) : null}
               </TableBody>
               <TableFooter>
                 <div className="p-4">

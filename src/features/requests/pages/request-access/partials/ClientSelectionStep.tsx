@@ -98,8 +98,8 @@ export const ClientStep = ({
               )}
             </div>
 
-            <ScrollArea className="h-[300px] sm:h-[340px] mt-4 px-1 sm:px-2">
-              <div className="space-y-2 grid grid-cols-1 gap-2 px-1 sm:px-2">
+            <ScrollArea className="h-[300px] sm:h-[340px] mt-4 has-[>[data-state=visible]]:pr-4">
+              <div className="space-y-2 grid grid-cols-1 gap-2">
                 {clients
                   .filter((client) =>
                     client.clientId.toLowerCase().includes(searchTerm.toLowerCase())

@@ -1,7 +1,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../common/external/ui/popover.tsx";
 import { CustomInput } from "../../../../../common/external/ui/custom-input.tsx";
 import { TruncatedDescription } from "../../../../../common/components/TruncateDescription.tsx";
-import { Check, Plus, User } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { cn } from "../../../../../config/lib/utils.ts";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { useEffect, useRef, useState } from "react";
@@ -99,7 +99,8 @@ export const RoleStep = ({
                   {selectedRole && (
                     <>
                       <IconRenderer
-                        className={`${selectedRoleObject!.icon} w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0`}
+                        iconName={selectedRoleObject!.icon}
+                        className="w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0"
                         showPlaceholder={true}
                       />
                       <p className="font-bold text-base sm:text-lg break-words">
@@ -141,8 +142,8 @@ export const RoleStep = ({
               )}
             </div>
 
-            <ScrollArea className="h-[300px] sm:h-[340px] mt-4 px-1 sm:px-2">
-              <div className="space-y-2 grid grid-cols-1 gap-2 px-1 sm:px-2">
+            <ScrollArea className="h-[300px] sm:h-[340px] mt-4 has-[>[data-state=visible]]:pr-4">
+              <div className="space-y-2 grid grid-cols-1 gap-2">
                 {roles && roles
                   .filter((role) =>
                     role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -159,7 +160,8 @@ export const RoleStep = ({
 
                       <div className="flex flex-row items-center">
                         <IconRenderer
-                          className={`${role.icon} w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0`}
+                          iconName={role.icon}
+                          className="w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4 flex-shrink-0"
                           showPlaceholder={true}
                         />
                         <p className="font-bold text-base sm:text-lg break-words flex-1 min-w-0">{role.label}</p>

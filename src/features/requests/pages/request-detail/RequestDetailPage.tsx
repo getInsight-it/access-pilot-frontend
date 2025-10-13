@@ -18,7 +18,6 @@ import { RequestInterface } from "../../common/types/request.model.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
 import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarchy.model.ts";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import AttachmentConfigurationPresentation
   from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
 import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
@@ -36,7 +35,7 @@ interface RequestStatusParams {
   finalReason?: string;
 }
 
-const useRequestData = (requestId: string | undefined) => {
+const useRequestData = (requestId: string | undefined, navigate: ReturnType<typeof useNavigate>) => {
   const [request, setRequest] = useState<RequestInterface>();
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [itemHierarchy, setItemHierarchy] = useState<ItemHierarchyInterface[]>([]);
@@ -100,10 +99,12 @@ const useRequestData = (requestId: string | undefined) => {
         description: errorMessage,
         variant: "destructive"
       });
+      // Navigate back when request details are not found
+      navigate(-1);
     } finally {
       setLoading(false);
     }
-  }, [requestId, generatePresentationAttachments, toast]);
+  }, [requestId, generatePresentationAttachments, toast, navigate]);
 
   const updateRequestStatus = useCallback(async (
     params: RequestStatusParams,
@@ -191,10 +192,10 @@ const useRequestNavigation = () => {
   const navigate = useNavigate();
 
   const handleReturnClick = useCallback((): void => {
-    navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
+    navigate(-1);
   }, [navigate]);
 
-  return { handleReturnClick };
+  return { handleReturnClick, navigate };
 };
 
 const useRequestDerivedData = (request: RequestInterface | undefined) => {
@@ -226,6 +227,8 @@ export default function RequestDetailPage() {
   const { id } = useParams();
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
+  const { handleReturnClick, navigate } = useRequestNavigation();
+
   const {
     request,
     attachments,
@@ -236,9 +239,7 @@ export default function RequestDetailPage() {
     handleReject,
     handleApprove,
     handleDownload
-  } = useRequestData(id);
-
-  const { handleReturnClick } = useRequestNavigation();
+  } = useRequestData(id, navigate);
 
   const {
     selectedStatus,

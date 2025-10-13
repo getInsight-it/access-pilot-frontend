@@ -10,10 +10,15 @@ type IconName = keyof typeof icons
 
 const INITIAL_ICON_COUNT = 100;
 
-export function IconPicker() {
+interface IconPickerProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export function IconPicker({ value, onChange }: IconPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedIcon, setSelectedIcon] = useState<IconName | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState<IconName | null>((value as IconName) || null);
   const [iconNames, setIconNames] = useState<IconName[]>([]);
   const [visibleIconCount, setVisibleIconCount] = useState(INITIAL_ICON_COUNT);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,11 +33,11 @@ export function IconPicker() {
     const lowercaseSearchTerm = searchTerm.toLowerCase().trim();
     return iconNames.filter((iconName) => {
       const lowercaseIconName = iconName.toLowerCase();
-      // Verifica se o nome do ícone em inglês corresponde à pesquisa
+
       if(lowercaseIconName.includes(lowercaseSearchTerm)) {
         return true;
       }
-      // Verifica se alguma tradução em português corresponde à pesquisa
+
       return Object.entries(iconTranslations).some(([ptTerm, enTerms]) => {
         if(ptTerm.toLowerCase().includes(lowercaseSearchTerm)) {
           return enTerms.some((enTerm) => lowercaseIconName.includes(enTerm.toLowerCase()));
@@ -47,6 +52,9 @@ export function IconPicker() {
   const handleIconClick = (iconName: IconName) => {
     setSelectedIcon(iconName);
     setIsOpen(false);
+    if (onChange) {
+      onChange(iconName);
+    }
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -61,6 +69,12 @@ export function IconPicker() {
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 300);
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (value && value !== selectedIcon) {
+      setSelectedIcon(value as IconName);
+    }
+  }, [value]);
 
   return (
     <div>

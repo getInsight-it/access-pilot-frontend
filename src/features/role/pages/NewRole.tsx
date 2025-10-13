@@ -35,7 +35,8 @@ const formSchema = z.object({
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
   description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
   label: z.string().min(3, { message: "A label do sistema deve conter no mínimo 3 caracteres" }),
-  levelId: z.string().optional()
+  levelId: z.string().optional(),
+  icon: z.string().optional()
 });
 
 export default function NewRole() {
@@ -58,7 +59,8 @@ export default function NewRole() {
     name: "",
     description: "",
     label: "",
-    levelId: ""
+    levelId: "",
+    icon: ""
   };
 
   const methods = useForm({
@@ -82,7 +84,8 @@ export default function NewRole() {
         name: role.name || "",
         label: role.label || "",
         description: role.description || "",
-        levelId: role.level?.id ? role.level.id.toString() : ""
+        levelId: role.level?.id ? role.level.id.toString() : "",
+        icon: role.icon || ""
       };
 
       setInitialData(formData);
@@ -215,7 +218,7 @@ export default function NewRole() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
           <div className="h-full flex items-center justify-center">
             <div className="flex items-center justify-center min-h-[60vh]">
               <HighlightLoader />
@@ -233,7 +236,7 @@ export default function NewRole() {
   }
 
   return (
-    <ScrollArea className="h-full" viewportClassName="px-7">
+    <ScrollArea className="h-full">
       <motion.div
         className="flex flex-col h-full"
         initial={{ opacity: 0 }}
@@ -393,15 +396,16 @@ export default function NewRole() {
 
                   <div>
                     <FormField
+                      control={methods.control}
                       name="icon"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
                             Ícone <span className="italic text-sm">(opcional)</span>
                           </Label>
                           <FormControl>
                             <div className="mt-2">
-                              <IconPicker />
+                              <IconPicker value={field.value} onChange={field.onChange} />
                             </div>
                           </FormControl>
                         </FormItem>

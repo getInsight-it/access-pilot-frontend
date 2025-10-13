@@ -177,16 +177,18 @@ export default function ManageRoles() {
                                 <EllipsisVertical size={20} className="cursor-pointer" />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem className="flex flex-row gap-2">
-                                  <Edit size={16} />
-                                  <span onClick={() => {
+                                <DropdownMenuItem
+                                  className="flex flex-row gap-2"
+                                  onClick={() => {
                                     savePreviousRoute(location.pathname + location.search);
                                     navigate(
                                       PRIVATE_ROUTES.ROLES_EDIT
                                         .replace(":clientId", clientId!)
                                         .replace(":id", role.id.toString())
                                     );
-                                  }}>Editar</span>
+                                  }}>
+                                  <Edit size={16} />
+                                  <span>Editar</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
