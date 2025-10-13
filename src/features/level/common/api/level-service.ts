@@ -43,10 +43,14 @@ export class LevelService {
     levelId: number,
     itemId: number,
     pageSize: number = 10,
-    page: number = 1
+    page: number = 1,
+    name: string = ""
   ): Promise<LevelSubItemResponseInterface> {
     try {
-      const url = `${LEVEL_API.LEVELS}/${levelId}/items/${itemId}/subitems?pageSize=${pageSize}&pageIndex=${page}`;
+      let url = `${LEVEL_API.LEVELS}/${levelId}/items/${itemId}/subitems?pageSize=${pageSize}&pageIndex=${page}`;
+      if (name && name.trim() !== "") {
+        url += `&name=${encodeURIComponent(name)}`;
+      }
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
       return response.data as LevelSubItemResponseInterface;
     } catch (error) {
@@ -92,10 +96,14 @@ export class LevelService {
     pageIndex = 1,
     pageSize = 10,
     sortField = "id",
-    sortType = "ASC"
+    sortType = "ASC",
+    name = ""
   ): Promise<any | null> {
     try {
-      const url = `${LEVEL_API.LEVELS}/${levelId}/items?pageIndex=${pageIndex}&pageSize=${pageSize}&sortField=${sortField}&sortType=${sortType}`;
+      let url = `${LEVEL_API.LEVELS}/${levelId}/items?pageIndex=${pageIndex}&pageSize=${pageSize}&sortField=${sortField}&sortType=${sortType}`;
+      if (name && name.trim() !== "") {
+        url += `&name=${encodeURIComponent(name)}`;
+      }
       const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(url);
 
       if(response instanceof HttpRequestResponse) {

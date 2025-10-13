@@ -9,6 +9,8 @@ import { Label } from "@radix-ui/react-label";
 import { cn } from "../../../../config/lib/utils.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { Input } from "../../../../common/external/ui/input.tsx";
+import { Search } from "lucide-react";
 
 interface DynamicSphereInterface {
   sphere: LevelInterface;
@@ -47,10 +49,99 @@ const DynamicSphereForm = ({
   const [isHierarchyLoaded, setIsHierarchyLoaded] = useState(false);
   const [activeSelectIndex, setActiveSelectIndex] = useState<number | null>(null);
   const [hasEmittedValue, setHasEmittedValue] = useState(false);
+  const [searchTerms, setSearchTerms] = useState<Map<number, string>>(new Map());
+  const [isSearching, setIsSearching] = useState<Map<number, boolean>>(new Map());
 
   const contentRefs = useRef<Map<number, HTMLElement | null>>(new Map());
   const lastItemRefs = useRef<Map<number, HTMLElement | null>>(new Map());
   const observersRef = useRef<Map<number, IntersectionObserver>>(new Map());
+  const searchTimeoutRefs = useRef<Map<number, NodeJS.Timeout>>(new Map());
+
+  const handleSearch = useCallback((index: number, searchTerm: string) => {
+    const existingTimeout = searchTimeoutRefs.current.get(index);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    setSearchTerms(prev => {
+      const newMap = new Map(prev);
+      newMap.set(index, searchTerm);
+      return newMap;
+    });
+
+    setIsSearching(prev => {
+      const newMap = new Map(prev);
+      newMap.set(index, true);
+      return newMap;
+    });
+
+    const timeout = setTimeout(async () => {
+      try {
+        if (index === 0) {
+          const pageableItems = await levelService.getLevelItems(
+            spheresData[index].sphere.id.toString(),
+            1,
+            subItemPageSize,
+            "id",
+            "ASC",
+            searchTerm
+          );
+
+          setSpheresData(prev => {
+            const data = [...prev];
+            const items = pageableItems?.items || [];
+            const total = pageableItems?.total || 0;
+            data[index] = {
+              ...data[index],
+              items: items,
+              totalItems: total,
+              hasMoreItems: total > items.length,
+              actualPage: 1
+            };
+            return data;
+          });
+        } else if (index > 0 && spheresData[index - 1]?.selectedItemId) {
+          const parentItemId = spheresData[index - 1].selectedItemId as number;
+          const subitems = await levelService.getItemSubItems(
+            spheresData[index].sphere.id,
+            parentItemId,
+            subItemPageSize,
+            1,
+            searchTerm
+          );
+
+          setSpheresData(prev => {
+            const data = [...prev];
+            const items = subitems?.items || [];
+            const total = subitems?.total || 0;
+            data[index] = {
+              ...data[index],
+              items: items,
+              totalItems: total,
+              hasMoreItems: total > items.length,
+              actualPage: 1
+            };
+            return data;
+          });
+        }
+      } catch (error: any) {
+        const errorMessage: string = formatErrorMessages(error.error);
+        toast({
+          title: "Erro ao buscar itens",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      } finally {
+        setIsSearching(prev => {
+          const newMap = new Map(prev);
+          newMap.set(index, false);
+          return newMap;
+        });
+      }
+    }, 500);
+
+    searchTimeoutRefs.current.set(index, timeout);
+  }, [spheresData, subItemPageSize]);
 
   const fetchInitialData = async () => {
     try {
@@ -59,12 +150,14 @@ const DynamicSphereForm = ({
         spheres.map(async (sphere: any, index: number) => {
           if(index === 0) {
             const pageableItems = await levelService.getLevelItems(sphere.id);
+            const items = pageableItems?.items || [];
+            const total = pageableItems?.total || 0;
             return {
               sphere,
-              items: pageableItems.items,
-              hasMoreItems: pageableItems.total > pageableItems.items.length,
+              items: items,
+              hasMoreItems: total > items.length,
               actualPage: 1,
-              totalItems: pageableItems.total,
+              totalItems: total,
               selectedItemId: ""
             };
           } else {
@@ -78,7 +171,13 @@ const DynamicSphereForm = ({
       if (codeItem) {
         await loadItemHierarchy(codeItem, spheres);
       }
-    } catch (err: any) {
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error.error);
+      toast({
+        title: "Erro ao buscar esferas",
+        description: errorMessage,
+        variant: "destructive"
+      });
       setError("Erro ao buscar esferas");
     } finally {
       setLoading(false);
@@ -109,8 +208,8 @@ const DynamicSphereForm = ({
 
         if (index === 0) {
           const firstLevelItems = await levelService.getLevelItems(sphere.id.toString());
-          tempItems = firstLevelItems.items;
-          totalItems = firstLevelItems.total;
+          tempItems = firstLevelItems?.items || [];
+          totalItems = firstLevelItems?.total || 0;
         } else if (index > 0 && hierarchyMap.get(spheres[index - 1].id)) {
           const parentItem = hierarchyMap.get(spheres[index - 1].id);
           const subitems = await levelService.getItemSubItems(
@@ -118,8 +217,8 @@ const DynamicSphereForm = ({
             parentItem!.id,
             subItemPageSize
           );
-          tempItems = subitems.items;
-          totalItems = subitems.total;
+          tempItems = subitems?.items || [];
+          totalItems = subitems?.total || 0;
         }
 
         if (hierarchyItem) {
@@ -230,10 +329,18 @@ const DynamicSphereForm = ({
             selectedItem.id,
             subItemPageSize
           );
+          const items = newPageableItems?.items || [];
+          const total = newPageableItems?.total || 0;
           setSpheresData(prev => {
             const data = [...prev];
             data[index] = { ...data[index], selectedItemId: selectedItem.id };
-            data[index + 1] = { ...data[index + 1], items: newPageableItems.items, totalItems: newPageableItems.total };
+            data[index + 1] = {
+              ...data[index + 1],
+              items: items,
+              totalItems: total,
+              hasMoreItems: total > items.length,
+              actualPage: 1
+            };
             return data;
           });
         } catch (error: any) {
@@ -251,6 +358,8 @@ const DynamicSphereForm = ({
   const loadMoreSubItems = async (index: number) => {
     if (!spheresData || index < 0 || index >= spheresData.length) return;
 
+    const currentSearchTerm = searchTerms.get(index) || "";
+
     if(spheresData[index].hasMoreItems) {
       if(index === 0) {
         if (index > 0 && !spheresData[index - 1]) return;
@@ -263,7 +372,11 @@ const DynamicSphereForm = ({
           if (index === 0) {
             itemResponse = await levelService.getLevelItems(
               actualSphereData.sphere.id.toString(),
-              actualSphereNextItemPage
+              actualSphereNextItemPage,
+              subItemPageSize,
+              "id",
+              "ASC",
+              currentSearchTerm
             );
           } else {
             const parentSphereData = spheresData[index - 1];
@@ -272,21 +385,26 @@ const DynamicSphereForm = ({
             itemResponse = await levelService.getItemSubItems(
               actualSphereData.sphere.id,
               parentSphereData.selectedItemId as number,
-              actualSphereNextItemPage
+              subItemPageSize,
+              actualSphereNextItemPage,
+              currentSearchTerm
             );
           }
+
+          const responseItems = itemResponse?.items || [];
+          const responseTotal = itemResponse?.total || 0;
 
           setSpheresData(prev => {
             const data = [...prev];
             const existingIds = new Set(data[index].items.map(item => item.id));
-            const newItems = itemResponse.items.filter(item => !existingIds.has(item.id));
+            const newItems = responseItems.filter(item => !existingIds.has(item.id));
 
             data[index] = {
               ...data[index],
               actualPage: actualSphereNextItemPage,
               items: [...data[index].items, ...newItems] as any,
-              hasMoreItems: (data[index].items.length + newItems.length) < itemResponse.total,
-              totalItems: itemResponse.total
+              hasMoreItems: (data[index].items.length + newItems.length) < responseTotal,
+              totalItems: responseTotal
             };
             return data;
           });
@@ -317,23 +435,30 @@ const DynamicSphereForm = ({
 
         const actualSpherePageNextPage = spheresData[index].actualPage + 1;
         const res = await levelService.getItemSubItems(
-          actualSphere.id, selectedItem.id, subItemPageSize, actualSpherePageNextPage
+          actualSphere.id,
+          selectedItem.id,
+          subItemPageSize,
+          actualSpherePageNextPage,
+          currentSearchTerm
         );
 
-        if(res.items?.length > 0) {
+        const resItems = res?.items || [];
+        const resTotal = res?.total || 0;
+
+        if(resItems.length > 0) {
           setSpheresData(prev => {
             const data = [...prev];
             const indexNumber = index;
             const actualSphereData = data[indexNumber];
             const existingIds = new Set(actualSphereData.items.map(item => item.id));
-            const newItems = res.items.filter(item => !existingIds.has(item.id));
+            const newItems = resItems.filter(item => !existingIds.has(item.id));
 
             data[indexNumber] = {
               ...actualSphereData,
               items: [...actualSphereData.items, ...newItems] as LevelSubItemInterface[],
               actualPage: actualSpherePageNextPage,
-              hasMoreItems: (actualSphereData.items.length + newItems.length) < res.total,
-              totalItems: res.total
+              hasMoreItems: (actualSphereData.items.length + newItems.length) < resTotal,
+              totalItems: resTotal
             };
             return data;
           });
@@ -379,6 +504,12 @@ const DynamicSphereForm = ({
           observer.disconnect();
         }
       });
+
+      searchTimeoutRefs.current.forEach(timeout => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      });
     };
   }, []);
 
@@ -405,8 +536,20 @@ const DynamicSphereForm = ({
     }
   }, [spheresData]);
 
-  const handleSelectOpen = (index: number) => {
-    setActiveSelectIndex(index);
+  const handleSelectOpen = (index: number, isOpen: boolean) => {
+    if (isOpen) {
+      setActiveSelectIndex(index);
+    } else {
+      setSearchTerms(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(index);
+        return newMap;
+      });
+
+      if (searchTerms.get(index)) {
+        handleSearch(index, "");
+      }
+    }
   };
 
   if(loading) {
@@ -441,11 +584,7 @@ const DynamicSphereForm = ({
               disabled={index > 0 && !selectedValues[index - 1]}
               onValueChange={(value: string) => handleSelectChange(index, value)}
               value={selectedValues[index]}
-              onOpenChange={(open) => {
-                if (open) {
-                  handleSelectOpen(index);
-                }
-              }}
+              onOpenChange={(open) => handleSelectOpen(index, open)}
             >
               <SelectTrigger className={cn(
                 "w-full",
@@ -454,6 +593,21 @@ const DynamicSphereForm = ({
                 <SelectValue className="text-black" placeholder="Selecionar..." />
               </SelectTrigger>
               <SelectContent ref={setContentRef(index)}>
+                <div className="px-2 py-2 border-b border-gray-200 sticky top-0 bg-white z-10">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Pesquisar..."
+                      value={searchTerms.get(index) || ""}
+                      onChange={(e) => handleSearch(index, e.target.value)}
+                      className="pl-8 h-8 text-sm"
+                      onClick={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </div>
+                </div>
                 {items?.length > 0 ? (
                   items.map((item, idx) => {
                     const isLastItem = idx === items.length - 1;
@@ -467,7 +621,11 @@ const DynamicSphereForm = ({
                       </SelectItem>
                     );
                   })
-                ) : null}
+                ) : (
+                  <div className="px-2 py-4 text-center text-sm text-gray-500">
+                    {isSearching.get(index) ? "Buscando..." : "Nenhum item encontrado"}
+                  </div>
+                )}
               </SelectContent>
             </Select>
             {shouldShowError && (

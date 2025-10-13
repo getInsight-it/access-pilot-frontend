@@ -99,7 +99,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
         description: errorMessage,
         variant: "destructive"
       });
-      // Navigate back when request details are not found
+
       navigate(-1);
     } finally {
       setLoading(false);

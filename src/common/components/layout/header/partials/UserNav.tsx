@@ -1,15 +1,17 @@
 import { ChevronDown, HelpCircle, LogOut, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../../../external/ui/avatar.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../../../external/ui/dropdown-menu.tsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../../../../features/auth/common/AuthService.ts";
 import useAuthStore from "../../../../../store/authStore.ts";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
   const signOut = async () => {
     await authService.signOut();
+    navigate("/login");
   };
 
   const getUserDisplayName = () => {
@@ -77,7 +79,7 @@ export function UserNav() {
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/login" onClick={signOut}>
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" onClick={signOut}>
           <LogOut className="w-4 h-4 mr-2" />
           Sair
         </Link>
