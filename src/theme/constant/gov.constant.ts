@@ -63,6 +63,8 @@ export const GOV_THEME: Theme = {
     'select-options-container-background-color': GOV_COLOR_PALETTE.gray['50'],
     'select-options-container-border-color': GOV_COLOR_PALETTE.gray['200'],
     'select-options-selected-background-color': GOV_COLOR_PALETTE.gray['200'],
+    'select-search-container-background-color': GOV_COLOR_PALETTE.gray['50'],
+    'select-search-container-border-color': GOV_COLOR_PALETTE.gray['200'],
     'radio-selected-color': GOV_COLOR_PALETTE.primary['600'],
     'radio-border-color': GOV_COLOR_PALETTE.gray['200'],
     'switch-unchecked-background-color': GOV_COLOR_PALETTE.gray['10'],

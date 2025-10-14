@@ -592,7 +592,7 @@ const DynamicSphereForm = ({
                 <SelectValue className="text-black" placeholder="Selecionar..." />
               </SelectTrigger>
               <SelectContent ref={setContentRef(index)}>
-                <div className="px-2 py-2 border-b border-gray-200 sticky top-0 bg-white z-10">
+                <div className="px-2 py-2 border-b border-select-search-container-border sticky top-0 bg-select-search-container-background z-10">
                   <div className="relative">
                     <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input

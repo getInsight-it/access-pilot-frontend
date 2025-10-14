@@ -4,7 +4,7 @@ import useAuthStore from "../../../store/authStore.ts";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "../../../common/external/ui/button.tsx";
 import { cn } from "../../../config/lib/utils.ts";
-import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal } from "lucide-react";
+import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Info } from "lucide-react";
 import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
 
 import { motion } from "framer-motion";
@@ -27,6 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "../../../common/external/ui/dropdown-menu.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../common/external/ui/popover.tsx";
 import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
 import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
 import { toast } from "../../../common/external/ui/use-toast.ts";
@@ -43,6 +44,15 @@ export default function SystemList() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchFilter, setSearchFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
+
+  const handleMouseEnter = (clientId: string) => {
+    setOpenPopoverId(clientId);
+  };
+
+  const handleMouseLeave = () => {
+    setOpenPopoverId(null);
+  };
 
   const init = () => {
     getData(currentPage, pageSize, searchFilter);
@@ -139,8 +149,6 @@ export default function SystemList() {
 
         <div className="flex-none">
           <HeaderContainer>
-            {/* <Breadcrumbs items={breadcrumbItems} /> */}
-
             <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
                 title="Sistemas"
@@ -276,7 +284,32 @@ export default function SystemList() {
                 {clients && clients.length > 0 ? (
                   clients.map((client) => (
                     <TableRow key={client.id}>
-                      <TableCell width="calc(40% - 33px)">{client.clientId}</TableCell>
+                      <TableCell width="calc(40% - 33px)">
+                        <div className="flex items-center gap-2">
+                          <span>{client.name}</span>
+                          <Popover open={openPopoverId === client.clientId}>
+                            <PopoverTrigger asChild>
+                              <button
+                                className="inline-flex items-center justify-center rounded-sm p-0.5 transition-colors"
+                                onMouseEnter={() => handleMouseEnter(client.clientId)}
+                                onMouseLeave={handleMouseLeave}
+                              >
+                                <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-3"
+                              align="start"
+                              onMouseEnter={() => handleMouseEnter(client.clientId)}
+                              onMouseLeave={handleMouseLeave}
+                            >
+                              <div className="text-sm">
+                                <span className="font-medium">Client ID:</span> {client.clientId}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </TableCell>
                       <TableCell width="calc(40% - 33px)">{client.description || '-'}</TableCell>
                       <TableCell width="calc(20% - 34px)">
                         {!client.status

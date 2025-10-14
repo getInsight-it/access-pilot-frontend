@@ -203,6 +203,8 @@ const APP_COLORS_VARIABLE_COLORS = {
   'select-options-container-background': 'var(--select-options-container-background-color)',
   'select-options-container-border': 'var(--select-options-container-border-color)',
   'select-options-selected-background': 'var(--select-options-selected-background-color)',
+  'select-search-container-background': 'var(--select-search-container-background-color)',
+  'select-search-container-border': 'var(--select-search-container-border-color)',
 
   'table-background': 'var(--table-background-color)',
   'table-border': 'var(--table-border-color)',

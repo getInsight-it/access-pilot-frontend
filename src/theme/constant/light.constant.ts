@@ -64,6 +64,8 @@ export const LIGHT_THEME: Theme = {
     'select-options-container-background-color': THEME_COLOR_PALETTE.gray['50'],
     'select-options-container-border-color': THEME_COLOR_PALETTE.gray['400'],
     'select-options-selected-background-color': THEME_COLOR_PALETTE.gray['200'],
+    'select-search-container-background-color': THEME_COLOR_PALETTE.gray['50'],
+    'select-search-container-border-color': THEME_COLOR_PALETTE.gray['200'],
     'radio-selected-color': THEME_COLOR_PALETTE.primary['600'],
     'radio-border-color': THEME_COLOR_PALETTE.gray['400'],
     'switch-unchecked-background-color': THEME_COLOR_PALETTE.gray['400'],

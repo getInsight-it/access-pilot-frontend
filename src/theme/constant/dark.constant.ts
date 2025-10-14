@@ -64,6 +64,8 @@ export const DARK_THEME: Theme = {
     'select-options-container-background-color': THEME_COLOR_PALETTE.gray['900'],
     'select-options-container-border-color': THEME_COLOR_PALETTE.gray['700'],
     'select-options-selected-background-color': THEME_COLOR_PALETTE.gray['800'],
+    'select-search-container-background-color': THEME_COLOR_PALETTE.gray['900'],
+    'select-search-container-border-color': THEME_COLOR_PALETTE.gray['700'],
     'radio-selected-color': THEME_COLOR_PALETTE.primary['400'],
     'radio-border-color': THEME_COLOR_PALETTE.gray['700'],
     'switch-unchecked-background-color': THEME_COLOR_PALETTE.gray['700'],

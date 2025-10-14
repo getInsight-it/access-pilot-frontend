@@ -59,7 +59,7 @@ function App() {
           return;
         }
 
-        navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+        navigate(PRIVATE_ROUTES.DASHBOARD);
       }
     });
 

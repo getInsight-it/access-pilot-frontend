@@ -164,7 +164,6 @@ const RequestStatus = ({
             </div>
           )}
 
-          {/* Action Buttons */}
           {status === "PENDING" && (
             <div className="mt-4">
               <FormProvider {...form}>
@@ -229,7 +228,6 @@ const RequestStatus = ({
         </div>
       </div>
 
-      {/* Protocol Card - Half width */}
       <div
         className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
         <div className="flex-shrink-0 mr-4">
@@ -248,7 +246,6 @@ const RequestStatus = ({
         </div>
       </div>
 
-      {/* Date Card - Half width */}
       <div
         className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
         <div className="flex-shrink-0 mr-4">
@@ -266,7 +263,6 @@ const RequestStatus = ({
         </div>
       </div>
 
-      {/* Role Card - Half width */}
       {roleName && (
         <div
           className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
@@ -286,7 +282,6 @@ const RequestStatus = ({
         </div>
       )}
 
-      {/* Requesting User Card - Half width */}
       {requestingUserName && (
         <div
           className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
@@ -306,7 +301,6 @@ const RequestStatus = ({
         </div>
       )}
 
-      {/* Request Description Card - Full width */}
       {requestDescription && (
         <div
           className="col-span-1 md:col-span-2 flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
