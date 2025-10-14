@@ -143,8 +143,12 @@ const useDashboardData = () => {
 const useNavigation = () => {
   const navigate = useNavigate();
 
-  const handleRequestAccess = useCallback((): void => {
-    navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+  const handleRequestAccess = useCallback((client?: ClientResponseInterface): void => {
+    if (client) {
+      navigate(PRIVATE_ROUTES.REQUEST_ACCESS, { state: client });
+    } else {
+      navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+    }
   }, [navigate]);
 
   const handleSeeClientDetails = useCallback((clientId: string): void => {
@@ -480,7 +484,7 @@ export default function Dashboard() {
                   key={client.clientId}
                   client={client}
                   hasAccess={false}
-                  onActionClick={handleRequestAccess}
+                  onActionClick={() => handleRequestAccess(client)}
                 />
               ))
             ) : (

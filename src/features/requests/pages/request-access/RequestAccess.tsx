@@ -174,7 +174,7 @@ export default function RequestAccess() {
       getClients();
       const client = location.state;
       if(client) {
-        handlerSelectedClient(client);
+        handlerSelectedClient(client, true);
       }
     }
   }
@@ -183,16 +183,21 @@ export default function RequestAccess() {
     init();
   }, [isAuthenticated]);
 
-  function handlerSelectedClient(client: ClientResponseInterface) {
+  function handlerSelectedClient(client: ClientResponseInterface, autoAdvance: boolean = false) {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
     setBasicFormFieldValue({ field: "roleId", value: "", error: null });
     setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
     setBasicFormFieldValue({ field: "reason", value: "", error: null });
     setBasicFormFieldValue({ field: "attachments", value: [], error: null });
 
-    setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
+    if (autoAdvance) {
+      setStepsState({ 1: "completed", 2: "pending", 3: "pending", 4: "pending" });
+      setCurrentStep(2);
+    } else {
+      setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
+      setCurrentStep(1);
+    }
 
-    setCurrentStep(1);
     getRolesByClientId(client.clientId);
   }
 
