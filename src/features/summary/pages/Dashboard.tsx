@@ -40,6 +40,8 @@ import { StatusCardData } from "./types/summary-card-data.model.ts";
 import { EmptyState } from "./partials/EmptyState.tsx";
 import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 import useAuthStore from "../../../store/authStore.ts";
+import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
+import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
 
 const REQUEST_PAGINATION = {
   PAGE: 1,
@@ -310,142 +312,146 @@ export default function Dashboard() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-7">
-        <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
-          {summaryCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.title}
-                className={`${card.bgColor} rounded-xl flex flex-row flex-wrap items-center justify-between gap-4 p-4 flex-1`}>
-                <div className="flex items-center gap-3">
-                  <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
-                    <Icon size={20} className={card.iconColor} />
+      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-4 md:px-7">
+        <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
+            {summaryCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <div
+                  key={card.title}
+                  className={`${card.bgColor} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 md:flex-1`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
+                      <Icon size={20} className={card.iconColor} />
+                    </div>
+                    <span className={`${card.textColor} text-sm sm:text-base font-normal`}>
+                      {card.title}
+                    </span>
                   </div>
-                  <span className={`${card.textColor} text-base font-normal`}>
-                    {card.title}
+                  <span className={`${card.valueColor} text-xl font-bold break-all ml-auto sm:ml-0`}>
+                    {card.value}
                   </span>
                 </div>
-                <span className={`${card.valueColor} text-xl font-bold break-all`}>
-                  {card.value}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
 
-        <div className="grid grid-cols-2 gap-4 md:flex flex-row flex-wrap md:gap-6 mb-6">
-          {statusCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.label}
-                className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
-                <Icon size={12} className={card.iconColor} />
-                <span className={`text-sm font-medium ${card.textColor} break-all`}>
-                  {card.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
-
-        <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-          {requests.length > 0 ? (
-            requests.map((request, index) => (
-              <div className="table-card" key={`dashboard-table-card-${index}`}>
-                <div className="table-card__header">
-                  <span className="mr-2">Ações</span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <EllipsisVertical size={20} />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        className="flex flex-row gap-2"
-                        onClick={() => handleNavigateToRequestDetails(request.id)}>
-                        <ReceiptText size={16} />
-                        <span>Detalhes</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
+            {statusCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <div
+                  key={card.label}
+                  className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
+                  <Icon size={12} className={card.iconColor} />
+                  <span className={`text-xs sm:text-sm font-medium ${card.textColor} break-all text-center`}>
+                    {card.label}
+                  </span>
                 </div>
-                <div className="table-card__content">
-                  <div className="table-card__content__row">
-                    <span className="table-card__label">Sistema:</span>
-                    <span className="table-card__value">{request.role?.client?.name}</span>
+              );
+            })}
+          </div>
+        </RoleComponentGuard>
+
+        <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
+          <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
+
+          <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+            {requests.length > 0 ? (
+              requests.map((request, index) => (
+                <div className="table-card" key={`dashboard-table-card-${index}`}>
+                  <div className="table-card__header">
+                    <span className="mr-2">Ações</span>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <EllipsisVertical size={20} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          className="flex flex-row gap-2"
+                          onClick={() => handleNavigateToRequestDetails(request.id)}>
+                          <ReceiptText size={16} />
+                          <span>Detalhes</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <div className="table-card__content__row">
-                    <span className="table-card__label">Papel:</span>
-                    <span className="table-card__value">{request.role?.name}</span>
-                  </div>
-                  <div className="table-card__content__row">
-                    <span className="table-card__label">Status:</span>
-                    {RequestStatusBadge(request.status)}
+                  <div className="table-card__content">
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Sistema:</span>
+                      <span className="table-card__value">{request.role?.client?.name}</span>
+                    </div>
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Papel:</span>
+                      <span className="table-card__value">{request.role?.name}</span>
+                    </div>
+                    <div className="table-card__content__row">
+                      <span className="table-card__label">Status:</span>
+                      {RequestStatusBadge(request.status)}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <EmptyState message="Nenhuma solicitação encontrada" />
-          )}
-        </div>
+              ))
+            ) : (
+              <EmptyState message="Nenhuma solicitação encontrada" />
+            )}
+          </div>
 
-        <div className="hidden lg:flex">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
-                <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
-                <TableHead width="calc(33.4% - 34px)">Status</TableHead>
-                <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {requests.length > 0 ? (
-                requests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
-                    <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
-                    <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
-                    <TableCell width="100px" className="flex items-center justify-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="flex flex-row gap-2"
-                            onClick={() => handleNavigateToRequestDetails(request.id)}>
-                            <ReceiptText size={16} />
-                            <span>Detalhes</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+          <div className="hidden lg:flex">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
+                  <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
+                  <TableHead width="calc(33.4% - 34px)">Status</TableHead>
+                  <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {requests.length > 0 ? (
+                  requests.map((request) => (
+                    <TableRow key={request.id}>
+                      <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
+                      <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
+                      <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
+                      <TableCell width="100px" className="flex items-center justify-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => handleNavigateToRequestDetails(request.id)}>
+                              <ReceiptText size={16} />
+                              <span>Detalhes</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-6">
+                      <div className="flex justify-center w-full">
+                        <EmptyState message="Nenhuma solicitação encontrada" />
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="py-6">
-                    <div className="flex justify-center w-full">
-                      <EmptyState message="Nenhuma solicitação encontrada" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="flex flex-row justify-between ">
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </RoleComponentGuard>
+        <div className="flex flex-row justify-between">
           <div className="flex flex-col w-full">
             <div className="pt-4 pb-0">
               <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
             </div>
             {displayedAttachedClients.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {displayedAttachedClients.map((client) => (
                   <ClientCard
                     key={client.clientId}
@@ -463,11 +469,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="h-1/2 flex flex-col">
+        <div className="flex flex-col pb-6">
           <div className="pt-4 pb-0">
             <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
           </div>
-          <div className="flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {displayedDetachedClients.length > 0 ? (
               displayedDetachedClients.map((client) => (
                 <ClientCard
@@ -478,7 +484,9 @@ export default function Dashboard() {
                 />
               ))
             ) : (
-              <EmptyState message="Nenhum sistema disponível para solicitação" />
+              <div className="col-span-full">
+                <EmptyState message="Nenhum sistema disponível para solicitação" />
+              </div>
             )}
           </div>
         </div>

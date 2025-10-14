@@ -142,15 +142,33 @@ export function PaginationWrapper({
       </div>
     );
   }
-  
+
   const renderPaginationItems = () => {
     const items = [];
     const maxVisiblePages = 3;
 
+    items.push(
+      <PaginationItem key={currentPage} className="md:hidden">
+        <PaginationLink
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+          isActive={true}
+          className={cn(
+            "border border-gray-300 dark:border-gray-700",
+            "bg-gray-50 dark:bg-gray-800"
+          )}
+        >
+          {currentPage}
+        </PaginationLink>
+      </PaginationItem>
+    );
+
     if(totalPages <= 7) {
       for(let i = 1; i <= totalPages; i++) {
         items.push(
-          <PaginationItem key={i}>
+          <PaginationItem key={`desktop-${i}`} className="hidden md:flex">
             <PaginationLink
               href="#"
               onClick={(e) => {
@@ -172,7 +190,7 @@ export function PaginationWrapper({
       }
     } else {
       items.push(
-        <PaginationItem key={1}>
+        <PaginationItem key="desktop-1" className="hidden md:flex">
           <PaginationLink
             href="#"
             onClick={(e) => {
@@ -194,7 +212,7 @@ export function PaginationWrapper({
 
       if(currentPage > maxVisiblePages + 1) {
         items.push(
-          <PaginationItem key="ellipsis-start">
+          <PaginationItem key="ellipsis-start" className="hidden md:flex">
             <PaginationEllipsis />
           </PaginationItem>
         );
@@ -205,7 +223,7 @@ export function PaginationWrapper({
 
       for(let i = startPage; i <= endPage; i++) {
         items.push(
-          <PaginationItem key={i}>
+          <PaginationItem key={`desktop-${i}`} className="hidden md:flex">
             <PaginationLink
               href="#"
               onClick={(e) => {
@@ -228,7 +246,7 @@ export function PaginationWrapper({
 
       if(currentPage < totalPages - maxVisiblePages) {
         items.push(
-          <PaginationItem key="ellipsis-end">
+          <PaginationItem key="ellipsis-end" className="hidden md:flex">
             <PaginationEllipsis />
           </PaginationItem>
         );
@@ -236,7 +254,7 @@ export function PaginationWrapper({
 
       if(totalPages > 1) {
         items.push(
-          <PaginationItem key={totalPages}>
+          <PaginationItem key={`desktop-${totalPages}`} className="hidden md:flex">
             <PaginationLink
               href="#"
               onClick={(e) => {

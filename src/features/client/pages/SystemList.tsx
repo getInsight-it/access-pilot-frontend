@@ -157,7 +157,7 @@ export default function SystemList() {
           </HeaderContainer>
         </div>
 
-        <ScrollArea className="flex-grow" viewportClassName="px-7">
+        <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
           <div className="py-6 max-w-content-container m-auto">
             <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
               <div className="w-96 max-w-full">

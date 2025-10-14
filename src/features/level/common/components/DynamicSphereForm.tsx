@@ -545,7 +545,6 @@ const DynamicSphereForm = ({
         newMap.delete(index);
         return newMap;
       });
-
       if (searchTerms.get(index)) {
         handleSearch(index, "");
       }
@@ -563,7 +562,7 @@ const DynamicSphereForm = ({
   const lastActiveSelectIndex = findLastActiveSelectIndex();
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-8">
       {spheresData.map(({ sphere, items, totalItems }, index) => {
         const isLastActiveSelect = index === lastActiveSelectIndex;
         const shouldShowError = hasError && isLastActiveSelect;

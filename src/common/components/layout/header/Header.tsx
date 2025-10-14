@@ -21,7 +21,7 @@ export default function Header() {
           <MobileSidebar />
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2 md:gap-4 flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-3 md:gap-4 flex-shrink-0">
           <ThemeToggle />
           <Notifications />
           <UserNav />

@@ -239,7 +239,9 @@ export default function RequestAccess() {
             clearError("codeItem");
           }}
           isLargeScreen={isLargeScreen}
-          isFormSubmitted={isFormSubmitted} selectedRole={null}
+          isFormSubmitted={isFormSubmitted}
+          selectedRole={null}
+          selectedClientId={customForm["clientId"].value}
         />
       )
     },
@@ -451,27 +453,27 @@ export default function RequestAccess() {
                 </div>
 
                 <AutoHeight>
-                  <CardHeader>
-                    <CardTitle>
+                  <CardHeader className="p-4 sm:p-6">
+                    <CardTitle className="text-base sm:text-lg">
                       Passo {currentStep}/{steps.length}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
 
-                  <CardContent>{steps[currentStep - 1].content}</CardContent>
+                  <CardContent className="p-4 sm:p-6">{steps[currentStep - 1].content}</CardContent>
 
-                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:gap-x-4 mt-4">
+                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:gap-x-4 mt-3 sm:mt-4 p-4 sm:p-6">
                     <Button
                       type="button"
                       variant="ghost"
-                      className="bg-secondary text-primary w-full sm:w-auto"
+                      className="bg-secondary text-primary w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10"
                       onClick={handleBack}
                       disabled={currentStep === 1}>
                       Voltar
                     </Button>
                     {currentStep < steps.length
-                      ? (<Button onClick={goToNextStep} className="w-full sm:w-auto">Próximo</Button>)
-                      : (<Button onClick={handleFinalSubmit} className="w-full sm:w-auto">Enviar</Button>)
+                      ? (<Button onClick={goToNextStep} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Próximo</Button>)
+                      : (<Button onClick={handleFinalSubmit} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Enviar</Button>)
                     }
                   </CardFooter>
                 </AutoHeight>
