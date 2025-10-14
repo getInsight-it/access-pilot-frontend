@@ -11,7 +11,8 @@ export default function Login() {
   return (
     <>
       <div
-        className="relative h-screen flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+        className="relative h-dvh md:h-screen flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
+        style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
 
         <div className="w-full lg:w-[50vw] flex justify-between items-center absolute top-0 right-0 p-6 lg:p-10">
           &nbsp;

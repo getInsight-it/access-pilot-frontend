@@ -77,7 +77,7 @@ const appRoutes = [
           {
             path: PRIVATE_ROUTES.DASHBOARD,
             element: (
-              <RoleGuard roles={[UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]}>
+              <RoleGuard>
                 <Dashboard />
               </RoleGuard>
             ),

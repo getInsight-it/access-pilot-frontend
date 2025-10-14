@@ -69,7 +69,7 @@ export class RequestService {
     );
 
     if(response instanceof HttpRequestError) {
-      console.error("Erro ao atualizar solicitação");
+      throw response;
     }
   }
 

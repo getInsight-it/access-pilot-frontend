@@ -135,7 +135,7 @@ export default function ManageRoles() {
           <Separator></Separator>
         </div>
 
-        <ScrollArea className="flex-grow" viewportClassName="px-6">
+        <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-6">
           <div className="py-6 max-w-content-container m-auto">
             <Tabs defaultValue="roles">
               <TabsList className="mb-4">
@@ -143,7 +143,6 @@ export default function ManageRoles() {
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
               <TabsContent value="roles" className="flex flex-col gap-4">
-                {/* Mobile View */}
                 <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
                   <div className="w-96 max-w-full">
                     <Input

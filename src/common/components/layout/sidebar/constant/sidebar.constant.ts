@@ -20,7 +20,6 @@ export const navItems: NavItem[] = [
     icon: "dashboard",
     label: "Dashboard",
     protected: true,
-    roles: [UserRoleEnum.ADMIN, UserRoleEnum.APPROVER]
   },
   {
     title: "Gerenciar sistemas",

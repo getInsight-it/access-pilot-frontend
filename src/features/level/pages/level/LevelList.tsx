@@ -276,7 +276,7 @@ export const LevelList = () => {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow" viewportClassName="px-7">
+      <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
         <div className="py-6 max-w-content-container m-auto">
           <Table>
             <TableHeader>

@@ -224,7 +224,7 @@ export default function RequestList() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow" viewportClassName="px-7">
+      <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
         {loading ? (
           <ContentLoader />
         ) : (

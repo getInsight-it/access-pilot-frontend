@@ -48,7 +48,7 @@ export function DashboardNav({
                     "flex items-center gap-2 overflow-hidden h-11 group",
 
                     "rounded-md",
-                    "text-base font-semibold",
+                    "text-sm sm:text-base font-semibold",
                     "text-gray-700 dark:text-gray-300",
                     "hover:bg-primary-100 hover:text-primary-800 dark:hover:bg-primary-900/20 dark:hover:text-primary-800",
                     "transition-colors duration-200",
@@ -56,15 +56,16 @@ export function DashboardNav({
                       "bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-800" :
                       "transparent",
                     item.disabled && "cursor-not-allowed opacity-80",
-                    isMinimized && "px-3 justify-start"
+                    isMinimized && "px-3 justify-start",
+                    isMobileNav && "px-3"
                   )}
                   onClick={() => {
                     if(setOpen) setOpen(false);
                   }}>
                   <Icon
                     className={cn(
-                      isMinimized ? "ml-0" : "ml-4",
-                      "size-5",
+                      isMinimized ? "ml-0" : isMobileNav ? "ml-0" : "ml-4",
+                      "size-5 flex-shrink-0",
                       "text-gray-500 dark:text-gray-100",
                       "group-hover:text-primary-800",
                       isActive && "text-primary-800 dark:text-primary-800"

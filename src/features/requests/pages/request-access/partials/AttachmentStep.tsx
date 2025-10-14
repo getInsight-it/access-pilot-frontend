@@ -196,10 +196,11 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
         )}
       </div>
 
-      <div className="pt-2">
-        <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Anexos necessários:</h3>
-        <div className="space-y-3 sm:space-y-4">
-          {requiredAttachments.map((item) => {
+      {requiredAttachments.length > 0 && (
+        <div className="pt-2">
+          <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Anexos necessários:</h3>
+          <div className="space-y-3 sm:space-y-4">
+            {requiredAttachments.map((item) => {
             const isMissing = isAttachmentMissing(item.key);
 
             return (
@@ -287,9 +288,10 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                 </div>
               </Card>
             );
-          })}
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

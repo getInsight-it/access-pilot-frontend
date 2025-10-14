@@ -7,6 +7,11 @@
     @apply border-border;
   }
 
+  :root {
+    --vh: 1vh;
+    --mobile-vh: 1vh;
+  }
+
   body {
     @apply bg-background;
     color: var(--text-default-color);
@@ -88,7 +93,8 @@
 
 .canvasShift canvas, .empty-state-canvas canvas {
   width: 100%;
-  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for mobile */
+  height: calc(var(--mobile-vh, 1vh) * 100); /* Fallback for older browsers */
 }
 
 .system-canvas canvas {
@@ -109,7 +115,8 @@
 
 .sceneCanvas canvas {
   width: 100%;
-  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for mobile */
+  height: calc(var(--mobile-vh, 1vh) * 100); /* Fallback for older browsers */
 }
 
 .markdown > * {

@@ -24,7 +24,7 @@ function ThemedLogo() {
 
   return (
     <img
-      className="mx-2 h-20 w-60 block"
+      className="mx-2 h-12 w-40 md:h-20 md:w-60 block object-contain"
       src={src}
       alt="Logo"
     />

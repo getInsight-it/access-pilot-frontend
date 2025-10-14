@@ -50,6 +50,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [duplicateNames, setDuplicateNames] = useState<string[]>([]);
   const [importedConfigs, setImportedConfigs] = useState<AttachmentConfigurationInterface[]>([]);
+  const [accordionValue, setAccordionValue] = useState<string>("add-config");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -193,8 +194,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       <h3 className="text-lg font-semibold mb-4">Anexos</h3>
 
       <div className="mb-6">
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="add-config" className="border border-gray-300 dark:border-gray-700 rounded-lg">
+        <Accordion type="single" collapsible className="w-full" value={accordionValue} onValueChange={setAccordionValue}>
+          <AccordionItem value="add-config" className="border !border-outline-button-border rounded-lg">
             <AccordionTrigger className="px-4 py-3 hover:no-underline">
               <div className="flex flex-row items-center gap-2">
                 <Plus className="h-4 w-4 text-primary-600" />
@@ -295,7 +296,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             className="flex items-center gap-2 min-h-[44px]"
           >
             <Upload className="h-4 w-4 text-primary-600" />
-            <span>Importar Anexos</span>
+            <span>Importar Configuração</span>
             <input
               type="file"
               ref={fileInputRef}
@@ -318,7 +319,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             {activeConfigurations.map((config) => (
               <Card
                 key={config.name}
-                className="relative p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                className="relative p-4 border !border-outline-button-border bg-white dark:bg-gray-800"
               >
                 <button
                   onClick={() => onDeleteConfiguration(config.name)}

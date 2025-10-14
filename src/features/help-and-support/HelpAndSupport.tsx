@@ -84,7 +84,7 @@ export default function HelpAndSupport() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden relative">
+    <div className="flex h-dvh md:h-screen overflow-hidden relative" style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
       {/* Conteúdo Markdown */}
       <main
         ref={mainRef}
@@ -102,7 +102,7 @@ export default function HelpAndSupport() {
       </main>
 
       {/* Índice lateral (desktop) */}
-      <aside className="hidden md:block w-64 border-l border-gray-200 p-4 overflow-y-auto sticky top-0 h-screen">
+      <aside className="hidden md:block w-64 border-l border-gray-200 p-4 overflow-y-auto sticky top-0 h-dvh md:h-screen" style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
         <h2 className="text-lg font-semibold mb-3">Índice</h2>
         <ul className="space-y-1 text-sm">
           {headings.map((h, i) => (

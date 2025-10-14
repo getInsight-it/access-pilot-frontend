@@ -113,8 +113,8 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
   ): Promise<void> => {
     if(!requestId) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
       const formData = new FormData();
       formData.append("request", JSON.stringify(params));
 
@@ -123,8 +123,13 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       toast({ title: "Sucesso!", description: successMessage });
       await fetchRequestData();
     } catch (error: any) {
-      const formattedErrorMessage: string = formatErrorMessages(error.error);
-      toast({ title: errorMessage, description: formattedErrorMessage, variant: "destructive" });
+      console.error("Error updating request status:", error);
+      const formattedErrorMessage: string = formatErrorMessages(error?.error || error);
+      toast({
+        title: errorMessage,
+        description: formattedErrorMessage,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

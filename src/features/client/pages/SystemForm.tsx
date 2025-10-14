@@ -235,7 +235,7 @@ export default function SystemForm() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
+        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-3 sm:px-5 md:px-7">
           <div className="h-full flex items-center justify-center">
             <div className="flex items-center justify-center min-h-[60vh]">
               <HighlightLoader />
@@ -243,11 +243,11 @@ export default function SystemForm() {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-between dark:bg- border-t">
-          <Button variant="outline" disabled>
+        <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg- border-t gap-2">
+          <Button variant="outline" disabled className="text-sm sm:text-base">
             <span>Voltar</span>
           </Button>
-          <Button disabled>
+          <Button disabled className="text-sm sm:text-base">
             <div className="flex flex-row items-center gap-2">
               <Loader2 size={16} className="animate-spin" />
               <span>Carregando...</span>
@@ -283,11 +283,11 @@ export default function SystemForm() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-7">
-        <div className="py-6 max-w-content-container m-auto">
+      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-3 sm:px-5 md:px-7">
+        <div className="py-4 sm:py-5 md:py-6 max-w-content-container m-auto">
           {activeIndex === 1 && (
             <motion.div
-              className="px-6"
+              className="px-2 sm:px-4 md:px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
               <AttachmentConfigurationForm
@@ -299,7 +299,7 @@ export default function SystemForm() {
           )}
           {activeIndex === 0 && (
             <motion.div
-              className="px-6"
+              className="px-2 sm:px-4 md:px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
               <FormProvider {...methods}>
@@ -462,13 +462,13 @@ export default function SystemForm() {
         </div>
       </ScrollArea>
 
-      <footer className="px-6 h-[88px] flex items-center justify-between dark:bg- border-t">
-        <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack}>
+      <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg- border-t gap-2">
+        <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack} className="text-sm sm:text-base">
           <span>Voltar</span>
         </Button>
 
         {activeIndex === 0 && (
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} className="text-sm sm:text-base">
             <div className="flex flex-row items-center gap-2">
               <ArrowRight size={16}></ArrowRight>
               <span>Continuar</span>
@@ -477,7 +477,7 @@ export default function SystemForm() {
         )}
 
         {activeIndex === 1 && (
-          <Button onClick={methods.handleSubmit(onSubmit)} disabled={loading}>
+          <Button onClick={methods.handleSubmit(onSubmit)} disabled={loading} className="text-sm sm:text-base">
             <div className="flex flex-row items-center gap-2">
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               <span>{loading ? "Salvando..." : "Salvar"}</span>

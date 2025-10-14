@@ -5,6 +5,8 @@ import { Input } from "../../external/ui/input.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
 import { ShuffleLoader } from "../loading/ShuffleLoader.tsx";
 import { iconTranslations } from "./constant/iconTranslations.ts";
+import { cn } from "../../../config/lib/utils.ts";
+import { useMediaQuery } from "../../hooks/use-media-query.ts";
 
 type IconName = keyof typeof icons
 
@@ -22,6 +24,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
   const [iconNames, setIconNames] = useState<IconName[]>([]);
   const [visibleIconCount, setVisibleIconCount] = useState(INITIAL_ICON_COUNT);
   const [isLoading, setIsLoading] = useState(true);
+  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   useEffect(() => {
     const names = Object.keys(icons) as IconName[];
@@ -82,7 +85,14 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <PopoverTrigger asChild>
           <Button>Selecione um ícone</Button>
         </PopoverTrigger>
-        <PopoverContent side="right" align="start" className="w-[300px] p-0 ml-6">
+        <PopoverContent
+          side={isLargeScreen ? "right" : "bottom"}
+          align={isLargeScreen ? "start" : "end"}
+          className={cn(
+            "w-[calc(100vw-2rem)] sm:w-[300px] p-0",
+            isLargeScreen && "ml-6"
+          )}
+        >
           <div className="p-4 pb-4  border-b border-gray-300">
             <div className="space-y-2">
               <h4 className="font-medium leading-none pb-2">Escolha um ícone</h4>
