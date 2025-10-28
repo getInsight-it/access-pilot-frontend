@@ -1,0 +1,62 @@
+name: ci-cd.yml
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+
+  build:
+    name: build
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22.x'
+          cache: 'yarn'
+
+      - name: yarn-build
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          yarn
+          yarn build
+
+      - uses: actions/upload-artifact@v5
+        with:
+          path: dist/*.*
+          retention-days: 1
+          if-no-files-found: 'error'
+          include-hidden-files: 'true'
+          name: 'dist'
+
+
+  container:
+    name: container
+    environment: dev
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v6
+        with:
+          path: ${{ github.workspace }}/dist
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build-image
+        env:
+          TAG: ghcr.io/${{ github.repository }}:latest
+        run: |
+          docker buildx create --use --driver docker-container --bootstrap
+          export DOCKER_TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]')
+          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t "$DOCKER_TAG" --push .
+

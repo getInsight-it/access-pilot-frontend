@@ -148,7 +148,7 @@ items:
     metadata:
       annotations:
         cert-manager.io/cluster-issuer: ${CLUSTER_ISSUER}
-        # nginx.ingress.kubernetes.io/rewrite-target: /$2
+#        nginx.ingress.kubernetes.io/rewrite-target: /$2
         # nginx.ingress.kubernetes.io/whitelist-source-range: ${WHITELIST_SOURCE_RANGE}
       name: ${CI_PROJECT_NAME}
       namespace: ${NAMESPACE}-${CI_ENVIRONMENT_NAME}
