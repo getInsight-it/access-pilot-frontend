@@ -14,8 +14,6 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v6
-        env:
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         with:
           node-version: '22.x'
           cache: 'yarn'
@@ -29,7 +27,7 @@ jobs:
 
       - uses: actions/upload-artifact@v5
         with:
-          path: dist/*.*
+          path: dist
           retention-days: 1
           if-no-files-found: 'error'
           include-hidden-files: 'true'
