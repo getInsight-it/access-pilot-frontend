@@ -39,7 +39,7 @@ import { SummaryCardData } from "./types/status-card-data.model.ts";
 import { StatusCardData } from "./types/summary-card-data.model.ts";
 import { EmptyState } from "./partials/EmptyState.tsx";
 import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
-import useAuthStore from "../../../store/authStore.ts";
+import useAuthStore, { UserInfo } from "../../../store/authStore.ts";
 import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
 import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
 
@@ -68,8 +68,8 @@ const useDashboardData = () => {
         REQUEST_PAGINATION.FILTER
       );
       setRequests(pageResponse?.items || []);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao carregar solicitações",
         description: errorMessage,
@@ -85,8 +85,8 @@ const useDashboardData = () => {
     try {
       const clients = await clientService.getClientsAssociates(attached);
       setter(clients || []);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar sistemas",
         description: errorMessage,
@@ -99,8 +99,8 @@ const useDashboardData = () => {
     try {
       const summaryData = await summaryService.getSummary();
       setSummary(summaryData);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar sumário",
         description: errorMessage,
@@ -118,8 +118,8 @@ const useDashboardData = () => {
         fetchSummary(),
         fetchRequests()
       ]);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao carregar dados do dashboard",
         description: errorMessage,
@@ -168,7 +168,13 @@ const useNavigation = () => {
   };
 };
 
-const getUserDisplayName = (user: any) => {
+/**
+ * Gets the display name for a user
+ *
+ * @param user - User information object
+ * @returns Formatted user display name or fallback text
+ */
+const getUserDisplayName = (user: UserInfo | null | undefined): string => {
   if (user?.firstName && user?.lastName) {
     return `${user.firstName} ${user.lastName}`;
   }
@@ -295,10 +301,7 @@ export default function Dashboard() {
     }
   ], [summary]);
 
-  const displayedAttachedClients = useMemo(() => attachedClients, [attachedClients]);
-  const displayedDetachedClients = useMemo(() => detachedClients, [detachedClients]);
-
-  if(loading) {
+  if (loading) {
     return <LoadingState />;
   }
 
@@ -438,7 +441,7 @@ export default function Dashboard() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="py-6">
+                    <TableCell {...{ colSpan: 4 }} className="py-6">
                       <div className="flex justify-center w-full">
                         <EmptyState message="Nenhuma solicitação encontrada" />
                       </div>
@@ -454,9 +457,9 @@ export default function Dashboard() {
             <div className="pt-4 pb-0">
               <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
             </div>
-            {displayedAttachedClients.length > 0 ? (
+            {attachedClients.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayedAttachedClients.map((client) => (
+                {attachedClients.map((client) => (
                   <ClientCard
                     key={client.clientId}
                     client={client}
@@ -478,8 +481,8 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {displayedDetachedClients.length > 0 ? (
-              displayedDetachedClients.map((client) => (
+            {detachedClients.length > 0 ? (
+              detachedClients.map((client) => (
                 <ClientCard
                   key={client.clientId}
                   client={client}

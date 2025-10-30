@@ -10,8 +10,6 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
   const [scope, animate] = useAnimate();
   const containerRef = useRef<HTMLDivElement>(null);
   const containerWidth = useRef(0);
-
-  // Define tamanhos baseados na prop size
   const sizeClasses = {
     sm: { container: "w-16", loader: "h-12", img: "w-10" },
     md: { container: "w-24", loader: "h-16", img: "w-14" },
@@ -28,7 +26,6 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
     const animateLoader = async () => {
       await animate(
         [
-          // Animação apenas da barra preta por trás da imagem, não da imagem em si
           [scope.current, { x: -5, width: "0%" }],
           [scope.current, { x: 0, width: "100%" }, { duration: 1 }],
           [scope.current, { x: 0, width: "100%" }, { duration: 0.2 }],
@@ -42,9 +39,8 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
       );
     };
 
-    // Garantir que iniciamos a animação apenas uma vez
     animateLoader();
-  }, [animate, scope, containerWidth]); // Não incluímos message aqui!
+  }, [animate, scope, containerWidth]);
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -61,7 +57,6 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
         </div>
       </div>
 
-      {/* Animação apenas para as mensagens, separada da animação do loader */}
       <motion.div
         key="message-container"
         initial={{ opacity: 0 }}
@@ -72,7 +67,7 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
       >
         {message && (
           <motion.p
-            key={message} // Key baseada na mensagem para garantir transição quando muda
+            key={message}
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}

@@ -54,8 +54,8 @@ export const CreateItem: React.FC = () => {
     try {
       const levelResponse = await levelService.getLevelById(id);
       setLevel(levelResponse);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar informações da esfera",
         description: errorMessage,
@@ -87,8 +87,8 @@ export const CreateItem: React.FC = () => {
           page: 2
         });
       }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar opções de itens pais",
         description: errorMessage,
@@ -112,8 +112,8 @@ export const CreateItem: React.FC = () => {
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao adicionar item",
         description: errorMessage,

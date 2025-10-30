@@ -55,7 +55,7 @@ const DynamicSphereForm = ({
   const contentRefs = useRef<Map<number, HTMLElement | null>>(new Map());
   const lastItemRefs = useRef<Map<number, HTMLElement | null>>(new Map());
   const observersRef = useRef<Map<number, IntersectionObserver>>(new Map());
-  const searchTimeoutRefs = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const searchTimeoutRefs = useRef<Map<number, any>>(new Map());
 
   const handleSearch = useCallback((index: number, searchTerm: string) => {
     const existingTimeout = searchTimeoutRefs.current.get(index);
@@ -408,8 +408,8 @@ const DynamicSphereForm = ({
             };
             return data;
           });
-        } catch (error: any) {
-          const errorMessage: string = formatErrorMessages(error.error);
+        } catch (error: unknown) {
+          const errorMessage: string = formatErrorMessages(error);
           toast({
             title: "Erro ao buscar mais itens",
             description: errorMessage,

@@ -4,6 +4,11 @@ import { authService } from "../../features/auth/common/AuthService.ts";
 
 const httpClient: HttpClient = new HttpClient(window.env.API_URL);
 
+/**
+ * Registers bearer token authorization for HTTP requests
+ *
+ * @param isAuthenticated - Whether the user is authenticated
+ */
 const registerHttpAuthorization = async (isAuthenticated: boolean): Promise<void> => {
   if(isAuthenticated) {
     const token: string = await authService.getBearerToken() as string;
@@ -15,7 +20,7 @@ const registerHttpAuthorization = async (isAuthenticated: boolean): Promise<void
 };
 
 const originalMakeRequest = httpClient["makeRequest"];
-httpClient["makeRequest"] = async function(...args: any[]) {
+httpClient["makeRequest"] = async function(...args: unknown[]) {
   try {
     const response: HttpRequestResponse | HttpRequestError = await originalMakeRequest.apply(this, args);
     return response;
@@ -23,7 +28,6 @@ httpClient["makeRequest"] = async function(...args: any[]) {
     if(error instanceof HttpRequestError && error.status === 401) {
       window.location.href = AUTH_ROUTES.LOGIN;
     }
-    console.error("Erro ao fazer requisição:", error);
     return error;
   }
 };

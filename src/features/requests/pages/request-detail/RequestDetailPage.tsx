@@ -82,8 +82,8 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       if (request.level?.id && request.codeItem) {
         try {
           hierarchy = await levelService.getItemHierarchy(request.level.id, request.codeItem);
-        } catch (error) {
-          console.warn("Não foi possível carregar a hierarquia:", error);
+        } catch (error: unknown) {
+          console.error("Erro ao buscar hierarquia de itens:", error);
         }
       }
 
@@ -92,8 +92,8 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       setRequest(request);
       setItemHierarchy(hierarchy);
       setAttachments(presentationAttachments);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar detalhes da solicitação",
         description: errorMessage,
@@ -122,9 +122,8 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
 
       toast({ title: "Sucesso!", description: successMessage });
       await fetchRequestData();
-    } catch (error: any) {
-      console.error("Error updating request status:", error);
-      const formattedErrorMessage: string = formatErrorMessages(error?.error || error);
+    } catch (error: unknown) {
+      const formattedErrorMessage: string = formatErrorMessages(error);
       toast({
         title: errorMessage,
         description: formattedErrorMessage,
@@ -170,8 +169,8 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao fazer download do arquivo",
         description: errorMessage,
@@ -230,7 +229,7 @@ const useRequestDerivedData = (request: RequestInterface | undefined) => {
 
 export default function RequestDetailPage() {
   const { id } = useParams();
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const { handleReturnClick, navigate } = useRequestNavigation();
 

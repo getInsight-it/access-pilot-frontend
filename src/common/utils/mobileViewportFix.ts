@@ -1,13 +1,13 @@
 let resizeTimeout: number | null = null;
 
-function updateMobileVH() {
+function updateMobileVH(): void {
   const vh = window.innerHeight * 0.01;
 
   document.documentElement.style.setProperty('--mobile-vh', `${vh}px`);
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
-function debouncedUpdateMobileVH() {
+function debouncedUpdateMobileVH(): void {
   if (resizeTimeout !== null) {
     clearTimeout(resizeTimeout);
   }
@@ -18,7 +18,7 @@ function debouncedUpdateMobileVH() {
   }, 100);
 }
 
-export function initMobileViewportFix() {
+export function initMobileViewportFix(): void {
   updateMobileVH();
 
   window.addEventListener('resize', debouncedUpdateMobileVH);
@@ -39,14 +39,4 @@ export function initMobileViewportFix() {
     }
     scrollTimeout = window.setTimeout(updateMobileVH, 200);
   }, { passive: true });
-}
-
-export function cleanupMobileViewportFix() {
-  window.removeEventListener('resize', debouncedUpdateMobileVH);
-  window.removeEventListener('orientationchange', updateMobileVH);
-  document.removeEventListener('visibilitychange', updateMobileVH);
-
-  if (resizeTimeout !== null) {
-    clearTimeout(resizeTimeout);
-  }
 }

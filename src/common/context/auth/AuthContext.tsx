@@ -1,20 +1,20 @@
 import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { KeycloakRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
-import useAuthStore from "../../../store/authStore.ts";
+import useAuthStore, { UserInfo, NotificationInfo } from "../../../store/authStore.ts";
 
 export interface AuthContextType {
   isAuthenticated: boolean;
-  user: any;
+  user: UserInfo | null;
   roles: KeycloakRoles | null;
-  notification: any;
+  notification: NotificationInfo | null;
   isApprover: boolean;
   setIsAuthenticated: (auth: boolean) => void;
-  setUserInfo: (user: any) => void;
+  setUserInfo: (user: UserInfo) => void;
   setRoles: (roles: KeycloakRoles | undefined) => void;
-  setNotificationInfo: (info: any | undefined) => void;
+  setNotificationInfo: (info: NotificationInfo | undefined) => void;
 }
 
-const AuthContext = createContext<AuthContextType>({} as any);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const {
@@ -45,6 +45,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = (): AuthContextType => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth context não encontrado.');
+  if (!ctx) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return ctx;
 };

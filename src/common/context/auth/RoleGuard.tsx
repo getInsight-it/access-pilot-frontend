@@ -1,17 +1,17 @@
 import React, { ReactNode, useEffect } from "react";
 import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
-import { AUTH_ROUTES, ERROR_ROUTES } from "../../constants/routes.ts";
+import { ERROR_ROUTES } from "../../constants/routes.ts";
+import { STORAGE_KEYS } from "../../constants/storage.ts";
 import HighlightLoader from "../../components/loading/HighLightLoader.tsx";
 import { KeycloakClientRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
 import { UserRoleEnum } from "../../types/user/user.model.ts";
-import { KeycloackSystemsEnum } from "../../types/keycloack/keycloack-systems.enum.ts";
+import { KeycloakSystemsEnum } from "../../types/keycloak/keycloak-systems.enum.ts";
 
 interface RoleGuardProps {
   children: ReactNode;
   roles?: string[];
 }
-
 
 /**
  * Checks if the user has any of the required roles
@@ -25,14 +25,14 @@ const hasRequiredRoles = (roles: string[] | undefined, authData: AuthContextType
   const userRoles: string[] = [];
 
   const isAdmin: boolean = authData.roles?.clientRoles
-    ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloackSystemsEnum.ACCESS_PILOT)
-    ?.[KeycloackSystemsEnum.ACCESS_PILOT].includes(UserRoleEnum.ADMIN) ?? false;
+    ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloakSystemsEnum.ACCESS_PILOT)
+    ?.[KeycloakSystemsEnum.ACCESS_PILOT].includes(UserRoleEnum.ADMIN) ?? false;
 
   if(isAdmin) userRoles.push(UserRoleEnum.ADMIN);
   if(authData.isApprover) userRoles.push(UserRoleEnum.APPROVER);
 
   return roles
-    ? roles.every((role) => userRoles.some(userRole => userRole === role))
+    ? roles.some((role) => userRoles.includes(role))
     : true;
 }
 
@@ -42,7 +42,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
 
   useEffect(() => {
     if(location.pathname) {
-      sessionStorage.setItem("lastApproverRoute", location.pathname + location.search);
+      sessionStorage.setItem(STORAGE_KEYS.LAST_APPROVER_ROUTE, location.pathname + location.search);
     }
   }, [location]);
 
@@ -52,10 +52,6 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
         <HighlightLoader />
       </div>
     );
-  }
-
-  if(!authData.isAuthenticated) {
-    return <Navigate to={AUTH_ROUTES.LOGIN} replace />;
   }
 
   if(!hasRequiredRoles(roles, authData)) {

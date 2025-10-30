@@ -47,19 +47,4 @@ export const navItems: NavItem[] = [
   }
 ];
 
-export const supportNavItems: NavItem[] = [
-  // {
-  //   title: "Ajuda",
-  //   href: "/dashboard/levels",
-  //   icon: "globe2",
-  //   label: "Ajuda",
-  //   protected: false,
-  // },
-  // {
-  //   title: "Configurações",
-  //   href: "/dashboard/levels",
-  //   icon: "globe2",
-  //   label: "Configurações",
-  //   protected: false,
-  // }
-]
+export const supportNavItems: NavItem[] = []

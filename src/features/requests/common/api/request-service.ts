@@ -19,7 +19,7 @@ export class RequestService {
     sortType: string,
     type?: string,
     filter?: string
-  ): Promise<PaginatedResponse<RequestInterface> | null> {
+  ): Promise<PaginatedResponse<RequestInterface>> {
     const queryParams = new URLSearchParams({
       pageIndex: pageIndex.toString(),
       pageSize: pageSize.toString(),
@@ -55,8 +55,6 @@ export class RequestService {
     if(response instanceof HttpRequestError) {
       throw response;
     }
-
-    return;
   }
 
   async updateRequest(id: number, formData: FormData): Promise<void> {

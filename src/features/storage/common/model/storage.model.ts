@@ -1,13 +1,13 @@
 export interface StorageModel {
   id?: number;
-  excluded: true;
+  excluded: boolean;
   originalFilename: string;
-  filesize: 0;
+  filesize: number;
   mimeType: string;
   bucket: string;
-  isPublic: true;
-  ephemeral: true;
-  downloadCount: 0;
+  isPublic: boolean;
+  ephemeral: boolean;
+  downloadCount: number;
   fileId: string;
   ownerId: string;
   requestId: string;

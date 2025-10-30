@@ -1,7 +1,6 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { NotificationModel } from "../types/notification/notification.model.ts";
 import { PaginatedResponse } from "../types/util/paginated-response.ts";
-import { NotificationSummaryModel } from "../types/notification/notification-summary.model.ts";
 import { httpClient } from "../../config/http/http.ts";
 
 const NOTIFICATION_API = {
@@ -32,9 +31,9 @@ export class NotificationService {
     queryParams.append("pageSize", pageSize.toString());
     queryParams.append("sortField", sortField);
     queryParams.append("sortType", sortType);
-    queryParams.append("externalId", userId);
+    queryParams.append("externalId", userId ?? "");
 
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${NOTIFICATION_API.NOTIFICATIONS}?${queryParams?.toString()}`);
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${NOTIFICATION_API.NOTIFICATIONS}?${queryParams.toString()}`);
 
     if(response instanceof HttpRequestError) {
       throw response;
@@ -43,28 +42,25 @@ export class NotificationService {
     return response.data as PaginatedResponse<NotificationModel>;
   }
 
+  /**
+   * Updates the opened status of a notification
+   *
+   * @param notificationId - ID of the notification to update
+   * @param isOpened - Whether the notification has been opened
+   * @throws {HttpRequestError} If the request fails
+   */
   async updateOpenNotification(notificationId: number, isOpened: boolean): Promise<void> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(NOTIFICATION_API.NOTIFICATIONS_OPENED.replace(":id", notificationId.toString()), {
-      isOpened,
-      type: "web"
-    });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(
+      NOTIFICATION_API.NOTIFICATIONS_OPENED.replace(":id", notificationId.toString()),
+      {
+        isOpened,
+        type: "web"
+      }
+    );
 
-    if(response instanceof HttpRequestResponse) {
-      return;
-    } else {
-      console.error("Deu ruim!");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
-  }
-
-  async getSummaryNotifications(externalId: string, type: string): Promise<NotificationSummaryModel> {
-    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${NOTIFICATION_API.NOTIFICATIONS_SUMMARY}?externalId=${externalId}&type=${type}`);
-
-    if(response instanceof HttpRequestResponse) {
-      return response.data as NotificationSummaryModel;
-    } else {
-      console.error("Deu ruim!");
-    }
-    return {} as NotificationSummaryModel;
   }
 }
 
