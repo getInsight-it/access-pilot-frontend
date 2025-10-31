@@ -37,6 +37,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
@@ -47,10 +48,17 @@ jobs:
           cache: 'yarn'
 
       - run: yarn
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+
       - run: yarn lint:report
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         continue-on-error: true
 
       - uses: ldiego73/eslint-report-action@v1.1
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           report: reports/lint.json
