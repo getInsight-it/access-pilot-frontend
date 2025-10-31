@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "lint:report": "eslint . --format json --output-file reports/lint.json",
     "preview": "vite preview --port 8080"
   },
   "dependencies": {
