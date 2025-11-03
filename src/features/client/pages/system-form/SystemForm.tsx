@@ -1,215 +1,48 @@
-import { AttachmentConfigurationForm } from "../common/components/AttachmentConfigurationForm.tsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "../../../common/external/ui/use-toast.ts";
-import { AttachmentConfigurationInterface } from "../common/model/configuration.model.ts";
-import { clientService } from "../common/service/client-service.ts";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { FormControl, FormField, FormItem } from "../../../common/external/ui/form.tsx";
-import { Input } from "../../../common/external/ui/input.tsx";
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
+import { AttachmentConfigurationForm } from "../../common/components/AttachmentConfigurationForm.tsx";
+import { FormProvider } from "react-hook-form";
+import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";
+import { Input } from "../../../../common/external/ui/input.tsx";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
-import { useEffect, useState } from "react";
-import { Button } from "../../../common/external/ui/button.tsx";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
 import { ArrowRight, Loader2, Save } from "lucide-react";
-import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
-import { Textarea } from "../../../common/external/ui/textarea.tsx";
-import { ClientStatusEnum } from "../common/enum/client-status.enum.ts";
-import { Switch } from "../../../common/external/ui/switch.tsx";
-import { Label } from "../../../common/external/ui/label.tsx";
-import { ClientResponseInterface } from "../common/model/client.model.ts";
-import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
-import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
+import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
+import { Textarea } from "../../../../common/external/ui/textarea.tsx";
+import { Switch } from "../../../../common/external/ui/switch.tsx";
+import { Label } from "../../../../common/external/ui/label.tsx";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import {
+  useSystemFormData,
+  useFormNavigation,
+  useAttachmentConfigs
+} from "./useSystemForm.ts";
+import { ClientStatusEnum } from "../../common/enum/client-status.enum.ts";
+import { useNavigate } from "react-router-dom";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
   { title: "Adicionar novo sistema", link: "" }
 ];
 
-const formSchema = z.object({
-  name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
-  clientId: z
-    .string()
-    .min(3, { message: "O client Id do sistema deve conter no mínimo 3 caracteres" })
-    .regex(/^[a-z][a-z0-9-]*$/, { message: "client Id deve ser separado por hífen" }),
-  description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
-  baseUrl: z
-    .string()
-    .min(3, { message: "O baseUrl do sistema deve conter no mínimo 3 caracteres" })
-    .regex(/^(https|http?:\/\/)?([\w.-:?-]+)$/, { message: "baseUrl inválido" }),
-  managed: z.boolean().default(true),
-  status: z.string().optional().nullable().default(ClientStatusEnum.UNPUBLISHED)
-});
-
 export default function SystemForm() {
-  const { toast } = useToast();
+  const {
+    methods,
+    activeIndex,
+    setActiveIndex,
+    loading,
+    initialLoading,
+    isEditing,
+    attachmentConfigs,
+    setAttachmentConfigs,
+    onSubmit
+  } = useSystemFormData();
+  const { handleNext, handleBack } = useFormNavigation(activeIndex, setActiveIndex, methods as any);
+  const { handleAddAttachmentConfig, handleDeleteAttachmentConfig } = useAttachmentConfigs(setAttachmentConfigs);
   const navigate = useNavigate();
-  const { clientId: urlClientId } = useParams();
-
-  const isEditing = window.location.pathname.includes("edit");
-  const clientId = isEditing ? urlClientId : null;
-
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [initialData, setInitialData] = useState<any>(null);
-
-  const getClientToEdit = async () => {
-    if(!clientId) return;
-
-    try {
-      setInitialLoading(true);
-      const client: ClientResponseInterface = await clientService.fetchByClientId(clientId);
-
-      const formData = {
-        id: client.id,
-        name: client.name || "",
-        label: client.label || "",
-        clientId: client.clientId || "",
-        description: client.description || "",
-        managed: client.managed || false,
-        baseUrl: client.baseUrl || "",
-        status: client.status || ClientStatusEnum.UNPUBLISHED
-      };
-
-      setInitialData(formData);
-
-      methods.reset(formData as any);
-
-      if(client.configurations) {
-        setAttachmentConfigs(client.configurations);
-      }
-
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao buscar dados do sistema",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setInitialLoading(false);
-    }
-  };
-
-  const defaultValues = {
-    id: "",
-    name: "",
-    label: "",
-    clientId: "",
-    description: "",
-    managed: false,
-    baseUrl: "",
-    status: ClientStatusEnum.UNPUBLISHED
-  };
-
-  const methods = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
-    mode: "onChange"
-  });
-
-  const handleNext = () => {
-    if(activeIndex === 0) {
-      methods.trigger().then((isValid) => {
-        if(isValid) {
-          setActiveIndex(activeIndex + 1);
-        }
-      });
-    } else {
-      setActiveIndex(activeIndex + 1);
-    }
-  };
-
-  const handleBack = () => {
-    setActiveIndex(activeIndex - 1);
-  };
-
-  const [attachmentConfigs, setAttachmentConfigs] = useState<AttachmentConfigurationInterface[]>([]);
-  const handleAddAttachmentConfig = (config: AttachmentConfigurationInterface) => {
-    setAttachmentConfigs(prev => {
-      return [...prev, config];
-    });
-  };
-  const handleDeleteAttachmentConfig = (name: string) => {
-    setAttachmentConfigs(prev => {
-      return prev.filter(config => config.name !== name);
-    });
-  };
-
-  const onSubmit = async (form: any) => {
-    try {
-      setLoading(true);
-      const payload = { ...form, configurations: attachmentConfigs };
-
-      if(initialData?.id) {
-        payload.id = initialData.id;
-        if(initialData.configurations && initialData.configurations.length > 0) {
-          const payloadConfigNames = new Set(
-            payload.configurations.map((config: AttachmentConfigurationInterface) => config.name)
-          );
-          const payloadConfigIds = new Set(
-            payload.configurations
-              .filter((config: AttachmentConfigurationInterface) => config.id)
-              .map((config: AttachmentConfigurationInterface) => config.id)
-          );
-          const configsToDeactivate: AttachmentConfigurationInterface[] = [];
-          const deletedConfigs = initialData.configurations.filter(
-            (config: AttachmentConfigurationInterface) =>
-              !payloadConfigNames.has(config.name)
-          );
-          const replacedConfigs = initialData.configurations.filter(
-            (config: AttachmentConfigurationInterface) =>
-              payloadConfigNames.has(config.name) &&
-              config.id &&
-              !payloadConfigIds.has(config.id)
-          );
-          configsToDeactivate.push(
-            ...deletedConfigs,
-            ...replacedConfigs
-          );
-          if(configsToDeactivate.length > 0) {
-            const inactiveConfigs = configsToDeactivate.map(
-              (config: AttachmentConfigurationInterface) => ({
-                ...config,
-                active: false
-              })
-            );
-
-            payload.configurations = [...payload.configurations, ...inactiveConfigs];
-          }
-        }
-
-        await clientService.updateClient(initialData.id, payload);
-        toast({ title: "Sistema atualizado", description: "O sistema foi atualizado com sucesso" });
-        navigate("/dashboard/systems/" + form.clientId + "/details");
-      } else {
-        await clientService.createClient(payload);
-        toast({ title: "Sistema criado", description: "O sistema foi criado com sucesso" });
-        navigate("/dashboard/systems/" + form.clientId + "/details");
-      }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao realizar operação no sistema",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if(isEditing && clientId) {
-      getClientToEdit();
-    }
-  }, [clientId, isEditing]);
 
   if(initialLoading) {
     return (
@@ -243,7 +76,7 @@ export default function SystemForm() {
           </div>
         </ScrollArea>
 
-        <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg- border-t gap-2">
+        <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg-gray-900 border-t gap-2">
           <Button variant="outline" disabled className="text-sm sm:text-base">
             <span>Voltar</span>
           </Button>
@@ -462,7 +295,7 @@ export default function SystemForm() {
         </div>
       </ScrollArea>
 
-      <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg- border-t gap-2">
+      <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg-gray-900 border-t gap-2">
         <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack} className="text-sm sm:text-base">
           <span>Voltar</span>
         </Button>

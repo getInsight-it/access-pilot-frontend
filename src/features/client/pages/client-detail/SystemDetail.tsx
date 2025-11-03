@@ -22,14 +22,14 @@ import { savePreviousRoute } from "../../../../common/utils/NavigationStateManag
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 const breadcrumbItems = [
-  { title: "Gerenciar sistemas", link: "/dashboard/systems" },
-  { title: "Detalhe do sistema", link: "/dashboard/systems" }
+  { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
+  { title: "Detalhe do sistema", link: PRIVATE_ROUTES.SYSTEMS }
 ];
 
 export const SystemDetail = () => {
   const { clientId } = useParams();
-  const [data, setData] = useState<ClientResponseInterface>();
   const navigate = useNavigate();
+  const [data, setData] = useState<ClientResponseInterface>();
   const [roleItems, setRoleItems] = useState<RoleResponseInterface[]>([]);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
@@ -41,9 +41,8 @@ export const SystemDetail = () => {
           setData(response);
         }
       }),
-      catchError((error) => {
-        console.error(error);
-        const errorMessage: string = formatErrorMessages(error.error);
+      catchError((error: unknown) => {
+        const errorMessage: string = formatErrorMessages(error);
         toast({
           title: "Erro ao buscar dados do sistema",
           description: errorMessage,
@@ -64,7 +63,7 @@ export const SystemDetail = () => {
         setRoleItems(rolesData);
       }
     } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar papéis",
         description: errorMessage,

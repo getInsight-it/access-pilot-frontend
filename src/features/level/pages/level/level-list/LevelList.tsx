@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { Button, buttonVariants } from "../../../../common/external/ui/button.tsx";
+import { useEffect } from "react";
+import { Button, buttonVariants } from "../../../../../common/external/ui/button.tsx";
 import { ChevronDown, ChevronRight, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogClose,
@@ -12,236 +11,46 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "../../../../common/external/ui/dialog.tsx";
+} from "../../../../../common/external/ui/dialog.tsx";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { cn } from "../../../../config/lib/utils.ts";
+import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
+import { cn } from "../../../../../config/lib/utils.ts";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../../common/external/ui/dropdown-menu.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../common/external/ui/table.tsx";
-import { Badge } from "../../../../common/external/ui/badge.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import useAuthStore from "../../../../store/authStore.ts";
-import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
-import { levelService } from "../../common/api/level-service.ts";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-
-interface SphereItem {
-  id: string;
-  name: string;
-  description: string;
-  type: "negocial" | "externa" | "BUILT_IN" | "BUSINESS" | "EXTERNAL";
-  parent?: {
-    id: number
-    name: string
-  } | null;
-  children?: SphereItem[];
-  isBuiltIn?: boolean;
-  sigla?: string;
-  uuid?: string;
-  externalUrl?: string;
-  level?: number;
-}
-
-const BUILT_IN_SPHERES = ["FEDERAL", "ESTADUAL", "MUNICIPAL"];
-
-const getTypeDisplayName = (type: string): string => {
-  switch(type) {
-    case "BUSINESS":
-      return "Negocial";
-    case "EXTERNAL":
-      return "Externa";
-    case "BUILT_IN":
-      return "Interna";
-    default:
-      return type;
-  }
-};
+} from "../../../../../common/external/ui/dropdown-menu.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../../common/external/ui/table.tsx";
+import { Badge } from "../../../../../common/external/ui/badge.tsx";
+import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
+import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
+import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
+import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
+import { savePreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
+import { useLevelListData, useLevelOperations, getTypeDisplayName } from "./useLevelList.ts";
 
 export const LevelList = () => {
-  const [spheres, setSpheres] = useState<SphereItem[]>([]);
-  const [flatSpheres, setFlatSpheres] = useState<SphereItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(() => {
-    const initialExpanded = new Set<string>();
-    BUILT_IN_SPHERES.forEach((sphere) => initialExpanded.add(sphere));
-    return initialExpanded;
-  });
-  const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
+
+  const {
+    flatSpheres,
+    loading,
+    error,
+    expandedItems,
+    fetchSpheres,
+    toggleExpand
+  } = useLevelListData();
+
+  const { excludeItem, handleViewItems } = useLevelOperations(fetchSpheres);
 
   useEffect(() => {
-    if(isAuthenticated) fetchSpheres();
-  }, [isAuthenticated]);
-
-  const fetchSpheres = async () => {
-    try {
-      setLoading(true);
-      const data = await levelService.getLevels(1, 100, "id", "ASC");
-
-      if(!data) {
-        throw new Error("Falha ao carregar esferas");
-      }
-
-      const spheresData: SphereItem[] = data.items.map((item) => ({
-        id: item.id.toString(),
-        name: item.name,
-        description: item.description || "",
-        type: item.type as "negocial" | "externa" | "BUILT_IN" | "BUSINESS" | "EXTERNAL",
-        parent: item.parent
-          ? {
-            id: item.parent.id,
-            name: item.parent.name
-          }
-          : null,
-        isBuiltIn: item.type === "BUILT_IN",
-        sigla: item.sigla,
-        uuid: item.uuid,
-        externalUrl: item.externalUrl
-      }));
-
-      const spheresWithBuiltInFlag = spheresData.map((sphere) => ({
-        ...sphere,
-        isBuiltIn: sphere.type === "BUILT_IN" || BUILT_IN_SPHERES.includes(sphere.name)
-      }));
-
-      const treeStructure = buildTreeStructure(spheresWithBuiltInFlag);
-      setSpheres(treeStructure);
-
-      const flatList = flattenSpheres(treeStructure, 0);
-      setFlatSpheres(flatList);
-
-      setExpandedItems((prev) => {
-        const next = new Set(prev);
-        spheresWithBuiltInFlag.forEach((sphere) => {
-          if(sphere.isBuiltIn) {
-            next.add(sphere.id);
-          }
-        });
-        return next;
-      });
-
-      setError(null);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-
-      toast({
-        title: "Erro ao carregar esferas.",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+    if (isAuthenticated) {
+      fetchSpheres();
     }
-  };
+  }, [isAuthenticated, fetchSpheres]);
 
-  const buildTreeStructure = (items: SphereItem[]): SphereItem[] => {
-    const itemMap = new Map<string, SphereItem>();
-
-    items.forEach((item) => {
-      itemMap.set(item.id, { ...item, children: [] });
-    });
-
-    const rootItems: SphereItem[] = [];
-
-    items.forEach((item) => {
-      if(!item.parent) {
-        rootItems.push(itemMap.get(item.id)!);
-      } else if(itemMap.has(item.parent.id.toString())) {
-        const parent = itemMap.get(item.parent.id.toString())!;
-        parent.children = parent.children || [];
-        parent.children.push(itemMap.get(item.id)!);
-      } else {
-        rootItems.push(itemMap.get(item.id)!);
-      }
-    });
-
-    const sortItems = (items: SphereItem[]): SphereItem[] => {
-      return items
-        .sort((a, b) => {
-          if(a.isBuiltIn && b.isBuiltIn) {
-            const aIndex = BUILT_IN_SPHERES.indexOf(a.name);
-            const bIndex = BUILT_IN_SPHERES.indexOf(b.name);
-            if(aIndex >= 0 && bIndex >= 0) {
-              return aIndex - bIndex;
-            }
-            return a.name.localeCompare(b.name);
-          }
-          if(a.isBuiltIn) return -1;
-          if(b.isBuiltIn) return 1;
-          return a.name.localeCompare(b.name);
-        })
-        .map((item) => ({
-          ...item,
-          children: item.children ? sortItems(item.children) : []
-        }));
-    };
-
-    return sortItems(rootItems);
-  };
-
-  const flattenSpheres = (items: SphereItem[], level: number = 0): SphereItem[] => {
-    let result: SphereItem[] = [];
-
-    items.forEach((item) => {
-      const itemWithLevel = { ...item, level };
-      result.push(itemWithLevel);
-
-      if(item.children && item.children.length > 0 && expandedItems.has(item.id)) {
-        result = result.concat(flattenSpheres(item.children, level + 1));
-      }
-    });
-
-    return result;
-  };
-
-  const toggleExpand = (itemId: string) => {
-    setExpandedItems((prev) => {
-      const next = new Set(prev);
-      if(next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
-  };
-
-  const excludeItem = async (item: any) => {
-    try {
-      await levelService.deleteLevel(item.id);
-      await fetchSpheres();
-
-      toast({ title: "Sucesso", description: `Esfera "${item.name}" excluída com sucesso!` });
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao excluir esfera",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleViewItems = async (item: SphereItem) => {
-    navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(":id", item.id));
-  };
-
-  useEffect(() => {
-    if(spheres.length > 0) {
-      const flatList = flattenSpheres(spheres, 0);
-      setFlatSpheres(flatList);
-    }
-  }, [expandedItems, spheres]);
-
-  if(loading) {
+  if (loading) {
     return (
       <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
         <HighlightLoader />
@@ -249,7 +58,11 @@ export const LevelList = () => {
     );
   }
 
-  if(error) return (<div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>);
+  if (error) {
+    return (
+      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>
+    );
+  }
 
   return (
     <motion.div
@@ -259,8 +72,6 @@ export const LevelList = () => {
 
       <div className="flex-none">
         <HeaderContainer>
-          {/* <Breadcrumbs items={breadcrumbItems} /> */}
-
           <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
             <Heading
               title="Gerenciar Esferas"

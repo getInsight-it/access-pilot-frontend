@@ -12,12 +12,12 @@ export interface UserInfo {
   externalId?: string;
 }
 
-interface NotificationInfo {
+export interface NotificationInfo {
   unread: number;
   notifications: NotificationModel[];
 }
 
-interface AuthState {
+export interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo | null;
   roles: KeycloakRoles | null;

@@ -6,10 +6,10 @@ export type ClientResponseInterface = {
   description?: string;
   name?: string;
   label: string;
-  clientId: string,
-  clientUUID: string,
-  managed: boolean,
+  clientId: string;
+  clientUUID: string;
+  managed: boolean;
   status?: string;
   baseUrl?: string;
-  configurations: AttachmentConfigurationInterface[]
+  configurations: AttachmentConfigurationInterface[];
 }

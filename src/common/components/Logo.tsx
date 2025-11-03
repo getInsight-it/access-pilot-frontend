@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useTheme } from '../../theme/theme-provider.tsx' // Usando o contexto customizado
+import { useTheme } from '../../theme/theme-provider.tsx'
 
 export const Logo = () => {
-  const { theme } = useTheme() // Usando o contexto customizado
+  const { theme } = useTheme()
   const [src, setSrc] = useState('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
 
   useEffect(() => {

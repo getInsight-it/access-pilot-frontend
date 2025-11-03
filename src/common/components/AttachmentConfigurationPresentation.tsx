@@ -12,7 +12,7 @@ export interface FileAttachment {
 interface AttachmentConfigurationPresentationProps {
   attachments: FileAttachment[];
   direction?: "row" | "column";
-  onDownload?: (file: File, attachmentKey: string) => void;
+  onDownload?: (file: File) => any;
   className?: string;
   collapsible?: boolean;
   itemsPerRow?: number;
@@ -107,7 +107,7 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
                       {onDownload && (
                         <button
                           className="flex-shrink-0 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                          onClick={() => onDownload(file, attachment.key)}
+                          onClick={() => onDownload(file)}
                           title="Fazer download"
                         >
                           <Download className="h-4 w-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />

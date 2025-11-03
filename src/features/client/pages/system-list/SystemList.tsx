@@ -1,17 +1,15 @@
-import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from "../../../store/authStore.ts";
-import { useEffect, useState } from "react";
-import { buttonVariants } from "../../../common/external/ui/button.tsx";
-import { cn } from "../../../config/lib/utils.ts";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { Link } from "react-router-dom";
+import useAuthStore, { type AuthState } from "../../../../store/authStore.ts";
+import { useEffect } from "react";
+import { buttonVariants } from "../../../../common/external/ui/button.tsx";
+import { cn } from "../../../../config/lib/utils.ts";
 import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Info } from "lucide-react";
-import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 
 import { motion } from "framer-motion";
-import { clientService } from "../common/service/client-service.ts";
-import { ClientResponseInterface } from "../common/model/client.model.ts";
-import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
-import { Input } from "../../../common/external/ui/input.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
+import { Input } from "../../../../common/external/ui/input.tsx";
 import {
   Table,
   TableBody,
@@ -20,125 +18,48 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../common/external/ui/table.tsx";
+} from "../../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "../../../common/external/ui/dropdown-menu.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../common/external/ui/popover.tsx";
-import { PaginationWrapper } from "../../../common/components/PaginationWrapper.tsx";
-import { savePreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
-import { toast } from "../../../common/external/ui/use-toast.ts";
-import { ClientStatusEnum, ClientStatusTranslationEnum } from "../common/enum/client-status.enum.ts";
-import { Badge } from "../../../common/external/ui/badge.tsx";
-import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
+} from "../../../../common/external/ui/dropdown-menu.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../common/external/ui/popover.tsx";
+import { PaginationWrapper } from "../../../../common/components/PaginationWrapper.tsx";
+import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { ClientStatusEnum, ClientStatusTranslationEnum } from "../../common/enum/client-status.enum.ts";
+import { Badge } from "../../../../common/external/ui/badge.tsx";
+import {
+  useSystemListData,
+  useSystemOperations,
+  useSystemNavigation,
+  usePopoverState
+} from "./useSystemList.ts";
 
 export default function SystemList() {
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-  const [clients, setClients] = useState<ClientResponseInterface[]>([]);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [pageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchFilter, setSearchFilter] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
-
-  const handleMouseEnter = (clientId: string) => {
-    setOpenPopoverId(clientId);
-  };
-
-  const handleMouseLeave = () => {
-    setOpenPopoverId(null);
-  };
-
-  const init = () => {
-    getData(currentPage, pageSize, searchFilter);
-  };
-
-  const getData = async (page: number, size: number, searchFilter: string = "") => {
-    setIsLoading(true);
-    try {
-      const pageResponse = await clientService.getClientsPaginated(page, size, "id", "asc", searchFilter);
-      setClients(pageResponse?.items || []);
-      setTotalUsers(pageResponse?.total ?? 0);
-      setTotalPages(Math.ceil((pageResponse?.total ?? 0) / size));
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao carregar sistemas",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const syncClient = async (client: ClientResponseInterface) => {
-    try {
-      await clientService.syncClient(client.clientId);
-      toast({
-        title: "Sistema sincronizado",
-        description: "O sistema foi sincronizado com sucesso"
-      });
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao sincronizar sistema",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }
-
-  const handlePublicationChange = async (client: ClientResponseInterface) => {
-    const newStatus = client.status === ClientStatusEnum.PUBLISHED ? ClientStatusEnum.UNPUBLISHED : ClientStatusEnum.PUBLISHED;
-    const toastMessage = client.status === ClientStatusEnum.PUBLISHED ? "despublicado" : "publicado";
-
-    try {
-      const updatedClient = await clientService.updateSystemPublication(client.id!, newStatus);
-
-      setClients(prevClients =>
-        prevClients.map(c => c.id === updatedClient.id ? updatedClient : c)
-      );
-
-      toast({
-        title: "Sistema atualizado",
-        description: `O sistema foi ${toastMessage} com sucesso!`
-      });
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: `Erro ao ${toastMessage} sistema`,
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }
+  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
+  const {
+    clients,
+    setClients,
+    totalSystems,
+    currentPage,
+    totalPages,
+    searchFilter,
+    isLoading,
+    handlePageChange,
+    handleSearchChange,
+    init
+  } = useSystemListData();
+  const { syncClient, handlePublicationChange } = useSystemOperations(setClients);
+  const { handleNavigateFromSystems } = useSystemNavigation();
+  const { openPopoverId, handleMouseEnter, handleMouseLeave } = usePopoverState();
 
   useEffect(() => {
     if(isAuthenticated) {
       init();
     }
-  }, [isAuthenticated, currentPage, searchFilter]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchFilter(value);
-    setCurrentPage(1);
-  };
-
-  const navigate = useNavigate();
-  const handleNavigateFromSystems = (route: string, clientId: string) => {
-    savePreviousRoute(PRIVATE_ROUTES.SYSTEMS);
-    navigate(route.replace(":clientId", clientId));
-  }
+  }, [isAuthenticated, currentPage, searchFilter, init]);
 
   return (
     <>
@@ -152,7 +73,7 @@ export default function SystemList() {
             <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
               <Heading
                 title="Sistemas"
-                badgeValue={totalUsers}
+                badgeValue={totalSystems}
                 description="Gerenciar sistemas cadastrados no ambiente."
               />
               <Link
@@ -215,7 +136,7 @@ export default function SystemList() {
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
                                 <Cog size={16}/>
-                                {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                                {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -248,7 +169,7 @@ export default function SystemList() {
                     <PaginationWrapper
                       currentPage={currentPage}
                       totalPages={totalPages}
-                      totalItems={totalUsers}
+                      totalItems={totalSystems}
                       onPageChange={(page) => handlePageChange(page)}
                     />
                   </div>
@@ -352,7 +273,7 @@ export default function SystemList() {
                             {client.managed && (
                               <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
                                 <Cog size={16}/>
-                                {client.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
+                                {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -362,7 +283,7 @@ export default function SystemList() {
                   ))
                 ) : !isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="py-12">
+                    <TableCell {...{ colSpan: 2 }} className="py-12">
                       <div className="flex flex-col items-center justify-center text-center w-full">
                         <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                           <LaptopMinimal size={24} className="text-gray-400" />
@@ -378,7 +299,7 @@ export default function SystemList() {
                   <PaginationWrapper
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    totalItems={totalUsers}
+                    totalItems={totalSystems}
                     onPageChange={(page) => handlePageChange(page)}
                   />
                 </div>

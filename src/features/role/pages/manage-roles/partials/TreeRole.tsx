@@ -1,25 +1,14 @@
 import { useEffect, useState } from "react";
 import { StaticTreeDataProvider, Tree, UncontrolledTreeEnvironment } from "react-complex-tree";
 import "react-complex-tree/lib/style-modern.css";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { toast } from "../../../../../common/external/ui/use-toast.ts";
 import { catchError, finalize, from, tap } from "rxjs";
-import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
-import { roleService } from "../../common/service/role-service.ts";
-import { RoleResponseInterface } from "../../common/types/role.model.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-
-type TreeRoleType = {
-  index: string,
-  isFolder: boolean,
-  children: string[],
-  data: any,
-}
-
-interface TreeRoleProps {
-  data?: RoleResponseInterface[],
-  onSuccess?: () => Promise<void>
-}
+import { StepLoader } from "../../../../../common/components/loading/StepLoader.tsx";
+import { Button } from "../../../../../common/external/ui/button.tsx";
+import { roleService } from "../../../common/service/role-service.ts";
+import { RoleResponseInterface } from "../../../common/types/role.model.ts";
+import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
+import { RoleUpdatePayload, TreeRoleProps, TreeRoleType } from "../../../common/types/tree-role.model.ts";
 
 function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   const [items, setItems] = useState<{ [key: string]: TreeRoleType }>({});
@@ -38,16 +27,16 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
       root: {
         index: "root",
         isFolder: true,
-        children: validData.filter(o => o.roleParent === undefined).map((_) => `${_.name}`) || [""],
+        children: validData.filter(o => o.roleParent === undefined).map((_) => `${_.name}`),
         data: "Root item"
-      } as TreeRoleType
+      }
     };
 
     validData.forEach((item) => {
       items[`${item.name}`] = {
         index: `${item.name}`,
         isFolder: true,
-        children: validData.filter(o => o?.roleParent?.id === item?.id).map((o) => `${o.name}`) || [""],
+        children: validData.filter(o => o?.roleParent?.id === item?.id).map((o) => `${o.name}`),
         data: item.name
       };
     });
@@ -68,7 +57,7 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
     });
 
     validData.forEach((item) => {
-      const parentName = !item?.name || childParentMap[item?.name];
+      const parentName = item?.name ? childParentMap[item.name] : undefined;
       item.roleParent = parentName ? validData.find(o => o.name === parentName) : undefined;
     });
 
@@ -77,17 +66,25 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
 
   const handleSave = () => {
     const roleDTOList = convertToRoleDTOList(items);
-    const clientId = roleDTOList[0].client!.id;
-    const rolePayload = roleDTOList.map((role) => {
-      return {
-        id: role.id,
-        parentId: role.roleParent?.id,
-        clientId
-      }
-    });
+
+    if (!roleDTOList.length || !roleDTOList[0].client?.id) {
+      toast({
+        title: "Erro",
+        description: "Dados inválidos para atualização",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const clientId = roleDTOList[0].client.id;
+    const rolePayload: RoleUpdatePayload[] = roleDTOList.map((role) => ({
+      id: role.id,
+      parentId: role.roleParent?.id,
+      clientId
+    }));
 
     setLoading(true);
-    from(roleService.update(rolePayload as any)).pipe(
+    from(roleService.update(rolePayload as unknown as RoleResponseInterface[])).pipe(
       tap(() => {
         toast({
           title: "Papéis atualizados",
@@ -95,8 +92,8 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
         });
         onSuccess?.();
       }),
-      catchError((error) => {
-        const errorMessage: string = formatErrorMessages(error.error);
+      catchError((error: unknown) => {
+        const errorMessage: string = formatErrorMessages(error);
         toast({
           title: "Erro ao atualizar papéis",
           description: errorMessage,

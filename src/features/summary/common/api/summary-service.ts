@@ -17,8 +17,8 @@ export class SummaryService {
   async getSummary(): Promise<SummaryModel> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(SUMMARY_API.SUMMARIES);
 
-    if(response instanceof HttpRequestError) {
-      throw response
+    if (response instanceof HttpRequestError) {
+      throw response;
     }
 
     return response.data as SummaryModel;

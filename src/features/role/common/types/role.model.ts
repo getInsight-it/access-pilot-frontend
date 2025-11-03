@@ -22,6 +22,6 @@ export interface RoleResponseInterface {
   clientName: string;
   roleParent?: RoleResponseInterface;
   client?: ClientResponseInterface;
-  level: LevelInterface,
-  levelId?: number,
+  level: LevelInterface;
+  levelId?: number;
 }
