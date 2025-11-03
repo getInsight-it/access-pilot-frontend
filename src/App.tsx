@@ -60,7 +60,7 @@ function App() {
 
     authService.onInitEvent().subscribe((event) => {
       if(event !== AuthInitEvent.INITIALIZE) {
-        setIsInitialized(true); // Inicialização completa
+        setIsInitialized(true);
       }
 
       if(event === AuthInitEvent.ERROR) {
