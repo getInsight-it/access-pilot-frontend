@@ -1,5 +1,9 @@
 # Orientações para contribuição
 
+## Com o que contribuir?
+
+O Access Pilot possui um _roadmap_ e nós gostaríamos de segui-lo. Por isso, daremos preferência às contribuições que estejam alinhadas com as metas definidas. Além disso, qualquer correção de bug também é muito bem-vinda.
+
 ## Padronização de commits
 
 As mensagens dos commits deverão seguir o padrão [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
@@ -32,8 +36,7 @@ Os tipos de commit são:
 
 Exemplo: `git commit -a -m "feat: nova funcionalidade XPTO"`
 
-`Escopo`: fornece informações contextuais adicionais e está contido entre parênteses. Normalmente, a utilização do escopo acontece em commits específicos e
-pontuais.
+`Escopo`: fornece informações contextuais adicionais e está contido entre parênteses. Normalmente, a utilização do escopo acontece em commits específicos e pontuais.
 
 Exemplo: `git commit -a -m "feat(user): nova tela de usuário"`
 
@@ -45,8 +48,7 @@ Exemplo: `git commit -a -m "feat: descrição do meu commit vai aqui"`
 
 Exemplo: `git commit -a -m "feat: descrição" -m "corpo da mensagem"`
 
-`rodapé`: rodapé da mensagem opcional, informações adicionais ao commit ou informações quando alguma modificação irá quebrar alguma compatbilidade. Geralmente
-inicial com o uso de palavra de identificação seguida pelo símbolo *:* (dois pontos).
+`rodapé`: rodapé da mensagem opcional, informações adicionais ao commit ou informações quando alguma modificação irá quebrar alguma compatbilidade. Geralmente inicial com o uso de palavra de identificação seguida pelo símbolo *:* (dois pontos).
 
 Exemplos:
 
@@ -60,8 +62,7 @@ Para mais informações, acesse a documentação oficial [Conventional Commits](
 
 Para o funcionamento correto do *semantic-release*, é necessário que os commits estejam seguindo o padrão *Conventional Commits* explicado acima.
 
-O *semantic-release* irá analisar as tags de versões e os commits após a última versão, a partir do resultado dessa análise, será determinado qual o tipo de
-versão que será gerada.
+O *semantic-release* irá analisar as tags de versões e os commits após a última versão, a partir do resultado dessa análise, será determinado qual o tipo de versão que será gerada.
 
 Exemplo de commits para gerar novas versões.
 
