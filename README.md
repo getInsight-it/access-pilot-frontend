@@ -15,7 +15,7 @@
 ![yarn](https://img.shields.io/badge/Yarn-1.22.22-2C8EBB?style=for-the-badge&logo=yarn)
 
 
-> "Fear is the path to the dark side. Fear leads to anger. Anger leads to hate. Hate leads to suffering." — Yoda
+> “Smaller in number are we, but larger in mind.” — Yoda
 
 ---
 
@@ -100,3 +100,7 @@ yarn lint
 ## 🤝 Como contribuir?
 
 Para contribuir com o projeto, começe lendo as orientações do [CONTRIBUTING.md](CONTRIBUTING.md). Além disso, esperamos que todos os participantes da comunidade cumpram nosso [Código de Conduta](CODE_OF_CONDUCT.md). Por favor, leia-o e siga-o.
+
+## Licença
+
+O Access Pilot e todos os seus derivados estão licenciados sob os termos da licença [Apache v2.0](LICENSE).
