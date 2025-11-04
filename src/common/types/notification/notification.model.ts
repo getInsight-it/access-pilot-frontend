@@ -1,3 +1,6 @@
+/**
+ * Notification model representing a user notification
+ */
 export interface NotificationModel {
   id: number;
   uuid: string;
@@ -5,7 +8,7 @@ export interface NotificationModel {
   description: string;
   isOpened: boolean;
   type: string;
-  ultimaAlteracao: string;
+  lastModified: string;
   requestId: number;
   priority: number;
 }

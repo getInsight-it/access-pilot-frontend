@@ -39,6 +39,8 @@ export default function Notifications() {
   }, [isOpen]);
 
   const loadNotifications = async () => {
+    if(!authData || !authData.user) return;
+
     try {
       const notificationsResponse = await notificationService.getNotifications(
         "WEB",
@@ -54,8 +56,8 @@ export default function Notifications() {
       setPage(page + 1);
       setNotifications(newNotifications);
       setHasMoreItems(notificationsResponse.total > newNotifications.length);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
 
       toast({
         title: "Erro ao buscar notificações.",
@@ -82,7 +84,6 @@ export default function Notifications() {
             <header className="flex flex-row justify-between items-center p-3 sm:p-4 gap-2">
               <h4 className="text-base sm:text-lg font-semibold">Notificações</h4>
               <div className="flex flex-row gap-1 items-center cursor-pointer flex-shrink-0">
-                {/* TODO trocar cor para accent */}
                 <CheckCheck className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
                 <span className="hidden sm:inline text-xs sm:text-sm text-blue-500 whitespace-nowrap">Marcar todas como lido</span>
                 <span className="sm:hidden text-xs text-blue-500 whitespace-nowrap">Marcar lidas</span>
@@ -94,7 +95,6 @@ export default function Notifications() {
                 <div className="flex flex-row justify-between items-center gap-2 p-3 sm:p-4 border-b border-gray-100" key={notification.id}>
                   <p className="text-sm sm:text-base break-words min-w-0 flex-1">{notification.title}</p>
                   <div className="flex flex-row gap-2 flex-shrink-0">
-                    {/* TODO trocar cor para accent */}
                     {notification.isOpened
                       ? <CheckCheck className="h-4 w-4 text-blue-500 flex-shrink-0" />
                       : <Check className="h-4 w-4 text-gray-400 cursor-pointer flex-shrink-0" />

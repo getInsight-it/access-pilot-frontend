@@ -18,7 +18,6 @@ export class RoleService {
   async getRoleById(id?: string): Promise<RoleResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}/${id}`);
 
-
     if(response instanceof HttpRequestError) {
       throw response;
     }
@@ -26,31 +25,23 @@ export class RoleService {
     return response.data as RoleResponseInterface;
   }
 
-  async getRolesByClientId(clientId: string): Promise<RoleResponseInterface[] | null> {
+  async getRolesByClientId(clientId: string): Promise<RoleResponseInterface[]> {
     if(!clientId) {
-      console.error("clientId está undefined ou null");
-      return null;
+      throw new Error("Client ID is required");
     }
 
-    const queryParams = new URLSearchParams({ clientId: clientId.toString() });
+    const queryParams = new URLSearchParams({ clientId });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
 
-    try {
-      const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
-
-      if(response instanceof HttpRequestResponse) {
-        return response.data as RoleResponseInterface[];
-      } else {
-        console.error("Erro ao buscar roles");
-      }
-    } catch (error) {
-      console.error("Erro durante a requisição:", error);
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return response.data as RoleResponseInterface[];
   }
 
   async getRolesByClientIdV2(clientId: string): Promise<HttpRequestResponse | HttpRequestError> {
-    const queryParams = new URLSearchParams({ clientId: clientId.toString() });
+    const queryParams = new URLSearchParams({ clientId });
     return this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
   }
 
@@ -58,15 +49,19 @@ export class RoleService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(ROLE_API.ROLES, data);
 
     if(!(response instanceof HttpRequestResponse)) {
-      console.error("Erro ao atualizar client");
+      throw response;
     }
   }
 
   async deleteRole(roleId?: number): Promise<void> {
+    if(!roleId) {
+      throw new Error("Role ID is required");
+    }
+
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.delete(`${ROLE_API.ROLES}/${roleId}`);
 
     if(!(response instanceof HttpRequestResponse)) {
-      console.error("Erro ao deletar role");
+      throw response;
     }
   }
 
@@ -81,6 +76,10 @@ export class RoleService {
   }
 
   async updateRole(id?: number, roleData?: RoleResponseInterface): Promise<RoleResponseInterface> {
+    if(!id || !roleData) {
+      throw new Error("Role ID and data are required");
+    }
+
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.put(`${ROLE_API.ROLES}/${id}`, roleData);
 
     if(response instanceof HttpRequestError) {

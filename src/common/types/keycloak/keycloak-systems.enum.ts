@@ -1,3 +1,4 @@
-export enum KeycloackSystemsEnum {
+export enum KeycloakSystemsEnum {
   ACCESS_PILOT = 'accesspilot-frontend'
 }
+

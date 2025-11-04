@@ -33,7 +33,6 @@ export function PageDropdown({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -93,12 +92,10 @@ export function PaginationWrapper({
 
     return (
       <div className={cn("flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full", className)}>
-        {/* Center: Item range */}
         <div className="text-sm text-gray-700">
           {startItem}–{endItem} de {totalItems} itens
         </div>
 
-        {/* Right: Page selector and arrows */}
         <div className="flex items-center gap-2">
           <span>Página</span>
           <PageDropdown value={currentPage} totalPages={totalPages} onChange={onPageChange} />

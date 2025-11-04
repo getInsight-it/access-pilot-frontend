@@ -39,8 +39,8 @@ export const EditItem: React.FC = () => {
     try {
       const levelResponse = await levelService.getLevelById(id);
       setLevel(levelResponse);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar informações da esfera",
         description: errorMessage,
@@ -65,8 +65,8 @@ export const EditItem: React.FC = () => {
       if(itemData.parent) {
         setValue("parentId", itemData.parent.id.toString());
       }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao carregar dados do item",
         description: errorMessage,
@@ -90,8 +90,8 @@ export const EditItem: React.FC = () => {
 
       toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
       toast({
         title: "Erro ao atualizar item",
         description: errorMessage,

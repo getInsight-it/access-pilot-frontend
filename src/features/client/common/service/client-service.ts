@@ -21,27 +21,25 @@ export class ClientService {
     this.httpClient = httpClient;
   }
 
-  async getClients(): Promise<ClientResponseInterface[] | null> {
+  async getClients(): Promise<ClientResponseInterface[]> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(CLIENT_API.CLIENTS_PUBLISHES);
 
-    if(response instanceof HttpRequestResponse) {
-      return response.data as ClientResponseInterface[];
-    } else {
-      console.error("Erro ao buscar clients");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return response.data as ClientResponseInterface[];
   }
 
   async getClientsAssociates(attached: boolean): Promise<ClientResponseInterface[]> {
-    const queryParams = new URLSearchParams({ attached: attached?.toString() });
+    const queryParams = new URLSearchParams({ attached: attached.toString() });
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_ME_ASSOCIATIONS}?${queryParams.toString()}`);
 
     if(response instanceof HttpRequestError) {
       throw response;
     }
 
-    return response.data as ClientResponseInterface[];;
+    return response.data as ClientResponseInterface[];
   }
 
   async getClientsPaginated(
@@ -50,7 +48,7 @@ export class ClientService {
     sortField: string,
     sortType: string,
     filter?: string
-  ): Promise<PaginatedResponse<ClientResponseInterface> | null> {
+  ): Promise<PaginatedResponse<ClientResponseInterface>> {
     const queryParams = new URLSearchParams({
       pageIndex: (pageIndex).toString(),
       pageSize: pageSize.toString(),
@@ -65,13 +63,11 @@ export class ClientService {
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);
 
-    if(response instanceof HttpRequestResponse) {
-      return response.data as PaginatedResponse<ClientResponseInterface>;
-    } else {
-      console.error("Erro ao buscar clients paginados");
+    if(response instanceof HttpRequestError) {
+      throw response;
     }
 
-    return null;
+    return response.data as PaginatedResponse<ClientResponseInterface>;
   }
 
   async createClient(clientData: ClientResponseInterface): Promise<ClientResponseInterface> {
@@ -90,15 +86,13 @@ export class ClientService {
     if(!(response instanceof HttpRequestResponse)) {
       throw response;
     }
-
-    return;
   }
 
   async updateSystemPublication(id: number, status: string): Promise<ClientResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.patch(`${CLIENT_API.CLIENTS}/${id}`, { "status": status });
 
     if(response instanceof HttpRequestError) {
-      throw response
+      throw response;
     }
 
     return response.data as ClientResponseInterface;
@@ -108,18 +102,15 @@ export class ClientService {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(`${CLIENT_API.SYNCHRONOUS}`, [clientId]);
 
     if(response instanceof HttpRequestError) {
-      throw response
+      throw response;
     }
-
-    return;
   }
 
   async fetchByClientId(clientId?: string): Promise<ClientResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.CLIENTS_BY_CLIENT_ID}/${clientId}`);
 
-
     if(response instanceof HttpRequestError) {
-      throw response
+      throw response;
     }
 
     return response.data as ClientResponseInterface;

@@ -1,199 +1,77 @@
-import { Breadcrumbs } from "../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { catchError, from, tap } from "rxjs";
-import useAuthStore from "../../../store/authStore.ts";
+import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
+import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { useToast } from "../../../common/external/ui/use-toast.ts";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Separator } from "../../../common/external/ui/separator.tsx";
-import { Button } from "../../../common/external/ui/button.tsx";
-import { FormControl, FormField, FormItem } from "../../../common/external/ui/form.tsx";
-import { Input } from "../../../common/external/ui/input.tsx";
-import { Textarea } from "../../../common/external/ui/textarea.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../common/external/ui/select.tsx";
-import { IconPicker } from "../../../common/components/icon/IconPicker.tsx";
-import { Label } from "../../../common/external/ui/label.tsx";
-import { clientService } from "../../client/common/service/client-service.ts";
-import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
-import { roleService } from "../common/service/role-service.ts";
-import { RoleResponseInterface } from "../common/types/role.model.ts";
-import { LevelInterface } from "../../level/common/types/level.model.ts";
-import { levelService } from "../../level/common/api/level-service.ts";
-import { PRIVATE_ROUTES } from "../../../common/constants/routes.ts";
-import { goToPreviousRoute } from "../../../common/utils/NavigationStateManager.ts";
+import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
+import { Button } from "../../../../common/external/ui/button.tsx";
+import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";
+import { Input } from "../../../../common/external/ui/input.tsx";
+import { Textarea } from "../../../../common/external/ui/textarea.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../common/external/ui/select.tsx";
+import { IconPicker } from "../../../../common/components/icon/IconPicker.tsx";
+import { Label } from "../../../../common/external/ui/label.tsx";
+import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
+import { formSchema, RoleFormData, useNewRoleData, useRoleSubmit, useRoleNavigation } from "./useNewRole.ts";
 
-import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
-import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
-
-import * as z from "zod";
-
-const formSchema = z.object({
-  name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
-  description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
-  label: z.string().min(3, { message: "A label do sistema deve conter no mínimo 3 caracteres" }),
-  levelId: z.string().optional(),
-  icon: z.string().optional()
-});
+const defaultValues: RoleFormData = {
+  name: "",
+  description: "",
+  label: "",
+  levelId: "",
+  icon: ""
+};
 
 export default function NewRole() {
-  const { toast } = useToast();
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-  const params = useParams();
+  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const navigate = useNavigate();
 
-  const isEditing = window.location.pathname.includes("edit");
-  const roleId = isEditing ? params.id : null;
+  const {
+    client,
+    levels,
+    loading,
+    setLoading,
+    dataLoading,
+    setDataLoading,
+    loadingLevels,
+    initialData,
+    isEditing,
+    clientId,
+    loadData
+  } = useNewRoleData();
 
-  const [client, setClient] = useState<ClientResponseInterface>();
-  const [levels, setLevels] = useState<LevelInterface[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [loadingLevels, setLoadingLevels] = useState(false);
-  const [initialData, setInitialData] = useState<any>(null);
-
-  const defaultValues = {
-    name: "",
-    description: "",
-    label: "",
-    levelId: "",
-    icon: ""
-  };
-
-  const methods = useForm({
+  const methods = useForm<RoleFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
     mode: "onChange"
   });
 
+  const { onSubmit } = useRoleSubmit(client, initialData, isEditing, setLoading);
+  const { navigateToSystemDetails } = useRoleNavigation(clientId);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      if (isAuthenticated) {
+        const roleData = await loadData();
+        setDataLoading(false);
+        
+        if (roleData) {
+          methods.reset(roleData);
+        }
+      }
+    };
+
+    initializeData();
+  }, [isAuthenticated, loadData, methods]);
+
   const breadcrumbItems = [
     { title: isEditing ? "Editar papel" : "Adicionar novo papel", link: "" }
   ];
-
-  const getRoleToEdit = async () => {
-    if(!roleId || !params.clientId) return;
-
-    try {
-      const role: RoleResponseInterface = await roleService.getRoleById(roleId);
-
-      const formData = {
-        id: role.id,
-        name: role.name || "",
-        label: role.label || "",
-        description: role.description || "",
-        levelId: role.level?.id ? role.level.id.toString() : "",
-        icon: role.icon || ""
-      };
-
-      setInitialData(formData);
-      methods.reset(formData as any);
-
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao buscar dados do papel",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const getData = async () => {
-    const clientId = params.clientId;
-    if(!clientId) return;
-
-    from(clientService.fetchByClientId(params.clientId)).pipe(
-      tap((response) => {
-        if(response) {
-          setClient(response);
-        }
-      }),
-      catchError((error) => {
-        const errorMessage: string = formatErrorMessages(error.error);
-        toast({
-          title: "Erro ao buscar dados do sistema",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        return [];
-      })
-    ).subscribe();
-  };
-
-  const fetchLevels = async () => {
-    setLoadingLevels(true);
-    try {
-      const response = await levelService.getLevels();
-      if (response && response.items) {
-        setLevels(response.items);
-      }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: "Erro ao carregar esferas",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setLoadingLevels(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      setDataLoading(true);
-      if (isEditing && roleId) {
-        await Promise.all([getData(), fetchLevels(), getRoleToEdit()]);
-      } else {
-        await Promise.all([getData(), fetchLevels()]);
-      }
-      setDataLoading(false);
-    };
-
-    if (isAuthenticated) {
-      loadData();
-    }
-  }, [isAuthenticated, params.clientId, roleId, isEditing]);
-
-  const onSubmit = async (form: any) => {
-    const role = {
-      ...form,
-      levelId: form.levelId === undefined || form.levelId === "empty" || form.levelId === "" ? undefined : Number(form.levelId)
-    } as RoleResponseInterface;
-    role.client = client;
-    setLoading(true);
-
-    try {
-      if(initialData?.id) {
-        await roleService.updateRole(initialData.id, role);
-        toast({
-          title: "Papel atualizado",
-          description: `O papel ${role.name} foi atualizado com sucesso.`
-        });
-      } else {
-        await roleService.createRole(role);
-        toast({
-          title: "Papel criado",
-          description: `O papel ${role.name} foi criado com sucesso.`
-        });
-      }
-
-      navigate(`/dashboard/systems/${client?.clientId}/roles`);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
-      toast({
-        title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
-        description: errorMessage,
-        variant: "destructive"
-      });
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (dataLoading || loadingLevels) {
     return (
@@ -226,7 +104,7 @@ export default function NewRole() {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg- border-t">
+        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
           <Button disabled>
             {isEditing ? "Atualizando..." : "Criando..."}
           </Button>
@@ -254,9 +132,7 @@ export default function NewRole() {
                 customDescription={
                   <span className="text-md">
                     Sistema: <span
-                    onClick={() => {
-                      navigate(PRIVATE_ROUTES.SYSTEMS_DETAILS.replace(":clientId", params.clientId!));
-                    }}
+                    onClick={navigateToSystemDetails}
                     className="text-primary-600 cursor-pointer underline">{client?.clientId || ""}</span>
                   </span>
                 }
@@ -418,7 +294,7 @@ export default function NewRole() {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg- border-t">
+        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
           <Button
             type="submit"
             onClick={methods.handleSubmit(onSubmit)}
@@ -431,3 +307,4 @@ export default function NewRole() {
     </ScrollArea>
   );
 }
+

@@ -23,10 +23,10 @@ import { ClientStep } from "./partials/ClientSelectionStep.tsx";
 import { RoleStep } from "./partials/RoleSelectionStep.tsx";
 import AttachmentStep, { FileAttachment } from "./partials/AttachmentStep.tsx";
 import { DetailsStep } from "./partials/DetailsStep.tsx";
-import { RequestService } from "../../common/api/request-service.ts";
-import { httpClient } from "../../../../config/http/http.ts";
+import { requestService } from "../../common/api/request-service.ts";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -54,7 +54,7 @@ export default function RequestAccess() {
     4: "pending"
   });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { toast } = useToast();
   const location = useLocation();
   const initialFormState: BasicFormFieldInterface = {
@@ -111,8 +111,15 @@ export default function RequestAccess() {
         isValid = false;
       }
 
-      const requiredConfigurations = clients.find(client => client.clientId === customForm["clientId"].value)?.configurations;
-      if(customForm["attachments"].value.length < (requiredConfigurations?.length || 0)) {
+      const allConfigurations = clients.find(client => client.clientId === customForm["clientId"].value)?.configurations || [];
+      const requiredConfigurations = allConfigurations.filter(config => config.required);
+      const attachments = customForm["attachments"].value as FileAttachment[];
+      const missingRequiredAttachments = requiredConfigurations.filter(config => {
+        const attachment = attachments.find(att => att.key === config.key);
+        return !attachment || attachment.files.length === 0;
+      });
+
+      if(missingRequiredAttachments.length > 0) {
         setBasicFormFieldValue({
           field: "attachments",
           value: customForm["attachments"].value,
@@ -142,9 +149,9 @@ export default function RequestAccess() {
   const getClients = async () => {
     try {
       const fetchedClients = await clientService.getClients();
-      setClients(fetchedClients as any);
+      setClients(fetchedClients);
     } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+      const errorMessage: string = formatErrorMessages(error);
 
       toast({
         title: "Erro ao carregar sistemas",
@@ -157,9 +164,9 @@ export default function RequestAccess() {
   const getRolesByClientId = async (clientId: string) => {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
-      setRoles(fetchedRoles as any);
+      setRoles(fetchedRoles);
     } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+      const errorMessage: string = formatErrorMessages(error);
 
       toast({
         title: "Erro ao carregar papéis",
@@ -302,7 +309,6 @@ export default function RequestAccess() {
     setHasError(false);
 
     try {
-      const requestService = new RequestService(httpClient);
       const payloadFormData = new FormData();
       const request = {
         clientId: customForm["clientId"].value,
@@ -321,10 +327,10 @@ export default function RequestAccess() {
       await requestService.createRequest(payloadFormData);
 
       toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada." });
-      navigate("/dashboard/my-access-requests");
+      navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
       setShowContent(false);
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error.error);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
 
       toast({
         title: "Erro ao processar solicitação de acesso",
