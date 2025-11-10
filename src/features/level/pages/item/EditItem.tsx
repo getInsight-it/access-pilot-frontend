@@ -18,6 +18,7 @@ import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 
 interface FormData {
   name: string;
@@ -38,6 +39,16 @@ export const EditItem: React.FC = () => {
   const retrieveLevel = async (id: string) => {
     try {
       const levelResponse = await levelService.getLevelById(id);
+      if(levelResponse && (levelResponse.type === "BUILT_IN" || levelResponse.type === "EXTERNAL")) {
+        toast({
+          title: "Ação não permitida",
+          description: "Não é possível gerenciar itens de esferas do tipo Negocial ou Externa.",
+          variant: "destructive"
+        });
+        goToPreviousRoute(navigate);
+        return;
+      }
+
       setLevel(levelResponse);
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
@@ -54,10 +65,6 @@ export const EditItem: React.FC = () => {
 
     try {
       const itemData = await levelService.getLevelItem(levelId, itemId);
-      if(!itemData) {
-        throw new Error("Falha ao carregar dados do item");
-      }
-
       setValue("name", itemData.name || "");
       setValue("description", itemData.description || "");
       setValue("externalCode", itemData.externalCode || "");
@@ -72,6 +79,7 @@ export const EditItem: React.FC = () => {
         description: errorMessage,
         variant: "destructive"
       });
+      goToPreviousRoute(navigate);
     }
   };
 

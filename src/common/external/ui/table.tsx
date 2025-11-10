@@ -148,18 +148,19 @@ const tableCellVariants = cva(
 export interface TableCellProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof tableCellVariants> {
-  width?: string
+  width?: string,
+  wordBreak?: "normal" | "break-all" | "break-word" | "keep-all"
 }
 
 const TableCell = React.forwardRef<
   HTMLDivElement,
   TableCellProps
->(({ className, size, width, style, ...props }, ref) => {
+>(({ className, size, width, style, wordBreak, ...props }, ref) => {
   return (
     <div
       ref={ref}
       className={cn(tableCellVariants({ size }), width ? "" : "flex-1", className)}
-      style={{ width: width || undefined, flexShrink: width ? 0 : 1, ...style }}
+      style={{ width: width || undefined, flexShrink: width ? 0 : 1, wordBreak, ...style }}
       {...props}
     />
   )

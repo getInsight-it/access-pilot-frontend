@@ -128,39 +128,41 @@ export default function LevelItems() {
               <>
                 {itemsData.filteredItems.map((item, index) => (
                   <div className="table-card" key={`mobile-table-card-${index}`}>
-                    <div className="table-card__header">
-                      <div className="flex items-center justify-between">
-                        <span className="mr-2">Ações</span>
-                        {itemsData.sphere?.type !== "BUILT_IN" && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <EllipsisVertical size={20} className="cursor-pointer" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  savePreviousRoute(location.pathname + location.search);
-                                  navigate(
-                                    PRIVATE_ROUTES.EDIT_ITEM
-                                      .replace(":id", itemsData.id!)
-                                      .replace(":itemId", item.id.toString())
-                                  );
-                                }}
-                                className="flex flex-row gap-2">
-                                <Edit size={16} />
-                                <span>Editar</span>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => operations.handleDelete(item)}
-                                className="flex flex-row gap-2">
-                                <Trash size={16} />
-                                <span>Excluir</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
+                    {itemsData.sphere?.type !== "BUILT_IN" && itemsData.sphere?.type !== 'EXTERNAL' && (
+                      <div className="table-card__header">
+                        <div className="flex items-center justify-between">
+                          <span className="mr-2">Ações</span>
+                          {itemsData.sphere?.type !== "BUILT_IN" && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <EllipsisVertical size={20} className="cursor-pointer" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    savePreviousRoute(location.pathname + location.search);
+                                    navigate(
+                                      PRIVATE_ROUTES.EDIT_ITEM
+                                        .replace(":id", itemsData.id!)
+                                        .replace(":itemId", item.id.toString())
+                                    );
+                                  }}
+                                  className="flex flex-row gap-2">
+                                  <Edit size={16} />
+                                  <span>Editar</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => operations.handleDelete(item)}
+                                  className="flex flex-row gap-2">
+                                  <Trash size={16} />
+                                  <span>Excluir</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="table-card__content">
                       <div className="table-card__content__row">
                         <span className="table-card__label">Nome</span>
@@ -219,9 +221,9 @@ export default function LevelItems() {
                   <TableHead width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>Nome</TableHead>
                   {itemsData.sphere?.type !== "BUILT_IN" && (
                     <>
-                      <TableHead width="calc(25% - 25px)">Descrição</TableHead>
-                      <TableHead width="calc(25% - 25px)">Código externo</TableHead>
-                      <TableHead width="calc(25% - 25px)">Item da esfera pai</TableHead>
+                      <TableHead width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Descrição</TableHead>
+                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código externo</TableHead>
+                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Item da esfera pai</TableHead>
                       <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>
                     </>
                   )}
@@ -231,12 +233,12 @@ export default function LevelItems() {
                 {itemsData.filteredItems.length > 0 ? (
                   itemsData.filteredItems.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>{item.name}</TableCell>
+                      <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"} wordBreak="break-word">{item.name}</TableCell>
                       {itemsData.sphere?.type !== "BUILT_IN" && (
                         <>
-                          <TableCell width="calc(25% - 25px)">{item.description}</TableCell>
-                          <TableCell width="calc(25% - 25px)">{item.externalCode}</TableCell>
-                          <TableCell width="calc(25% - 25px)">{operations.renderParentItem(item)}</TableCell>
+                          <TableCell width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.description}</TableCell>
+                          <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.externalCode ?? '-'}</TableCell>
+                          <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{operations.renderParentItem(item)}</TableCell>
                           <TableCell width="100px" className="flex align-center justify-center">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
