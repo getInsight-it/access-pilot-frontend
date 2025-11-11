@@ -181,15 +181,16 @@ export const EditItem: React.FC = () => {
                         })}
                       />
                       {errors.name && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle
-                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.name.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/3 transform -translate-y-1/2" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>
+                      </>
                       )}
                     </div>
                   </div>
@@ -199,23 +200,25 @@ export const EditItem: React.FC = () => {
                     <div className="relative">
                       <Input
                         id="externalCode"
-                        placeholder="Escreva o código externo do item"
+                        placeholder="Escreva o código do item"
                         className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
                         {...register("externalCode", {
                           required: "Código externo é obrigatório",
-                          minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" }
+                          minLength: { value: 3, message: "O código deve conter no mínimo 3 caracteres" },
+                          pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
                         })}
                       />
                       {errors.externalCode && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle
-                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.externalCode.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.externalCode.message}</p>
+                      </>
                       )}
                     </div>
                   </div>
@@ -235,14 +238,16 @@ export const EditItem: React.FC = () => {
                       })}
                     />
                     {errors.description && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
-                          </TooltipTrigger>
-                          <TooltipContent>{errors.description.message}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                       <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.description.message}</p>
+                      </>
                     )}
                   </div>
                 </div>

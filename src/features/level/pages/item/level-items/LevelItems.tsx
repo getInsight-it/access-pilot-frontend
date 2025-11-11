@@ -207,7 +207,7 @@ export default function LevelItems() {
                       <TableHead width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Descrição</TableHead>
                       <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código externo</TableHead>
                       <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Item da esfera pai</TableHead>
-                      <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>
+                      {itemsData.sphere?.type !== 'EXTERNAL' && <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>}
                     </>
                   )}
                 </TableRow>
@@ -217,7 +217,7 @@ export default function LevelItems() {
                   itemsData.filteredItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"} wordBreak="break-word">{item.name}</TableCell>
-                      {itemsData.sphere?.type !== "BUILT_IN" && (
+                      {itemsData.sphere?.type !== "BUILT_IN" && itemsData.sphere?.type !== 'EXTERNAL' && (
                         <>
                           <TableCell width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.description}</TableCell>
                           <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.externalCode ?? '-'}</TableCell>
