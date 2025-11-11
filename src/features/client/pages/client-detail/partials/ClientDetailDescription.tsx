@@ -1,6 +1,6 @@
 
 import { MonitorIcon } from "lucide-react";
-import TruncatedText from "../../../../../common/components/TruncatedText.tsx";
+import TruncatedText from "@components/TruncatedText.tsx";
 
 interface ClientDetailDescriptionProps {
   clientId: string;

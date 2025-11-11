@@ -1,6 +1,7 @@
-import { ClientResponseInterface } from "../../../common/model/client.model.ts";
+import { ClientStatusBadgeFactory } from "@features/client/common/components/ClientStatusBadgeFactory";
+import { ClientResponseInterface } from "@features/client/common/model/client.model";
 import { ActivityIcon, FileTextIcon, GlobeIcon, SettingsIcon } from "lucide-react";
-import { ClientStatusBadgeFactory } from "../../../common/components/ClientStatusBadgeFactory.tsx";
+
 
 interface ClientDetailGeneralInformationProps {
   client: ClientResponseInterface;

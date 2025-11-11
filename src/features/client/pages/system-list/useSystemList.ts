@@ -1,13 +1,13 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { toast } from "@ui/use-toast.ts";
 import { clientService } from "../../common/service/client-service.ts";
 import { ClientResponseInterface } from "../../common/model/client.model.ts";
 import { ClientStatusEnum } from "../../common/enum/client-status.enum.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-import { PAGINATION } from "../../../../common/constants/pagination.ts";
+import { formatErrorMessages } from "@utils/error-utils.ts";
+import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { PAGINATION } from "@constants/pagination.ts";
 
 export const useSystemListData = () => {
   const [clients, setClients] = useState<ClientResponseInterface[]>([]);

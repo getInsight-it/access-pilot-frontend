@@ -1,30 +1,19 @@
 import React, { useRef, useState } from "react";
 import { Plus, Settings, Upload, X } from "lucide-react";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
-import { Switch } from "../../../../common/external/ui/switch.tsx";
-import { Textarea } from "../../../../common/external/ui/textarea.tsx";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "../../../../common/external/ui/accordion.tsx";
-import { Label } from "../../../../common/external/ui/label.tsx";
-import { Card } from "../../../../common/external/ui/card.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../common/external/ui/popover.tsx";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "../../../../common/external/ui/dialog.tsx";
+import { Input } from "@ui/input.tsx";
+import { Button } from "@ui/button.tsx";
+import { Switch } from "@ui/switch.tsx";
+import { Textarea } from "@ui/textarea.tsx";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/accordion.tsx";
+import { Label } from "@ui/label.tsx";
+import { Card } from "@ui/card.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover.tsx";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { formatErrorMessages } from "@utils/error-utils.ts";
+import { toast } from "@ui/use-toast.ts";
 
 export interface AttachmentConfigSectionProps {
   configurations: AttachmentConfigurationInterface[];

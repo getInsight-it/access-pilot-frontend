@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
+import { Breadcrumbs } from "@components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "@components/heading.tsx";
+import { ScrollArea } from "@ui/scroll-area.tsx";
+import { Separator } from "@ui/separator.tsx";
 import { motion } from "framer-motion";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
-import { clientService } from "../../common/service/client-service.ts";
-import { ClientResponseInterface } from "../../common/model/client.model.ts";
+import { toast } from "@ui/use-toast.ts";
 import { HttpRequestResponse } from "@getinsight.it/getinsight-common";
-import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
-import { roleService } from "../../../role/common/service/role-service.ts";
 import { ClientRoleDetails } from "./partials/ClientRoleDetails.tsx";
 import { ClientDetailDescription } from "./partials/ClientDetailDescription.tsx";
 import { ClientDetailGeneralInformation } from "./partials/ClientDetailGeneralInformation.tsx";
 import { ClientDetailConfigurations } from "./partials/ClientDetailConfigurations.tsx";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
-import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { DetailContainer } from "@components/DetailContainer.tsx";
+import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "@utils/error-utils.ts";
+import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
+import { clientService } from "@features/client/common/service/client-service.ts";
+import { roleService } from "@features/role/common/service/role-service.ts";
+import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },

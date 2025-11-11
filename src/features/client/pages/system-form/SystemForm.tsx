@@ -1,27 +1,23 @@
-import { AttachmentConfigurationForm } from "../../common/components/AttachmentConfigurationForm.tsx";
 import { FormProvider } from "react-hook-form";
-import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
+import { FormControl, FormField, FormItem } from "@ui/form.tsx";
+import { Input } from "@ui/input.tsx";
+import { Breadcrumbs } from "@components/breadcrumbs.tsx";
+import { ScrollArea } from "@ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
+import { HeaderContainer, Heading } from "@components/heading.tsx";
+import { Separator } from "@ui/separator.tsx";
+import { Button } from "@ui/button.tsx";
 import { ArrowRight, Loader2, Save } from "lucide-react";
-import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
-import { Textarea } from "../../../../common/external/ui/textarea.tsx";
-import { Switch } from "../../../../common/external/ui/switch.tsx";
-import { Label } from "../../../../common/external/ui/label.tsx";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-import {
-  useSystemFormData,
-  useFormNavigation,
-  useAttachmentConfigs
-} from "./useSystemForm.ts";
-import { ClientStatusEnum } from "../../common/enum/client-status.enum.ts";
+import HighlightLoader from "@components/loading/HighLightLoader.tsx";
+import { Textarea } from "@ui/textarea.tsx";
+import { Switch } from "@ui/switch.tsx";
+import { Label } from "@ui/label.tsx";
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { useSystemFormData,useFormNavigation, useAttachmentConfigs } from "./useSystemForm.ts";
 import { useNavigate } from "react-router-dom";
+import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum.ts";
+import { AttachmentConfigurationForm } from "@features/client/common/components/AttachmentConfigurationForm.tsx";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },

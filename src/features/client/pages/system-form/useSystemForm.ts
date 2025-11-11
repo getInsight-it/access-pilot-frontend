@@ -2,14 +2,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@ui/use-toast.ts";
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { formatErrorMessages } from "@utils/error-utils.ts";
+import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum";
+import { ClientResponseInterface } from "@features/client/common/model/client.model";
+import { AttachmentConfigurationInterface } from "@features/client/common/model/configuration.model";
+import { clientService } from "@features/client/common/service/client-service";
+
 import * as z from "zod";
-import { useToast } from "../../../../common/external/ui/use-toast.ts";
-import { clientService } from "../../common/service/client-service.ts";
-import { ClientResponseInterface } from "../../common/model/client.model.ts";
-import { AttachmentConfigurationInterface } from "../../common/model/configuration.model.ts";
-import { ClientStatusEnum } from "../../common/enum/client-status.enum.ts";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
 export const formSchema = z.object({
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),

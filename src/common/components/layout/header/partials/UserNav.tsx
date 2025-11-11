@@ -1,10 +1,11 @@
 import { ChevronDown, HelpCircle, LogOut, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../../../external/ui/avatar.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../../../external/ui/dropdown-menu.tsx";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@common/external/ui/dropdown-menu";
+import { PRIVATE_ROUTES } from "@common/constants/routes";
+import { authService } from "@features/auth/common/AuthService";
 import { Link, useNavigate } from "react-router-dom";
-import { authService } from "../../../../../features/auth/common/AuthService.ts";
-import useAuthStore from "../../../../../store/authStore.ts";
-import { PRIVATE_ROUTES } from "../../../../constants/routes.ts";
+import { Avatar, AvatarFallback, AvatarImage } from "@common/external/ui/avatar";
+
+import useAuthStore from "@store/authStore";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
@@ -80,10 +81,10 @@ export function UserNav() {
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" onClick={signOut}>
+        <div className="flex items-center p-2 text-sm hover:opacity-55 cursor-pointer" onClick={signOut}>
           <LogOut className="w-4 h-4 mr-2" />
           Sair
-        </Link>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
