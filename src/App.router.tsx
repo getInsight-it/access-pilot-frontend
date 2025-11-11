@@ -62,12 +62,14 @@ const appRoutes = [
     element: <PrivateRoute />,
     children: [
       {
+        path: "/",
         element: (
           <Suspense>
             <DashboardLayout />
           </Suspense>
         ),
         children: [
+          { index: true, element: <Navigate to={PRIVATE_ROUTES.DASHBOARD} replace /> },
           { path: PRIVATE_ROUTES.MY_ACCESS_REQUESTS, element: <RequestList /> },
           { path: PRIVATE_ROUTES.REQUEST_ACCESS, element: <RequestAccess /> },
           {
@@ -80,8 +82,7 @@ const appRoutes = [
               <RoleGuard>
                 <Dashboard />
               </RoleGuard>
-            ),
-            index: true
+            )
           },
           {
             path: PRIVATE_ROUTES.SYSTEMS,

@@ -52,11 +52,11 @@ export default function LevelItems() {
         window.removeEventListener("item-updated", handleItemUpdated);
       };
     }
-  }, [isAuthenticated, itemsData.id, itemsData.currentPage, itemsData.pageSize, itemsData.searchTerm, itemsData.fetchSphereAndItems]);
+  }, [isAuthenticated, itemsData.id, itemsData.currentPage, itemsData.pageSize, itemsData.searchTerm]);
 
   const breadcrumbItems = [
     { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
-    { title: "Itens", link: `/dashboard/levels/${itemsData.id}/items` }
+    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', itemsData.id || '') }
   ];
 
   if (itemsData.loading && !itemsData.sphere) {
@@ -97,7 +97,7 @@ export default function LevelItems() {
                     asChild
                     onClick={() => {
                       savePreviousRoute(location.pathname + location.search);
-                      navigate(`/dashboard/levels/${itemsData.id}/items/create`);
+                      navigate(PRIVATE_ROUTES.CREATE_ITEM.replace(':id', itemsData.id || ''));
                     }}>
                     <div>
                       <Plus className="mr-2 h-4 w-4" />

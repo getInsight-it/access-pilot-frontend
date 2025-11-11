@@ -146,7 +146,7 @@ export const LevelList = () => {
                         {!item.isBuiltIn && (
                           <>
                             <DropdownMenuItem className="flex flex-row gap-2" asChild>
-                              <Link to={`/dashboard/levels/create?id=${item.id}`}>
+                              <Link to={`${PRIVATE_ROUTES.CREATE_LEVEL}?id=${item.id}`}>
                                 <Edit size={16} />
                                 <span>Editar</span>
                               </Link>

@@ -50,7 +50,7 @@ function App() {
 
         const currentRoute = window.location.pathname;
 
-        if(currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute.startsWith("/dashboard")) {
+        if(currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute === "/" || currentRoute === AUTH_ROUTES.LOGIN) {
           return;
         }
 

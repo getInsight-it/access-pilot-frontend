@@ -4,6 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSepar
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../../../../features/auth/common/AuthService.ts";
 import useAuthStore from "../../../../../store/authStore.ts";
+import { PRIVATE_ROUTES } from "../../../../constants/routes.ts";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
@@ -71,11 +72,11 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
         </div>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/profile">
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to={PRIVATE_ROUTES.PROFILE}>
           <User className="w-4 h-4 mr-2" />
           Perfil
         </Link>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to="/dashboard/help-and-support">
+        <Link className="flex items-center p-2 text-sm hover:opacity-55" to={PRIVATE_ROUTES.HELP_AND_SUPPORT}>
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
         </Link>

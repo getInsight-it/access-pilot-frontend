@@ -2,6 +2,7 @@ import { Button } from "../../../../../common/external/ui/button.tsx";
 import { FlipWords } from "../../../../../common/external/ui/flip-words.tsx";
 import { Link } from "react-router-dom";
 import { FileAttachment } from "./AttachmentStep.tsx";
+import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 
 interface SuccessFeedbackProps {
   words: string[];
@@ -53,7 +54,7 @@ export const SuccessFeedback = ({
 
       <Link
         className="bg-[var(--dashboard-nav-bg)] text-primary rounded-full text-sm font-medium transition-colors hover:bg-[var(--button-hover)] hover:text-[var(--button-hover-text)] h-10 px-4 py-2.5 mt-4"
-        to="/dashboard/my-access-requests/">
+        to={PRIVATE_ROUTES.MY_ACCESS_REQUESTS}>
         Listar solicitações
       </Link>
       <Button className="ml-4 mt-4" onClick={onRequestNew}>

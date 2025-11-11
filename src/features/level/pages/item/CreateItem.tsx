@@ -20,6 +20,7 @@ import { LevelItemInterface } from "../../common/types/level-item.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 
 interface FormData {
   name: string;
@@ -111,7 +112,7 @@ export const CreateItem: React.FC = () => {
       if (!result) throw new Error("Falha ao adicionar o item.");
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
-      navigate(`/dashboard/levels/${levelId}/items`);
+      navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!));
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
@@ -150,8 +151,8 @@ export const CreateItem: React.FC = () => {
   }
 
   const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: "/dashboard/levels" },
-    { title: "Itens", link: `/dashboard/levels/${levelId}/items` },
+    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
+    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!) },
     { title: "Criar item", link: "" }
   ];
 

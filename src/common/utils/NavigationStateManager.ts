@@ -1,3 +1,5 @@
+import { PRIVATE_ROUTES } from "../constants/routes.ts";
+
 export interface NavigationState<T = unknown> {
   previousRoute: string;
   data?: T;
@@ -44,7 +46,7 @@ export const getPreviousRoute = <T = unknown>(): NavigationState<T> | null => {
  */
 export const goToPreviousRoute = <T = unknown>(
   navigate: (to: string) => void,
-  fallbackRoute: string = "/dashboard"
+  fallbackRoute: string = PRIVATE_ROUTES.DASHBOARD
 ): T | null => {
   const previousState = getPreviousRoute<T>();
 

@@ -19,6 +19,8 @@ import { LevelInterface } from "../../common/types/level.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { CreateLevelItemData } from "../../common/types/level-item.model.ts";
 
 interface FormData {
   name: string;
@@ -86,15 +88,14 @@ export const EditItem: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      const payload = {
+      const payload: CreateLevelItemData = {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
-        parentId: data.parentId ? Number(data.parentId) : null
+        parentId: data.parentId ? Number(data.parentId) : undefined
       };
 
-      const result = await levelService.updateLevelItem(levelId!, itemId!, payload);
-      if(!result) throw new Error("Falha ao atualizar o item.");
+      await levelService.updateLevelItem(levelId!, itemId!, payload);
 
       toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
@@ -131,8 +132,8 @@ export const EditItem: React.FC = () => {
   }
 
   const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: "/dashboard/levels" },
-    { title: "Itens", link: `/dashboard/levels/${levelId}/items` },
+    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
+    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!) },
     { title: "Editar item", link: "" }
   ];
 

@@ -92,7 +92,7 @@ export default function SystemList() {
               <div className="w-96 max-w-full">
                 <Input
                   variant="dark"
-                  placeholder="Filtrar por Sistema..."
+                  placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
@@ -186,7 +186,7 @@ export default function SystemList() {
             <div className="hidden lg:flex flex-col gap-4">
               <div className="w-96 max-w-full">
                 <Input
-                  placeholder="Filtrar por Sistema..."
+                  placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="h-10 w-full"
