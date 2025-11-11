@@ -105,11 +105,10 @@ export const CreateItem: React.FC = () => {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
-        parentId: data.parentId ? Number(data.parentId) : null
+        parentId: data.parentId ? Number(data.parentId) : undefined
       };
 
-      const result = await levelService.createLevelItem(levelId!, payload);
-      if (!result) throw new Error("Falha ao adicionar o item.");
+      await levelService.createLevelItem(levelId!, payload);
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
       navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!));

@@ -128,7 +128,7 @@ export class LevelService {
     return response.data as LevelItemInterface;
   }
 
-  async createLevelItem(levelId: string, itemData: CreateLevelItemData): Promise<LevelItemInterface | null> {
+  async createLevelItem(levelId: string, itemData: CreateLevelItemData): Promise<LevelItemInterface> {
     const url = `${LEVEL_API.LEVELS}/${levelId}/items`;
 
     const formattedData: CreateLevelItemData = {
@@ -149,10 +149,6 @@ export class LevelService {
 
     if (response instanceof HttpRequestError) {
       throw response;
-    }
-
-    if (response.status === 204 || !response.data) {
-      return null;
     }
 
     return response.data as LevelItemInterface;
