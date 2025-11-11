@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "../../../../../common/external/ui/use-toast.ts";
 import { levelService } from "../../../common/api/level-service.ts";
 import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
 import { PAGINATION } from "../../../../../common/constants/pagination.ts";
+import { useDebounce } from "../../../../../common/hooks/use-debounce.ts";
 
 export interface Sphere {
   id: string;
@@ -26,15 +27,6 @@ export interface Item {
   } | null;
 }
 
-export interface SphereHierarchy {
-  id: string;
-  name: string;
-  parent: {
-    id: number;
-    name: string;
-  } | null;
-}
-
 export const useLevelItemsData = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -47,149 +39,51 @@ export const useLevelItemsData = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const fetchSphereHierarchy = useCallback(async (sphereId: string): Promise<SphereHierarchy[]> => {
-    const hierarchy: SphereHierarchy[] = [];
-    let currentId = sphereId;
+  const fetchItemsRequestIdRef = useRef(0);
 
-    while (currentId) {
-      try {
-        const sphereData = await levelService.getLevelById(currentId);
-        if (!sphereData) break;
-
-        hierarchy.unshift({
-          id: sphereData.id.toString(),
-          name: sphereData.name,
-          parent: sphereData.parent
-            ? {
-                id: sphereData.parent.id,
-                name: sphereData.parent.name
-              }
-            : null
-        });
-
-        currentId = sphereData.parent ? sphereData.parent.id.toString() : "";
-      } catch (error: any) {
-        const errorMessage: string = formatErrorMessages(error);
-        toast({
-          title: "Erro ao buscar hierarquia",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        break;
-      }
-    }
-
-    if (hierarchy.length === 0) {
-      hierarchy.push({
-        id: sphereId,
-        name: `Esfera ${sphereId}`,
-        parent: null
-      });
-    }
-
-    return hierarchy;
-  }, []);
-
-  const fetchParentSpheres = useCallback(async (itemsData: Item[]) => {
-    try {
-      const itemsWithParent = itemsData.filter((item) => item.parent);
-
-      if (itemsWithParent.length === 0) return;
-
-      const uniqueParentIds = [...new Set(itemsWithParent.map((item) => item.parent?.id))];
-      const parentSpheresData: Record<string, string> = {};
-      const hierarchies: Record<string, SphereHierarchy[]> = {};
-
-      for (const parentId of uniqueParentIds) {
-        if (!parentId) continue;
-
-        try {
-          const itemWithThisParent = itemsWithParent.find((item) => item.parent?.id === parentId);
-
-          if (itemWithThisParent && itemWithThisParent.parent) {
-            parentSpheresData[parentId.toString()] = itemWithThisParent.parent.name || `Item ${parentId}`;
-
-            if (sphere && sphere.parent) {
-              try {
-                hierarchies[parentId.toString()] = await fetchSphereHierarchy(sphere.parent.id.toString());
-              } catch (hierarchyError) {
-                console.error(`Erro ao buscar hierarquia para esfera pai:`, hierarchyError);
-                hierarchies[parentId.toString()] = [
-                  {
-                    id: sphere.parent.id.toString(),
-                    name: sphere.parent.name,
-                    parent: null
-                  }
-                ];
-              }
-            } else {
-              hierarchies[parentId.toString()] = [
-                {
-                  id: parentId.toString(),
-                  name: itemWithThisParent.parent.name,
-                  parent: null
-                }
-              ];
-            }
-          } else {
-            parentSpheresData[parentId.toString()] = `Item ${parentId}`;
-            hierarchies[parentId.toString()] = [
-              {
-                id: parentId.toString(),
-                name: `Item ${parentId}`,
-                parent: null
-              }
-            ];
-          }
-        } catch (error) {
-          console.error(`Erro ao processar item pai ${parentId}:`, error);
-          parentSpheresData[parentId.toString()] = `Item ${parentId}`;
-          hierarchies[parentId.toString()] = [
-            {
-              id: parentId.toString(),
-              name: `Item ${parentId}`,
-              parent: null
-            }
-          ];
-        }
-      }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error);
-
-      toast({
-        title: "Erro ao processar solicitação de acesso",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [sphere, fetchSphereHierarchy]);
-
-  const fetchSphereAndItems = useCallback(async () => {
+  const fetchSphere = useCallback(async () => {
     if (!id) return;
 
     try {
       setLoading(true);
-
+      
       const sphereData = await levelService.getLevelById(id);
-      if (!sphereData) {
-        throw new Error("Falha ao buscar dados da esfera");
-      }
 
       const sphereObj: Sphere = {
         id: sphereData.id.toString(),
         name: sphereData.name,
         type: sphereData.type,
-        parent: sphereData.parent
-          ? {
-              id: sphereData.parent.id,
-              name: sphereData.parent.name
-            }
-          : null
+        parent: sphereData.parent? { id: sphereData.parent.id, name: sphereData.parent.name }: null
       };
       setSphere(sphereObj);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
 
-      const itemsData = await levelService.getLevelItems(id, currentPage, pageSize, "id", "ASC", searchTerm);
+      toast({
+        title: "Erro ao buscar dados da esfera.",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  const fetchItems = useCallback(async () => {
+    if (!id) return;
+
+    const currentRequestId = ++fetchItemsRequestIdRef.current;
+
+    try {
+      setLoading(true);
+
+      const itemsData = await levelService.getLevelItems(id, currentPage, pageSize, "id", "ASC", debouncedSearchTerm);
+
+      if (currentRequestId !== fetchItemsRequestIdRef.current) {
+        return;
+      }
 
       if (itemsData) {
         setItems(itemsData.items || []);
@@ -198,10 +92,6 @@ export const useLevelItemsData = () => {
 
         const totalPagesCount = Math.ceil((itemsData.total || 0) / pageSize);
         setTotalPages(totalPagesCount > 0 ? totalPagesCount : 1);
-
-        if (itemsData.items && itemsData.items.length > 0) {
-          await fetchParentSpheres(itemsData.items);
-        }
       } else {
         setItems([]);
         setFilteredItems([]);
@@ -209,17 +99,47 @@ export const useLevelItemsData = () => {
         setTotalPages(1);
       }
     } catch (error: any) {
+      if (currentRequestId !== fetchItemsRequestIdRef.current) {
+        return;
+      }
+
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao buscar esferas e itens.",
+        title: "Erro ao buscar itens.",
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      if (currentRequestId === fetchItemsRequestIdRef.current) {
+        setLoading(false);
+      }
     }
-  }, [id, currentPage, pageSize, searchTerm, fetchParentSpheres]);
+  }, [id, currentPage, pageSize, debouncedSearchTerm]);
+
+  useEffect(() => {
+    if (id) {
+      fetchSphere();
+    }
+  }, [id, fetchSphere]);
+
+  useEffect(() => {
+    if (id && sphere) {
+      fetchItems();
+    }
+  }, [id, sphere, debouncedSearchTerm, currentPage, pageSize, fetchItems]);
+
+  useEffect(() => {
+    const handleItemUpdated = () => {
+      fetchItems();
+    };
+
+    window.addEventListener("item-updated", handleItemUpdated);
+
+    return () => {
+      window.removeEventListener("item-updated", handleItemUpdated);
+    };
+  }, [fetchItems]);
 
   return {
     id,
@@ -238,8 +158,8 @@ export const useLevelItemsData = () => {
     setTotalPages,
     searchTerm,
     setSearchTerm,
-    fetchSphereAndItems,
-    fetchSphereHierarchy
+    fetchSphere,
+    fetchItems
   };
 };
 

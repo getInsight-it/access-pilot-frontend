@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../../../../../common/external/ui/button.tsx";
 import {
@@ -15,7 +15,6 @@ import { HeaderContainer, Heading } from "../../../../../common/components/headi
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
-import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
 import { Input } from "../../../../../common/external/ui/input.tsx";
 import { motion } from "framer-motion";
 import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
@@ -34,25 +33,9 @@ import { useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
 export default function LevelItems() {
   const location = useLocation();
   const navigate = useNavigate();
-  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
 
   const itemsData = useLevelItemsData();
   const operations = useLevelItemsOperations(itemsData);
-
-  useEffect(() => {
-    if (isAuthenticated && itemsData.id) {
-      itemsData.fetchSphereAndItems();
-      const handleItemUpdated = () => {
-        itemsData.fetchSphereAndItems();
-      };
-
-      window.addEventListener("item-updated", handleItemUpdated);
-
-      return () => {
-        window.removeEventListener("item-updated", handleItemUpdated);
-      };
-    }
-  }, [isAuthenticated, itemsData.id, itemsData.currentPage, itemsData.pageSize, itemsData.searchTerm]);
 
   const breadcrumbItems = [
     { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },

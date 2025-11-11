@@ -273,10 +273,13 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
             sigla: formData.sigla,
             description: formData.description,
             type: formData.type,
-            parent: formData.parentId && formData.parentId !== "0" ? { id: Number(formData.parentId) } : null,
             externalUrl: formData.endpoint,
             uuid: formData.uuid
           };
+
+          if (formData.parentId && formData.parentId !== "0") {
+            sphereData.parentId = Number(formData.parentId);
+          }
 
           if (formData.type === "EXTERNAL") {
             sphereData.apiKey = formData.apiKey;

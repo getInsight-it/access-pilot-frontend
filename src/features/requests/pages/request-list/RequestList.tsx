@@ -1,6 +1,6 @@
 import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
 import { Link } from "react-router-dom";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { buttonVariants } from "../../../../common/external/ui/button.tsx";
 import { cn } from "../../../../config/lib/utils.ts";
 import { Plus } from "lucide-react";
@@ -21,6 +21,7 @@ import { RequestsTable } from "./partials/RequestsTable.tsx";
 
 export default function RequestList() {
   const requestType = useRequestType();
+  const isInitialMount = useRef(true);
 
   const {
     searchFilter,
@@ -42,12 +43,13 @@ export default function RequestList() {
   const { formatDate } = useRequestFormatting();
 
   useEffect(() => {
-    resetToFirstPage();
-  }, [resetToFirstPage]);
-
-  useEffect(() => {
-    resetToFirstPage(debouncedSearchFilter);
-  }, [debouncedSearchFilter, resetToFirstPage]);
+    if (isInitialMount.current) {
+      resetToFirstPage();
+      isInitialMount.current = false;
+    } else {
+      resetToFirstPage(debouncedSearchFilter);
+    }
+  }, [debouncedSearchFilter]);
 
   const handlePaginationChange = useCallback((page: number) => {
     handlePageChange(page, debouncedSearchFilter);

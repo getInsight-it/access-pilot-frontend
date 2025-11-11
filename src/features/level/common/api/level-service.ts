@@ -76,19 +76,11 @@ export class LevelService {
     return response.data as LevelSubItemResponseInterface;
   }
 
-  async getLevelById(id?: string): Promise<LevelInterface | null> {
-    if (!id) {
-      return null;
-    }
-
+  async getLevelById(id: string): Promise<LevelInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${LEVEL_API.LEVELS}/${id}`);
 
     if (response instanceof HttpRequestError) {
       throw response;
-    }
-
-    if (!response.data) {
-      return null;
     }
 
     return response.data as LevelInterface;
