@@ -101,14 +101,12 @@ export const CreateItem: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      const payload = {
+      await levelService.createLevelItem(levelId!, {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
         parentId: data.parentId ? Number(data.parentId) : undefined
-      };
-
-      await levelService.createLevelItem(levelId!, payload);
+      });
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
       navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!));
@@ -197,7 +195,7 @@ export const CreateItem: React.FC = () => {
                         className={`mt-2 ${errors.name ? "border-red-500" : ""}`}
                         {...register("name", {
                           required: "Nome é obrigatório",
-                          minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" }
+                          minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" },
                         })}
                       />
                       {errors.name && (
