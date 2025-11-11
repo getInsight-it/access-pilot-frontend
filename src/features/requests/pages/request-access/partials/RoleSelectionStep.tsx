@@ -17,7 +17,7 @@ interface RoleStepProps {
   roles: RoleResponseInterface[];
   selectedRole: string | null;
   handlerSelectedRole: (role: RoleResponseInterface) => void;
-  handlerSelectedSphere: (codeItem: string) => void;
+  handlerSelectedSphere: (codeItem: string, externalCode?: string) => void;
   handlerClearSphereHierarchyError: () => void;
   isLargeScreen: boolean;
   isFormSubmitted?: boolean;
@@ -69,12 +69,12 @@ export const RoleStep = ({
     hierarchyNotCompletedRef.current = false;
   }, [selectedRole]);
 
-  const handleHierarchyComplete = (codeItem: number) => {
+  const handleHierarchyComplete = (codeItem: number, externalCode?: string) => {
     const codeItemStr = codeItem.toString();
 
     if(currentCodeItemRef.current !== codeItemStr) {
       hierarchyNotCompletedRef.current = false;
-      handlerSelectedSphere(codeItemStr);
+      handlerSelectedSphere(codeItemStr, externalCode);
     }
   };
 

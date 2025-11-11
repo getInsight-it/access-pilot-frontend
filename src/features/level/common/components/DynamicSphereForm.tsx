@@ -23,7 +23,7 @@ interface DynamicSphereInterface {
 
 interface DynamicSphereFormProps {
   initialId: any;
-  onHierarchyComplete?: (complete: number) => void;
+  onHierarchyComplete?: (id: number, externalCode?: string) => void;
   onHierarchyNotCompleted?: () => void;
   limitFirst?: boolean;
   hasError?: boolean;
@@ -297,7 +297,7 @@ const DynamicSphereForm = ({
 
       if (selectedItem) {
         setHasEmittedValue(true);
-        onHierarchyComplete(selectedItem.id);
+        onHierarchyComplete(selectedItem.id, selectedItem.externalCode || undefined);
 
         if (hasError && onErrorClear) {
           onErrorClear();
