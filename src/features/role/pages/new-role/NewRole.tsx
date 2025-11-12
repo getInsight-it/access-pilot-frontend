@@ -67,7 +67,7 @@ export default function NewRole() {
     };
 
     initializeData();
-  }, [isAuthenticated, loadData, methods]);
+  }, [isAuthenticated, loadData, methods, setDataLoading]);
 
   const breadcrumbItems = [
     { title: isEditing ? "Editar papel" : "Adicionar novo papel", link: "" }
