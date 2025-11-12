@@ -2,6 +2,7 @@ import { cn } from "../../../../config/lib/utils.ts";
 import { Link } from "react-router-dom";
 import { UserNav } from "./partials/UserNav.tsx";
 import { MobileSidebar } from "../sidebar/MobileSidebar.tsx";
+import { PRIVATE_ROUTES } from "../../../constants/routes.ts";
 
 import ThemeToggle from "../../../../theme/theme-toggle.tsx";
 import ThemedLogo from "./partials/ThemedLogo.tsx";
@@ -13,7 +14,7 @@ export default function Header() {
       className="supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur">
       <nav className="flex h-16 items-center justify-between px-2 sm:px-4">
         <div className="hidden md:block flex-shrink-0">
-          <Link to={"#"}>
+          <Link to={PRIVATE_ROUTES.DASHBOARD}>
             <ThemedLogo />
           </Link>
         </div>

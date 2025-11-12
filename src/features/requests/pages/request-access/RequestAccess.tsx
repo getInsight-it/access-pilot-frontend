@@ -36,7 +36,7 @@ export interface BasicFormFieldInterface {
   };
 }
 
-export type RequestFormFieldType = "clientId" | "roleId" | "codeItem" | "reason" | "attachments";
+export type RequestFormFieldType = "clientId" | "roleId" | "codeItem" | "externalCode" | "reason" | "attachments";
 
 export default function RequestAccess() {
   const navigate = useNavigate();
@@ -61,6 +61,7 @@ export default function RequestAccess() {
     clientId: { invalid: false, error: "", value: "" },
     roleId: { invalid: false, error: "", value: "" },
     codeItem: { invalid: false, error: "", value: "" },
+    externalCode: { invalid: false, error: "", value: "" },
     reason: { invalid: false, error: "", value: "" },
     attachments: { invalid: false, error: "", value: [] }
   };
@@ -194,6 +195,7 @@ export default function RequestAccess() {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
     setBasicFormFieldValue({ field: "roleId", value: "", error: null });
     setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
+    setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
     setBasicFormFieldValue({ field: "reason", value: "", error: null });
     setBasicFormFieldValue({ field: "attachments", value: [], error: null });
 
@@ -240,11 +242,13 @@ export default function RequestAccess() {
           handlerSelectedRole={(role) => {
             setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
           }}
-          handlerSelectedSphere={(codeItem) => {
+          handlerSelectedSphere={(codeItem, externalCode) => {
             if(codeItem) {
               setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
+              setBasicFormFieldValue({ field: "externalCode", value: externalCode || "", error: null });
             } else {
               setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+              setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
             }
           }}
           handlerClearSphereHierarchyError={() => {
@@ -313,7 +317,10 @@ export default function RequestAccess() {
       const request = {
         clientId: customForm["clientId"].value,
         roleId: Number(customForm["roleId"].value),
-        ...(customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }),
+        ...(customForm["externalCode"].value ? 
+          { codeItem: customForm["externalCode"].value } :
+          customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }
+        ),
         description: customForm["reason"].value
       };
 

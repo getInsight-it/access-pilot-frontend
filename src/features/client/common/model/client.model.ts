@@ -1,4 +1,5 @@
 import { AttachmentConfigurationInterface } from "./configuration.model.ts";
+import {ItemTreeInterface} from "../../../summary/pages/partials/ClientCard.tsx";
 
 export type ClientResponseInterface = {
   id?: number;
@@ -12,4 +13,6 @@ export type ClientResponseInterface = {
   status?: string;
   baseUrl?: string;
   configurations: AttachmentConfigurationInterface[];
+  allowedItemsHierarchy: ItemTreeInterface[];
+
 }

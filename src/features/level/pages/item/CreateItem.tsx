@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
+import { Breadcrumbs } from "@common/components/breadcrumbs.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading.tsx";
+import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
+import { Separator } from "@common/external/ui/separator.tsx";
 import { motion } from "framer-motion";
-import { toast } from "../../../../common/external/ui/use-toast.ts";
-import { Label } from "../../../../common/external/ui/label.tsx";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
-import { Textarea } from "../../../../common/external/ui/textarea.tsx";
+import { toast } from "@common/external/ui/use-toast.ts";
+import { Label } from "@common/external/ui/label.tsx";
+import { Input } from "@common/external/ui/input.tsx";
+import { Button } from "@common/external/ui/button.tsx";
+import { Textarea } from "@common/external/ui/textarea.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../common/external/ui/tooltip.tsx";
 import { AlertCircle, Loader2 } from "lucide-react";
-import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
-import { levelService } from "../../common/api/level-service.ts";
-import { LevelInterface } from "../../common/types/level.model.ts";
-import { LevelItemInterface } from "../../common/types/level-item.model.ts";
-import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
-import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
+import { levelService } from "@features/level/common/api/level-service.ts";
+import { LevelInterface } from "@features/level/common/types/level.model.ts";
+import { LevelItemInterface } from "@features/level/common/types/level-item.model.ts";
+import DynamicSphereForm from "@features/level/common/components/DynamicSphereForm.tsx";
+import { goToPreviousRoute } from "@common/utils/NavigationStateManager.ts";
+import { formatErrorMessages } from "@common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
 
 interface FormData {
   name: string;
@@ -100,18 +101,15 @@ export const CreateItem: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      const payload = {
+      await levelService.createLevelItem(levelId!, {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
-        parentId: data.parentId ? Number(data.parentId) : null
-      };
-
-      const result = await levelService.createLevelItem(levelId!, payload);
-      if (!result) throw new Error("Falha ao adicionar o item.");
+        parentId: data.parentId ? Number(data.parentId) : undefined
+      });
 
       toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
-      navigate(`/dashboard/levels/${levelId}/items`);
+      navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!));
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
@@ -150,8 +148,8 @@ export const CreateItem: React.FC = () => {
   }
 
   const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: "/dashboard/levels" },
-    { title: "Itens", link: `/dashboard/levels/${levelId}/items` },
+    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
+    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!) },
     { title: "Criar item", link: "" }
   ];
 
@@ -197,43 +195,48 @@ export const CreateItem: React.FC = () => {
                         className={`mt-2 ${errors.name ? "border-red-500" : ""}`}
                         {...register("name", {
                           required: "Nome é obrigatório",
-                          minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" }
+                          minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" },
                         })}
                       />
                       {errors.name && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.name.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/3 transform -translate-y-1/2" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>
+                        </>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código externo <span className="text-primary-600">*</span></Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="externalCode"
-                        placeholder="Escreva o código externo do item"
+                        placeholder="Escreva o código do item"
                         className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
                         {...register("externalCode", {
-                          required: "Código externo é obrigatório",
-                          minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" }
+                          required: "O Código é obrigatório",
+                          minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" },
+                          pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
                         })}
                       />
                       {errors.externalCode && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.externalCode.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.externalCode.message}</p>
+                        </>
                       )}
                     </div>
                   </div>
@@ -252,14 +255,16 @@ export const CreateItem: React.FC = () => {
                       })}
                     />
                     {errors.description && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
-                          </TooltipTrigger>
-                          <TooltipContent>{errors.description.message}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                            </TooltipTrigger>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <p className="text-red-500 text-xs mt-2">{errors.description.message}</p>
+                      </>
                     )}
                   </div>
                 </div>

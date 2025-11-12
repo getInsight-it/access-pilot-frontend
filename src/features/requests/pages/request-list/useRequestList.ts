@@ -84,7 +84,7 @@ export const useRequestListData = (requestType: string) => {
   }, [requestType]);
 
   const handlePageChange = useCallback((page: number, filter?: string): void => {
-    fetchRequests({
+    void fetchRequests({
       page,
       size: DEFAULT_PAGINATION.PAGE_SIZE,
       sortField: DEFAULT_PAGINATION.SORT_FIELD,
@@ -94,7 +94,7 @@ export const useRequestListData = (requestType: string) => {
   }, [fetchRequests]);
 
   const resetToFirstPage = useCallback((filter?: string): void => {
-    fetchRequests({
+    void fetchRequests({
       page: DEFAULT_PAGINATION.INITIAL_PAGE,
       size: DEFAULT_PAGINATION.PAGE_SIZE,
       sortField: DEFAULT_PAGINATION.SORT_FIELD,

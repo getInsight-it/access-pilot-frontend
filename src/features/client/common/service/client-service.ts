@@ -1,8 +1,8 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 
-import { PaginatedResponse } from "../../../../common/types/util/paginated-response.ts";
-import { httpClient } from "../../../../config/http/http.ts";
+import { httpClient } from "@config/http/http.ts";
 import { ClientResponseInterface } from "../model/client.model.ts";
+import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
 
 export const CLIENT_API = {
   CLIENTS: "/v1/clients",

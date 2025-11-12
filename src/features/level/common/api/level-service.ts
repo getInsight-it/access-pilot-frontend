@@ -76,19 +76,11 @@ export class LevelService {
     return response.data as LevelSubItemResponseInterface;
   }
 
-  async getLevelById(id?: string): Promise<LevelInterface | null> {
-    if (!id) {
-      return null;
-    }
-
+  async getLevelById(id: string): Promise<LevelInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${LEVEL_API.LEVELS}/${id}`);
 
     if (response instanceof HttpRequestError) {
       throw response;
-    }
-
-    if (!response.data) {
-      return null;
     }
 
     return response.data as LevelInterface;
@@ -136,7 +128,7 @@ export class LevelService {
     return response.data as LevelItemInterface;
   }
 
-  async createLevelItem(levelId: string, itemData: CreateLevelItemData): Promise<LevelItemInterface | null> {
+  async createLevelItem(levelId: string, itemData: CreateLevelItemData): Promise<LevelItemInterface> {
     const url = `${LEVEL_API.LEVELS}/${levelId}/items`;
 
     const formattedData: CreateLevelItemData = {
@@ -157,10 +149,6 @@ export class LevelService {
 
     if (response instanceof HttpRequestError) {
       throw response;
-    }
-
-    if (response.status === 204 || !response.data) {
-      return null;
     }
 
     return response.data as LevelItemInterface;

@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { Bell, Check, CheckCheck, SquareArrowOutUpRight } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../external/ui/popover.tsx";
-import { Button } from "../../../../external/ui/button.tsx";
-import { Separator } from "../../../../external/ui/separator.tsx";
-import { toast } from "../../../../external/ui/use-toast.ts";
-import { useAuth } from "../../../../context/auth/AuthContext.tsx";
+import { PRIVATE_ROUTES } from "@common/constants/routes";
+import { useAuth } from "@common/context/auth/AuthContext";
+import { Button } from "@common/external/ui/button";
+import { toast } from "@common/external/ui/use-toast";
+import { notificationService } from "@common/service/notification-service";
+import { NotificationModel } from "@common/types/notification/notification.model";
+import { formatErrorMessages } from "@common/utils/error-utils";
+import { savePreviousRoute } from "@common/utils/NavigationStateManager";
 import { useNavigate } from "react-router-dom";
+import { Popover, PopoverContent, PopoverTrigger } from "@common/external/ui/popover";
+import { Separator } from "@common/external/ui/separator";
 
-import type { NotificationModel } from "../../../../types/notification/notification.model.ts";
-
-import { notificationService } from "../../../../service/notification-service.ts";
-import { PRIVATE_ROUTES } from "../../../../constants/routes.ts";
-import { savePreviousRoute } from "../../../../utils/NavigationStateManager.ts";
-import { formatErrorMessages } from "../../../../utils/error-utils.ts";
 
 export default function Notifications() {
   const navigate = useNavigate();

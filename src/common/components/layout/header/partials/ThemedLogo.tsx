@@ -1,5 +1,5 @@
+import { useTheme } from "@theme/theme-provider";
 import { useEffect, useState } from "react";
-import { useTheme } from "../../../../../theme/theme-provider.tsx";
 
 function ThemedLogo() {
   const { themeType } = useTheme();

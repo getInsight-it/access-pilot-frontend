@@ -1,5 +1,5 @@
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "../enum/client-status.enum.ts";
-import { Badge } from "../../../../common/external/ui/badge.tsx";
+import { Badge } from "@ui/badge.tsx";
 
 export const ClientStatusBadgeFactory = (status: string) => {
   const statusLabel = status === ClientStatusEnum.PUBLISHED

@@ -4,13 +4,13 @@ import { UserRoleEnum } from "../../../../types/user/user.model.ts";
 export const navItems: NavItem[] = [
   {
     title: "Minhas solicitações",
-    href: "/dashboard/my-access-requests",
+    href: "/my-access-requests",
     icon: "book",
     label: "Minhas solicitações"
   },
   {
     title: "Solicitar acesso",
-    href: "/dashboard/request-access",
+    href: "/request-access",
     icon: "key",
     label: "Solicitar acesso"
   },
@@ -23,7 +23,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Gerenciar sistemas",
-    href: "/dashboard/systems",
+    href: "/systems",
     icon: "cog",
     label: "Gerenciar Sistemas",
     protected: true,
@@ -31,7 +31,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Gerenciar solicitações",
-    href: "/dashboard/access-requests",
+    href: "/access-requests",
     icon: "bookuser",
     label: "Gerenciar solicitações",
     protected: true,
@@ -39,7 +39,7 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Gerenciar esferas",
-    href: "/dashboard/levels",
+    href: "/levels",
     icon: "globe2",
     label: "Gerenciar esferas",
     protected: true,

@@ -18,6 +18,9 @@ import { levelService } from "../../common/api/level-service.ts";
 import { LevelInterface } from "../../common/types/level.model.ts";
 import DynamicSphereForm from "../../common/components/DynamicSphereForm.tsx";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
+import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { CreateLevelItemData } from "../../common/types/level-item.model.ts";
 
 interface FormData {
   name: string;
@@ -38,6 +41,16 @@ export const EditItem: React.FC = () => {
   const retrieveLevel = async (id: string) => {
     try {
       const levelResponse = await levelService.getLevelById(id);
+      if(levelResponse && (levelResponse.type === "BUILT_IN" || levelResponse.type === "EXTERNAL")) {
+        toast({
+          title: "Ação não permitida",
+          description: "Não é possível gerenciar itens de esferas do tipo Negocial ou Externa.",
+          variant: "destructive"
+        });
+        goToPreviousRoute(navigate);
+        return;
+      }
+
       setLevel(levelResponse);
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
@@ -54,10 +67,6 @@ export const EditItem: React.FC = () => {
 
     try {
       const itemData = await levelService.getLevelItem(levelId, itemId);
-      if(!itemData) {
-        throw new Error("Falha ao carregar dados do item");
-      }
-
       setValue("name", itemData.name || "");
       setValue("description", itemData.description || "");
       setValue("externalCode", itemData.externalCode || "");
@@ -72,21 +81,21 @@ export const EditItem: React.FC = () => {
         description: errorMessage,
         variant: "destructive"
       });
+      goToPreviousRoute(navigate);
     }
   };
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      const payload = {
+      const payload: CreateLevelItemData = {
         name: data.name,
         description: data.description,
         externalCode: data.externalCode,
-        parentId: data.parentId ? Number(data.parentId) : null
+        parentId: data.parentId ? Number(data.parentId) : undefined
       };
 
-      const result = await levelService.updateLevelItem(levelId!, itemId!, payload);
-      if(!result) throw new Error("Falha ao atualizar o item.");
+      await levelService.updateLevelItem(levelId!, itemId!, payload);
 
       toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
       navigate(`/dashboard/levels/${levelId}/items`);
@@ -123,8 +132,8 @@ export const EditItem: React.FC = () => {
   }
 
   const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: "/dashboard/levels" },
-    { title: "Itens", link: `/dashboard/levels/${levelId}/items` },
+    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
+    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!) },
     { title: "Editar item", link: "" }
   ];
 
@@ -172,15 +181,16 @@ export const EditItem: React.FC = () => {
                         })}
                       />
                       {errors.name && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle
-                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.name.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/3 transform -translate-y-1/2" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>
+                      </>
                       )}
                     </div>
                   </div>
@@ -190,23 +200,25 @@ export const EditItem: React.FC = () => {
                     <div className="relative">
                       <Input
                         id="externalCode"
-                        placeholder="Escreva o código externo do item"
+                        placeholder="Escreva o código do item"
                         className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
                         {...register("externalCode", {
                           required: "Código externo é obrigatório",
-                          minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" }
+                          minLength: { value: 3, message: "O código deve conter no mínimo 3 caracteres" },
+                          pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
                         })}
                       />
                       {errors.externalCode && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle
-                                className="h-5 w-5 text-red-500 absolute right-3 top-1/2 transform -translate-y-1/2" />
-                            </TooltipTrigger>
-                            <TooltipContent>{errors.externalCode.message}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.externalCode.message}</p>
+                      </>
                       )}
                     </div>
                   </div>
@@ -226,14 +238,16 @@ export const EditItem: React.FC = () => {
                       })}
                     />
                     {errors.description && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
-                          </TooltipTrigger>
-                          <TooltipContent>{errors.description.message}</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                       <>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <p className="text-red-500 text-xs mt-2">{errors.description.message}</p>
+                      </>
                     )}
                   </div>
                 </div>

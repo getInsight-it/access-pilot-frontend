@@ -1,41 +1,22 @@
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { Link } from "react-router-dom";
-import useAuthStore, { type AuthState } from "../../../../store/authStore.ts";
+import useAuthStore, { type AuthState } from "@store/authStore.ts";
 import { useEffect } from "react";
-import { buttonVariants } from "../../../../common/external/ui/button.tsx";
-import { cn } from "../../../../config/lib/utils.ts";
+import { buttonVariants } from "@ui/button.tsx";
+import { cn } from "@config/lib/utils.ts";
 import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Info } from "lucide-react";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
-
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { motion } from "framer-motion";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "../../../../common/external/ui/table.tsx";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "../../../../common/external/ui/dropdown-menu.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../common/external/ui/popover.tsx";
-import { PaginationWrapper } from "../../../../common/components/PaginationWrapper.tsx";
-import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import { ClientStatusEnum, ClientStatusTranslationEnum } from "../../common/enum/client-status.enum.ts";
-import { Badge } from "../../../../common/external/ui/badge.tsx";
-import {
-  useSystemListData,
-  useSystemOperations,
-  useSystemNavigation,
-  usePopoverState
-} from "./useSystemList.ts";
+import { ScrollArea } from "@ui/scroll-area.tsx";
+import { Input } from "@ui/input.tsx";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@ui/table.tsx";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/dropdown-menu.tsx";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover.tsx";
+import { PaginationWrapper } from "@components/PaginationWrapper.tsx";
+import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
+import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/common/enum/client-status.enum";
+import { Badge } from "@ui/badge.tsx";
+import { useSystemListData, useSystemOperations, useSystemNavigation, usePopoverState } from "./useSystemList.ts";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -92,7 +73,7 @@ export default function SystemList() {
               <div className="w-96 max-w-full">
                 <Input
                   variant="dark"
-                  placeholder="Filtrar por Sistema..."
+                  placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
@@ -186,7 +167,7 @@ export default function SystemList() {
             <div className="hidden lg:flex flex-col gap-4">
               <div className="w-96 max-w-full">
                 <Input
-                  placeholder="Filtrar por Sistema..."
+                  placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="h-10 w-full"

@@ -16,7 +16,7 @@ import { RolesTable } from "./partials/RolesTable.tsx";
 
 const breadcrumbItems = [
   { title: "Gerenciar Sistemas", link: PRIVATE_ROUTES.SYSTEMS },
-  { title: "Gerenciar papéis", link: "/dashboard/:client" }
+  { title: "Gerenciar papéis", link: PRIVATE_ROUTES.ROLES }
 ];
 
 export default function ManageRoles() {

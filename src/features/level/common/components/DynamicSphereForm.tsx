@@ -23,7 +23,7 @@ interface DynamicSphereInterface {
 
 interface DynamicSphereFormProps {
   initialId: any;
-  onHierarchyComplete?: (complete: number) => void;
+  onHierarchyComplete?: (id: number, externalCode?: string) => void;
   onHierarchyNotCompleted?: () => void;
   limitFirst?: boolean;
   hasError?: boolean;
@@ -89,8 +89,17 @@ const DynamicSphereForm = ({
 
           setSpheresData(prev => {
             const data = [...prev];
-            const items = pageableItems?.items || [];
+            let items = pageableItems?.items || [];
             const total = pageableItems?.total || 0;
+
+            const selectedValue = selectedValues[index];
+            if (selectedValue && !items.some(item => item.name === selectedValue)) {
+              const selectedItem = data[index].items.find(item => item.name === selectedValue);
+              if (selectedItem) {
+                items = [selectedItem as any, ...items];
+              }
+            }
+
             data[index] = {
               ...data[index],
               items: items,
@@ -112,8 +121,17 @@ const DynamicSphereForm = ({
 
           setSpheresData(prev => {
             const data = [...prev];
-            const items = subitems?.items || [];
+            let items = subitems?.items || [];
             const total = subitems?.total || 0;
+
+            const selectedValue = selectedValues[index];
+            if (selectedValue && !items.some(item => item.name === selectedValue)) {
+              const selectedItem = data[index].items.find(item => item.name === selectedValue);
+              if (selectedItem) {
+                items = [selectedItem as any, ...items];
+              }
+            }
+
             data[index] = {
               ...data[index],
               items: items,
@@ -141,14 +159,14 @@ const DynamicSphereForm = ({
     }, 500);
 
     searchTimeoutRefs.current.set(index, timeout);
-  }, [spheresData, subItemPageSize]);
+  }, [spheresData, subItemPageSize, selectedValues]);
 
   const fetchInitialData = async () => {
     try {
       const spheres = await levelService.getLevelHierarchy(initialId);
       const fetchedSpheresData: DynamicSphereInterface[] = await Promise.all(
         spheres.map(async (sphere: any, index: number) => {
-          if(index === 0) {
+          if (index === 0) {
             const pageableItems = await levelService.getLevelItems(sphere.id);
             const items = pageableItems?.items || [];
             const total = pageableItems?.total || 0;
@@ -265,12 +283,12 @@ const DynamicSphereForm = ({
   useEffect(() => {
     const allFilled = selectedValues.every(val => val !== "");
 
-    if(!allFilled && hasEmittedValue) {
+    if (!allFilled && hasEmittedValue) {
       onHierarchyNotCompleted?.();
       return;
     }
 
-    if(onHierarchyComplete && allFilled && selectedValues.length) {
+    if (onHierarchyComplete && allFilled && selectedValues.length) {
 
       const lastIdx = spheresData.length - 1;
       const selectedItem = spheresData[lastIdx]
@@ -279,7 +297,7 @@ const DynamicSphereForm = ({
 
       if (selectedItem) {
         setHasEmittedValue(true);
-        onHierarchyComplete(selectedItem.id);
+        onHierarchyComplete(selectedItem.id, selectedItem.externalCode || undefined);
 
         if (hasError && onErrorClear) {
           onErrorClear();
@@ -301,7 +319,7 @@ const DynamicSphereForm = ({
     setSelectedValues(prev => {
       const data = [...prev];
       data[index] = newValue;
-      for(let i = index + 1; i < data.length; i++) {
+      for (let i = index + 1; i < data.length; i++) {
         data[i] = "";
       }
       return data;
@@ -309,7 +327,7 @@ const DynamicSphereForm = ({
 
     setSpheresData(prev => {
       const data = [...prev];
-      for(let i = index + 1; i < data.length; i++) {
+      for (let i = index + 1; i < data.length; i++) {
         data[i] = { ...data[i], items: [] };
       }
       return data;
@@ -319,10 +337,10 @@ const DynamicSphereForm = ({
       onErrorClear();
     }
 
-    if(index < spheresData.length - 1) {
+    if (index < spheresData.length - 1) {
       const currentSphereData = spheresData[index];
       const selectedItem = currentSphereData.items.find((item: any) => item.name === newValue);
-      if(selectedItem) {
+      if (selectedItem) {
         try {
           const newPageableItems = await levelService.getItemSubItems(
             spheresData[index + 1].sphere.id,
@@ -360,8 +378,8 @@ const DynamicSphereForm = ({
 
     const currentSearchTerm = searchTerms.get(index) || "";
 
-    if(spheresData[index].hasMoreItems) {
-      if(index === 0) {
+    if (spheresData[index].hasMoreItems) {
+      if (index === 0) {
         if (index > 0 && !spheresData[index - 1]) return;
 
         const actualSphereData = spheresData[index];
@@ -445,7 +463,7 @@ const DynamicSphereForm = ({
         const resItems = res?.items || [];
         const resTotal = res?.total || 0;
 
-        if(resItems.length > 0) {
+        if (resItems.length > 0) {
           setSpheresData(prev => {
             const data = [...prev];
             const indexNumber = index;
@@ -551,11 +569,11 @@ const DynamicSphereForm = ({
     }
   };
 
-  if(loading) {
+  if (loading) {
     return <div>Carregando esferas...</div>;
   }
 
-  if(error) {
+  if (error) {
     return <div>Erro: {error}</div>;
   }
 
