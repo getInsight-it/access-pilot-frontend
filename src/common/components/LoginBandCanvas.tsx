@@ -1,9 +1,13 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, extend } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
+import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 import { useTheme } from '../../theme/theme-provider.tsx'
+
+// Register meshline primitives with react-three-fiber so <meshLineGeometry /> and <meshLineMaterial /> work in JSX
+extend({ MeshLineGeometry, MeshLineMaterial })
 
 /* eslint-disable @typescript-eslint/no-namespace -- necessário para declarar IntrinsicElements para elementos customizados de three/meshline */
 declare global {
