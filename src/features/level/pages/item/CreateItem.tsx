@@ -11,7 +11,7 @@ import { Label } from "@common/external/ui/label.tsx";
 import { Input } from "@common/external/ui/input.tsx";
 import { Button } from "@common/external/ui/button.tsx";
 import { Textarea } from "@common/external/ui/textarea.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../common/external/ui/tooltip.tsx";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "../../../../common/external/ui/tooltip.tsx";
 import { AlertCircle, Loader2 } from "lucide-react";
 import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
 import { levelService } from "@features/level/common/api/level-service.ts";

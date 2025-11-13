@@ -1,13 +1,24 @@
-// @ts-nocheck
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
-import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, extend } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 import { useTheme } from '../../theme/theme-provider.tsx'
 
+// Register meshline primitives with react-three-fiber so <meshLineGeometry /> and <meshLineMaterial /> work in JSX
 extend({ MeshLineGeometry, MeshLineMaterial })
+
+/* eslint-disable @typescript-eslint/no-namespace -- necessário para declarar IntrinsicElements para elementos customizados de three/meshline */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      meshLineGeometry: any;
+      meshLineMaterial: any;
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
 useGLTF.preload('/models/card.glb')
 useTexture.preload('/img/band.jpg')
 
@@ -24,13 +35,6 @@ export default function LoginBandCanvas() {
     : theme === 'tangerine'
     ? '#ffeedb'  // Cor de fundo para o tema tangerine (um tom claro de tangerina)
     : '#ffffff';  // Cor de fundo para o tema claro
-
-  // apartment, city, dawn, forest, lobby, night, park, studio, sunset, warehouse
-  const environmentHDR = theme === 'dark'
-    ? '/hdr/warehouse.hdr'
-    : theme === 'tangerine'
-    ? '/hdr/lobby.hdr'  // Caminho para o HDR do tema tangerine
-    : '/hdr/park.hdr';  // Tema claro usa o HDR padrão
 
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
@@ -63,25 +67,19 @@ interface BandProps {
 
 function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
   const band = useRef<THREE.Mesh>(null)
-  {/* @ts-ignore  */}
-  const fixed = useRef<RigidBody>(null)
-  {/* @ts-ignore  */}
-  const j1 = useRef<RigidBody>(null)
-  {/* @ts-ignore  */}
-  const j2 = useRef<RigidBody>(null)
-  {/* @ts-ignore  */}
-  const j3 = useRef<RigidBody>(null)
-  {/* @ts-ignore  */}
-  const card = useRef<RigidBody>(null)
+  const fixed = useRef<any>(null)
+  const j1 = useRef<any>(null)
+  const j2 = useRef<any>(null)
+  const j3 = useRef<any>(null)
+  const card = useRef<any>(null)
   const vec = new THREE.Vector3()
   const ang = new THREE.Vector3()
   const rot = new THREE.Vector3()
   const dir = new THREE.Vector3()
-  const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
+  const segmentProps = { type: 'dynamic' as const, canSleep: true, angularDamping: 2, linearDamping: 2 }
   // const segmentProps = { type: 'dynamic', canSleep: true, angularDamping: 2, linearDamping: 2 }
   const { nodes, materials } = useGLTF('/models/card.glb') as any
   const texture = useTexture('/img/band.jpg')
-  const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState<THREE.Vector3 | boolean>(false)
   const [hovered, hover] = useState(false)
@@ -116,8 +114,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
       curve.points[1].copy(j2.current!.lerped)
       curve.points[2].copy(j1.current!.lerped)
       curve.points[3].copy(fixed.current!.translation())
-      {/* @ts-ignore  */}
-      band.current!.geometry.setPoints(curve.getPoints(32))
+      ;(band.current!.geometry as any).setPoints(curve.getPoints(32))
       ang.copy(card.current!.angvel())
       rot.copy(card.current!.rotation())
       card.current!.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z })
@@ -130,22 +127,17 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
   return (
     <>
       <group position={[0, 4, 0]}>
-        {/* @ts-ignore  */}
-        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        {/* @ts-ignore  */}
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody ref={fixed} {...segmentProps} type="fixed" colliders={false as any} />
+        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps} colliders={false as any}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-          {/* @ts-ignore  */}
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps} colliders={false as any}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-          {/* @ts-ignore  */}
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps} colliders={false as any}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        {/* @ts-ignore  */}
-        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={typeof dragged === 'object' ? 'kinematicPosition' : 'dynamic'}>
+        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} colliders={false as any} type={typeof dragged === 'object' ? 'kinematicPosition' : 'dynamic'}>
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
             scale={2.25}
@@ -163,9 +155,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }: BandProps) {
         </RigidBody>
       </group>
       <mesh ref={band}>
-        {/* @ts-ignore  */}
         <meshLineGeometry />
-        {/* @ts-ignore  */}
         <meshLineMaterial
           color="white"
           depthTest={false}

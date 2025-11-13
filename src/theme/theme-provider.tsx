@@ -87,14 +87,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const [themeCache] = useState<Map<string, Theme>>(new Map());
 
-  useLayoutEffect(() => {
-    const initialTheme = BUILT_IN_THEMES[theme] || LIGHT_THEME;
-    applyTreeComponentPalette(initialTheme['theme-type']);
-    applyTheme(initialTheme, initialTheme['theme-type']);
-
-    if (!BUILT_IN_THEMES[theme]) {
-      changeTheme(theme);
-    }
+  const executeApplyTheme = useCallback((themeData: Theme, selectedTheme: string) => {
+    applyTreeComponentPalette(themeData['theme-type']);
+    applyTheme(themeData, themeData['theme-type']);
+    setTheme(selectedTheme);
+    setThemeType(themeData['theme-type']);
+    localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
+    localStorage.setItem(THEME_TYPE_STORAGE_KEY, themeData['theme-type']);
   }, []);
 
   const changeTheme = useCallback(async (selectedTheme: string) => {
@@ -118,16 +117,17 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         executeApplyTheme(LIGHT_THEME, 'light');
       }
     }
-  }, [themeCache]);
+  }, [themeCache, executeApplyTheme]);
 
-  const executeApplyTheme = (themeData: Theme, selectedTheme: string) => {
-    applyTreeComponentPalette(themeData['theme-type']);
-    applyTheme(themeData, themeData['theme-type']);
-    setTheme(selectedTheme);
-    setThemeType(themeData['theme-type']);
-    localStorage.setItem(THEME_STORAGE_KEY, selectedTheme);
-    localStorage.setItem(THEME_TYPE_STORAGE_KEY, themeData['theme-type']);
-  }
+  useLayoutEffect(() => {
+    const initialTheme = BUILT_IN_THEMES[theme] || LIGHT_THEME;
+    applyTreeComponentPalette(initialTheme['theme-type']);
+    applyTheme(initialTheme, initialTheme['theme-type']);
+
+    if (!BUILT_IN_THEMES[theme]) {
+      changeTheme(theme);
+    }
+  }, [changeTheme, theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, themeType, changeTheme }}>

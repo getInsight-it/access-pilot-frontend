@@ -11,7 +11,7 @@ import { SuccessFeedback } from "./partials/SuccessFeedbackForm.tsx";
 import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
 import { ConfirmRequestDialog } from "./partials/ConfirmRequestDialog.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
 import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 import useAuthStore from "../../../../store/authStore.ts";
@@ -68,7 +68,7 @@ export default function RequestAccess() {
 
   const [customForm, setCustomForm] = useState<BasicFormFieldInterface>(initialFormState);
 
-  const setBasicFormFieldValue = ({ field, value, error }: {
+  const setBasicFormFieldValue = useCallback(({ field, value, error }: {
     field: RequestFormFieldType,
     value?: any,
     error: string | null
@@ -79,7 +79,7 @@ export default function RequestAccess() {
         [field]: { ...prev[field], value, error }
       };
     });
-  };
+  }, [setCustomForm]);
 
   const clearError = (field: RequestFormFieldType) => {
     setBasicFormFieldValue({ field, value: customForm[field].value, error: null });
@@ -147,7 +147,7 @@ export default function RequestAccess() {
     }
   };
 
-  const getClients = async () => {
+  const getClients = useCallback(async () => {
     try {
       const fetchedClients = await clientService.getClients();
       setClients(fetchedClients);
@@ -160,9 +160,9 @@ export default function RequestAccess() {
         variant: "destructive"
       });
     }
-  };
+  }, [toast]);
 
-  const getRolesByClientId = async (clientId: string) => {
+  const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
       const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles);
@@ -175,23 +175,9 @@ export default function RequestAccess() {
         variant: "destructive"
       });
     }
-  };
+  }, [toast]);
 
-  function init() {
-    if(isAuthenticated) {
-      getClients();
-      const client = location.state;
-      if(client) {
-        handlerSelectedClient(client, true);
-      }
-    }
-  }
-
-  useEffect(() => {
-    init();
-  }, [isAuthenticated]);
-
-  function handlerSelectedClient(client: ClientResponseInterface, autoAdvance: boolean = false) {
+  const handlerSelectedClient = useCallback((client: ClientResponseInterface, autoAdvance: boolean = false) => {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
     setBasicFormFieldValue({ field: "roleId", value: "", error: null });
     setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
@@ -208,7 +194,21 @@ export default function RequestAccess() {
     }
 
     getRolesByClientId(client.clientId);
-  }
+  }, [setBasicFormFieldValue, setStepsState, setCurrentStep, getRolesByClientId]);
+
+  const init = useCallback(() => {
+    if(isAuthenticated) {
+      getClients();
+      const client = location.state;
+      if(client) {
+        handlerSelectedClient(client, true);
+      }
+    }
+  }, [isAuthenticated, getClients, location.state, handlerSelectedClient]);
+
+  useEffect(() => {
+    init();
+  }, [init]);
 
   const { width } = useWindowSize();
   const isLargeScreen = width >= 1024;

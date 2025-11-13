@@ -35,16 +35,16 @@ export const useSystemListData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setIsLoading, setClients, setTotalSystems, setTotalPages]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  }, []);
+  }, [setCurrentPage]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchFilter(value);
     setCurrentPage(1);
-  }, []);
+  }, [setSearchFilter, setCurrentPage]);
 
   const init = useCallback(() => {
     getData(currentPage, pageSize, searchFilter);

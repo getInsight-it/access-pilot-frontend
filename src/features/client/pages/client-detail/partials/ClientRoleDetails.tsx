@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@ui/button.tsx";
 import { ChevronDown, ChevronRight, User } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "@ui/table.tsx";
@@ -84,20 +84,21 @@ export const ClientRoleDetails = ({ roles }: ClientRoleDetailsProps) => {
     return sortItems(rootItems);
   };
 
-  const flattenRoles = (items: RoleItemType[], level: number = 0): RoleItemType[] => {
+  const flattenRoles = useCallback((items: RoleItemType[], level: number = 0): RoleItemType[] => {
     let result: RoleItemType[] = [];
 
     items.forEach((item) => {
       const itemWithLevel = { ...item, level };
       result.push(itemWithLevel);
 
-      if(item.children && item.children.length > 0 && expandedItems.has(item.id)) {
+      if (item.children && item.children.length > 0 && expandedItems.has(item.id)) {
+        // recurse using the same memoized function
         result = result.concat(flattenRoles(item.children, level + 1));
       }
     });
 
     return result;
-  };
+  }, [expandedItems]);
 
   const toggleExpand = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -112,11 +113,11 @@ export const ClientRoleDetails = ({ roles }: ClientRoleDetailsProps) => {
   };
 
   useEffect(() => {
-    if(roleItems.length > 0) {
+    if (roleItems.length > 0) {
       const flatList = flattenRoles(roleItems, 0);
       setFlatRoles(flatList);
     }
-  }, [expandedItems, roleItems]);
+  }, [flattenRoles, roleItems]);
 
   if(roleItems.length === 0) {
     return (
