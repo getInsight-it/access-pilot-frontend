@@ -1,9 +1,15 @@
-import { ChevronDown, HelpCircle, LogOut, User } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@common/external/ui/dropdown-menu";
-import { PRIVATE_ROUTES } from "@common/constants/routes";
-import { authService } from "@features/auth/common/AuthService";
-import { Link, useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@common/external/ui/avatar";
+import {ChevronDown, HelpCircle, LogOut} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@common/external/ui/dropdown-menu";
+import {PRIVATE_ROUTES} from "@common/constants/routes";
+import {authService} from "@features/auth/common/AuthService";
+import {Link, useNavigate} from "react-router-dom";
+import {Avatar, AvatarFallback, AvatarImage} from "@common/external/ui/avatar";
 
 import useAuthStore from "@store/authStore";
 
@@ -73,10 +79,6 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
         </div>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to={PRIVATE_ROUTES.PROFILE}>
-          <User className="w-4 h-4 mr-2" />
-          Perfil
-        </Link>
         <Link className="flex items-center p-2 text-sm hover:opacity-55" to={PRIVATE_ROUTES.HELP_AND_SUPPORT}>
           <HelpCircle className="w-4 h-4 mr-2" />
           Ajuda e suporte
