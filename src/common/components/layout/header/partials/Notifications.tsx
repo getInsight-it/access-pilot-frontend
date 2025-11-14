@@ -11,7 +11,6 @@ import { savePreviousRoute } from "@common/utils/NavigationStateManager";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@common/external/ui/popover";
 import { Separator } from "@common/external/ui/separator";
-import { get } from "react-hook-form";
 
 
 export default function Notifications() {
@@ -75,8 +74,6 @@ export default function Notifications() {
     let actions: string[] = [];
     
     actions = await notificationService.getAvailableActions(notification.requestId);
-    console.log('ACTIONS AEEEEE', actions);
-    
     
     return actions;
   }
