@@ -6,7 +6,8 @@ import { httpClient } from "../../config/http/http.ts";
 const NOTIFICATION_API = {
   NOTIFICATIONS: "/v1/notifications",
   NOTIFICATIONS_OPENED: "/v1/notifications/:id/opened",
-  NOTIFICATIONS_SUMMARY: "/v1/notifications/summary"
+  NOTIFICATIONS_SUMMARY: "/v1/notifications/summary",
+  AVAILABLE_ACTIONS: "/v1/requests/:id/my-available-actions"
 };
 
 export class NotificationService {
@@ -61,6 +62,18 @@ export class NotificationService {
     if(response instanceof HttpRequestError) {
       throw response;
     }
+  }
+
+  async getAvailableActions(requestId: number): Promise<string[]> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      NOTIFICATION_API.AVAILABLE_ACTIONS.replace(":id", requestId.toString())
+    );
+
+    if(response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as string[];
   }
 }
 

@@ -144,7 +144,7 @@ export function RolesTable({
               ))
             ) : !loading ? (
               <TableRow>
-                <TableCell {...{ colSpan: 5 }} className="py-12">
+                <TableCell {...{ colSpan: 5 }} className="py-12 justify-center">
                   <EmptyState />
                 </TableCell>
               </TableRow>
