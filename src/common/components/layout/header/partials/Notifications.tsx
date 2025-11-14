@@ -70,6 +70,14 @@ export default function Notifications() {
     setIsOpen(open);
   };
 
+  const getAvailableActions = async (notification: NotificationModel) => {
+    let actions: string[] = [];
+    
+    actions = await notificationService.getAvailableActions(notification.requestId);
+    
+    return actions;
+  }
+
   return (
     <div className="flex items-center">
       <div>
@@ -100,9 +108,10 @@ export default function Notifications() {
                     }
                     <SquareArrowOutUpRight
                       className="h-4 w-4 text-blue-500 cursor-pointer flex-shrink-0"
-                      onClick={() => {
+                      onClick={async () => {
                         setIsOpen(false);
-                        savePreviousRoute(PRIVATE_ROUTES.ACCESS_REQUESTS, "assigned");
+                        let availableActions = await getAvailableActions(notification);
+                        savePreviousRoute(PRIVATE_ROUTES.ACCESS_REQUESTS, availableActions.includes('REJECT') ? "assigned" : "created");
                         navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", notification.requestId.toString()));
                       }}
                     />
@@ -117,5 +126,3 @@ export default function Notifications() {
     </div>
   );
 }
-
-
