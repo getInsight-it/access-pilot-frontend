@@ -28,9 +28,11 @@ interface RequestStatusContainerProps {
   protocolCode: string;
   formattedDate: string;
   finalReason?: string;
+  revocationReason?: string;
   data?: any;
   canCancel?: boolean;
   onCancel: (finalReason: string) => void;
+  onRevoke: (revocationReason: string) => void;
   onReject: (description: string, finalReason: string) => void;
   onApprove: (description: string) => void;
   description?: string;
@@ -44,6 +46,7 @@ const statusConfig: any = {
   "PENDING": { icon: FileSearch, color: "text-blue-800", bgColor: "bg-blue-200", progress: 50 },
   "APPROVED": { icon: FileCheck, color: "text-green-800", bgColor: "bg-green-200", progress: 100 },
   "REJECTED": { icon: FileX, color: "text-red-800", bgColor: "bg-red-200", progress: 100 },
+  "REVOKED": { icon: FileX, color: "text-gray-800", bgColor: "bg-gray-200", progress: 100 },
   "CANCELED": { icon: FileX, color: "text-gray-800", bgColor: "bg-gray-200", progress: 100 }
 };
 
@@ -52,8 +55,10 @@ const RequestStatus = ({
   protocolCode,
   formattedDate,
   finalReason,
+  revocationReason,
   canCancel,
   onCancel,
+  onRevoke,
   onReject,
   onApprove,
   description,
@@ -81,7 +86,7 @@ const RequestStatus = ({
   }, [status, config.progress]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"CANCELED" | "REJECTED" | "APPROVED">("CANCELED");
+  const [modalAction, setModalAction] = useState<"CANCELED" | "REJECTED" | "APPROVED" | "REVOKED">("CANCELED");
 
   const isFinished = ["APPROVED", "REJECTED"].includes(status);
   const formSchema = z.object({
@@ -98,11 +103,13 @@ const RequestStatus = ({
   });
 
   const onSubmit = async (formData: any) => {
-    if(modalAction === "APPROVED") {
+    if (modalAction === "APPROVED") {
       onApprove(description || "");
-    } else if(modalAction === "REJECTED") {
+    } else if (modalAction === "REJECTED") {
       onReject(description || "", formData.finalReason);
-    } else if(modalAction === "CANCELED") {
+    } else if (modalAction === "REVOKED") {
+      onRevoke(formData.finalReason);
+    } else if (modalAction === "CANCELED") {
       onCancel(formData.finalReason);
     }
     setIsModalOpen(false);
@@ -158,9 +165,50 @@ const RequestStatus = ({
             </div>
           )}
 
+          {status === "REVOKED" && revocationReason && (
+            <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+              <strong>Motivo:</strong> {revocationReason}
+            </div>
+          )}
+
           {status === "CANCELED" && finalReason && (
             <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
               <strong>Motivo:</strong> {finalReason}
+            </div>
+          )}
+
+          {status === "APPROVED" && isFinished && (
+            <div className="mt-4">
+              <FormProvider {...form}>
+                <motion.div
+                  initial={{ y: 12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -12, opacity: 0 }}
+                >
+                  <div className="flex gap-2 flex-wrap">
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-red-200 text-red-800 hover:bg-red-50"
+                      onClick={() => {
+                        setModalAction("REVOKED");
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      Revogar
+                    </Button>
+                  </div>
+                  <ConfirmationModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={modalAction === "APPROVED" ? () => onSubmit({}) : form.handleSubmit(onSubmit)}
+                    title={`${modalAction === "CANCELED" ? "Cancelar" : modalAction === "REJECTED" ? "Rejeitar" : modalAction === "REVOKED" ? "Revogar" : "Aprovar"} Solicitação`}
+                    action={modalAction === "CANCELED" ? "cancelamento" : modalAction === "REJECTED" ? "rejeição" : modalAction === "REVOKED" ? "revogação" : "aprovação"}
+                    form={form}
+                  />
+                </motion.div>
+              </FormProvider>
             </div>
           )}
 

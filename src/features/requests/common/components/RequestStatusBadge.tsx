@@ -10,6 +10,7 @@ export const RequestStatusBadge = (status: string) => {
     case REQUEST_STATUS_ENUM.CANCELED: return (<Badge variant="destructive">{presentationName}</Badge>);
     case REQUEST_STATUS_ENUM.CREATED: return (<Badge variant="info">{presentationName}</Badge>);
     case REQUEST_STATUS_ENUM.REJECTED: return (<Badge variant="destructive">{presentationName}</Badge>);
+    case REQUEST_STATUS_ENUM.REVOKED: return (<Badge variant="destructive">{presentationName}</Badge>);
     default: return <span>{presentationName}</span>
   }
 }

@@ -27,12 +27,13 @@ import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
 import { STATUS } from "./constant/status.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 
-type RequestStatusType = "CANCELED" | "REJECTED" | "APPROVED";
+type RequestStatusType = "CANCELED" | "REJECTED" | "REVOKED" | "APPROVED";
 
 interface RequestStatusParams {
   status: RequestStatusType;
   description?: string;
   finalReason?: string;
+  revocationReason?: string;
 }
 
 const useRequestData = (requestId: string | undefined, navigate: ReturnType<typeof useNavigate>) => {
@@ -150,6 +151,14 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     );
   }, [updateRequestStatus]);
 
+  const handleRevoke = useCallback(async (finalReason: string): Promise<void> => {
+    await updateRequestStatus(
+      { status: "REVOKED", description: request?.description, revocationReason: finalReason },
+      "Solicitação revogada com sucesso.",
+      "Erro ao revogar solicitação."
+    );
+  }, [updateRequestStatus, request?.description]);
+
   const handleApprove = useCallback(async (description: string): Promise<void> => {
     await updateRequestStatus(
       { status: "APPROVED", description },
@@ -187,6 +196,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     fetchRequestData,
     handleCancel,
     handleReject,
+    handleRevoke,
     handleApprove,
     handleDownload
   };
@@ -241,6 +251,7 @@ export default function RequestDetailPage() {
     fetchRequestData,
     handleCancel,
     handleReject,
+    handleRevoke,
     handleApprove,
     handleDownload
   } = useRequestData(id, navigate);
@@ -293,10 +304,12 @@ export default function RequestDetailPage() {
                 protocolCode={request.protocolCode}
                 formattedDate={formattedDate}
                 finalReason={request.finalReason}
+                revocationReason={request.revocationReason}
                 data={request}
                 canCancel={canCancel}
                 onCancel={handleCancel}
                 onReject={handleReject}
+                onRevoke={handleRevoke}
                 onApprove={handleApprove}
                 roleName={request.role?.name}
                 requestingUserName={request?.requestingUser?.firstName}
