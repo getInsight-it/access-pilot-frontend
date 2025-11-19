@@ -9,7 +9,8 @@ export enum REQUEST_STATUS_ENUM {
   APPROVED = "APPROVED",
   CANCELED = "CANCELED",
   PENDING = "PENDING",
-  REJECTED = "REJECTED"
+  REJECTED = "REJECTED",
+  REVOKED = "REVOKED"
 }
 
 export enum REQUEST_STATUS_PRESENTATION_NAME_ENUM {
@@ -17,5 +18,6 @@ export enum REQUEST_STATUS_PRESENTATION_NAME_ENUM {
   APPROVED = "Aprovado",
   CANCELED = "Cancelado",
   PENDING = "Em análise",
-  REJECTED = "Rejeitado"
+  REJECTED = "Rejeitado",
+  REVOKED = "Revogado"
 }

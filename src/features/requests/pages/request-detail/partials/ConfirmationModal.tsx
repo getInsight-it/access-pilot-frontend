@@ -36,10 +36,10 @@ export function ConfirmationModal({ isOpen, onClose, onConfirm, title, action, f
               name="finalReason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Motivo da conclusão</FormLabel>
+                  <FormLabel>Motivo {action === 'cancelamento' ? 'do cancelamento' : 'da revogação'}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Motivo da conclusão..."
+                      placeholder="Descreva o motivo aqui..."
                       className="col-span-4"
                       {...field}
                     />

@@ -9,6 +9,7 @@ export interface RequestInterface {
   status: string;
   description: string;
   finalReason: string;
+  revocationReason?: string;
   protocolCode: string;
   codeItem: string;
   criacao: string;

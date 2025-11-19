@@ -24,6 +24,11 @@ export const STATUS = [
       value: "CANCELED",
       title: "Cancelada",
     },
+    {
+      id: 6,
+      value: "REVOKED",
+      title: "Revogada",
+    },
   ];
   
   
