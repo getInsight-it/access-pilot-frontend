@@ -1,3 +1,4 @@
+import { HttpRequestError } from "@getinsight.it/getinsight-common";
 import { ApiErrorMessage } from "../types/error/api-error.model.ts";
 
 /**
@@ -26,21 +27,25 @@ import { ApiErrorMessage } from "../types/error/api-error.model.ts";
  * // Returns: "Ocorreu um erro inesperado. Por favor, tente novamente."
  */
 export function formatErrorMessages(messages: unknown): string {
-  if (!messages) {
+  let error = messages;
+  if(messages instanceof HttpRequestError) {
+    error = messages.error;
+  }
+  if (!error) {
     return "Ocorreu um erro inesperado. Por favor, tente novamente.";
   }
 
-  if (typeof messages === 'object' && messages !== null && 'message' in messages && !Array.isArray(messages)) {
-    const errorObj = messages as { message: string };
+  if (typeof error === 'object' && error !== null && 'message' in error && !Array.isArray(error)) {
+    const errorObj = error as { message: string };
     return errorObj.message || "Ocorreu um erro inesperado. Por favor, tente novamente.";
   }
 
-  if (Array.isArray(messages)) {
-    if (messages.length === 0) {
+  if (Array.isArray(error)) {
+    if (error.length === 0) {
       return "Ocorreu um erro inesperado. Por favor, tente novamente.";
     }
 
-    return messages
+    return error
       .map((errorItem: ApiErrorMessage) => errorItem.message)
       .filter((message: string) => message && message.trim() !== "")
       .join("\n");
