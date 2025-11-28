@@ -13,6 +13,7 @@ import { clientService } from "@features/client/common/service/client-service";
 import * as z from "zod";
 
 export const formSchema = z.object({
+  id: z.string().or(z.number()).optional().nullable(),
   name: z.string().min(3, { message: "O nome do sistema deve conter no mínimo 3 caracteres" }),
   clientId: z
     .string()
@@ -66,6 +67,7 @@ export const useSystemFormData = () => {
       const client: ClientResponseInterface = await clientService.fetchByClientId(clientId);
 
       const formData: SystemFormData = {
+        id: client.id || null,
         name: client.name || "",
         clientId: client.clientId || "",
         description: client.description || "",

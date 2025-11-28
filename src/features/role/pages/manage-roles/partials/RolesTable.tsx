@@ -1,4 +1,4 @@
-import { Edit, EllipsisVertical, UserCog } from "lucide-react";
+import { Copy, Edit, EllipsisVertical, UserCog } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import {
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
 import { PaginationWrapper } from "../../../../../common/components/PaginationWrapper.tsx";
 import { RoleResponseInterface } from "../../../common/types/role.model.ts";
+import { toast } from "@common/external/ui/use-toast.ts";
 
 interface RolesTableProps {
   roles: RoleResponseInterface[];
@@ -51,6 +52,12 @@ export function RolesTable({
         <EllipsisVertical size={20} className="cursor-pointer" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem 
+          className="flex flex-row gap-2" 
+          onClick={() => { navigator.clipboard?.writeText(role.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+          <Copy size={16} />
+          <span>Copiar Código</span>
+      </DropdownMenuItem>
         <DropdownMenuItem
           className="flex flex-row gap-2"
           onClick={() => onEditRole(role.id)}>

@@ -117,6 +117,7 @@ export const SystemDetail = () => {
               description="Sumário de informações do sistema cadastrado."
               returnButton={true}
               onReturnClick={() => navigate(PRIVATE_ROUTES.SYSTEMS)}
+              code={data?.id}
             />
           </div>
         </HeaderContainer>

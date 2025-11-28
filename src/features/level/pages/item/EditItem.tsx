@@ -34,7 +34,7 @@ export const EditItem: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState<LevelInterface | null>(null);
 
-  const { register, handleSubmit, control, formState: { errors }, setValue } = useForm<FormData>();
+  const { register, handleSubmit, control, formState: { errors }, setValue, getValues } = useForm<FormData>();
   const { id: levelId, itemId } = useParams<{ id: string; itemId: string }>();
   const navigate = useNavigate();
 
@@ -156,6 +156,7 @@ export const EditItem: React.FC = () => {
                     Esfera: <span className="text-primary-600">{level?.name}</span>
                   </span>
                 }
+                code={getValues("externalCode")}
               />
             </div>
           </HeaderContainer>
@@ -196,14 +197,14 @@ export const EditItem: React.FC = () => {
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código externo <span className="text-primary-600">*</span></Label>
+                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código <span className="text-primary-600">*</span></Label>
                     <div className="relative">
                       <Input
                         id="externalCode"
                         placeholder="Escreva o código do item"
                         className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
                         {...register("externalCode", {
-                          required: "Código externo é obrigatório",
+                          required: "O código é obrigatório",
                           minLength: { value: 3, message: "O código deve conter no mínimo 3 caracteres" },
                           pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
                         })}

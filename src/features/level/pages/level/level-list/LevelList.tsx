@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Button, buttonVariants } from "../../../../../common/external/ui/button.tsx";
-import { ChevronDown, ChevronRight, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
+import { ChevronDown, ChevronRight, Copy, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Dialog,
@@ -29,6 +29,7 @@ import HighlightLoader from "../../../../../common/components/loading/HighLightL
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { savePreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 import { useLevelListData, useLevelOperations, getTypeDisplayName } from "./useLevelList.ts";
+import { toast } from "@common/external/ui/use-toast.ts";
 
 export const LevelList = () => {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -137,6 +138,12 @@ export const LevelList = () => {
                         <EllipsisVertical size={20} className="cursor-pointer text-gray-500 dark:text-gray-400" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          className="flex flex-row gap-2" 
+                          onClick={() => { navigator.clipboard?.writeText(item.id ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                          <Copy size={16} />
+                          <span>Copiar código</span>
+                        </DropdownMenuItem>
                         {(item.isBuiltIn || item.type === "BUSINESS" || item.type === "EXTERNAL") && (
                           <DropdownMenuItem className="flex flex-row gap-2" onClick={() => handleViewItems(item)}>
                             <List size={16} />

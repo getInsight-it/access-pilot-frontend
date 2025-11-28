@@ -136,6 +136,7 @@ export default function NewRole() {
                     className="text-primary-600 cursor-pointer underline">{client?.clientId || ""}</span>
                   </span>
                 }
+                code={ isEditing ? client?.id?.toString() || "" : null}
               />
             </div>
           </HeaderContainer>
