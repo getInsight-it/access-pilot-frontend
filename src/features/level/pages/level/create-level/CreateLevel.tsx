@@ -57,6 +57,7 @@ export default function CreateOrEditLevel() {
                 title={formData.isEditing ? "Editar esfera" : "Nova esfera"}
                 returnButton={true}
                 onReturnClick={() => {navigate(PRIVATE_ROUTES.LEVELS)}}
+                code={formData.sphereId}
               />
             </div>
           </HeaderContainer>

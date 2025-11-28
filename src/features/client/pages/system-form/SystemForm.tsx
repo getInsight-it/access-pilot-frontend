@@ -14,7 +14,7 @@ import { Textarea } from "@ui/textarea.tsx";
 import { Switch } from "@ui/switch.tsx";
 import { Label } from "@ui/label.tsx";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
-import { useSystemFormData,useFormNavigation, useAttachmentConfigs } from "./useSystemForm.ts";
+import { useSystemFormData, useFormNavigation, useAttachmentConfigs } from "./useSystemForm.ts";
 import { useNavigate } from "react-router-dom";
 import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum.ts";
 import { AttachmentConfigurationForm } from "@features/client/common/components/AttachmentConfigurationForm.tsx";
@@ -22,6 +22,11 @@ import { AttachmentConfigurationForm } from "@features/client/common/components/
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
   { title: "Adicionar novo sistema", link: "" }
+];
+
+const editingBreadcrumbItems = [
+  { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
+  { title: "Editar sistema", link: "" }
 ];
 
 export default function SystemForm() {
@@ -49,7 +54,7 @@ export default function SystemForm() {
 
         <div className="flex-none">
           <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
+            <Breadcrumbs items={isEditing ? editingBreadcrumbItems : breadcrumbItems} />
 
             <div className="pl-1 flex items-start justify-between">
               <Heading
@@ -95,7 +100,7 @@ export default function SystemForm() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={breadcrumbItems} />
+          <Breadcrumbs items={isEditing ? editingBreadcrumbItems : breadcrumbItems} />
 
           <div className="pl-1 flex items-start justify-between">
             <Heading
@@ -105,6 +110,7 @@ export default function SystemForm() {
               headerStepperItems={["Detalhes do sistema", "Configuração de anexos"]}
               returnButton={true}
               onReturnClick={() => {navigate(PRIVATE_ROUTES.SYSTEMS);}}
+              code={methods.getValues("id")}
             />
           </div>
         </HeaderContainer>

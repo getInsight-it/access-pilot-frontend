@@ -14,7 +14,7 @@ import { Breadcrumbs } from "../../../../../common/components/breadcrumbs.tsx";
 import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
-import { Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
+import { Copy, Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
 import { Input } from "../../../../../common/external/ui/input.tsx";
 import { motion } from "framer-motion";
 import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
 import { useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
+import { toast } from "@common/external/ui/use-toast.ts";
 
 
 export default function LevelItems() {
@@ -121,6 +122,12 @@ export default function LevelItems() {
                                 <EllipsisVertical size={20} className="cursor-pointer" />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
+                                <DropdownMenuItem 
+                                  className="flex flex-row gap-2" 
+                                  onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                  <Copy size={16} />
+                                  <span>Copiar Código</span>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => {
                                     savePreviousRoute(location.pathname + location.search);
@@ -158,7 +165,7 @@ export default function LevelItems() {
                             <span className="table-card__value">{item.description || '-'}</span>
                           </div>
                           <div className="table-card__content__row">
-                            <span className="table-card__label">Código externo</span>
+                            <span className="table-card__label">Código</span>
                             <span className="table-card__value">{item.externalCode || '-'}</span>
                           </div>
                           <div className="table-card__content__row">
@@ -205,7 +212,7 @@ export default function LevelItems() {
                   {itemsData.sphere?.type !== "BUILT_IN" && (
                     <>
                       <TableHead width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Descrição</TableHead>
-                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código externo</TableHead>
+                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código</TableHead>
                       <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Item da esfera pai</TableHead>
                       {itemsData.sphere?.type !== 'EXTERNAL' && <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>}
                     </>
@@ -228,6 +235,12 @@ export default function LevelItems() {
                                 <EllipsisVertical size={20} className="cursor-pointer" />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
+                                <DropdownMenuItem 
+                                  className="flex flex-row gap-2" 
+                                  onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                  <Copy size={16} />
+                                  <span>Copiar código</span>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => {
                                     savePreviousRoute(location.pathname + location.search);
