@@ -19,16 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum.ts";
 import { AttachmentConfigurationForm } from "@features/client/common/components/AttachmentConfigurationForm.tsx";
 
-const breadcrumbItems = [
-  { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
-  { title: "Adicionar novo sistema", link: "" }
-];
-
-const editingBreadcrumbItems = [
-  { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
-  { title: "Editar sistema", link: "" }
-];
-
 export default function SystemForm() {
   const {
     methods,
@@ -45,6 +35,11 @@ export default function SystemForm() {
   const { handleAddAttachmentConfig, handleDeleteAttachmentConfig } = useAttachmentConfigs(setAttachmentConfigs);
   const navigate = useNavigate();
 
+  const breadcrumbItems = [
+    { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
+    { title: isEditing ? "Editar sistema" : "Adicionar novo sistema", link: "" }
+  ];
+
   if(initialLoading) {
     return (
       <motion.div
@@ -54,7 +49,7 @@ export default function SystemForm() {
 
         <div className="flex-none">
           <HeaderContainer>
-            <Breadcrumbs items={isEditing ? editingBreadcrumbItems : breadcrumbItems} />
+            <Breadcrumbs items={breadcrumbItems} />
 
             <div className="pl-1 flex items-start justify-between">
               <Heading
@@ -100,7 +95,7 @@ export default function SystemForm() {
 
       <div className="flex-none">
         <HeaderContainer>
-          <Breadcrumbs items={isEditing ? editingBreadcrumbItems : breadcrumbItems} />
+          <Breadcrumbs items={breadcrumbItems} />
 
           <div className="pl-1 flex items-start justify-between">
             <Heading

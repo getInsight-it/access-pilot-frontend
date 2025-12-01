@@ -110,7 +110,7 @@ export default function Notifications() {
                       className="h-4 w-4 text-blue-500 cursor-pointer flex-shrink-0"
                       onClick={async () => {
                         setIsOpen(false);
-                        let availableActions = await getAvailableActions(notification);
+                        const availableActions = await getAvailableActions(notification);
                         savePreviousRoute(PRIVATE_ROUTES.ACCESS_REQUESTS, availableActions.includes('REJECT') ? "assigned" : "created");
                         navigate(PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID.replace(":id", notification.requestId.toString()));
                       }}
