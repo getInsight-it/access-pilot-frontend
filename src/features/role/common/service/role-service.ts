@@ -30,7 +30,7 @@ export class RoleService {
       throw new Error("Client ID is required");
     }
 
-    const queryParams = new URLSearchParams({ clientId });
+    const queryParams = new URLSearchParams({ clientId, 'hasParent': 'true' });
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
 
     if(response instanceof HttpRequestError) {

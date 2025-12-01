@@ -58,7 +58,7 @@ export class ClientService {
 
     if(filter) {
       queryParams.append("clientId", filter);
-      queryParams.append("description", filter);
+      queryParams.append("name", filter);
     }
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);
