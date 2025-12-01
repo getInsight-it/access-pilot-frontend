@@ -164,7 +164,7 @@ export default function CreateOrEditLevel() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="0">Nenhuma (esfera pai)</SelectItem>
-                          {formData.allSpheres.map((sphere) => (
+                          {formData.allSpheres.filter((s) => s.name !== formData.name).map((sphere) => (
                             <SelectItem key={sphere.id} value={sphere.id}>
                               {sphere.name}
                             </SelectItem>

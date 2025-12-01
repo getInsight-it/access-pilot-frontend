@@ -98,7 +98,6 @@ export default function RequestAccess() {
         setBasicFormFieldValue({ field: "roleId", error: "Selecione um papel." });
         isValid = false;
       }
-
       const role = roles.find(role => role.id.toString() === customForm["roleId"].value);
       if((customForm["roleId"].value && role!.level) && !customForm["codeItem"].value) {
         setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
@@ -164,7 +163,7 @@ export default function RequestAccess() {
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
-      const fetchedRoles = await roleService.getRolesByClientId(clientId);
+      const fetchedRoles = await roleService.getRolesByClientId(clientId, true);
       setRoles(fetchedRoles);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
