@@ -165,6 +165,12 @@ export default function NewRole() {
                               placeholder="Nome do papel"
                               disabled={loading}
                               {...field}
+                              value={(field.value || "").toString().toUpperCase()}
+                              onChange={(e) => {
+                                const upper = e.target.value.toString().toUpperCase();
+                                field.value = upper;
+                                field.onChange(upper);
+                              }}
                             />
                           </FormControl>
                           {methods.formState.errors.name && (
