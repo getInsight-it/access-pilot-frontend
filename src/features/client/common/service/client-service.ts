@@ -2,6 +2,7 @@ import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.i
 
 import { httpClient } from "@config/http/http.ts";
 import { ClientResponseInterface } from "../model/client.model.ts";
+import {ClientStatusEnum, ClientStatusTranslationEnum} from "../enum/client-status.enum";
 import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
 
 export const CLIENT_API = {
@@ -59,6 +60,18 @@ export class ClientService {
     if(filter) {
       queryParams.append("clientId", filter);
       queryParams.append("name", filter);
+      queryParams.append("description", filter);
+
+      const normalizeString = (str: string) => str.normalize('NFD').replace(/[^\w\s]/g, '').toLowerCase().trim();
+
+      const normalizedFilter = normalizeString(filter);
+      const statusEntry = Object.entries(ClientStatusTranslationEnum).find(
+        ([, value]) => normalizeString(value) === normalizedFilter
+      );
+      if (statusEntry) {
+        const [statusKey] = statusEntry;
+        queryParams.append("status", ClientStatusEnum[statusKey as keyof typeof ClientStatusEnum]);
+      }
     }
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);
