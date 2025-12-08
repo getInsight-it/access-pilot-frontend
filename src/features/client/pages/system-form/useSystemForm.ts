@@ -19,7 +19,8 @@ export const formSchema = z.object({
     .string()
     .min(3, { message: "O client Id do sistema deve conter no mínimo 3 caracteres" })
     .regex(/^[a-z][a-z0-9-]*$/, { message: "client Id deve ser separado por hífen" }),
-  description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
+  description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" })
+    .max(100, { message: "A descrição do sistema deve conter no máximo 100 caracteres" }),
   baseUrl: z
     .string()
     .min(3, { message: "O baseUrl do sistema deve conter no mínimo 3 caracteres" })
