@@ -169,12 +169,14 @@ export const SystemDetail = () => {
               titleContent={
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">Papéis do sistema</span>
-                  <span className="text-xs font-normal">
-                    Papeis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
-                  </span>
+                  {data?.managed && (
+                    <span className="text-xs font-normal">
+                      Papeis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
+                    </span>
+                  )}
                 </div>
               }>
-              <ClientRoleDetails roles={roleItems} />
+              <ClientRoleDetails roles={roleItems} isManaged={data?.managed} />
             </DetailContainer>
           </div>
         )}
