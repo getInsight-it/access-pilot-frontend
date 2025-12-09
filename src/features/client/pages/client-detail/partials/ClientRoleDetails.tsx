@@ -18,9 +18,10 @@ interface RoleItemType {
 
 interface ClientRoleDetailsProps {
   roles: RoleResponseInterface[];
+  isManaged?: boolean;
 }
 
-export const ClientRoleDetails = ({ roles }: ClientRoleDetailsProps) => {
+export const ClientRoleDetails = ({ roles, isManaged }: ClientRoleDetailsProps) => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [roleItems, setRoleItems] = useState<RoleItemType[]>([]);
   const [flatRoles, setFlatRoles] = useState<RoleItemType[]>([]);
@@ -118,6 +119,14 @@ export const ClientRoleDetails = ({ roles }: ClientRoleDetailsProps) => {
       setFlatRoles(flatList);
     }
   }, [flattenRoles, roleItems]);
+
+  if(!isManaged) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-center text-gray-500 dark:text-gray-400">A configuração ainda não foi realizada pelo administrador.</p>
+      </div>
+    );
+  }
 
   if(roleItems.length === 0) {
     return (

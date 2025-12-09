@@ -37,7 +37,7 @@ export const DetailsStep = ({ selectedClient, selectedRole, reason, roles, attac
           <User className="text-blue-500 w-5 h-5 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <strong className="text-sm sm:text-base">Papel</strong>
-            <p className="text-sm sm:text-base break-words">{roles.find(role => role.id.toString() === selectedRole)!.name}</p>
+            <p className="text-sm sm:text-base break-words">{roles.find(role => role.id.toString() === selectedRole)?.name}</p>
           </div>
         </li>
         <li className="flex gap-2 sm:gap-3">

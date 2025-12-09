@@ -9,8 +9,6 @@ import { RoleResponseInterface } from "../../../../role/common/types/role.model.
 import IconRenderer from "../../../../../common/components/icon/IconRenderer.tsx";
 import DynamicSphereForm from "../../../../level/common/components/DynamicSphereForm.tsx";
 import { BasicFormFieldInterface, RequestFormFieldType } from "../RequestAccess.tsx";
-import { useNavigate } from "react-router-dom";
-import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 
 interface RoleStepProps {
   form: BasicFormFieldInterface;
@@ -31,9 +29,7 @@ export const RoleStep = ({
   handlerSelectedSphere,
   handlerClearSphereHierarchyError,
   isLargeScreen,
-  selectedClientId
 }: RoleStepProps) => {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [showError, setShowError] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -184,15 +180,7 @@ export const RoleStep = ({
                     </div>
                     <p className="text-xs sm:text-sm text-gray-600 font-medium mb-1">Nenhum papel encontrado para este sistema.</p>
                     <p className="text-xs sm:text-sm text-gray-500">
-                      <span
-                        onClick={() => {
-                          if (selectedClientId) {
-                            navigate(PRIVATE_ROUTES.ROLES.replace(":clientId", selectedClientId));
-                          }
-                        }}
-                        className="underline text-primary-600 cursor-pointer">
-                        Clique aqui
-                      </span> para gerenciar os papéis deste sistema.
+                      A configuração ainda não foi realizada pelo administrador.
                     </p>
                   </div>
                 )}
