@@ -3,6 +3,13 @@ import { UserRoleEnum } from "../../../../types/user/user.model.ts";
 
 export const navItems: NavItem[] = [
   {
+    title: "Dashboard",
+    href: "/dashboard/general-info",
+    icon: "dashboard",
+    label: "Dashboard",
+    protected: true,
+  },
+  {
     title: "Minhas solicitações",
     href: "/my-access-requests",
     icon: "book",
@@ -13,13 +20,6 @@ export const navItems: NavItem[] = [
     href: "/request-access",
     icon: "key",
     label: "Solicitar acesso"
-  },
-  {
-    title: "Dashboard",
-    href: "/dashboard/general-info",
-    icon: "dashboard",
-    label: "Dashboard",
-    protected: true,
   },
   {
     title: "Gerenciar sistemas",
