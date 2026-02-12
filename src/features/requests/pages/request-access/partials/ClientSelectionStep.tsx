@@ -61,7 +61,7 @@ export const ClientStep = ({
                     <div className="flex flex-row items-center">
                       {selectedClient && <MonitorIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 lg:mr-4 flex-shrink-0" />}
                       <p className="font-bold text-sm sm:text-base lg:text-lg break-words">
-                        {selectedClient}
+                        {clients.find(client => client.clientId === selectedClient)?.name || selectedClient}
                       </p>
                     </div>
 
@@ -102,7 +102,7 @@ export const ClientStep = ({
               <div className="space-y-2 grid grid-cols-1 gap-2">
                 {clients
                   .filter((client) =>
-                    client.clientId.toLowerCase().includes(searchTerm.toLowerCase())
+                    (client.name || client.clientId).toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((client) => (
                     <div
@@ -116,7 +116,7 @@ export const ClientStep = ({
                       <div className="flex flex-row items-center">
                         <MonitorIcon className="w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-4 flex-shrink-0" />
                         <p className="font-bold text-sm sm:text-lg break-words flex-1 min-w-0">
-                          {client.clientId}
+                          {client.name || client.clientId}
                         </p>
                         {selectedClient === client.clientId && <Check className="ml-2 flex-shrink-0 w-4 h-4 sm:w-6 sm:h-6" />}
                       </div>
