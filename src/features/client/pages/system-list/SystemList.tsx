@@ -1,16 +1,18 @@
 import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { Link } from "react-router-dom";
 import useAuthStore, { type AuthState } from "@store/authStore.ts";
-import { useEffect } from "react";
-import { buttonVariants } from "@ui/button.tsx";
+import { useEffect, useState } from "react";
+import { Button, buttonVariants } from "@ui/button.tsx";
 import { cn } from "@config/lib/utils.ts";
-import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy } from "lucide-react";
+import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy, Loader2 } from "lucide-react";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 import { Input } from "@ui/input.tsx";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@ui/table.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/dropdown-menu.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
+import { Switch } from "@ui/switch.tsx";
 import { PaginationWrapper } from "@components/PaginationWrapper.tsx";
 import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/common/enum/client-status.enum";
@@ -32,14 +34,28 @@ export default function SystemList() {
     handleSearchChange,
     init
   } = useSystemListData();
-  const { syncClient, handlePublicationChange } = useSystemOperations(setClients);
+  const { syncClient, syncAllClients, syncAllLoading, handlePublicationChange } = useSystemOperations(setClients, init);
   const { handleNavigateFromSystems } = useSystemNavigation();
+  const [syncAllOpen, setSyncAllOpen] = useState(false);
+  const [syncRoles, setSyncRoles] = useState(false);
 
   useEffect(() => {
     if(isAuthenticated) {
       init();
     }
   }, [isAuthenticated, currentPage, searchFilter, init]);
+
+  const openSyncAllModal = () => {
+    setSyncRoles(false);
+    setSyncAllOpen(true);
+  };
+
+  const handleSyncAll = async () => {
+    const summary = await syncAllClients(syncRoles);
+    if (summary) {
+      setSyncAllOpen(false);
+    }
+  };
 
   return (
     <>
@@ -56,12 +72,22 @@ export default function SystemList() {
                 badgeValue={totalSystems}
                 description="Gerenciar sistemas cadastrados no ambiente."
               />
-              <Link
-                to={PRIVATE_ROUTES.NEW_SYSTEM}
-                className={cn(buttonVariants({ variant: "default" }))}
-                onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
-                <Plus className="mr-2 h-4 w-4" /> Adicionar novo sistema
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={openSyncAllModal}
+                  disabled={syncAllLoading}
+                  className="w-full sm:w-auto flex items-center justify-center"
+                  title="Sincronizar todos os sistemas do IDP">
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                <Link
+                  to={PRIVATE_ROUTES.NEW_SYSTEM}
+                  className={cn(buttonVariants({ variant: "default" }))}
+                  onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
+                  <Plus className="mr-2 h-4 w-4" /> Adicionar novo sistema
+                </Link>
+              </div>
             </div>
           </HeaderContainer>
         </div>
@@ -91,7 +117,7 @@ export default function SystemList() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                className="flex flex-row gap-2" 
+                                className="flex flex-row gap-2"
                                 onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
                                 <Copy size={16} />
                                 <span>Copiar Código</span>
@@ -211,8 +237,8 @@ export default function SystemList() {
                             <EllipsisVertical size={20} className="cursor-pointer" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem 
-                              className="flex flex-row gap-2" 
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
                               onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
                               <Copy size={16} />
                               <span>Copiar Código</span>
@@ -280,6 +306,39 @@ export default function SystemList() {
           </div>
         </ScrollArea>
       </motion.div>
+
+      <Dialog open={syncAllOpen} onOpenChange={setSyncAllOpen}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Sincronizar sistemas</DialogTitle>
+            <DialogDescription>
+              Esta ação busca todos os sistemas no Keycloak e atualiza o cadastro local.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                Sincronizar papéis também?
+              </span>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Pode aumentar o tempo da operação.
+              </span>
+            </div>
+            <Switch checked={syncRoles} onCheckedChange={setSyncRoles} disabled={syncAllLoading} />
+          </div>
+
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setSyncAllOpen(false)} disabled={syncAllLoading}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSyncAll} disabled={syncAllLoading}>
+              {syncAllLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+              {syncAllLoading ? "Sincronizando..." : "Sincronizar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

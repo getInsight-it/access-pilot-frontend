@@ -1,7 +1,7 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 
 import { httpClient } from "@config/http/http.ts";
-import { ClientResponseInterface } from "../model/client.model.ts";
+import { ClientResponseInterface, ClientSyncSummaryInterface } from "../model/client.model.ts";
 import {ClientStatusEnum, ClientStatusTranslationEnum} from "../enum/client-status.enum";
 import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
 
@@ -12,6 +12,7 @@ export const CLIENT_API = {
   CLIENTS_BY_CLIENT_ID: "/v1/clients/client-id",
   PAGINATED: "/v1/clients/paginated",
   SYNCHRONOUS: "/v1/clients/synchronous",
+  SYNCHRONOUS_ALL: "/v1/clients/synchronous/all",
   CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview"
 };
 
@@ -117,6 +118,20 @@ export class ClientService {
     if(response instanceof HttpRequestError) {
       throw response;
     }
+  }
+
+  async syncAllClients(syncRoles: boolean = false): Promise<ClientSyncSummaryInterface> {
+    const queryParams = new URLSearchParams({ syncRoles: syncRoles.toString() });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(
+      `${CLIENT_API.SYNCHRONOUS_ALL}?${queryParams.toString()}`,
+      {}
+    );
+
+    if(response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ClientSyncSummaryInterface;
   }
 
   async fetchByClientId(clientId?: string): Promise<ClientResponseInterface> {
