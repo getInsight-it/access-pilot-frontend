@@ -1,9 +1,12 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
+import axios, { AxiosResponse } from "axios";
 
 import { httpClient } from "@config/http/http.ts";
 import { ClientResponseInterface, ClientSyncSummaryInterface } from "../model/client.model.ts";
-import {ClientStatusEnum, ClientStatusTranslationEnum} from "../enum/client-status.enum";
+import { ClientStatusEnum, ClientStatusTranslationEnum } from "../enum/client-status.enum";
 import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
+import { authService } from "../../../auth/common/AuthService.ts";
+import { AttachmentConfigurationInterface } from "../model/configuration.model.ts";
 
 export const CLIENT_API = {
   CLIENTS: "/v1/clients",
@@ -13,7 +16,8 @@ export const CLIENT_API = {
   PAGINATED: "/v1/clients/paginated",
   SYNCHRONOUS: "/v1/clients/synchronous",
   SYNCHRONOUS_ALL: "/v1/clients/synchronous/all",
-  CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview"
+  CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview",
+  CLIENT_CONFIGURATION_EXPORT_PREVIEW: "/v1/clients/attachments-configurations-export-preview"
 };
 
 export class ClientService {
@@ -149,6 +153,20 @@ export class ClientService {
     const formData = new FormData();
     formData.append("file", csv, csv.name);
     return this.httpClient.post(`${CLIENT_API.CLIENT_CONFIGURATION_PREVIEW}`, formData, headers);
+  }
+
+  async exportAttachmentConfigurationsPreview(configurations: AttachmentConfigurationInterface[]): Promise<AxiosResponse<Blob>> {
+    const token = await authService.getBearerToken();
+    const apiClient = axios.create({
+      baseURL: window.env.API_URL,
+      headers: {
+        Authorization: `${token}`
+      }
+    });
+
+    return apiClient.post(CLIENT_API.CLIENT_CONFIGURATION_EXPORT_PREVIEW, configurations, {
+      responseType: "blob"
+    });
   }
 }
 

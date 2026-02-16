@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Plus, Settings, Upload, X } from "lucide-react";
+import { Download, Plus, Settings, Upload, X } from "lucide-react";
 import { Input } from "@ui/input.tsx";
 import { Button } from "@ui/button.tsx";
 import { Switch } from "@ui/switch.tsx";
@@ -36,12 +36,14 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     extensions?: string;
   }>({});
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [duplicateNames, setDuplicateNames] = useState<string[]>([]);
   const [importedConfigs, setImportedConfigs] = useState<AttachmentConfigurationInterface[]>([]);
   const [accordionValue, setAccordionValue] = useState<string>("add-config");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const activeConfigurations = configurations.filter(config => config.active !== false);
 
   const handleAddConfig = () => {
     const errors: {
@@ -176,7 +178,41 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     setImportedConfigs([]);
   };
 
-  const activeConfigurations = configurations.filter(config => config.active !== false);
+  const handleExportClick = async () => {
+    if (activeConfigurations.length === 0) {
+      toast({
+        title: "Nenhuma configuração para exportar",
+        description: "Adicione pelo menos uma configuração antes de exportar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setExporting(true);
+      const response = await clientService.exportAttachmentConfigurationsPreview(activeConfigurations);
+      const url = window.URL.createObjectURL(response.data as Blob);
+      const a = document.createElement("a");
+      const fileName = response.headers["content-disposition"]?.match(/filename=\"?(.+?)\"?$/)?.[1]
+        || "attachments_configurations.csv";
+
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: "Erro ao exportar configurações",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="col-span-1 md:col-span-2">
@@ -277,7 +313,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           </AccordionItem>
         </Accordion>
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
             onClick={handleImportClick}
@@ -294,6 +330,15 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               className="hidden"
               disabled={loading}
             />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExportClick}
+            disabled={exporting}
+            className="flex items-center gap-2 min-h-[44px]"
+          >
+            <Download className="h-4 w-4 text-primary-600" />
+            <span>Exportar Configuração</span>
           </Button>
         </div>
       </div>
