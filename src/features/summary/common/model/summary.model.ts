@@ -1,8 +1,8 @@
 export interface SummaryModel {
-  totalActiveUsers: number;
+  totalApprovedRequests: number;
+  totalPendingRequests: number;
+  totalApprovedUsers: number;
   totalPendingUsers: number;
-  totalRegisteredUsers: number;
   totalClients: number;
   totalRoles: number;
-  totalInactiveUsers: number;
 }

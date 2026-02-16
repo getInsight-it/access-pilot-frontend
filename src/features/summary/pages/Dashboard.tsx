@@ -235,8 +235,8 @@ export default function Dashboard() {
 
   const summaryCards = useMemo((): SummaryCardData[] => [
     {
-      title: "Total de Usuários",
-      value: summary?.totalRegisteredUsers || 0,
+      title: "Solicitações aprovadas",
+      value: summary?.totalApprovedRequests || 0,
       icon: Users,
       bgColor: "bg-success-25",
       iconBg: "bg-success-100",
@@ -245,8 +245,8 @@ export default function Dashboard() {
       valueColor: "text-success-700"
     },
     {
-      title: "Usuários Pendentes",
-      value: summary?.totalPendingUsers || 0,
+      title: "Solicitações pendentes",
+      value: summary?.totalPendingRequests || 0,
       icon: FileText,
       bgColor: "bg-warning-50",
       iconBg: "bg-warning-100",
@@ -255,7 +255,7 @@ export default function Dashboard() {
       valueColor: "text-warning-700"
     },
     {
-      title: "Total de Clientes",
+      title: "Total de sistemas",
       value: summary?.totalClients || 0,
       icon: TrendingUp,
       bgColor: "bg-indigo-25",
@@ -268,7 +268,7 @@ export default function Dashboard() {
 
   const statusCards = useMemo((): StatusCardData[] => [
     {
-      label: `${summary?.totalActiveUsers || 0} usuários ativos`,
+      label: `${summary?.totalApprovedUsers || 0} usuários com acesso aprovado`,
       icon: CheckCircle,
       bgColor: "bg-success-50",
       borderColor: "border-success-200",
@@ -292,7 +292,7 @@ export default function Dashboard() {
       textColor: "text-purple-700"
     },
     {
-      label: `${summary?.totalInactiveUsers || 0} usuários inativos`,
+      label: `${summary?.totalPendingUsers || 0} usuários com solicitações pendentes`,
       icon: XCircle,
       bgColor: "bg-error-50",
       borderColor: "border-error-200",
