@@ -7,6 +7,7 @@ import { ClientStatusEnum, ClientStatusTranslationEnum } from "../enum/client-st
 import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
 import { authService } from "../../../auth/common/AuthService.ts";
 import { AttachmentConfigurationInterface } from "../model/configuration.model.ts";
+import { ClientExport, ClientImportRequest, ClientImportSummary } from "../model/client-export.model.ts";
 
 export const CLIENT_API = {
   CLIENTS: "/v1/clients",
@@ -14,10 +15,35 @@ export const CLIENT_API = {
   CLIENTS_ME_ASSOCIATIONS: "/v1/clients/me/associations",
   CLIENTS_BY_CLIENT_ID: "/v1/clients/client-id",
   PAGINATED: "/v1/clients/paginated",
+  CLIENTS_EXPORT: "/v1/clients/export",
   SYNCHRONOUS: "/v1/clients/synchronous",
   SYNCHRONOUS_ALL: "/v1/clients/synchronous/all",
   CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview",
-  CLIENT_CONFIGURATION_EXPORT_PREVIEW: "/v1/clients/attachments-configurations-export-preview"
+  CLIENT_CONFIGURATION_EXPORT_PREVIEW: "/v1/clients/attachments-configurations-export-preview",
+  CLIENT_EXPORT_IMPORT: "/v1/clients/import"
+};
+
+const normalizeString = (value: string) =>
+  value.normalize("NFD").replace(/[^\w\s]/g, "").toLowerCase().trim();
+
+const appendClientFilterParams = (queryParams: URLSearchParams, filter?: string) => {
+  if (!filter) {
+    return;
+  }
+
+  queryParams.append("clientId", filter);
+  queryParams.append("name", filter);
+  queryParams.append("description", filter);
+
+  const normalizedFilter = normalizeString(filter);
+  const statusEntry = Object.entries(ClientStatusTranslationEnum).find(
+    ([, value]) => normalizeString(value) === normalizedFilter
+  );
+
+  if (statusEntry) {
+    const [statusKey] = statusEntry;
+    queryParams.append("status", ClientStatusEnum[statusKey as keyof typeof ClientStatusEnum]);
+  }
 };
 
 export class ClientService {
@@ -62,22 +88,7 @@ export class ClientService {
       sortType: sortType
     });
 
-    if(filter) {
-      queryParams.append("clientId", filter);
-      queryParams.append("name", filter);
-      queryParams.append("description", filter);
-
-      const normalizeString = (str: string) => str.normalize('NFD').replace(/[^\w\s]/g, '').toLowerCase().trim();
-
-      const normalizedFilter = normalizeString(filter);
-      const statusEntry = Object.entries(ClientStatusTranslationEnum).find(
-        ([, value]) => normalizeString(value) === normalizedFilter
-      );
-      if (statusEntry) {
-        const [statusKey] = statusEntry;
-        queryParams.append("status", ClientStatusEnum[statusKey as keyof typeof ClientStatusEnum]);
-      }
-    }
+    appendClientFilterParams(queryParams, filter);
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${CLIENT_API.PAGINATED}?${queryParams.toString()}`);
 
@@ -167,6 +178,81 @@ export class ClientService {
     return apiClient.post(CLIENT_API.CLIENT_CONFIGURATION_EXPORT_PREVIEW, configurations, {
       responseType: "blob"
     });
+  }
+
+  async exportClient(clientId: number, includeRoles: boolean = true, includeConfigurations: boolean = true): Promise<AxiosResponse<Blob>> {
+    const token = await authService.getBearerToken();
+    const apiClient = axios.create({
+      baseURL: window.env.API_URL,
+      headers: {
+        Authorization: `${token}`
+      }
+    });
+
+    return apiClient.get(`${CLIENT_API.CLIENTS}/${clientId}/export`, {
+      params: {
+        includeRoles,
+        includeConfigurations
+      },
+      responseType: "blob"
+    });
+  }
+
+  async exportClientData(clientId: number, includeRoles: boolean = true, includeConfigurations: boolean = true): Promise<ClientExport> {
+    const queryParams = new URLSearchParams({
+      includeRoles: includeRoles.toString(),
+      includeConfigurations: includeConfigurations.toString()
+    });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      `${CLIENT_API.CLIENTS}/${clientId}/export?${queryParams.toString()}`
+    );
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ClientExport;
+  }
+
+  async exportClientsPage(
+    pageIndex: number,
+    pageSize: number,
+    sortField: string,
+    sortType: string,
+    filter?: string,
+    includeRoles: boolean = true,
+    includeConfigurations: boolean = true
+  ): Promise<ClientExport[]> {
+    const queryParams = new URLSearchParams({
+      pageIndex: pageIndex.toString(),
+      pageSize: pageSize.toString(),
+      sortField: sortField,
+      sortType: sortType,
+      includeRoles: includeRoles.toString(),
+      includeConfigurations: includeConfigurations.toString()
+    });
+
+    appendClientFilterParams(queryParams, filter);
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      `${CLIENT_API.CLIENTS_EXPORT}?${queryParams.toString()}`
+    );
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ClientExport[];
+  }
+
+  async importClients(request: ClientImportRequest): Promise<ClientImportSummary> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(CLIENT_API.CLIENT_EXPORT_IMPORT, request);
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ClientImportSummary;
   }
 }
 

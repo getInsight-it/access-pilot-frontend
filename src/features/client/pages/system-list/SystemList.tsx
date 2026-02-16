@@ -1,10 +1,10 @@
 import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { Link } from "react-router-dom";
 import useAuthStore, { type AuthState } from "@store/authStore.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, buttonVariants } from "@ui/button.tsx";
 import { cn } from "@config/lib/utils.ts";
-import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy, Loader2 } from "lucide-react";
+import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy, Loader2, FileUp, FileDown } from "lucide-react";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@ui/scroll-area.tsx";
@@ -19,6 +19,9 @@ import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/
 import { Badge } from "@ui/badge.tsx";
 import { useSystemListData, useSystemOperations, useSystemNavigation } from "./useSystemList.ts";
 import { toast } from "@common/external/ui/use-toast.ts";
+import { clientService } from "../../common/service/client-service.ts";
+import type { ClientExport } from "../../common/model/client-export.model.ts";
+import { formatErrorMessages } from "@utils/error-utils.ts";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -26,6 +29,7 @@ export default function SystemList() {
     clients,
     setClients,
     totalSystems,
+    pageSize,
     currentPage,
     totalPages,
     searchFilter,
@@ -38,6 +42,15 @@ export default function SystemList() {
   const { handleNavigateFromSystems } = useSystemNavigation();
   const [syncAllOpen, setSyncAllOpen] = useState(false);
   const [syncRoles, setSyncRoles] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importForce, setImportForce] = useState(true);
+  const [importRoles, setImportRoles] = useState(true);
+  const [importConfigurations, setImportConfigurations] = useState(true);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importTargetClientId, setImportTargetClientId] = useState<string | null>(null);
+  const [exportAllLoading, setExportAllLoading] = useState(false);
+  const importFileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -54,6 +67,163 @@ export default function SystemList() {
     const summary = await syncAllClients(syncRoles);
     if (summary) {
       setSyncAllOpen(false);
+    }
+  };
+
+  const openImportModal = (clientId?: string) => {
+    setImportForce(true);
+    setImportRoles(true);
+    setImportConfigurations(true);
+    setImportFile(null);
+    setImportTargetClientId(clientId ?? null);
+    setImportOpen(true);
+  };
+
+  const triggerImportFileSelect = () => {
+    importFileRef.current?.click();
+  };
+
+  const handleImportFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setImportFile(file);
+    event.target.value = "";
+  };
+
+  const handleExportClient = async (clientId?: number, clientKey?: string) => {
+    if (!clientId) {
+      toast({
+        title: "Erro ao exportar",
+        description: "ID do sistema não encontrado",
+        variant: "destructive"
+      });
+      return;
+    }
+    try {
+      const response = await clientService.exportClient(clientId, true, true);
+      const blob = new Blob([response.data], { type: "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `client_export_${clientKey ?? clientId}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast({
+        title: "Exportação concluída",
+        description: "A exportação foi baixada com sucesso."
+      });
+    } catch (error: unknown) {
+      const errorMessage = formatErrorMessages(error);
+      toast({
+        title: "Erro ao exportar",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleExportAllClients = async () => {
+    if (!totalSystems) {
+      toast({
+        title: "Nada para exportar",
+        description: "Nenhum sistema encontrado para exportação.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setExportAllLoading(true);
+    try {
+      const exports: ClientExport[] = [];
+      for (let pageIndex = 1; pageIndex <= totalPages; pageIndex++) {
+        const pageExports = await clientService.exportClientsPage(pageIndex, pageSize, "id", "asc", searchFilter, true, true);
+        exports.push(...pageExports);
+      }
+
+      const blob = new Blob([JSON.stringify(exports)], { type: "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `clients_export_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Exportação concluída",
+        description: `Exportados ${exports.length} sistemas.`
+      });
+    } catch (error: unknown) {
+      const errorMessage = formatErrorMessages(error);
+      toast({
+        title: "Erro ao exportar sistemas",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setExportAllLoading(false);
+    }
+  };
+
+  const handleImportExports = async () => {
+    if (!importFile) {
+      toast({
+        title: "Arquivo não selecionado",
+        description: "Selecione um arquivo JSON para continuar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setImportLoading(true);
+    try {
+      const fileContent = await importFile.text();
+      const parsed = JSON.parse(fileContent);
+      let exportItems = Array.isArray(parsed) ? parsed : [parsed];
+
+      if (importTargetClientId) {
+        const target = importTargetClientId.trim().toLowerCase();
+        exportItems = exportItems.filter(exportItem => (exportItem?.client?.clientId ?? "").toString().trim().toLowerCase() === target);
+        if (exportItems.length === 0) {
+          toast({
+            title: "Cliente não encontrado no arquivo",
+            description: `Nenhuma exportação corresponde ao cliente ${importTargetClientId}.`,
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
+      const summary = await clientService.importClients({
+        force: importForce,
+        importRoles: importRoles,
+        importConfigurations: importConfigurations,
+        exports: exportItems
+      });
+
+      const durationLabel = summary.duration >= 1000
+        ? `${(summary.duration / 1000).toFixed(1)}s`
+        : `${summary.duration}ms`;
+
+      toast({
+        title: "Importação concluída",
+        description: `Criados ${summary.created} • Atualizados ${summary.updated} • Ignorados ${summary.ignored} • Erros ${summary.errors} • Duração ${durationLabel}`
+      });
+      init();
+      setImportOpen(false);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof SyntaxError
+        ? "Arquivo JSON inválido."
+        : formatErrorMessages(error);
+      toast({
+        title: "Erro ao importar exportações",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setImportLoading(false);
     }
   };
 
@@ -80,6 +250,21 @@ export default function SystemList() {
                   className="w-full sm:w-auto flex items-center justify-center"
                   title="Sincronizar todos os sistemas do IDP">
                   <RefreshCw className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleExportAllClients}
+                  disabled={exportAllLoading || isLoading}
+                  className="w-full sm:w-auto flex items-center justify-center"
+                  title="Exportar todos os sistemas filtrados">
+                  {exportAllLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => openImportModal()}
+                  className="w-full sm:w-auto flex items-center justify-center"
+                  title="Importar exportações de sistemas">
+                  <FileUp className="h-4 w-4" />
                 </Button>
                 <Link
                   to={PRIVATE_ROUTES.NEW_SYSTEM}
@@ -133,6 +318,18 @@ export default function SystemList() {
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
                                 <Edit size={16} />
                                 <span>Editar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => { handleExportClient(client.id, client.clientId); }}>
+                                <FileDown size={16} />
+                                <span>Exportar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="flex flex-row gap-2"
+                                onClick={() => { openImportModal(client.clientId); }}>
+                                <FileUp size={16} />
+                                <span>Importar</span>
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem
@@ -255,6 +452,18 @@ export default function SystemList() {
                               <Edit size={16} />
                               <span>Editar</span>
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => { handleExportClient(client.id, client.clientId); }}>
+                              <FileDown size={16} />
+                              <span>Exportar</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="flex flex-row gap-2"
+                              onClick={() => { openImportModal(client.clientId); }}>
+                              <FileUp size={16} />
+                              <span>Importar</span>
+                            </DropdownMenuItem>
                             {client.managed && (
                               <DropdownMenuItem
                                 className="flex flex-row gap-2"
@@ -306,6 +515,89 @@ export default function SystemList() {
           </div>
         </ScrollArea>
       </motion.div>
+
+      <input
+        ref={importFileRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={handleImportFileChange}
+      />
+
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle>Importar exportações</DialogTitle>
+            <DialogDescription>
+              {importTargetClientId
+                ? `Importar exportação para o sistema ${importTargetClientId}.`
+                : "Importar um ou mais sistemas a partir de um arquivo JSON."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Forçar importação?
+                </span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Atualiza registros existentes e remove ausentes.
+                </span>
+              </div>
+              <Switch checked={importForce} onCheckedChange={setImportForce} disabled={importLoading} />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Importar papéis?
+                </span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Inclui roles na exportação quando o sistema é gerenciado.
+                </span>
+              </div>
+              <Switch checked={importRoles} onCheckedChange={setImportRoles} disabled={importLoading} />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Importar configurações de anexo?
+                </span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Substitui as configurações do sistema.
+                </span>
+              </div>
+              <Switch checked={importConfigurations} onCheckedChange={setImportConfigurations} disabled={importLoading} />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Arquivo JSON
+                </span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  {importFile ? importFile.name : "Nenhum arquivo selecionado"}
+                </span>
+              </div>
+              <Button variant="outline" onClick={triggerImportFileSelect} disabled={importLoading}>
+                Selecionar arquivo
+              </Button>
+            </div>
+          </div>
+
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setImportOpen(false)} disabled={importLoading}>
+              Cancelar
+            </Button>
+            <Button onClick={handleImportExports} disabled={importLoading}>
+              {importLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
+              {importLoading ? "Importando..." : "Importar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={syncAllOpen} onOpenChange={setSyncAllOpen}>
         <DialogContent className="sm:max-w-[520px]">
