@@ -1,7 +1,7 @@
 import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { Link } from "react-router-dom";
 import useAuthStore, { type AuthState } from "@store/authStore.ts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@ui/button.tsx";
 import { cn } from "@config/lib/utils.ts";
 import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy, Loader2, FileUp, FileDown } from "lucide-react";
@@ -22,6 +22,7 @@ import { toast } from "@common/external/ui/use-toast.ts";
 import { clientService } from "../../common/service/client-service.ts";
 import type { ClientExport } from "../../common/model/client-export.model.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
+import { ImportClientsDialog } from "./partials/ImportClientsDialog.tsx";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -50,7 +51,6 @@ export default function SystemList() {
   const [importLoading, setImportLoading] = useState(false);
   const [importTargetClientId, setImportTargetClientId] = useState<string | null>(null);
   const [exportAllLoading, setExportAllLoading] = useState(false);
-  const importFileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -77,16 +77,6 @@ export default function SystemList() {
     setImportFile(null);
     setImportTargetClientId(clientId ?? null);
     setImportOpen(true);
-  };
-
-  const triggerImportFileSelect = () => {
-    importFileRef.current?.click();
-  };
-
-  const handleImportFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-    setImportFile(file);
-    event.target.value = "";
   };
 
   const handleExportClient = async (clientId?: number, clientKey?: string) => {
@@ -516,88 +506,21 @@ export default function SystemList() {
         </ScrollArea>
       </motion.div>
 
-      <input
-        ref={importFileRef}
-        type="file"
-        accept="application/json"
-        className="hidden"
-        onChange={handleImportFileChange}
+      <ImportClientsDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        importTargetClientId={importTargetClientId}
+        importFile={importFile}
+        importLoading={importLoading}
+        importForce={importForce}
+        importRoles={importRoles}
+        importConfigurations={importConfigurations}
+        onImportForceChange={setImportForce}
+        onImportRolesChange={setImportRoles}
+        onImportConfigurationsChange={setImportConfigurations}
+        onImportFileChange={setImportFile}
+        onImport={handleImportExports}
       />
-
-      <Dialog open={importOpen} onOpenChange={setImportOpen}>
-        <DialogContent className="sm:max-w-[560px]">
-          <DialogHeader>
-            <DialogTitle>Importar exportações</DialogTitle>
-            <DialogDescription>
-              {importTargetClientId
-                ? `Importar exportação para o sistema ${importTargetClientId}.`
-                : "Importar um ou mais sistemas a partir de um arquivo JSON."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Forçar importação?
-                </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  Atualiza registros existentes e remove ausentes.
-                </span>
-              </div>
-              <Switch checked={importForce} onCheckedChange={setImportForce} disabled={importLoading} />
-            </div>
-
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Importar papéis?
-                </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  Inclui roles na exportação quando o sistema é gerenciado.
-                </span>
-              </div>
-              <Switch checked={importRoles} onCheckedChange={setImportRoles} disabled={importLoading} />
-            </div>
-
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Importar configurações de anexo?
-                </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  Substitui as configurações do sistema.
-                </span>
-              </div>
-              <Switch checked={importConfigurations} onCheckedChange={setImportConfigurations} disabled={importLoading} />
-            </div>
-
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Arquivo JSON
-                </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  {importFile ? importFile.name : "Nenhum arquivo selecionado"}
-                </span>
-              </div>
-              <Button variant="outline" onClick={triggerImportFileSelect} disabled={importLoading}>
-                Selecionar arquivo
-              </Button>
-            </div>
-          </div>
-
-          <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setImportOpen(false)} disabled={importLoading}>
-              Cancelar
-            </Button>
-            <Button onClick={handleImportExports} disabled={importLoading}>
-              {importLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
-              {importLoading ? "Importando..." : "Importar"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={syncAllOpen} onOpenChange={setSyncAllOpen}>
         <DialogContent className="sm:max-w-[520px]">

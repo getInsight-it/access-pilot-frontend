@@ -16,9 +16,12 @@ import {
 } from "../types/level-item.model.ts";
 import { ItemHierarchyInterface } from "../types/item-hierarchy.model.ts";
 import { LevelItemStatus } from "../types/level-status.enum.ts";
+import { LevelExport, LevelImportRequest, LevelImportSummary } from "../types/level-export.model.ts";
 
 const LEVEL_API = {
-  LEVELS: "/v1/levels"
+  LEVELS: "/v1/levels",
+  LEVELS_EXPORT: "/v1/levels/export",
+  LEVELS_IMPORT: "/v1/levels/import"
 };
 
 export class LevelService {
@@ -325,6 +328,32 @@ export class LevelService {
     }
 
     return response.data as ItemHierarchyInterface[];
+  }
+
+  async exportLevels(includeItems: boolean = false, includeBuiltIn: boolean = true): Promise<LevelExport[]> {
+    const queryParams = new URLSearchParams({
+      includeItems: includeItems.toString(),
+      includeBuiltIn: includeBuiltIn.toString()
+    });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      `${LEVEL_API.LEVELS_EXPORT}?${queryParams.toString()}`
+    );
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as LevelExport[];
+  }
+
+  async importLevels(request: LevelImportRequest): Promise<LevelImportSummary> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(LEVEL_API.LEVELS_IMPORT, request);
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as LevelImportSummary;
   }
 }
 

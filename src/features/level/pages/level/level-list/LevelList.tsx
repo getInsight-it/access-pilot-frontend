@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "../../../../../common/external/ui/button.tsx";
-import { ChevronDown, ChevronRight, Copy, Edit, EllipsisVertical, Globe2, List, Plus, Trash } from "lucide-react";
+import { ChevronDown, ChevronRight, Copy, Edit, EllipsisVertical, FileDown, FileUp, Globe2, List, Loader2, Plus, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Dialog,
@@ -30,6 +30,11 @@ import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { savePreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
 import { useLevelListData, useLevelOperations, getTypeDisplayName } from "./useLevelList.ts";
 import { toast } from "@common/external/ui/use-toast.ts";
+import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
+import { levelService } from "../../../common/api/level-service.ts";
+import type { LevelExport } from "../../../common/types/level-export.model.ts";
+import { ExportLevelsDialog } from "./partials/ExportLevelsDialog.tsx";
+import { ImportLevelsDialog } from "./partials/ImportLevelsDialog.tsx";
 
 export const LevelList = () => {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -44,12 +49,109 @@ export const LevelList = () => {
   } = useLevelListData();
 
   const { excludeItem, handleViewItems } = useLevelOperations(fetchSpheres);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [exportIncludeItems, setExportIncludeItems] = useState(true);
+  const [exportIncludeBuiltIn, setExportIncludeBuiltIn] = useState(true);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchSpheres();
     }
   }, [isAuthenticated, fetchSpheres]);
+
+  const openImportModal = () => {
+    setImportFile(null);
+    setImportOpen(true);
+  };
+
+  const handleExportLevels = async () => {
+    setExportLoading(true);
+    try {
+      const exports = await levelService.exportLevels(exportIncludeItems, exportIncludeBuiltIn);
+      if (!exports.length) {
+        toast({
+          title: "Nada para exportar",
+          description: "Nenhuma esfera encontrada para exportação.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const blob = new Blob([JSON.stringify(exports)], { type: "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `levels_export_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Exportação concluída",
+        description: `Exportadas ${exports.length} esferas.`
+      });
+      setExportOpen(false);
+    } catch (error: unknown) {
+      const errorMessage = formatErrorMessages(error);
+      toast({
+        title: "Erro ao exportar esferas",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleImportLevels = async () => {
+    if (!importFile) {
+      toast({
+        title: "Arquivo não selecionado",
+        description: "Selecione um arquivo JSON para continuar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setImportLoading(true);
+    try {
+      const fileContent = await importFile.text();
+      const parsed = JSON.parse(fileContent);
+      const exportItems: LevelExport[] = Array.isArray(parsed) ? parsed : [parsed];
+
+      const summary = await levelService.importLevels({ exports: exportItems });
+      const builtInIgnored = (summary.results || []).filter(result =>
+        result.status === "IGNORED" && (result.message || "").includes("BUILT_IN")
+      ).length;
+
+      const durationLabel = summary.duration >= 1000
+        ? `${(summary.duration / 1000).toFixed(1)}s`
+        : `${summary.duration}ms`;
+
+      toast({
+        title: "Importação concluída",
+        description: `Criadas ${summary.created} • Atualizadas ${summary.updated} • Ignoradas ${summary.ignored} • Erros ${summary.errors} • Duração ${durationLabel}${builtInIgnored ? ` • BUILT_IN ignoradas ${builtInIgnored}` : ""}`
+      });
+      await fetchSpheres();
+      setImportOpen(false);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof SyntaxError ? "Arquivo JSON inválido." : "Erro ao importar esferas.";
+      toast({
+        title: "Erro ao importar esferas",
+        description: errorMessage === "Erro ao importar esferas."
+          ? formatErrorMessages(error)
+          : errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setImportLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -78,12 +180,30 @@ export const LevelList = () => {
               title="Gerenciar Esferas"
               description="Gerenciar esferas cadastradas no ambiente."
             />
-            <Link
-              to={PRIVATE_ROUTES.CREATE_LEVEL}
-              className={cn(buttonVariants({ variant: "default" }))}
-              onClick={() => savePreviousRoute(PRIVATE_ROUTES.LEVELS)}>
-              <Plus className="mr-2 h-4 w-4" /> Adicionar nova esfera
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={() => setExportOpen(true)}
+                disabled={exportLoading || loading}
+                className="w-full sm:w-auto flex items-center justify-center"
+                title="Exportar esferas">
+                {exportLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={openImportModal}
+                disabled={importLoading || loading}
+                className="w-full sm:w-auto flex items-center justify-center"
+                title="Importar esferas">
+                <FileUp className="h-4 w-4" />
+              </Button>
+              <Link
+                to={PRIVATE_ROUTES.CREATE_LEVEL}
+                className={cn(buttonVariants({ variant: "default" }), "w-full sm:w-auto flex items-center justify-center")}
+                onClick={() => savePreviousRoute(PRIVATE_ROUTES.LEVELS)}>
+                <Plus className="mr-2 h-4 w-4" /> Adicionar nova esfera
+              </Link>
+            </div>
           </div>
         </HeaderContainer>
       </div>
@@ -223,6 +343,26 @@ export const LevelList = () => {
           </Table>
         </div>
       </ScrollArea>
+
+      <ImportLevelsDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        importFile={importFile}
+        importLoading={importLoading}
+        onImportFileChange={setImportFile}
+        onImport={handleImportLevels}
+      />
+
+      <ExportLevelsDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        exportIncludeItems={exportIncludeItems}
+        exportIncludeBuiltIn={exportIncludeBuiltIn}
+        exportLoading={exportLoading}
+        onExportIncludeItemsChange={setExportIncludeItems}
+        onExportIncludeBuiltInChange={setExportIncludeBuiltIn}
+        onExport={handleExportLevels}
+      />
     </motion.div>
   );
 };
