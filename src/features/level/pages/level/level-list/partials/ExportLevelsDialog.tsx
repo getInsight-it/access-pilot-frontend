@@ -1,7 +1,7 @@
 import { FileDown, Loader2 } from "lucide-react";
-import { Button } from "../../../../../common/external/ui/button.tsx";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
-import { Switch } from "../../../../../common/external/ui/switch.tsx";
+import { Button } from "../../../../../../common/external/ui/button.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
+import { Switch } from "../../../../../../common/external/ui/switch.tsx";
 
 interface ExportLevelsDialogProps {
   open: boolean;

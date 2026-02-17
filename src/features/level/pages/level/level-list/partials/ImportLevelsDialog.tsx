@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import type { ChangeEvent } from "react";
 import { FileUp, Loader2 } from "lucide-react";
-import { Button } from "../../../../../common/external/ui/button.tsx";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
+import { Button } from "../../../../../../common/external/ui/button.tsx";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
 
 interface ImportLevelsDialogProps {
   open: boolean;
