@@ -171,7 +171,7 @@ export const SystemDetail = () => {
                   <span className="text-sm font-semibold">Papéis do sistema</span>
                   {data?.managed && (
                     <span className="text-xs font-normal">
-                      Papeis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
+                      Papéis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
                     </span>
                   )}
                 </div>

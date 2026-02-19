@@ -29,6 +29,7 @@ export default function ManageRoles() {
     loading,
     currentPage,
     totalPages,
+    systemName,
     handlePageChange,
     getData
   } = useManageRolesData(clientId);
@@ -70,7 +71,7 @@ export default function ManageRoles() {
                   <span className="text-md">
                     Sistema: <span
                       onClick={navigateToSystemDetails}
-                      className="text-primary-600 cursor-pointer underline">{clientId}</span>
+                      className="text-primary-600 cursor-pointer underline">{systemName || ""}</span>
                   </span>
                 }
               />

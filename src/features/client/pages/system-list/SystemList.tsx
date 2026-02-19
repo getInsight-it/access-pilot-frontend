@@ -344,7 +344,7 @@ export default function SystemList() {
                       <div className="table-card__content">
                         <div className="table-card__content__row">
                           <span className="table-card__label">Sistema</span>
-                          <span className="table-card__value">{client.clientId}</span>
+                          <span className="table-card__value">{client.name}</span>
                         </div>
                         <div className="table-card__content__row">
                           <span className="table-card__label">Descrição</span>

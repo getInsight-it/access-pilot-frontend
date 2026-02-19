@@ -18,6 +18,7 @@ import { Label } from "../../../../common/external/ui/label.tsx";
 import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
 import { formSchema, RoleFormData, useNewRoleData, useRoleSubmit, useRoleNavigation } from "./useNewRole.ts";
+import { Badge } from "@common/external/ui/badge.tsx";
 
 const defaultValues: RoleFormData = {
   name: "",
@@ -133,7 +134,7 @@ export default function NewRole() {
                   <span className="text-md">
                     Sistema: <span
                     onClick={navigateToSystemDetails}
-                    className="text-primary-600 cursor-pointer underline">{client?.clientId || ""}</span>
+                    className="text-primary-600 cursor-pointer underline">{client?.name || ""}</span>
                   </span>
                 }
                 code={ isEditing ? client?.id?.toString() || "" : null}
@@ -229,7 +230,12 @@ export default function NewRole() {
                                 <SelectItem value="empty">Nenhuma esfera</SelectItem>
                                 {levels && levels.length > 0 && levels.map((level) => (
                                   <SelectItem key={level.id} value={level.id.toString()}>
-                                    {level.name}
+                                    <span className="flex items-center gap-4">
+                                      <span>{level.name}</span>
+                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap">
+                                        {level.type}
+                                      </Badge>
+                                    </span>
                                   </SelectItem>
                                 ))}
                               </SelectContent>

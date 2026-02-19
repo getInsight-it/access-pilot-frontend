@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { roleService } from "../../common/service/role-service.ts";
+import { clientService } from "../../../client/common/service/client-service.ts";
 import { RoleResponseInterface } from "../../common/types/role.model.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
@@ -15,6 +16,7 @@ export const useManageRolesData = (clientId?: string) => {
   const [pageSize] = useState(PAGINATION.DEFAULT_PAGE_SIZE);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [systemName, setSystemName] = useState<string>("");
 
   const updatePaginatedRoles = useCallback((roles: RoleResponseInterface[], page: number) => {
     const startIndex = (page - 1) * pageSize;
@@ -22,6 +24,17 @@ export const useManageRolesData = (clientId?: string) => {
     const paginatedData = roles.slice(startIndex, endIndex);
     setPaginatedRoles(paginatedData);
   }, [pageSize]);
+
+  const getClientData = useCallback(async () => {
+    if (!clientId) return;
+
+    try {
+      const response = await clientService.fetchByClientId(clientId);
+      if (response?.name) {
+        setSystemName(response.name);
+      }
+    } catch {}
+  }, [clientId]);
 
   const getData = useCallback(async () => {
     if (!clientId) {
@@ -31,7 +44,10 @@ export const useManageRolesData = (clientId?: string) => {
 
     setLoading(true);
     try {
-      const roles = await roleService.getRolesByClientId(clientId);
+      const [roles] = await Promise.all([
+        roleService.getRolesByClientId(clientId),
+        systemName ? Promise.resolve() : getClientData()
+      ]);
       setAllRoles(roles);
 
       const totalPages = Math.ceil(roles.length / pageSize);
@@ -47,7 +63,7 @@ export const useManageRolesData = (clientId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [clientId, pageSize, currentPage, updatePaginatedRoles]);
+  }, [clientId, pageSize, currentPage, updatePaginatedRoles, systemName, getClientData]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -60,6 +76,7 @@ export const useManageRolesData = (clientId?: string) => {
     pageSize,
     currentPage,
     totalPages,
+    systemName,
     handlePageChange,
     getData
   };

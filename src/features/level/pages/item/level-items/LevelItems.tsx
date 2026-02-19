@@ -112,44 +112,46 @@ export default function LevelItems() {
               <>
                 {itemsData.filteredItems.map((item, index) => (
                   <div className="table-card" key={`mobile-table-card-${index}`}>
-                    {itemsData.sphere?.type !== "BUILT_IN" && itemsData.sphere?.type !== 'EXTERNAL' && (
+                    {itemsData.sphere?.type !== 'EXTERNAL' && (
                       <div className="table-card__header">
                         <div className="flex items-center justify-between">
                           <span className="mr-2">Ações</span>
-                          {itemsData.sphere?.type !== "BUILT_IN" && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <EllipsisVertical size={20} className="cursor-pointer" />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
-                                  className="flex flex-row gap-2" 
-                                  onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
-                                  <Copy size={16} />
-                                  <span>Copiar Código</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    savePreviousRoute(location.pathname + location.search);
-                                    navigate(
-                                      PRIVATE_ROUTES.EDIT_ITEM
-                                        .replace(":id", itemsData.id!)
-                                        .replace(":itemId", item.id.toString())
-                                    );
-                                  }}
-                                  className="flex flex-row gap-2">
-                                  <Edit size={16} />
-                                  <span>Editar</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => operations.handleDelete(item)}
-                                  className="flex flex-row gap-2">
-                                  <Trash size={16} />
-                                  <span>Excluir</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <EllipsisVertical size={20} className="cursor-pointer" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem 
+                                className="flex flex-row gap-2" 
+                                onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                <Copy size={16} />
+                                <span>Copiar Código</span>
+                              </DropdownMenuItem>
+                              {itemsData.sphere?.type !== "BUILT_IN" && (
+                                <>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      savePreviousRoute(location.pathname + location.search);
+                                      navigate(
+                                        PRIVATE_ROUTES.EDIT_ITEM
+                                          .replace(":id", itemsData.id!)
+                                          .replace(":itemId", item.id.toString())
+                                      );
+                                    }}
+                                    className="flex flex-row gap-2">
+                                    <Edit size={16} />
+                                    <span>Editar</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => operations.handleDelete(item)}
+                                    className="flex flex-row gap-2">
+                                    <Trash size={16} />
+                                    <span>Excluir</span>
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
                     )}
@@ -208,62 +210,68 @@ export default function LevelItems() {
             <Table>
               <TableHeader>
                 <TableRow className="uppercase">
-                  <TableHead width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"}>Nome</TableHead>
+                  <TableHead width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "calc(100% - 100px)"}>Nome</TableHead>
                   {itemsData.sphere?.type !== "BUILT_IN" && (
                     <>
                       <TableHead width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Descrição</TableHead>
                       <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código</TableHead>
                       <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Item da esfera pai</TableHead>
-                      {itemsData.sphere?.type !== 'EXTERNAL' && <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>}
                     </>
                   )}
+                  {itemsData.sphere?.type !== 'EXTERNAL' && <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {itemsData.filteredItems.length > 0 ? (
                   itemsData.filteredItems.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "100%"} wordBreak="break-word">{item.name}</TableCell>
-                      {itemsData.sphere?.type !== "BUILT_IN" && itemsData.sphere?.type !== 'EXTERNAL' && (
+                      <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "calc(100% - 100px)"} wordBreak="break-word">{item.name}</TableCell>
+                      {itemsData.sphere?.type !== "BUILT_IN" && (
                         <>
                           <TableCell width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.description}</TableCell>
                           <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.externalCode ?? '-'}</TableCell>
                           <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{operations.renderParentItem(item)}</TableCell>
-                          <TableCell width="100px" className="flex align-center justify-center">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <EllipsisVertical size={20} className="cursor-pointer" />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
-                                  className="flex flex-row gap-2" 
-                                  onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
-                                  <Copy size={16} />
-                                  <span>Copiar código</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    savePreviousRoute(location.pathname + location.search);
-                                    navigate(
-                                      PRIVATE_ROUTES.EDIT_ITEM
-                                        .replace(":id", itemsData.id!)
-                                        .replace(":itemId", item.id.toString())
-                                    );
-                                  }}
-                                  className="flex flex-row gap-2">
-                                  <Edit size={16} />
-                                  <span>Editar</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => operations.handleDelete(item)}
-                                  className="flex flex-row gap-2">
-                                  <Trash size={16} />
-                                  <span>Excluir</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
                         </>
+                      )}
+                      {itemsData.sphere?.type !== 'EXTERNAL' && (
+                        <TableCell width="100px" className="flex align-center justify-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <EllipsisVertical size={20} className="cursor-pointer" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem 
+                                className="flex flex-row gap-2" 
+                                onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                <Copy size={16} />
+                                <span>Copiar código</span>
+                              </DropdownMenuItem>
+                              {itemsData.sphere?.type !== "BUILT_IN" && (
+                                <>
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      savePreviousRoute(location.pathname + location.search);
+                                      navigate(
+                                        PRIVATE_ROUTES.EDIT_ITEM
+                                          .replace(":id", itemsData.id!)
+                                          .replace(":itemId", item.id.toString())
+                                      );
+                                    }}
+                                    className="flex flex-row gap-2">
+                                    <Edit size={16} />
+                                    <span>Editar</span>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => operations.handleDelete(item)}
+                                    className="flex flex-row gap-2">
+                                    <Trash size={16} />
+                                    <span>Excluir</span>
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
                       )}
                     </TableRow>
                   ))

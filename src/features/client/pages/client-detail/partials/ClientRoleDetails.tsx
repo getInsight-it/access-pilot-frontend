@@ -8,6 +8,7 @@ import { RoleResponseInterface } from "@features/role/common/types/role.model";
 interface RoleItemType {
   id: string;
   name: string;
+  levelName?: string;
   children?: RoleItemType[];
   roleParent?: {
     id: string;
@@ -42,6 +43,7 @@ export const ClientRoleDetails = ({ roles, isManaged }: ClientRoleDetailsProps) 
       itemMap.set(id, {
         id,
         name: item.name,
+        levelName: item.level?.name || item.level?.sigla || "",
         roleParent: item.roleParent ? { id: item.roleParent.id.toString(), name: item.roleParent.name } : null,
         children: []
       });
@@ -162,11 +164,16 @@ export const ClientRoleDetails = ({ roles, isManaged }: ClientRoleDetailsProps) 
                     </div>
                     <div className="flex items-center">
                       <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">{item.name}</span>
-                      {item.children && item.children.length > 0 && (
+                      {item.levelName && (
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap mr-2">
+                          {item.levelName}
+                        </Badge>
+                      )}
+                      {/* {item.children && item.children.length > 0 && (
                         <Badge variant="outline" size="sm">
                           {item.children.length}
                         </Badge>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </TableCell>

@@ -9,6 +9,7 @@ import { roleService } from "../../../common/service/role-service.ts";
 import { RoleResponseInterface } from "../../../common/types/role.model.ts";
 import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
 import { RoleUpdatePayload, TreeRoleProps, TreeRoleType } from "../../../common/types/tree-role.model.ts";
+import { Badge } from "../../../../../common/external/ui/badge.tsx";
 
 function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
   const [items, setItems] = useState<{ [key: string]: TreeRoleType }>({});
@@ -28,7 +29,7 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
         index: "root",
         isFolder: true,
         children: validData.filter(o => o.roleParent === undefined).map((_) => `${_.name}`),
-        data: "Root item"
+        data: { name: "Root item", levelName: "" }
       }
     };
 
@@ -37,7 +38,7 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
         index: `${item.name}`,
         isFolder: true,
         children: validData.filter(o => o?.roleParent?.id === item?.id).map((o) => `${o.name}`),
-        data: item.name
+        data: { name: item.name, levelName: item.level?.name || item.level?.sigla || "" }
       };
     });
     return items;
@@ -111,9 +112,40 @@ function TreeRole({ data, onSuccess }: Readonly<TreeRoleProps>) {
         className="w-full max-w-xl flex justify-between items-start bg-zebra-background-2 rounded-xl border py-8 px-8 h-auto min-h-[220px] ">
         <div className="w-96 max-w-full">
           <div>
-            <UncontrolledTreeEnvironment<string>
+            <UncontrolledTreeEnvironment<string | { name: string; levelName: string }>
               dataProvider={new StaticTreeDataProvider(items, (item, newName) => ({ ...item, data: newName }))}
-              getItemTitle={item => item.data}
+              getItemTitle={item => typeof item.data === "string" ? item.data : item.data.name}
+              renderItem={({ item, title, arrow, depth, context, children }) => {
+                const levelName = typeof item.data === "object" && item.data.levelName ? item.data.levelName : "";
+                const InteractiveComponent = context.isRenaming ? 'div' : 'button';
+                return (
+                  <li
+                    {...(context.itemContainerWithChildrenProps as object)}
+                    className="rct-tree-item-li"
+                  >
+                    <div
+                      className="rct-tree-item-title-container"
+                      style={{ paddingLeft: `${(depth || 0) * 20}px` }}
+                    >
+                      {arrow}
+                      <InteractiveComponent
+                        {...(context.interactiveElementProps as object)}
+                        className="rct-tree-item-button"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{title}</span>
+                          {levelName && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap">
+                              {levelName}
+                            </Badge>
+                          )}
+                        </span>
+                      </InteractiveComponent>
+                    </div>
+                    {children}
+                  </li>
+                );
+              }}
               viewState={{
                 "tree-1": {}
               }}

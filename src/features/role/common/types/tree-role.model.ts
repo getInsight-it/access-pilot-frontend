@@ -4,7 +4,7 @@ export type TreeRoleType = {
   index: string;
   isFolder: boolean;
   children: string[];
-  data: string;
+  data: string | { name: string; levelName: string };
 }
 
 export interface TreeRoleProps {
