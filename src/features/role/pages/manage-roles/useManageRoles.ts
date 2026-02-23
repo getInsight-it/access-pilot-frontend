@@ -4,6 +4,7 @@ import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { roleService } from "../../common/service/role-service.ts";
 import { clientService } from "../../../client/common/service/client-service.ts";
 import { RoleResponseInterface } from "../../common/types/role.model.ts";
+import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
@@ -17,6 +18,7 @@ export const useManageRolesData = (clientId?: string) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [systemName, setSystemName] = useState<string>("");
+  const [client, setClient] = useState<ClientResponseInterface>();
 
   const updatePaginatedRoles = useCallback((roles: RoleResponseInterface[], page: number) => {
     const startIndex = (page - 1) * pageSize;
@@ -30,10 +32,21 @@ export const useManageRolesData = (clientId?: string) => {
 
     try {
       const response = await clientService.fetchByClientId(clientId);
-      if (response?.name) {
-        setSystemName(response.name);
+      if (response) {
+        setClient(response);
+
+        if (response.name) {
+          setSystemName(response.name);
+        }
       }
-    } catch {}
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: "Erro ao buscar dados do sistema",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
   }, [clientId]);
 
   const getData = useCallback(async () => {
@@ -78,7 +91,9 @@ export const useManageRolesData = (clientId?: string) => {
     totalPages,
     systemName,
     handlePageChange,
-    getData
+    getData,
+    client,
+    getClientData
   };
 };
 

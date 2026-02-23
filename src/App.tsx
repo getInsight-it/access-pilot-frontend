@@ -50,11 +50,9 @@ function App() {
 
         const currentRoute = window.location.pathname;
 
-        if(currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute === "/" || currentRoute === AUTH_ROUTES.LOGIN) {
-          return;
+        if(currentRoute === "/" || currentRoute === AUTH_ROUTES.LOGIN) {
+          navigate(PRIVATE_ROUTES.DASHBOARD);
         }
-
-        navigate(PRIVATE_ROUTES.DASHBOARD);
       }
     });
 

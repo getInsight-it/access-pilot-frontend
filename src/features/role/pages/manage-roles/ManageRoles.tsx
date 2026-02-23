@@ -31,7 +31,9 @@ export default function ManageRoles() {
     totalPages,
     systemName,
     handlePageChange,
-    getData
+    getData,
+    client,
+    getClientData
   } = useManageRolesData(clientId);
 
   const {
@@ -43,8 +45,9 @@ export default function ManageRoles() {
   useEffect(() => {
     if (isAuthenticated) {
       getData();
+      getClientData();
     }
-  }, [isAuthenticated, getData]);
+  }, [isAuthenticated, getData, getClientData]);
 
   useEffect(() => {
     if (allRoles.length > 0) {
@@ -68,11 +71,20 @@ export default function ManageRoles() {
                 title="Gerenciar papéis"
                 badgeValue={allRoles.length.toString() || "0"}
                 customDescription={
-                  <span className="text-md">
-                    Sistema: <span
-                      onClick={navigateToSystemDetails}
-                      className="text-primary-600 cursor-pointer underline">{systemName || ""}</span>
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-md">
+                      Client-id: <span
+                        onClick={navigateToSystemDetails}
+                        className="text-primary-600 cursor-pointer underline">{clientId}</span>
+                    </span>
+                    {client?.name && (
+                      <span className="text-md">
+                        Sistema: <span
+                          onClick={navigateToSystemDetails}
+                          className="text-primary-600 cursor-pointer underline">{client.name}</span>
+                      </span>
+                    )}
+                  </div>
                 }
               />
               <Button onClick={navigateToNewRole}>
