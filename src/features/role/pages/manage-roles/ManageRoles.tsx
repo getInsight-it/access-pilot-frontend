@@ -1,5 +1,5 @@
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import TreeRole from "./partials/TreeRole.tsx";
+import RoleHierarchy from "./partials/RoleHierarchy.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -75,13 +75,13 @@ export default function ManageRoles() {
                     <span className="text-md">
                       Client-id: <span
                         onClick={navigateToSystemDetails}
-                        className="text-primary-600 cursor-pointer underline">{clientId}</span>
+                        className="text-primary-600 cursor-pointer">{clientId}</span>
                     </span>
                     {client?.name && (
                       <span className="text-md">
                         Sistema: <span
                           onClick={navigateToSystemDetails}
-                          className="text-primary-600 cursor-pointer underline">{client.name}</span>
+                          className="text-primary-600 cursor-pointer">{client.name}</span>
                       </span>
                     )}
                   </div>
@@ -98,7 +98,7 @@ export default function ManageRoles() {
         <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-6">
           <div className="py-6 max-w-content-container m-auto">
             <Tabs defaultValue="roles">
-              <TabsList className="mb-4">
+              <TabsList className="my-4">
                 <TabsTrigger value="roles">Papéis</TabsTrigger>
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
@@ -116,7 +116,7 @@ export default function ManageRoles() {
               <TabsContent value="roles_hierarchy">
                 <div>
                   <h2 className="text-xl mb-4">Arraste para organizar a hierarquia.</h2>
-                  {!loading && <TreeRole data={allRoles} onSuccess={() => getData()} />}
+                  {!loading && <RoleHierarchy data={allRoles} onSuccess={() => getData()} />}
                 </div>
               </TabsContent>
             </Tabs>

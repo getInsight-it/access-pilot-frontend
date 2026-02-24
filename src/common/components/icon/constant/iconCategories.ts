@@ -15,5 +15,5 @@ export const iconCategories: IconCategory[] = [
   { id: "devices",       label: "Dispositivos",  test: (n) => /^(Laptop|Monitor|Smartphone|Tablet|Keyboard|Server|Database|Cpu|HardDrive|Wifi|Bluetooth|Watch)/i.test(n) },
   { id: "weather",       label: "Clima",         test: (n) => /^(Cloud|Sun|Moon|Wind|Thermometer|Umbrella|Tornado|Snowflake|Sunrise|Sunset|Flame|Droplets)/i.test(n) },
   { id: "navigation",    label: "Navegação",     test: (n) => /^(Map|Navigation|Compass|Globe|Locate|Route|Waypoints)/i.test(n) },
-  { id: "outros",        label: "Outros",        test: () => false }, // sentinel — matched by exclusion
+  { id: "outros",        label: "Outros",        test: () => false },
 ];

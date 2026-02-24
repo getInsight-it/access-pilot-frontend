@@ -1,13 +1,13 @@
 import { RoleResponseInterface } from "./role.model.ts";
 
-export type TreeRoleType = {
-  index: string;
-  isFolder: boolean;
-  children: string[];
-  data: string | { name: string; levelName: string };
+export interface ArboristNode {
+  id: string;
+  name: string;
+  levelName: string;
+  children?: ArboristNode[];
 }
 
-export interface TreeRoleProps {
+export interface RoleHierarchyProps {
   data?: RoleResponseInterface[];
   onSuccess?: () => Promise<void>;
 }

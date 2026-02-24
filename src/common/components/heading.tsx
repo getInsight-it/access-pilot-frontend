@@ -77,7 +77,7 @@ export const Heading: React.FC<HeadingProps> = ({
             <ArrowLeft className="text-primary-700" size={18}></ArrowLeft>
           </Button>
         )}
-        <div className="flex flex-col gap-1 w-full min-w-0">
+        <div className="flex flex-col gap-4 w-full min-w-0">
           <div className="flex flex-row items-center gap-2 md:gap-3 flex-wrap">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-text-default break-words">{title}</h2>
             {badgeValue !== undefined && (<Badge variant="outline" className="h-[24px] md:h-[28px] flex items-center justify-center flex-shrink-0">{badgeValue}</Badge>)}
