@@ -105,11 +105,11 @@ export default function HelpAndSupport() {
   ];
 
   return (
-    <div className="flex h-dvh md:h-screen overflow-hidden relative"
+    <div
          style={{ height: "calc(var(--mobile-vh, 1vh) * 100)" }}>
       <main
         ref={mainRef}
-        className="markdown flex-1 overflow-y-auto prose prose-a:text-blue-600 px-4 pb-20"
+        className="markdown"
       >
         <ReactMarkdown remarkPlugins={remarkPlugins}>
           {content}
@@ -117,16 +117,14 @@ export default function HelpAndSupport() {
       </main>
 
       <aside
-        className="hidden md:block w-64 border-l border-gray-200 p-4 overflow-y-auto sticky top-0 h-dvh md:h-screen"
         style={{ height: "calc(var(--mobile-vh, 1vh) * 100)" }}
       >
-        <h2 className="text-lg font-semibold mb-3">Índice</h2>
-        <ul className="space-y-1 text-sm">
+        <h2>Índice</h2>
+        <ul>
           {headings.map((h, i) => (
             <li key={i} style={{ marginLeft: (h.level - 1) * 12 }}>
               <a
                 href={`#${h.id}`}
-                className="text-blue-600 hover:underline cursor-pointer"
                 onClick={(e) => handleIndexClick(e, h.id)}
               >
                 {h.title}
@@ -138,30 +136,27 @@ export default function HelpAndSupport() {
 
       <button
         onClick={() => setIsModalOpen(true)}
-        className="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 mr-1 rounded-full shadow-lg z-50"
       >
-        <List className="w-5 h-5" />
+        <List />
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-end justify-center z-50">
-          <div className="bg-white w-full max-h-[80vh] rounded-t-2xl p-4 overflow-y-auto">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold">Índice</h2>
+        <div>
+          <div>
+            <div>
+              <h2>Índice</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-gray-500 hover:text-gray-700"
               >
-                <X className="w-5 h-5" />
+                <X />
               </button>
             </div>
-            <ul className="space-y-2 text-sm">
+            <ul>
               {headings.map((h, i) => (
                 <li key={i} style={{ marginLeft: (h.level - 1) * 12 }}>
                   <a
                     href={`#${h.id}`}
-                    className="text-blue-600 hover:underline cursor-pointer block py-1"
-                    onClick={(e) => handleIndexClick(e, h.id)}
+                        onClick={(e) => handleIndexClick(e, h.id)}
                   >
                     {h.title}
                   </a>

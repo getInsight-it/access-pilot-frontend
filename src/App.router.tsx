@@ -18,7 +18,7 @@ import SystemForm from "./features/client/pages/system-form/SystemForm.tsx";
 import Login from "./features/auth/pages/Login.tsx";
 import Dashboard from "./features/summary/pages/Dashboard.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
-import DashboardLayout from "./layouts/DashboardLayout.tsx";
+import DashboardLayout from "./layouts/dashboard-layout/DashboardLayout.tsx";
 import NewRole from "./features/role/pages/new-role/NewRole.tsx";
 import LevelItems from "./features/level/pages/item/level-items/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/create-level/CreateLevel.tsx";

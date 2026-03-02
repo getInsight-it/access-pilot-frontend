@@ -220,63 +220,58 @@ export default function SystemList() {
   return (
     <>
       <motion.div
-        className="flex flex-col h-full w-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
-            <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
+            <div className="pl-1">
               <Heading
                 title="Sistemas"
                 badgeValue={totalSystems}
                 description="Gerenciar sistemas cadastrados no ambiente."
               />
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div>
                 <Button
                   variant="outline"
                   onClick={openSyncAllModal}
                   disabled={syncAllLoading}
-                  className="w-full sm:w-auto flex items-center justify-center"
                   title="Sincronizar todos os sistemas do IDP">
-                  <RefreshCw className="h-4 w-4" />
+                  <RefreshCw />
                 </Button>
                 <Button
                   variant="outline"
                   onClick={handleExportAllClients}
                   disabled={exportAllLoading || isLoading}
-                  className="w-full sm:w-auto flex items-center justify-center"
                   title="Exportar todos os sistemas filtrados">
-                  {exportAllLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                  {exportAllLoading ? <Loader2 className="animate-spin" /> : <FileDown />}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => openImportModal()}
-                  className="w-full sm:w-auto flex items-center justify-center"
                   title="Importar exportações de sistemas">
-                  <FileUp className="h-4 w-4" />
+                  <FileUp />
                 </Button>
                 <Link
                   to={PRIVATE_ROUTES.NEW_SYSTEM}
                   className={cn(buttonVariants({ variant: "default" }))}
                   onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
-                  <Plus className="mr-2 h-4 w-4" /> Adicionar novo sistema
+                  <Plus /> Adicionar novo sistema
                 </Link>
               </div>
             </div>
           </HeaderContainer>
         </div>
 
-        <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
-          <div className="py-6 max-w-content-container m-auto">
-            <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-              <div className="w-96 max-w-full">
+        <ScrollArea viewportClassName="px-4 md:px-7">
+          <div className="max-w-content-container m-auto">
+            <div className="lg:hidden">
+              <div>
                 <Input
                   variant="dark"
                   placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
                 />
               </div>
               {clients && clients.length > 0 ? (
@@ -284,56 +279,50 @@ export default function SystemList() {
                   {clients.map((client, index) => (
                     <div className="table-card" key={`mobile-table-card-${index}`}>
                       <div className="table-card__header">
-                        <div className="flex items-center justify-between">
-                          <span className="mr-2">Ações</span>
+                        <div>
+                          <span>Ações</span>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <EllipsisVertical size={20} className="cursor-pointer" />
+                              <EllipsisVertical size={20} />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
                                 <Copy size={16} />
                                 <span>Copiar Código</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
                                 <MonitorCog size={16} />
                                 <span>Detalhes</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
                                 <Edit size={16} />
                                 <span>Editar</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { handleExportClient(client.id, client.clientId); }}>
                                 <FileDown size={16} />
                                 <span>Exportar</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { openImportModal(client.clientId); }}>
                                 <FileUp size={16} />
                                 <span>Importar</span>
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem
-                                  className="flex flex-row gap-2"
                                   onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
                                   <UserCog size={16}/>
                                   Gerenciar Papéis
                                 </DropdownMenuItem>
                               )}
-                              <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                              <DropdownMenuItem onClick={() => { syncClient(client) }}>
                                 <RefreshCw size={16}/>
                                 Sincronizar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
                                 <Cog size={16}/>
                                 {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
                               </DropdownMenuItem>
@@ -364,7 +353,7 @@ export default function SystemList() {
                       </div>
                     </div>
                   ))}
-                  <div className="p-4">
+                  <div>
                     <PaginationWrapper
                       currentPage={currentPage}
                       totalPages={totalPages}
@@ -374,21 +363,20 @@ export default function SystemList() {
                   </div>
                 </>
               ) : !isLoading ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                    <LaptopMinimal size={24} className="text-gray-400" />
+                <div>
+                  <div>
+                    <LaptopMinimal size={24} />
                   </div>
-                  <span className="text-sm text-gray-500">Nenhum sistema encontrado</span>
+                  <span>Nenhum sistema encontrado</span>
                 </div>
               ) : null}
             </div>
-            <div className="hidden lg:flex flex-col gap-4">
-              <div className="w-96 max-w-full">
+            <div className="hidden lg:flex">
+              <div>
                 <Input
                   placeholder="Filtrar..."
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="h-10 w-full"
                 />
               </div>
               <Table>
@@ -405,7 +393,7 @@ export default function SystemList() {
                   clients.map((client) => (
                     <TableRow key={client.id}>
                       <TableCell width="calc(40% - 33px)">
-                        <div className="flex items-center gap-2">
+                        <div>
                           <span>{client.name}</span>
                         </div>
                       </TableCell>
@@ -421,53 +409,47 @@ export default function SystemList() {
                       <TableCell className="flex align-center justify-center" width="100px">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} className="cursor-pointer" />
+                            <EllipsisVertical size={20} />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
                               <Copy size={16} />
                               <span>Copiar Código</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
                               <MonitorCog size={16} />
                               <span>Detalhes</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
                               <Edit size={16} />
                               <span>Editar</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => { handleExportClient(client.id, client.clientId); }}>
                               <FileDown size={16} />
                               <span>Exportar</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => { openImportModal(client.clientId); }}>
                               <FileUp size={16} />
                               <span>Importar</span>
                             </DropdownMenuItem>
                             {client.managed && (
                               <DropdownMenuItem
-                                className="flex flex-row gap-2"
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
                                 <UserCog size={16}/>
                                 Gerenciar Papéis
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem onClick={() => { syncClient(client) }} className="flex flex-row gap-2">
+                            <DropdownMenuItem onClick={() => { syncClient(client) }}>
                               <RefreshCw size={16}/>
                               Sincronizar
                             </DropdownMenuItem>
                             {client.managed && (
-                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }} className="flex flex-row gap-2">
+                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
                                 <Cog size={16}/>
                                 {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
                               </DropdownMenuItem>
@@ -479,19 +461,19 @@ export default function SystemList() {
                   ))
                 ) : !isLoading ? (
                   <TableRow>
-                    <TableCell {...{ colSpan: 2 }} className="py-12">
-                      <div className="flex flex-col items-center justify-center text-center w-full">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                          <LaptopMinimal size={24} className="text-gray-400" />
+                    <TableCell {...{ colSpan: 2 }}>
+                      <div>
+                        <div>
+                          <LaptopMinimal size={24} />
                         </div>
-                        <span className="text-sm text-gray-500">Nenhum sistema encontrado</span>
+                        <span>Nenhum sistema encontrado</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : null}
               </TableBody>
               <TableFooter>
-                <div className="p-4">
+                <div>
                   <PaginationWrapper
                     currentPage={currentPage}
                     totalPages={totalPages}
@@ -523,7 +505,7 @@ export default function SystemList() {
       />
 
       <Dialog open={syncAllOpen} onOpenChange={setSyncAllOpen}>
-        <DialogContent className="sm:max-w-[520px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Sincronizar sistemas</DialogTitle>
             <DialogDescription>
@@ -531,24 +513,24 @@ export default function SystemList() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div>
+            <div>
+              <span>
                 Sincronizar papéis também?
               </span>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
+              <span>
                 Pode aumentar o tempo da operação.
               </span>
             </div>
             <Switch checked={syncRoles} onCheckedChange={setSyncRoles} disabled={syncAllLoading} />
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter>
             <Button variant="outline" onClick={() => setSyncAllOpen(false)} disabled={syncAllLoading}>
               Cancelar
             </Button>
             <Button onClick={handleSyncAll} disabled={syncAllLoading}>
-              {syncAllLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+              {syncAllLoading ? <Loader2 className="animate-spin" /> : <RefreshCw />}
               {syncAllLoading ? "Sincronizando..." : "Sincronizar"}
             </Button>
           </DialogFooter>

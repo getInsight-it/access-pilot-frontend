@@ -87,19 +87,19 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
   const SelectedIconComponent = selectedIcon ? icons[selectedIcon] : null;
 
   return (
-    <div className="flex items-center gap-2">
+    <div>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2 min-w-[180px] justify-start">
+          <Button variant="outline">
             {SelectedIconComponent ? (
               <>
-                <SelectedIconComponent className="h-5 w-5 shrink-0" />
-                <span className="truncate">{selectedIcon}</span>
+                <SelectedIconComponent />
+                <span>{selectedIcon}</span>
               </>
             ) : (
               <>
-                <span className="h-5 w-5 shrink-0 rounded border border-dashed border-muted-foreground/50" />
-                <span className="text-muted-foreground">Selecione um ícone</span>
+                <span />
+                <span>Selecione um ícone</span>
               </>
             )}
           </Button>
@@ -107,19 +107,14 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <PopoverContent
           side={isLargeScreen ? "right" : "bottom"}
           align={isLargeScreen ? "start" : "end"}
-          className={cn(
-            "w-[calc(100vw-2rem)] sm:w-[300px] p-0",
-            isLargeScreen && "ml-6"
-          )}
         >
-          <div className="p-4 border-b border-gray-300">
-            <h4 className="font-medium leading-none">Escolha um ícone</h4>
+          <div>
+            <h4>Escolha um ícone</h4>
           </div>
-          <div className="flex gap-1 overflow-x-auto px-4 py-2 border-b border-gray-300 scrollbar-none">
+          <div>
             <Button
               size="sm"
               variant={selectedCategory === null ? "default" : "outline"}
-              className="shrink-0 h-7 text-xs"
               onClick={() => handleCategorySelect(null)}
             >
               Todos
@@ -129,7 +124,6 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
                 key={cat.id}
                 size="sm"
                 variant={selectedCategory === cat.id ? "default" : "outline"}
-                className="shrink-0 h-7 text-xs"
                 onClick={() => handleCategorySelect(cat.id)}
               >
                 {cat.label}
@@ -137,11 +131,11 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
             ))}
           </div>
           {isLoading ? (
-            <div className="flex justify-center items-center h-[300px]">
+            <div>
               <ShuffleLoader />
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-2 p-4 max-h-[300px] overflow-y-auto" onScroll={handleScroll}>
+            <div onScroll={handleScroll}>
               {visibleIcons.map((iconName) => {
                 const IconComponent = icons[iconName];
                 const isSelected = iconName === selectedIcon;
@@ -149,13 +143,9 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
                   <Button
                     key={iconName}
                     variant="ghost"
-                    className={cn(
-                      "p-0",
-                      isSelected && "ring-2 ring-primary bg-primary/10"
-                    )}
                     onClick={() => handleIconClick(iconName)}
                   >
-                    <IconComponent className="h-5 w-5" />
+                    <IconComponent />
                   </Button>
                 );
               })}
@@ -168,12 +158,11 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 shrink-0"
           onClick={handleClear}
           type="button"
           aria-label="Remover ícone"
         >
-          <X className="h-4 w-4" />
+          <X />
         </Button>
       )}
     </div>

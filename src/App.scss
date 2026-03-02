@@ -1,52 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  :root {
-    --vh: 1vh;
-    --mobile-vh: 1vh;
-  }
-
-  body {
-    @apply bg-background;
-    color: var(--text-default-color);
-    font-family: var(--font-family);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    overflow: hidden;
-  }
-
-  html {
-    overflow: hidden;
-    scroll-behavior: smooth;
-  }
+:root {
+  --vh: 1vh;
+  --mobile-vh: 1vh;
 }
 
-@layer components {
-  .table-card {
-    @apply font-semibold rounded-lg border border-gray-400;
+body {
+  background-color: var(--background);
+  color: var(--text-default-color);
+  font-family: var(--font-family);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: hidden;
+}
 
-    &__header {
-      @apply flex justify-end items-center font-bold p-2 border-b border-gray-200;
-    }
-    &__content {
-      @apply px-4;
-      &__row {
-        @apply flex items-start justify-between py-4 border-b border-gray-200;
-        &:last-child {
-          @apply border-none;
-        }
+html {
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+.table-card {
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 1px solid #9ca3af;
+
+  &__header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: 700;
+    padding: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  &__content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &__row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+
+      &:last-child {
+        border: none;
       }
     }
-    &__label {
-      @apply text-sm text-gray-600 mr-2 dark:text-gray-100 font-bold;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-right: 0.5rem;
+    font-weight: 700;
+
+    @media (prefers-color-scheme: dark) {
+      color: #f3f4f6;
     }
-    &__value {
-      @apply text-sm text-gray-800 dark:text-gray-100 font-normal;
+  }
+
+  &__value {
+    font-size: 0.875rem;
+    color: #1f2937;
+    font-weight: 400;
+
+    @media (prefers-color-scheme: dark) {
+      color: #f3f4f6;
     }
   }
 }

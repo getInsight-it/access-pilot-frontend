@@ -169,87 +169,71 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
   };
 
   return (
-    <div className={clsx("w-full space-y-4 sm:space-y-6", className)}>
-      <div className="flex flex-col gap-2">
+    <div className={clsx(className)}>
+      <div>
         <Label
-          htmlFor="request-reason"
-          className={cn(
-            "text-lg sm:text-xl font-bold",
-            hasError.reason && "text-red-500"
-          )}>
+          htmlFor="request-reason">
           Motivo da solicitação
-          <span className="text-red-500 ml-1">*</span>
+          <span>*</span>
         </Label>
         <Textarea
           id="request-reason"
           value={reason}
           onChange={handleReasonChange}
-          className={cn(
-            "resize-none min-h-[100px] sm:min-h-[120px]",
-            hasError.reason && "border-red-500 focus-visible:ring-red-500"
-          )}
           placeholder="Descreva o motivo da sua solicitação" />
         {hasError.reason && (
-          <p className="text-red-500 text-sm mt-1">
+          <p>
             Por favor, informe o motivo da solicitação
           </p>
         )}
       </div>
 
       {requiredAttachments.length > 0 && (
-        <div className="pt-2">
-          <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Anexos necessários:</h3>
-          <div className="space-y-3 sm:space-y-4">
+        <div>
+          <h3>Anexos necessários:</h3>
+          <div>
             {requiredAttachments.map((item) => {
             const isMissing = isAttachmentMissing(item.key);
 
             return (
               <Card
-                key={item.key}
-                className={cn(
-                  "flex flex-col gap-2 sm:gap-3 border rounded-md p-3 sm:p-4 bg-[var(--system-card)]",
-                  isMissing && "border-red-500"
-                )}>
+                key={item.key}>
                 <Label
-                  htmlFor={`file-upload-${item.key}`}
-                  className={cn("text-sm sm:text-base", isMissing && "text-red-500")}>
+                  htmlFor={`file-upload-${item.key}`}>
                   {item.name}
-                  {item.required && <span className="text-red-500 ml-1">*</span>}
+                  {item.required && <span>*</span>}
                 </Label>
 
-                <div className="flex flex-col gap-2 sm:gap-3">
+                <div>
                   {getAttachmentByName(item.key) && getAttachmentByName(item.key)!.files.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                    <div>
                       {getAttachmentByName(item.key)?.files.map((file, index) => (
                         <Card
-                          key={`${item.key}-${index}`}
-                          className="relative w-full h-[70px] sm:h-[80px] flex flex-col items-center justify-center p-2 bg-secondary">
+                          key={`${item.key}-${index}`}>
                           <button
                             onClick={() => removeFile(item.key, index)}
-                            className="absolute top-1 right-1 text-gray-400 hover:text-red-500 z-10"
                             aria-label="Remover arquivo"
                             type="button">
-                            <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <X />
                           </button>
 
                           <Popover>
                             <PopoverTrigger asChild>
-                              <div
-                                className="cursor-pointer gap-1 w-full h-full flex flex-col items-center justify-center">
+                              <div>
                                 <FileIcon fileName={file.name}></FileIcon>
-                                <span className="text-[9px] sm:text-[10px] text-center line-clamp-1 break-all px-1">{file.name}</span>
+                                <span>{file.name}</span>
                               </div>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80">
-                              <div className="space-y-2 text-sm">
-                                <div className="break-words">
-                                  <span className="font-medium">Nome:</span> {file.name}
+                            <PopoverContent>
+                              <div>
+                                <div>
+                                  <span>Nome:</span> {file.name}
                                 </div>
                                 <div>
-                                  <span className="font-medium">Tamanho:</span> {formatFileSize(file.size)}
+                                  <span>Tamanho:</span> {formatFileSize(file.size)}
                                 </div>
                                 <div>
-                                  <span className="font-medium">Tipo:</span> {file.type || "Não especificado"}
+                                  <span>Tipo:</span> {file.type || "Não especificado"}
                                 </div>
                               </div>
                             </PopoverContent>
@@ -259,11 +243,10 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                     </div>
                   )}
 
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+                  <div>
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full sm:w-40 bg-primary text-primary-foreground"
                       onClick={() => triggerFileInput(item.key)}>
                       Escolher arquivos
                     </Button>
@@ -273,15 +256,15 @@ const AttachmentStep: React.FC<AttachmentFormProps> = ({
                       multiple
                       ref={(el) => (fileInputRefs.current[item.key] = el)}
                       onChange={(e) => handleFileChange(e, item)}
-                      className="hidden" />
+                      style={{ display: "none" }} />
                   </div>
 
-                  <div className="text-xs sm:text-sm text-gray-500 break-words">
+                  <div>
                     Formatos aceitos: {item.allowedExtensions.join(", ")}
                   </div>
 
                   {isMissing && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                    <p>
                       Este anexo é obrigatório
                     </p>
                   )}

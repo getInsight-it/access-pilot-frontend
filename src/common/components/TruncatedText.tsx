@@ -96,7 +96,7 @@ const TruncatedText: FC<TruncatedTextProps> = ({
   const shouldShowButton = wasTruncated.current;
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn(className)}>
       <div
         ref={textRef}
         style={!showFullText && autoManage ? {
@@ -104,16 +104,12 @@ const TruncatedText: FC<TruncatedTextProps> = ({
           WebkitLineClamp: maxLines,
           WebkitBoxOrient: "vertical",
           overflow: "hidden"
-        } : undefined}
-        className={cn(
-          fontSize,
-          "break-words transition-all duration-200"
-        )}>
+        } : undefined}>
         {autoManage ? text : (showFullText ? text : (isTruncated ? `${text.substring(0, maxChars)}...` : text))}
       </div>
 
       {shouldShowButton && (
-        <span className="text-xs text-primary cursor-pointer mt-1 block" onClick={toggleFullText}>
+        <span onClick={toggleFullText}>
           {showFullText ? "Ver menos" : "Ver mais"}
         </span>
       )}

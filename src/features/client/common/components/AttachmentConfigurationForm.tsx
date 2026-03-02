@@ -215,25 +215,25 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   };
 
   return (
-    <div className="col-span-1 md:col-span-2">
-      <h3 className="text-lg font-semibold mb-4">Anexos</h3>
+    <div>
+      <h3>Anexos</h3>
 
-      <div className="mb-6">
-        <Accordion type="single" collapsible className="w-full" value={accordionValue} onValueChange={setAccordionValue}>
-          <AccordionItem value="add-config" className="border !border-outline-button-border rounded-lg">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline">
-              <div className="flex flex-row items-center gap-2">
-                <Plus className="h-4 w-4 text-primary-600" />
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+      <div>
+        <Accordion type="single" collapsible value={accordionValue} onValueChange={setAccordionValue}>
+          <AccordionItem value="add-config" className="!border-outline-button-border">
+            <AccordionTrigger>
+              <div>
+                <Plus className="text-primary-600" />
+                <span>
                   Adicionar Novo Tipo de Anexo
                 </span>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <AccordionContent>
+              <div>
+                <div>
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="config-name">
+                    <Label htmlFor="config-name">
                       Nome <span className="text-primary-600">*</span>
                     </Label>
                     <Input
@@ -241,23 +241,23 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                       value={name}
                       onChange={handleNameChange}
                       placeholder="Nome da configuração"
-                      className={`mt-2 ${formError.name ? "border-red-500" : ""}`}
+                      className={`${formError.name ? "border-red-500" : ""}`}
                     />
                     {formError.name && (
-                      <p className="text-sm text-red-500 mt-1">{formError.name}</p>
+                      <p>{formError.name}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                    <Label>
                       Tornar anexo obrigatório
                     </Label>
-                    <div className="flex items-center gap-2 mt-2">
+                    <div>
                       <Switch
                         checked={required}
                         onCheckedChange={setRequired}
                       />
-                      <span className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                      <span>
                         {required ? "Obrigatório" : "Opcional"}
                       </span>
                     </div>
@@ -265,7 +265,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                 </div>
 
                 <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="config-description">
+                  <Label htmlFor="config-description">
                     Descrição <span className="text-primary-600">*</span>
                   </Label>
                   <Textarea
@@ -273,26 +273,26 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                     value={description}
                     onChange={handleDescriptionChange}
                     placeholder="Descrição da configuração"
-                    className={`mt-2 ${formError.description ? "border-red-500" : ""}`}
+                    className={`${formError.description ? "border-red-500" : ""}`}
                   />
                   {formError.description && (
-                    <p className="text-sm text-red-500 mt-1">{formError.description}</p>
+                    <p>{formError.description}</p>
                   )}
                 </div>
 
                 <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                  <Label>
                     Extensões Permitidas <span className="text-primary-600">*</span>
                   </Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div>
                     {AVAILABLE_EXTENSIONS.map((extension) => (
                       <div
                         key={extension}
                         onClick={() => toggleExtension(extension)}
-                        className={`px-3 py-1 rounded-md cursor-pointer transition-colors text-sm ${
+                        className={`${
                           selectedExtensions.includes(extension)
-                            ? "bg-primary-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            ? "bg-primary-600"
+                            : ""
                         }`}
                       >
                         {extension}
@@ -300,12 +300,12 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                     ))}
                   </div>
                   {formError.extensions && (
-                    <p className="text-sm text-red-500 mt-1">{formError.extensions}</p>
+                    <p>{formError.extensions}</p>
                   )}
                 </div>
 
-                <Button onClick={handleAddConfig} type="button" className="mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button onClick={handleAddConfig} type="button">
+                  <Plus />
                   Adicionar Configuração
                 </Button>
               </div>
@@ -313,14 +313,13 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           </AccordionItem>
         </Accordion>
 
-        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+        <div>
           <Button
             variant="outline"
             onClick={handleImportClick}
             disabled={loading}
-            className="flex items-center gap-2 min-h-[44px]"
           >
-            <Upload className="h-4 w-4 text-primary-600" />
+            <Upload className="text-primary-600" />
             <span>Importar Configuração</span>
             <input
               type="file"
@@ -335,9 +334,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             variant="outline"
             onClick={handleExportClick}
             disabled={exporting}
-            className="flex items-center gap-2 min-h-[44px]"
           >
-            <Download className="h-4 w-4 text-primary-600" />
+            <Download className="text-primary-600" />
             <span>Exportar Configuração</span>
           </Button>
         </div>
@@ -345,55 +343,54 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
       <div>
         {activeConfigurations.length === 0 ? (
-          <div className="p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-            <p className="text-gray-500 dark:text-gray-400">Nenhum tipo de anexo adicionado</p>
+          <div>
+            <p>Nenhum tipo de anexo adicionado</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             {activeConfigurations.map((config) => (
               <Card
                 key={config.name}
-                className="relative p-4 border !border-outline-button-border bg-white dark:bg-gray-800"
+                className="!border-outline-button-border"
               >
                 <button
                   onClick={() => onDeleteConfiguration(config.name)}
-                  className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"
                   aria-label="Remover configuração"
                   type="button"
                 >
-                  <X className="h-4 w-4" />
+                  <X />
                 </button>
 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <div className="cursor-pointer flex flex-col items-center text-center">
-                      <Settings className="h-6 w-6 text-gray-600 dark:text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
+                    <div>
+                      <Settings />
+                      <span>
                         {truncateText(config.name, 50)}
                       </span>
                       <span
-                        className={`text-xs ${config.required ? "text-primary-600" : "text-gray-500"} mt-1`}>
+                        className={`${config.required ? "text-primary-600" : ""}`}>
                         {config.required ? "Obrigatório" : "Opcional"}
                       </span>
                     </div>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="space-y-3">
+                  <PopoverContent>
+                    <div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Nome:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.name}</p>
+                        <span>Nome:</span>
+                        <p>{config.name}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.description}</p>
+                        <span>Descrição:</span>
+                        <p>{config.description}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Obrigatório:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.required ? "Sim" : "Não"}</p>
+                        <span>Obrigatório:</span>
+                        <p>{config.required ? "Sim" : "Não"}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Extensões:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.allowedExtensions.join(", ")}</p>
+                        <span>Extensões:</span>
+                        <p>{config.allowedExtensions.join(", ")}</p>
                       </div>
                     </div>
                   </PopoverContent>
@@ -405,25 +402,25 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       </div>
 
       <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
-        <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <DialogTitle>
               Confirmação de Importação
             </DialogTitle>
           </DialogHeader>
 
-          <div className="py-3 sm:py-4 space-y-3 sm:space-y-4">
+          <div>
             <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h4>
                 Configurações duplicadas
               </h4>
-              <div className="border border-amber-200 dark:border-amber-800 rounded-md p-2 sm:p-3 bg-amber-50 dark:bg-amber-950/30">
-                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2">
+              <div>
+                <p>
                   As seguintes configurações já existem e serão sobrescritas:
                 </p>
-                <ul className="list-disc pl-4 sm:pl-5 space-y-1">
+                <ul>
                   {duplicateNames.map(name => (
-                    <li key={name} className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 break-words">
+                    <li key={name}>
                       <strong>{name}</strong>
                     </li>
                   ))}
@@ -432,29 +429,29 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
 
             <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h4>
                 Configurações a serem importadas
               </h4>
-              <div className="max-h-[200px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 sm:p-3 bg-gray-50 dark:bg-gray-800">
-                <ul className="space-y-2 sm:space-y-3">
+              <div>
+                <ul>
                   {importedConfigs.map(config => (
-                    <li key={config.name} className="pb-2 sm:pb-3 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
-                      <div className="space-y-1">
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Nome:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.name}</span>
+                    <li key={config.name}>
+                      <div>
+                        <div>
+                          <span>Nome:</span>{" "}
+                          <span>{config.name}</span>
                         </div>
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Descrição:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.description}</span>
+                        <div>
+                          <span>Descrição:</span>{" "}
+                          <span>{config.description}</span>
                         </div>
-                        <div className="text-xs sm:text-sm">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Obrigatório:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.required ? "Sim" : "Não"}</span>
+                        <div>
+                          <span>Obrigatório:</span>{" "}
+                          <span>{config.required ? "Sim" : "Não"}</span>
                         </div>
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Extensões:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.allowedExtensions.join(", ")}</span>
+                        <div>
+                          <span>Extensões:</span>{" "}
+                          <span>{config.allowedExtensions.join(", ")}</span>
                         </div>
                       </div>
                     </li>
@@ -464,11 +461,11 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
           </div>
 
-          <DialogFooter className="mt-3 sm:mt-4">
-            <Button variant="outline" onClick={cancelImport} className="w-full sm:w-auto">
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelImport}>
               Cancelar
             </Button>
-            <Button onClick={confirmImport} className="w-full sm:w-auto">
+            <Button onClick={confirmImport}>
               Confirmar Importação
             </Button>
           </DialogFooter>

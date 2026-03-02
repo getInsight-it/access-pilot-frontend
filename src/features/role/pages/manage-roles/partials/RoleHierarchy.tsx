@@ -134,7 +134,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
     <div
       style={{ ...style, paddingLeft: 0 }}
       ref={dragHandle}
-      className="flex items-center gap-1 pr-1 h-full cursor-pointer select-none hover:bg-muted rounded"
+      className="cursor-pointer hover:bg-muted rounded"
     >
       {node.level > 0 && Array.from({ length: node.level }, (_, i) => {
         const isLastColumn = i === node.level - 1;
@@ -144,7 +144,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
           return (
             <div
               key={i}
-              className="relative shrink-0"
+              className="relative"
               style={{ width: INDENT, alignSelf: "stretch" }}
             >
               <div
@@ -165,7 +165,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
         return (
           <div
             key={i}
-            className="relative shrink-0"
+            className="relative"
             style={{ width: INDENT, alignSelf: "stretch" }}
           >
             {!ancestorIsLast && (
@@ -181,24 +181,23 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
       {hasChildren ? (
         <button
           onClick={e => { e.stopPropagation(); node.toggle(); }}
-          className="flex items-center justify-center w-4 h-4 shrink-0"
         >
           {node.isOpen
             ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
             : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
         </button>
       ) : (
-        <span className="w-4 h-4 shrink-0" />
+        <span className="w-4 h-4" />
       )}
 
       {hasChildren
-        ? <Users className="w-4 h-4 shrink-0 text-primary" />
-        : <User className="w-4 h-4 shrink-0 text-muted-foreground" />}
+        ? <Users className="w-4 h-4 text-primary" />
+        : <User className="w-4 h-4 text-muted-foreground" />}
 
-      <span className="text-sm truncate flex-1">{node.data.name}</span>
+      <span className="truncate">{node.data.name}</span>
 
       {node.data.levelName && (
-        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap shrink-0">
+        <Badge variant="outline" className="font-medium">
           {node.data.levelName}
         </Badge>
       )}
@@ -317,9 +316,9 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
 
   return (
     <>
-      <div className="w-full flex bg-zebra-background-2 rounded-xl border border-gray-300 dark:border-gray-700 min-h-[500px]">
-        <div className="w-[30%] flex flex-col justify-between p-6">
-          <div ref={treeContainerRef} className="flex-1 min-w-0">
+      <div className="border border-gray-300 dark:border-gray-700">
+        <div>
+          <div ref={treeContainerRef}>
             <Tree<ArboristNode>
               data={treeData}
               onMove={handleMove}
@@ -335,8 +334,8 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
             Salvar
           </Button>
         </div>
-        <div className="w-px bg-gray-300 self-stretch" />
-        <div className="flex-1 h-[500px] rounded-r-xl overflow-hidden">
+        <div className="bg-gray-300" />
+        <div className="rounded-r-xl overflow-hidden">
           <ReactFlow
             nodes={nodes}
             edges={edges}

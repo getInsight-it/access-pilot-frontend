@@ -23,19 +23,19 @@ export const DetailContainer: React.FC<DetailContainerProps> = ({
     return "bg-zebra-background-2";
   };
 
-  const borderClass = border ? "border-t border-b border-gray-200 dark:border-gray-700" : "";
+  const borderClass = border ? "" : "";
 
   return (
-    <div className={`p-6 ${getBgClass()} ${borderClass} ${grow ? "flex-1" : ""}`}>
-      <div className="flex flex-col xl:flex-row gap-8">
+    <div className={`${getBgClass()} ${borderClass}`}>
+      <div>
         {titleContent && (
-          <div className="w-full xl:w-[300px] xl:min-w-[300px] xl:max-w-[300px] text-gray-900 dark:text-gray-100">
+          <div>
             {titleContent}
-            {description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>}
+            {description && <p>{description}</p>}
           </div>
         )}
 
-        <div className="flex-1">
+        <div>
           {children}
         </div>
       </div>

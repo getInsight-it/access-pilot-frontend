@@ -36,7 +36,7 @@ export default function CreateOrEditLevel() {
 
   if (formData.loading)
     return (
-      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
+      <div>
         <HighlightLoader />{" "}
       </div>
     );
@@ -64,7 +64,7 @@ export default function CreateOrEditLevel() {
 
     if (formData.type === "EXTERNAL") {
       const endpoint = formData.endpoint?.trim() || "";
-      
+
       if (endpoint.length < 3) {
         newErrors.endpoint = "O endpoint é obrigatório para esferas externas.";
       }
@@ -87,17 +87,16 @@ export default function CreateOrEditLevel() {
   };
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea>
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div>
               <Heading
                 title={formData.isEditing ? "Editar esfera" : "Nova esfera"}
                 returnButton={true}
@@ -110,47 +109,47 @@ export default function CreateOrEditLevel() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="px-6 py-6 max-w-content-container m-auto">
-            <form onSubmit={(e) => { e.preventDefault(); handleSave(e); }} className="w-full mt-4 max-w-content-container m-auto">
-              <div className="space-y-4 pb-10">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <ScrollArea>
+          <div className="max-w-content-container m-auto">
+            <form onSubmit={(e) => { e.preventDefault(); handleSave(e); }} className="max-w-content-container m-auto">
+              <div>
+                <div>
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">
+                    <Label htmlFor="name">
                       Nome <span className="text-primary-600">*</span>
                     </Label>
                     <Input
-                      className={`mt-2 ${errors.name ? "border-red-500" : ""}`}
+                      className={errors.name ? "border-red-500" : ""}
                       id="name"
                       value={formData.name}
                       onChange={(e) => { formData.setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: undefined })); }}
                       placeholder="Nome da esfera"
                       required
                     />
-                    {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+                    {errors.name && <p className="text-red-500">{errors.name}</p>}
                   </div>
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="sigla">
+                    <Label htmlFor="sigla">
                       Sigla <span className="text-primary-600">*</span>
                     </Label>
                     <Input
-                      className={`mt-2 ${errors.sigla ? "border-red-500" : ""}`}
+                      className={errors.sigla ? "border-red-500" : ""}
                       id="sigla"
                       value={formData.sigla}
                       onChange={(e) => { formData.setSigla(e.target.value); if (errors.sigla) setErrors(prev => ({ ...prev, sigla: undefined })); }}
                       placeholder="Sigla da esfera (ex: FED, EST)"
                       required />
                     {errors.sigla ? (
-                      <p className="text-sm text-red-500 mt-1">{errors.sigla}</p>
+                      <p className="text-red-500">{errors.sigla}</p>
                     ) : (
-                      <p className="text-xs text-gray-500 mt-1">A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.</p>
+                      <p>A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.</p>
                     )}
                   </div>
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="parentSphere">
+                    <Label htmlFor="parentSphere">
                       Esfera pai <span className="text-primary-600">*</span>
                     </Label>
-                    <div className="mt-2">
+                    <div>
                       <Select
                         value={formData.parentId ?? "0"}
                         onValueChange={(value) => {
@@ -159,7 +158,7 @@ export default function CreateOrEditLevel() {
                           formData.setSelectedSphereName(value === "0" ? "Nenhuma (esfera pai)" : selectedSphere?.name || "");
                         }}
                         disabled={formData.isEditing && formData.hasItems}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione a esfera pai">{formData.selectedSphereName}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
@@ -172,7 +171,7 @@ export default function CreateOrEditLevel() {
                         </SelectContent>
                       </Select>
                       {formData.isEditing && formData.hasItems && (
-                        <p className="text-xs text-blue-600 mt-1">
+                        <p className="text-blue-600">
                           A esfera pai não pode ser alterada porque esta esfera já possui itens.
                         </p>
                       )}
@@ -181,12 +180,12 @@ export default function CreateOrEditLevel() {
                 </div>
 
                 <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">
+                  <Label htmlFor="description">
                     Descrição <span className="text-primary-600">*</span>
                   </Label>
                   <Textarea
                     placeholder="Escreva uma descrição para a esfera"
-                    className="resize-none mt-2"
+                    className="resize-none"
                     id="description"
                     value={formData.description}
                     onChange={(e) => { formData.setDescription(e.target.value); if (errors.description) setErrors(prev => ({ ...prev, description: undefined })); }}
@@ -194,18 +193,17 @@ export default function CreateOrEditLevel() {
                     maxLength={200}
                   />
                   {errors.description ? (
-                    <p className="text-sm text-red-500 mt-1">{errors.description}</p>
+                    <p className="text-red-500">{errors.description}</p>
                   ) : (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">{formData.description.length}/200 caracteres</div>
+                    <div>{formData.description.length}/200 caracteres</div>
                   )}
                 </div>
 
                 <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
+                  <Label>
                     Tipo <span className="text-primary-600">*</span>
                   </Label>
                   <RadioGroup
-                    className="mt-2 flex flex-row gap-4"
                     value={formData.type}
                     onValueChange={(value: "BUSINESS" | "EXTERNAL") => {
                       formData.setType(value);
@@ -215,50 +213,50 @@ export default function CreateOrEditLevel() {
                       }
                     }}
                     disabled={formData.isEditing}>
-                    <div className="flex items-center space-x-2">
+                    <div>
                       <RadioGroupItem value="BUSINESS" id="BUSINESS" disabled={formData.isEditing} />
                       <Label htmlFor="BUSINESS">Negocial</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div>
                       <RadioGroupItem value="EXTERNAL" id="EXTERNAL" disabled={formData.isEditing} />
                       <Label htmlFor="EXTERNAL">Externa</Label>
                     </div>
                   </RadioGroup>
                   {formData.isEditing && (
-                    <p className="text-xs text-blue-600 mt-2">O tipo da esfera não pode ser alterado após a criação.</p>
+                    <p className="text-blue-600">O tipo da esfera não pode ser alterado após a criação.</p>
                   )}
                 </div>
 
                 {formData.type === "EXTERNAL" && (
-                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    <div className="lg:col-span-1">
-                      <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="endpoint">
+                  <div>
+                    <div>
+                      <Label htmlFor="endpoint">
                         Endpoint <span className="text-primary-600">*</span>
                       </Label>
                       <Input
                         placeholder="https://api.exemplo.com"
-                        className={`mt-2 ${errors.endpoint ? "border-red-500" : ""}`}
+                        className={errors.endpoint ? "border-red-500" : ""}
                         id="endpoint"
                         value={formData.endpoint}
                         onChange={(e) => { formData.setEndpoint(e.target.value); if (errors.endpoint) setErrors(prev => ({ ...prev, endpoint: undefined })); }}
                         required />
-                      {errors.endpoint && <p className="text-sm text-red-500 mt-1">{errors.endpoint}</p>}
-                      <div className="text-xs text-gray-500 font-normal flex items-center mt-3">
-                        <span><span className="bold text-primary-600 underline cursor-pointer font-bold">Clique aqui</span> Para mais informações sobre a criação do seu endpoint.</span>
+                      {errors.endpoint && <p className="text-red-500">{errors.endpoint}</p>}
+                      <div>
+                        <span><span className="bold text-primary-600 cursor-pointer font-bold">Clique aqui</span> Para mais informações sobre a criação do seu endpoint.</span>
                       </div>
                     </div>
-                    <div className="lg:col-span-1">
-                      <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="apiKey">
+                    <div>
+                      <Label htmlFor="apiKey">
                         API Key <span className="text-primary-600">*</span>
                       </Label>
                       <Input
                         placeholder={formData.isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
-                        className={`mt-2 ${errors.apiKey ? "border-red-500" : ""}`}
+                        className={errors.apiKey ? "border-red-500" : ""}
                         id="apiKey"
                         value={formData.apiKey}
                         onChange={(e) => { formData.setApiKey(e.target.value); if (errors.apiKey) setErrors(prev => ({ ...prev, apiKey: undefined })); }}
                         required={!formData.isEditing} />
-                      {errors.apiKey && <p className="text-sm text-red-500 mt-1">{errors.apiKey}</p>}
+                      {errors.apiKey && <p className="text-red-500">{errors.apiKey}</p>}
                     </div>
                   </div>
                 )}
@@ -268,7 +266,7 @@ export default function CreateOrEditLevel() {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg-gray-900 border-t">
+        <footer>
           <Button onClick={handleSave}>
             {formData.isEditing ? "Atualizar esfera" : "Criar esfera"}
           </Button>

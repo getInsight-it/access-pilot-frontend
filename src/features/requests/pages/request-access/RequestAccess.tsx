@@ -316,7 +316,7 @@ export default function RequestAccess() {
       const request = {
         clientId: customForm["clientId"].value,
         roleId: Number(customForm["roleId"].value),
-        ...(customForm["externalCode"].value ? 
+        ...(customForm["externalCode"].value ?
           { codeItem: customForm["externalCode"].value } :
           customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }
         ),
@@ -372,13 +372,12 @@ export default function RequestAccess() {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
+          <div>
             <Heading
               title="Solicitar acesso"
               description="Preencha o formulário e solicite o acesso a um sistema."
@@ -387,37 +386,27 @@ export default function RequestAccess() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow">
-        <div className="py-4 sm:py-6 max-w-content-container m-auto">
-          <div className="px-4 sm:px-6">
+      <ScrollArea>
+        <div className="max-w-content-container">
+          <div>
             {showContent && !hasError && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{
                   opacity: 1,
                   transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
-                }}
-                className="grid grid-cols-1 lg:grid-cols-[340px,1fr] xl:grid-cols-[400px,1fr] gap-4 lg:gap-6">
+                }}>
 
-                <div className="relative py-4 sm:py-8 rounded-xl space-y-8 sm:space-y-10 md:space-y-12">
+                <div>
                   {steps.map((step, index) => (
                     <motion.div
                       key={step.id}
-                      className="flex items-start relative"
                       initial={false}
                       animate={{
                         opacity: step.id <= currentStep ? 1 : 0.5,
                         transition: { duration: 0.3, ease: "easeInOut" }
                       }}>
                       <motion.div
-                        className={cn(
-                          "w-8 h-8 sm:w-9 sm:h-9 bg-gray-500 rounded-full flex items-center justify-center z-10 flex-shrink-0",
-                          step.id === currentStep
-                            ? "hover:bg-primary-500 bg-primary-500 text-gray-100"
-                            : stepsState[step.id] === "completed"
-                              ? "hover:bg-primary-500 bg-primary-500 text-white"
-                              : "bg-gray-400 text-gray-100"
-                        )}
                         initial={{ opacity: 0, x: -500 }}
                         animate={{
                           scale: step.id === currentStep ? 1.1 : 1,
@@ -431,17 +420,15 @@ export default function RequestAccess() {
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}>
                           {stepsState[step.id] === "completed" ? (
-                            <Check className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <Check />
                           ) : (
-                            <span
-                              className={stepsState[step.id] === "completed" ? "text-white" : ""}>{step.number}</span>
+                            <span>{step.number}</span>
                           )}
                         </motion.span>
                       </motion.div>
 
-                      <div className="ml-3 sm:ml-4 flex-1 min-w-0">
-                        <h3
-                          className={`text-sm sm:text-md lg:text-lg mt-1 ${step.id === currentStep ? "font-bold" : ""}`}>
+                      <div>
+                        <h3>
                           {step.title}
                         </h3>
                       </div>
@@ -449,13 +436,11 @@ export default function RequestAccess() {
                       <motion.div
                         initial={{ opacity: 0, y: -100 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 2.8 }}
-                        className="absolute left-4 top-8 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300">
+                        transition={{ duration: 2.8 }}>
                       </motion.div>
 
                       {index < steps.length - 1 && (
                         <motion.div
-                          className="absolute left-4 top-8 w-[2px] h-[calc(100%+24px)]"
                           initial={{ backgroundColor: "var(--color-primary-500)", y: -500 }}
                           animate={{
                             backgroundColor: stepsState[step.id] === "completed" ? "var(--color-primary-500)" : "var(--color-gray-200)",
@@ -470,27 +455,26 @@ export default function RequestAccess() {
                 </div>
 
                 <AutoHeight>
-                  <CardHeader className="p-4 sm:p-6">
-                    <CardTitle className="text-base sm:text-lg">
+                  <CardHeader>
+                    <CardTitle>
                       Passo {currentStep}/{steps.length}
                     </CardTitle>
                     <Separator />
                   </CardHeader>
 
-                  <CardContent className="p-4 sm:p-6">{steps[currentStep - 1].content}</CardContent>
+                  <CardContent>{steps[currentStep - 1].content}</CardContent>
 
-                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:gap-x-4 mt-3 sm:mt-4 p-4 sm:p-6">
+                  <CardFooter>
                     <Button
                       type="button"
                       variant="ghost"
-                      className="bg-secondary text-primary w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10"
                       onClick={handleBack}
                       disabled={currentStep === 1}>
                       Voltar
                     </Button>
                     {currentStep < steps.length
-                      ? (<Button onClick={goToNextStep} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Próximo</Button>)
-                      : (<Button onClick={handleFinalSubmit} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Enviar</Button>)
+                      ? (<Button onClick={goToNextStep}>Próximo</Button>)
+                      : (<Button onClick={handleFinalSubmit}>Enviar</Button>)
                     }
                   </CardFooter>
                 </AutoHeight>

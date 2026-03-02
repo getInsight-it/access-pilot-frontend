@@ -57,12 +57,11 @@ export default function RequestList() {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex flex-col gap-4 md:flex-row items-start justify-between">
+          <div>
             <Heading
               title="Solicitações"
               badgeValue={totalRequests}
@@ -72,22 +71,21 @@ export default function RequestList() {
               to={PRIVATE_ROUTES.REQUEST_ACCESS}
               className={cn(buttonVariants({ variant: "default" }))}
             >
-              <Plus className="mr-2 h-4 w-4" /> Solicitar novo acesso
+              <Plus /> Solicitar novo acesso
             </Link>
           </div>
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
+      <ScrollArea viewportClassName="px-4 md:px-7">
         {loading ? (
           <ContentLoader />
         ) : (
-          <div className="py-6 max-w-content-container m-auto">
-            <div className="hidden lg:block mb-4">
-              <div className="w-96 max-w-full">
+          <div className="max-w-content-container">
+            <div>
+              <div>
                 <Input
                   placeholder="Buscar solicitação..."
-                  className="h-10 w-full"
                   value={searchFilter}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />

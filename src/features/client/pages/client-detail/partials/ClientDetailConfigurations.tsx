@@ -25,70 +25,67 @@ export const ClientDetailConfigurations = ({ configurations }: ClientDetailConfi
 
   if(!configurations || configurations.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-center text-gray-500 dark:text-gray-400">Nenhum anexo cadastrado para este sistema.</p>
+      <div>
+        <p>Nenhum anexo cadastrado para este sistema.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div>
         {configurations.map((config: AttachmentConfigurationInterface) => (
           <Popover key={config.key} open={openPopoverId === config.key}>
             <div
-              className="flex flex-row items-start border bg-zebra-background-2 rounded-[12px] p-4 relative">
-              <div className="flex flex-col flex-grow">
-                <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300 line-clamp-1 pr-8">
+              className="bg-zebra-background-2">
+              <div>
+                <p className="text-[14px]">
                   {config.name}
                 </p>
-                <div className="mt-1">
-                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400 line-clamp-2">
+                <div>
+                  <span>
                     {config.description}
                   </span>
                 </div>
                 {config.required && (
                   <div>
-                    <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
+                    <span className="text-primary-600 dark:text-primary-400">
                       Obrigatório
                     </span>
                   </div>
                 )}
               </div>
-              <div className="absolute top-4 right-4">
+              <div>
                 <PopoverTrigger asChild>
                   <button
-                    className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center"
+                    className="text-primary-600 dark:text-primary-400"
                     onClick={() => handleTogglePopover(config.key)}
                   >
-                    <InfoIcon className="w-4 h-4" />
+                    <InfoIcon />
                   </button>
                 </PopoverTrigger>
               </div>
             </div>
             <PopoverContent
-              className="w-100 max-w-[500px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
               onMouseEnter={() => handleMouseEnter(config.key)}
               onMouseLeave={handleMouseLeave}
             >
-              <div className="space-y-3">
-                <div className="flex flex-col">
-                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Nome</span>
-                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.name}</span>
+              <div>
+                <div>
+                  <span className="text-[14px]">Nome</span>
+                  <span>{config.name}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Descrição</span>
-                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.description}</span>
+                <div>
+                  <span className="text-[14px]">Descrição</span>
+                  <span>{config.description}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Obrigatório</span>
-                  <span
-                    className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.required ? "Sim" : "Não"}</span>
+                <div>
+                  <span className="text-[14px]">Obrigatório</span>
+                  <span>{config.required ? "Sim" : "Não"}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300">Extensões permitidas</span>
-                  <span
-                    className="text-sm font-normal text-gray-600 dark:text-gray-400">{config.allowedExtensions.join(", ")}</span>
+                <div>
+                  <span className="text-[14px]">Extensões permitidas</span>
+                  <span>{config.allowedExtensions.join(", ")}</span>
                 </div>
               </div>
             </PopoverContent>

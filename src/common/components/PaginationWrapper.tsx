@@ -42,26 +42,21 @@ export function PageDropdown({
   }, [open]);
 
   return (
-    <div className="relative" ref={ref}>
+    <div ref={ref}>
       <button
         type="button"
-        className="flex items-center font-bold px-2 py-1 rounded focus:outline-none min-w-[48px] justify-between bg-transparent border-0 shadow-none"
         onClick={() => setOpen((v) => !v)}
       >
         {value}
         <ChevronDown
-          className={`ml-2 transition-transform duration-200 text-primary-700 ${open ? "rotate-0" : "rotate-180"}`}
           size={18}
         />
       </button>
       {open && (
-        <div className="absolute left-0 bottom-full mb-2 w-full bg-white border rounded shadow-lg z-10">
+        <div>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <div
               key={page}
-              className={`px-4 py-2 cursor-pointer hover:bg-blue-100 ${
-                page === value ? "bg-blue-600 text-white" : ""
-              }`}
               onClick={() => {
                 onChange(page);
                 setOpen(false);
@@ -91,16 +86,16 @@ export function PaginationWrapper({
     const endItem = Math.min(currentPage * pageSize, totalItems);
 
     return (
-      <div className={cn("flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full", className)}>
-        <div className="text-sm text-gray-700">
+      <div className={cn(className)}>
+        <div>
           {startItem}–{endItem} de {totalItems} itens
         </div>
 
-        <div className="flex items-center gap-2">
+        <div>
           <span>Página</span>
           <PageDropdown value={currentPage} totalPages={totalPages} onChange={onPageChange} />
-          <div className="h-10 w-px bg-gray-300 mx-2" />
-          <Pagination className="!mx-0">
+          <div />
+          <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
@@ -110,11 +105,6 @@ export function PaginationWrapper({
                     e.preventDefault();
                     if (currentPage > 1) onPageChange(currentPage - 1);
                   }}
-                  className={cn(
-                    currentPage === 1
-                      ? "opacity-50 cursor-not-allowed border-none ml-0 py-5 pl-3 pr-3"
-                      : "cursor-pointer border-none ml-0 py-5 pl-3 pr-3"
-                  )}
                 />
               </PaginationItem>
               <PaginationItem>
@@ -125,12 +115,6 @@ export function PaginationWrapper({
                     e.preventDefault();
                     if (currentPage < totalPages) onPageChange(currentPage + 1);
                   }}
-                  className={cn(
-                    `border-none ml-0 py-5 pl-3 pr-3 ${currentPage === totalPages
-                      ? "opacity-50 cursor-not-allowed"
-                      : "cursor-pointer border-none"
-                    }`
-                  )}
                 />
               </PaginationItem>
             </PaginationContent>
@@ -145,17 +129,13 @@ export function PaginationWrapper({
     const maxVisiblePages = 3;
 
     items.push(
-      <PaginationItem key={currentPage} className="md:hidden">
+      <PaginationItem key={currentPage}>
         <PaginationLink
           href="#"
           onClick={(e) => {
             e.preventDefault();
           }}
           isActive={true}
-          className={cn(
-            "border border-gray-300 dark:border-gray-700",
-            "bg-gray-50 dark:bg-gray-800"
-          )}
         >
           {currentPage}
         </PaginationLink>
@@ -165,7 +145,7 @@ export function PaginationWrapper({
     if(totalPages <= 7) {
       for(let i = 1; i <= totalPages; i++) {
         items.push(
-          <PaginationItem key={`desktop-${i}`} className="hidden md:flex">
+          <PaginationItem key={`desktop-${i}`}>
             <PaginationLink
               href="#"
               onClick={(e) => {
@@ -173,12 +153,6 @@ export function PaginationWrapper({
                 onPageChange(i);
               }}
               isActive={currentPage === i}
-              className={cn(
-                "border border-gray-300 dark:border-gray-700",
-                currentPage === i
-                  ? "bg-gray-50 dark:bg-gray-800"
-                  : "bg-white dark:bg-gray-950"
-              )}
             >
               {i}
             </PaginationLink>
@@ -187,7 +161,7 @@ export function PaginationWrapper({
       }
     } else {
       items.push(
-        <PaginationItem key="desktop-1" className="hidden md:flex">
+        <PaginationItem key="desktop-1">
           <PaginationLink
             href="#"
             onClick={(e) => {
@@ -195,12 +169,6 @@ export function PaginationWrapper({
               onPageChange(1);
             }}
             isActive={currentPage === 1}
-            className={cn(
-              "border border-gray-300 dark:border-gray-700",
-              currentPage === 1
-                ? "bg-gray-50 dark:bg-gray-800"
-                : "bg-white dark:bg-gray-950"
-            )}
           >
             1
           </PaginationLink>
@@ -209,7 +177,7 @@ export function PaginationWrapper({
 
       if(currentPage > maxVisiblePages + 1) {
         items.push(
-          <PaginationItem key="ellipsis-start" className="hidden md:flex">
+          <PaginationItem key="ellipsis-start">
             <PaginationEllipsis />
           </PaginationItem>
         );
@@ -220,7 +188,7 @@ export function PaginationWrapper({
 
       for(let i = startPage; i <= endPage; i++) {
         items.push(
-          <PaginationItem key={`desktop-${i}`} className="hidden md:flex">
+          <PaginationItem key={`desktop-${i}`}>
             <PaginationLink
               href="#"
               onClick={(e) => {
@@ -228,12 +196,6 @@ export function PaginationWrapper({
                 onPageChange(i);
               }}
               isActive={currentPage === i}
-              className={cn(
-                "border border-gray-300 dark:border-gray-700",
-                currentPage === i
-                  ? "bg-gray-50 dark:bg-gray-800"
-                  : "bg-white dark:bg-gray-950"
-              )}
             >
               {i}
             </PaginationLink>
@@ -243,7 +205,7 @@ export function PaginationWrapper({
 
       if(currentPage < totalPages - maxVisiblePages) {
         items.push(
-          <PaginationItem key="ellipsis-end" className="hidden md:flex">
+          <PaginationItem key="ellipsis-end">
             <PaginationEllipsis />
           </PaginationItem>
         );
@@ -251,7 +213,7 @@ export function PaginationWrapper({
 
       if(totalPages > 1) {
         items.push(
-          <PaginationItem key={`desktop-${totalPages}`} className="hidden md:flex">
+          <PaginationItem key={`desktop-${totalPages}`}>
             <PaginationLink
               href="#"
               onClick={(e) => {
@@ -259,12 +221,6 @@ export function PaginationWrapper({
                 onPageChange(totalPages);
               }}
               isActive={currentPage === totalPages}
-              className={cn(
-                "border border-gray-300 dark:border-gray-700",
-                currentPage === totalPages
-                  ? "bg-gray-50 dark:bg-gray-800"
-                  : "bg-white dark:bg-gray-950"
-              )}
             >
               {totalPages}
             </PaginationLink>
@@ -288,13 +244,6 @@ export function PaginationWrapper({
                 onPageChange(currentPage - 1);
               }
             }}
-            className={cn(
-              "border border-gray-300 dark:border-gray-700",
-              currentPage === 1
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer",
-              "bg-white dark:bg-gray-950"
-            )}
           />
         </PaginationItem>
 
@@ -309,13 +258,6 @@ export function PaginationWrapper({
                 onPageChange(currentPage + 1);
               }
             }}
-            className={cn(
-              "border border-gray-300 dark:border-gray-700",
-              currentPage === totalPages
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer",
-              "bg-white dark:bg-gray-950"
-            )}
           />
         </PaginationItem>
       </PaginationContent>

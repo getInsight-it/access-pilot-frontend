@@ -26,7 +26,7 @@ export const ExportLevelsDialog = ({
 }: ExportLevelsDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Exportar esferas</DialogTitle>
           <DialogDescription>
@@ -34,25 +34,25 @@ export const ExportLevelsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+        <div>
+          <div className="border border-gray-200 dark:border-gray-700">
+            <div>
+              <span className="text-gray-900 dark:text-gray-100">
                 Incluir esferas Built-in?
               </span>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
+              <span className="text-gray-600 dark:text-gray-400">
                 Esferas Built-in são ignoradas na importação.
               </span>
             </div>
             <Switch checked={exportIncludeBuiltIn} onCheckedChange={onExportIncludeBuiltInChange} disabled={exportLoading} />
           </div>
 
-          <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div className="border border-gray-200 dark:border-gray-700">
+            <div>
+              <span className="text-gray-900 dark:text-gray-100">
                 Incluir itens?
               </span>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
+              <span className="text-gray-600 dark:text-gray-400">
                 Exporta os itens associados a cada esfera.
               </span>
             </div>
@@ -60,7 +60,7 @@ export const ExportLevelsDialog = ({
           </div>
         </div>
 
-        <DialogFooter className="mt-4">
+        <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={exportLoading}>
             Cancelar
           </Button>

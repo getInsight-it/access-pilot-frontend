@@ -103,15 +103,14 @@ export const SystemDetail = () => {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
           <Breadcrumbs items={breadcrumbItems} />
 
-          <div className="pl-1 flex items-start justify-between">
+          <div className="pl-1">
             <Heading
               title="Detalhes do sistema"
               description="Sumário de informações do sistema cadastrado."
@@ -125,14 +124,14 @@ export const SystemDetail = () => {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-background">
+      <ScrollArea>
         {data && (
-          <div className="max-w-content-container m-auto flex flex-col h-full">
+          <div className="max-w-content-container m-auto">
             <DetailContainer
               background={"highlight"}
               border={true}
               titleContent={
-                <span className="text-sm font-semibold">Sistema</span>
+                <span>Sistema</span>
               }>
               <ClientDetailDescription
                 clientId={data.clientId}
@@ -144,7 +143,7 @@ export const SystemDetail = () => {
 
             <DetailContainer
               titleContent={
-                <span className="text-sm font-semibold">Informações gerais</span>
+                <span>Informações gerais</span>
               }>
               <ClientDetailGeneralInformation client={data} />
             </DetailContainer>
@@ -153,9 +152,9 @@ export const SystemDetail = () => {
               background={"highlight"}
               border={true}
               titleContent={
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold">Anexos do sistema</span>
-                  <span className="text-xs font-normal">Anexos que serão solicitados no momento da criação de uma solicitação de acesso.</span>
+                <div>
+                  <span>Anexos do sistema</span>
+                  <span>Anexos que serão solicitados no momento da criação de uma solicitação de acesso.</span>
                 </div>
               }>
               <ClientDetailConfigurations
@@ -167,10 +166,10 @@ export const SystemDetail = () => {
             <DetailContainer
               grow={true}
               titleContent={
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold">Papéis do sistema</span>
+                <div>
+                  <span>Papéis do sistema</span>
                   {data?.managed && (
-                    <span className="text-xs font-normal">
+                    <span>
                       Papéis relacionados a este sistema. <span onClick={() => { navigateToClientRoles(); }} className="underline text-primary-600 cursor-pointer">Clique aqui</span> para gerenciar os papeis deste sistema.
                     </span>
                   )}

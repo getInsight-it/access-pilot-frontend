@@ -43,17 +43,16 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
   }, [animate, scope, containerWidth]);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div>
       <div
         ref={containerRef}
-        className={`relative ${sizeClasses[size].container} grid items-center justify-center`}
       >
         <motion.div
           ref={scope}
-          className={`loader absolute ${sizeClasses[size].loader} bg-black`}
+          className="loader"
         />
-        <div className="text m-4 text-white whitespace-nowrap mix-blend-difference z-10">
-          <img className={sizeClasses[size].img} src="/img/ap-white.svg" alt="Logo" />
+        <div className="text">
+          {/* <img src="/img/ap-white.svg" alt="Logo" /> */}
         </div>
       </div>
 
@@ -63,7 +62,6 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="h-6 flex items-center justify-center"
       >
         {message && (
           <motion.p
@@ -71,7 +69,6 @@ export default function HighlightLoader({ message = "Carregando...", size = "md"
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-sm text-muted-foreground text-center"
           >
             {message}
           </motion.p>

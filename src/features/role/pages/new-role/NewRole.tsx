@@ -60,7 +60,7 @@ export default function NewRole() {
       if (isAuthenticated) {
         const roleData = await loadData();
         setDataLoading(false);
-        
+
         if (roleData) {
           methods.reset(roleData);
         }
@@ -77,15 +77,14 @@ export default function NewRole() {
   if (dataLoading || loadingLevels) {
     return (
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div>
               <Heading
                 title={isEditing ? "Carregando papel..." : "Carregando..."}
                 returnButton={true}
@@ -97,15 +96,15 @@ export default function NewRole() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="h-full flex items-center justify-center">
-            <div className="flex items-center justify-center min-h-[60vh]">
+        <ScrollArea>
+          <div>
+            <div>
               <HighlightLoader />
             </div>
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
+        <footer>
           <Button disabled>
             {isEditing ? "Atualizando..." : "Criando..."}
           </Button>
@@ -115,26 +114,25 @@ export default function NewRole() {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea>
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div>
               <Heading
                 title={isEditing ? "Editar papel" : "Novo papel"}
                 returnButton={true}
                 onReturnClick={() => {goToPreviousRoute(navigate);}}
                 customDescription={
-                  <span className="text-md">
+                  <span>
                     Sistema: <span
                     onClick={navigateToSystemDetails}
-                    className="text-primary-600 cursor-pointer underline">{client?.name || ""}</span>
+                    className="text-primary-600">{client?.name || ""}</span>
                   </span>
                 }
                 code={ isEditing ? client?.id?.toString() || "" : null}
@@ -145,24 +143,24 @@ export default function NewRole() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-6">
-          <div className="py-6 max-w-content-container m-auto">
+        <ScrollArea viewportClassName="px-6">
+          <div className="max-w-content-container m-auto">
             <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmit)} className="w-full mt-4 max-w-content-container m-auto">
-                <div className="space-y-4 pb-10">
-                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <form onSubmit={methods.handleSubmit(onSubmit)} className="max-w-content-container m-auto">
+                <div>
+                  <div>
                     <FormField
                       control={methods.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">
+                          <Label htmlFor="name">
                             Nome <span className="text-primary-600">*</span>
                           </Label>
                           <FormControl>
                             <Input
                               id="name"
-                              className={`mt-2 ${methods.formState.errors.name ? "border-red-500" : ""}`}
+                              className={methods.formState.errors.name ? "border-red-500" : ""}
                               placeholder="Nome do papel"
                               disabled={loading}
                               {...field}
@@ -175,7 +173,7 @@ export default function NewRole() {
                             />
                           </FormControl>
                           {methods.formState.errors.name && (
-                            <p className="text-sm text-red-500 mt-1">
+                            <p className="text-red-500">
                               {methods.formState.errors.name?.message?.toString()}
                             </p>
                           )}
@@ -188,20 +186,20 @@ export default function NewRole() {
                       name="label"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="label">
+                          <Label htmlFor="label">
                             Label <span className="text-primary-600">*</span>
                           </Label>
                           <FormControl>
                             <Input
                               id="label"
-                              className={`mt-2 ${methods.formState.errors.label ? "border-red-500" : ""}`}
+                              className={methods.formState.errors.label ? "border-red-500" : ""}
                               placeholder="Label do papel"
                               disabled={loading}
                               {...field}
                             />
                           </FormControl>
                           {methods.formState.errors.label && (
-                            <p className="text-sm text-red-500 mt-1">
+                            <p className="text-red-500">
                               {methods.formState.errors.label?.message?.toString()}
                             </p>
                           )}
@@ -214,7 +212,7 @@ export default function NewRole() {
                       name="levelId"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="levelId">
+                          <Label htmlFor="levelId">
                             Esfera
                           </Label>
                           <FormControl>
@@ -223,16 +221,16 @@ export default function NewRole() {
                               value={field.value}
                               disabled={loading}
                             >
-                              <SelectTrigger className={`mt-2 ${methods.formState.errors.levelId ? "border-red-500" : ""}`}>
+                              <SelectTrigger className={methods.formState.errors.levelId ? "border-red-500" : ""}>
                                 <SelectValue placeholder="Selecione uma esfera" />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="empty">Nenhuma esfera</SelectItem>
                                 {levels && levels.length > 0 && levels.map((level) => (
                                   <SelectItem key={level.id} value={level.id.toString()}>
-                                    <span className="flex items-center gap-4">
+                                    <span>
                                       <span>{level.name}</span>
-                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap">
+                                      <Badge variant="outline">
                                         {level.type}
                                       </Badge>
                                     </span>
@@ -242,7 +240,7 @@ export default function NewRole() {
                             </Select>
                           </FormControl>
                           {methods.formState.errors.levelId && (
-                            <p className="text-sm text-red-500 mt-1">
+                            <p className="text-red-500">
                               {methods.formState.errors.levelId?.message?.toString()}
                             </p>
                           )}
@@ -257,25 +255,25 @@ export default function NewRole() {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">
+                          <Label htmlFor="description">
                             Descrição <span className="text-primary-600">*</span>
                           </Label>
                           <FormControl>
                             <Textarea
                               id="description"
                               placeholder="Descrição do papel"
-                              className={`resize-none mt-2 ${methods.formState.errors.description ? "border-red-500" : ""}`}
+                              className={`resize-none ${methods.formState.errors.description ? "border-red-500" : ""}`}
                               disabled={loading}
                               {...field}
                               maxLength={200}
                             />
                           </FormControl>
                           {methods.formState.errors.description && (
-                            <p className="text-sm text-red-500 mt-1">
+                            <p className="text-red-500">
                               {methods.formState.errors.description?.message?.toString()}
                             </p>
                           )}
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
+                          <div>
                             {field.value?.length || 0}/200 caracteres
                           </div>
                         </FormItem>
@@ -289,11 +287,11 @@ export default function NewRole() {
                       name="icon"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                            Ícone <span className="italic text-sm">(opcional)</span>
+                          <Label>
+                            Ícone <span className="italic">(opcional)</span>
                           </Label>
                           <FormControl>
-                            <div className="mt-2">
+                            <div>
                               <IconPicker value={field.value} onChange={field.onChange} />
                             </div>
                           </FormControl>
@@ -307,7 +305,7 @@ export default function NewRole() {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
+        <footer>
           <Button
             type="submit"
             onClick={methods.handleSubmit(onSubmit)}

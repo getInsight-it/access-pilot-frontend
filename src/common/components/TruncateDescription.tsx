@@ -33,18 +33,18 @@ export function TruncatedDescription({
   }, [description, maxLength, fallback])
 
   if (!description) {
-    return <p className={`mt-1 ${fontSize}`}>{fallback}</p>
+    return <p>{fallback}</p>
   }
 
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild className="">
-          <p className={`mt-1 ${fontSize}`}>{truncatedDescription}</p>
+        <TooltipTrigger asChild>
+          <p>{truncatedDescription}</p>
         </TooltipTrigger>
         {showTooltip && (
-          <TooltipContent className="rounded-[var(--card-border-radius)]">
-            <p className="max-w-xs">{description}</p>
+          <TooltipContent>
+            <p>{description}</p>
           </TooltipContent>
         )}
       </Tooltip>

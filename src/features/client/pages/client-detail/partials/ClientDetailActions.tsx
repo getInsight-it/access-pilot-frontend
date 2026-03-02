@@ -33,9 +33,8 @@ export const ClientDetailActions = ({
           <Button
             variant="outline"
             size="icon"
-            onClick={onClick}
-            className="w-9 h-9 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
-            <Icon className="h-5 w-5" />
+            onClick={onClick}>
+            <Icon />
             <span className="sr-only">{label}</span>
           </Button>
         </TooltipTrigger>
@@ -47,9 +46,9 @@ export const ClientDetailActions = ({
   );
 
   return (
-    <div className="flex items-center gap-4">
-      <p className="font-bold text-lg whitespace-nowrap">Ações:</p>
-      <div className="flex items-center gap-6">
+    <div>
+      <p>Ações:</p>
+      <div>
         <ActionButton
           icon={Pen}
           label="Editar"

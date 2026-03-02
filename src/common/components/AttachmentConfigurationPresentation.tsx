@@ -30,16 +30,16 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
 
   if(!attachments || attachments.length === 0) {
     return (
-      <div className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
-        <div className="flex-shrink-0 mr-4">
-          <Folder size={20} className="text-gray-600 dark:text-gray-400" />
+      <div>
+        <div>
+          <Folder size={20} />
         </div>
-        <div className="flex flex-col">
-          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+        <div>
+          <p>
             Anexos
           </p>
-          <div className="mt-1">
-            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+          <div>
+            <span>
               Nenhum anexo fornecido.
             </span>
           </div>
@@ -70,56 +70,46 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
   };
 
   return (
-    <div className={cn(
-      direction === "column" ? `grid gap-4 ${getGridColsClass()}` : "space-y-4",
-      className
-    )}>
+    <div className={cn(className)}>
       {attachments.map((attachment) => {
         const isExpanded = expandedItems[attachment.key] || false;
         const hasExcessFiles = collapsible && attachment.files.length > 3;
         const displayFiles = hasExcessFiles && !isExpanded ? attachment.files.slice(0, 3) : attachment.files;
 
         return (
-          <div key={attachment.key} className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
-            <div className="flex flex-col flex-grow">
-              <p className="text-[14px] font-medium text-text-default">
+          <div key={attachment.key}>
+            <div>
+              <p>
                 {attachment.fileName}
               </p>
-              <div className="mt-3">
-                <div
-                  className={cn(
-                    "grid gap-2 grid-cols-1"
-                  )}
-                >
+              <div>
+                <div>
                   {displayFiles.map((file, index) => (
                     <div
                       key={`${attachment.key}-${index}`}
-                      className="flex items-center justify-between gap-2 bg-gray-50 dark:bg-gray-700 rounded-md p-3 border border-gray-100 dark:border-gray-600"
                     >
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        <div className="min-w-4 min-h-4 flex-shrink-0">
+                      <div>
+                        <div>
                           <FileIcon fileName={file.name} />
                         </div>
-                        <span className="text-sm font-normal text-gray-700 dark:text-text-default truncate">
+                        <span>
                           {file.name}
                         </span>
                       </div>
                       {onDownload && (
                         <button
-                          className="flex-shrink-0 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                           onClick={() => onDownload(file)}
                           title="Fazer download"
                         >
-                          <Download className="h-4 w-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
+                          <Download />
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
                 {hasExcessFiles && (
-                  <div className="mt-3">
+                  <div>
                     <button
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer transition-colors"
                       onClick={() => toggleExpanded(attachment.key)}
                     >
                       {isExpanded

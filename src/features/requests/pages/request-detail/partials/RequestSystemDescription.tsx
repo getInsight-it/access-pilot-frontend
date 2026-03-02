@@ -15,22 +15,22 @@ const RequestSystemDescription = ({
 }: RequestSystemDescriptionProps) => {
   if (isContentLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[100px]">
+      <div>
         <ShuffleLoader />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-row items-start border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-[12px] p-4">
-      <div className="flex-shrink-0 mr-4">
-        <MonitorCog size={20} className="text-gray-600 dark:text-gray-400" />
+    <div>
+      <div>
+        <MonitorCog size={20} />
       </div>
-      <div className="flex flex-col">
-        <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+      <div>
+        <p>
           {clientName || "Sistema não informado"}
         </p>
-        <div className="mt-1 relative">
+        <div>
           <TruncatedText
             text={clientDescription}
             autoManage={true}

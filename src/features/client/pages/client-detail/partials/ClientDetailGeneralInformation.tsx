@@ -12,18 +12,18 @@ export const ClientDetailGeneralInformation = ({
 }: ClientDetailGeneralInformationProps) => {
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
-          <div className="flex-shrink-0 mr-4">
+      <div>
+        <div className="bg-zebra-background-1">
+          <div>
             <FileTextIcon size={20} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+          <div>
+            <p className="text-[14px]">
               Nome
             </p>
-            <div className="mt-1 relative">
-              <div className="break-words">
-                <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
+            <div>
+              <div>
+                <span>
                   {client?.name || "-"}
                 </span>
               </div>
@@ -31,21 +31,20 @@ export const ClientDetailGeneralInformation = ({
           </div>
         </div>
 
-        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
-          <div className="flex-shrink-0 mr-4">
+        <div className="bg-zebra-background-1">
+          <div>
             <GlobeIcon size={20} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+          <div>
+            <p className="text-[14px]">
               URL
             </p>
-            <div className="mt-1 relative">
-              <div className="break-words">
+            <div>
+              <div>
                 <a
                   href={client?.baseUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-normal text-blue-500 underline hover:text-blue-600"
                 >
                   {client?.baseUrl || "-"}
                 </a>
@@ -54,31 +53,31 @@ export const ClientDetailGeneralInformation = ({
           </div>
         </div>
 
-        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
-          <div className="flex-shrink-0 mr-4">
+        <div className="bg-zebra-background-1">
+          <div>
             <SettingsIcon size={20} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+          <div>
+            <p className="text-[14px]">
               Gerenciado
             </p>
-            <div className="mt-1">
-              <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
+            <div>
+              <span>
                 {client?.managed ? "Sim" : "Não"}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-row items-start border bg-zebra-background-1 rounded-[12px] p-4">
-          <div className="flex-shrink-0 mr-4">
+        <div className="bg-zebra-background-1">
+          <div>
             <ActivityIcon size={20} />
           </div>
-          <div className="flex flex-col">
-            <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+          <div>
+            <p className="text-[14px]">
               Status
             </p>
-            <div className="mt-1">
+            <div>
               {ClientStatusBadgeFactory(client.status!)}
             </div>
           </div>

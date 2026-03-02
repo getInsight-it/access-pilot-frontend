@@ -48,7 +48,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
 
   if(!authData.isAuthenticated || !authData.user) {
     return (
-      <div className="flex items-center justify-center h-dvh md:h-screen" style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
+      <div style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
         <HighlightLoader />
       </div>
     );

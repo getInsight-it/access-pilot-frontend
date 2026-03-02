@@ -580,22 +580,21 @@ const DynamicSphereForm = ({
   const lastActiveSelectIndex = findLastActiveSelectIndex();
 
   return (
-    <div className="flex flex-col space-y-8">
+    <div>
       {spheresData.map(({ sphere, items, totalItems }, index) => {
         const isLastActiveSelect = index === lastActiveSelectIndex;
         const shouldShowError = hasError && isLastActiveSelect;
 
         return (
-          <div key={sphere.id} className="flex flex-col gap-1">
+          <div key={sphere.id}>
             <Label className={cn(
-              "flex flex-row justify-between",
               shouldShowError && "text-red-500"
             )}>
-              <span className="text-sm font-medium">
+              <span>
                 {!simpleLabel && 'Selecione um item para a esfera de nível'} {sphere.name}:
-                {shouldShowError && <span className="text-red-500 ml-1">*</span>}
+                {shouldShowError && <span className="text-red-500">*</span>}
               </span>
-              <span className="text-xs font-normal text-gray-500">({totalItems} itens encontrados)</span>
+              <span>({totalItems} itens encontrados)</span>
             </Label>
             <Select
               disabled={index > 0 && !selectedValues[index - 1]}
@@ -604,20 +603,18 @@ const DynamicSphereForm = ({
               onOpenChange={(open) => handleSelectOpen(index, open)}
             >
               <SelectTrigger className={cn(
-                "w-full",
                 shouldShowError && "border-red-500 ring-red-500"
               )}>
-                <SelectValue className="text-black" placeholder="Selecionar..." />
+                <SelectValue placeholder="Selecionar..." />
               </SelectTrigger>
               <SelectContent ref={setContentRef(index)}>
-                <div className="px-2 py-2 border-b border-select-search-container-border sticky top-0 bg-select-search-container-background z-10">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <div className="border-b border-select-search-container-border bg-select-search-container-background">
+                  <div>
+                    <Search className="h-4 w-4" />
                     <Input
                       placeholder="Pesquisar..."
                       value={searchTerms.get(index) || ""}
                       onChange={(e) => handleSearch(index, e.target.value)}
-                      className="pl-8 h-8 text-sm"
                       onClick={(e) => e.stopPropagation()}
                       onKeyDown={(e) => {
                         e.stopPropagation();
@@ -639,14 +636,14 @@ const DynamicSphereForm = ({
                     );
                   })
                 ) : (
-                  <div className="px-2 py-4 text-center text-sm text-gray-500">
+                  <div>
                     {isSearching.get(index) ? "Buscando..." : "Nenhum item encontrado"}
                   </div>
                 )}
               </SelectContent>
             </Select>
             {shouldShowError && (
-              <p className="text-red-500 text-xs mt-1">Este campo é obrigatório</p>
+              <p className="text-red-500">Este campo é obrigatório</p>
             )}
           </div>
         );

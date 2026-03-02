@@ -40,20 +40,19 @@ export function RequestsTable({
   return (
     <>
       {/* Mobile View */}
-      <div className="flex flex-col gap-4 lg:hidden">
+      <div>
         {requests.length > 0 ? (
           <>
             {requests.map((request, index) => (
               <div className="table-card" key={`request-table-card-${index}`}>
                 <div className="table-card__header">
-                  <span className="mr-2">Ações</span>
+                  <span>Ações</span>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <EllipsisVertical size={20} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        className="flex flex-row gap-2"
                         onClick={() => onNavigateToDetails(request.id)}
                       >
                         <ReceiptText size={16} />
@@ -88,7 +87,7 @@ export function RequestsTable({
                 </div>
               </div>
             ))}
-            <div className="p-4">
+            <div>
               <PaginationWrapper
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -97,17 +96,17 @@ export function RequestsTable({
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-              <ReceiptText size={24} className="text-gray-400" />
+          <div>
+            <div>
+              <ReceiptText size={24} />
             </div>
-            <span className="text-sm text-gray-500">Nenhuma solicitação encontrada</span>
+            <span>Nenhuma solicitação encontrada</span>
           </div>
         )}
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-col gap-4">
+      <div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -116,26 +115,25 @@ export function RequestsTable({
               <TableHead width="calc(20% - 20px)">Papel</TableHead>
               <TableHead width="calc(20% - 20px)">Data de submissão</TableHead>
               <TableHead width="calc(20% - 20px)">Status</TableHead>
-              <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+              <TableHead width="100px">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {requests.length > 0 ? (
               requests.map((request) => (
-                <TableRow className="break-all" key={request.id}>
+                <TableRow key={request.id}>
                   <TableCell width="calc(20% - 20px)">{request.protocolCode}</TableCell>
                   <TableCell width="calc(20% - 20px)">{request.role?.client?.name}</TableCell>
                   <TableCell width="calc(20% - 20px)">{request.role?.label}</TableCell>
                   <TableCell width="calc(20% - 20px)">{formatDate(request.criacao)}</TableCell>
                   <TableCell width="calc(20% - 20px)">{RequestStatusBadge(request.status)}</TableCell>
-                  <TableCell className="flex align-center justify-center" width="100px">
+                  <TableCell width="100px">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <EllipsisVertical size={20} className="cursor-pointer" />
+                        <EllipsisVertical size={20} />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          className="flex flex-row gap-2"
                           onClick={() => onNavigateToDetails(request.id)}
                         >
                           <ReceiptText size={16} />
@@ -148,19 +146,19 @@ export function RequestsTable({
               ))
             ) : (
               <TableRow>
-                <TableCell {...{ colSpan: 6 }} className="py-12">
-                  <div className="flex flex-col items-center justify-center text-center w-full">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                      <ReceiptText size={24} className="text-gray-400" />
+                <TableCell {...{ colSpan: 6 }}>
+                  <div>
+                    <div>
+                      <ReceiptText size={24} />
                     </div>
-                    <span className="text-sm text-gray-500">Nenhuma solicitação encontrada</span>
+                    <span>Nenhuma solicitação encontrada</span>
                   </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
           <TableFooter>
-            <div className="p-4">
+            <div>
               <PaginationWrapper
                 currentPage={currentPage}
                 totalPages={totalPages}

@@ -124,48 +124,47 @@ export const ClientRoleDetails = ({ roles, isManaged }: ClientRoleDetailsProps) 
 
   if(!isManaged) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-center text-gray-500 dark:text-gray-400">A configuração ainda não foi realizada pelo administrador.</p>
+      <div>
+        <p>A configuração ainda não foi realizada pelo administrador.</p>
       </div>
     );
   }
 
   if(roleItems.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-center text-gray-500 dark:text-gray-400">Nenhum papel cadastrado para este sistema.</p>
+      <div>
+        <p>Nenhum papel cadastrado para este sistema.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="w-full">
+      <div>
         <Table>
           <TableBody>
             {flatRoles && flatRoles.map((item) => (
               <TableRow key={item.id}>
                 <TableCell width="100%">
-                  <div className="flex items-center" style={{ paddingLeft: `${(item.level || 0) * 20}px` }}>
-                    <div className="w-8 mr-2 flex justify-center">
+                  <div style={{ paddingLeft: `${(item.level || 0) * 20}px` }}>
+                    <div>
                       {item.children && item.children.length > 0 ? (
-                        <Button variant="ghost" size="icon" onClick={() => toggleExpand(item.id)} className="h-6 w-6">
+                        <Button variant="ghost" size="icon" onClick={() => toggleExpand(item.id)}>
                           {expandedItems.has(item.id) ? (
-                            <ChevronDown className="h-3 w-3" />
+                            <ChevronDown />
                           ) : (
-                            <ChevronRight className="h-3 w-3" />
+                            <ChevronRight />
                           )}
                         </Button>
                       ) : null}
                     </div>
-                    <div
-                      className="h-8 w-8 flex items-center justify-center border border-gray-200 rounded-lg mr-3 shadow-xs-skeumorphic bg-white dark:bg-gray-800 dark:border-gray-700">
-                      <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    <div>
+                      <User />
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">{item.name}</span>
+                    <div>
+                      <span>{item.name}</span>
                       {item.levelName && (
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-medium whitespace-nowrap mr-2">
+                        <Badge variant="outline">
                           {item.levelName}
                         </Badge>
                       )}

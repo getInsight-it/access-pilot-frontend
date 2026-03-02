@@ -193,17 +193,16 @@ const LoadingState = () => {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
+          <div>
             <Heading title={`Olá, ${displayName}`} />
           </div>
         </HeaderContainer>
         <Separator />
       </div>
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div>
         <HighlightLoader />
       </div>
     </motion.div>
@@ -307,36 +306,35 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
+          <div>
             <Heading title={`Olá, ${displayName}`} />
           </div>
         </HeaderContainer>
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-4 md:px-7">
+      <ScrollArea viewportClassName="px-4 md:px-7">
         <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
+          <div>
             {summaryCards.map((card) => {
               const Icon = card.icon;
               return (
                 <div
                   key={card.title}
-                  className={`${card.bgColor} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 md:flex-1`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
+                  className={`${card.bgColor}`}>
+                  <div>
+                    <div className={`${card.iconBg}`}>
                       <Icon size={20} className={card.iconColor} />
                     </div>
-                    <span className={`${card.textColor} text-sm sm:text-base font-normal`}>
+                    <span className={`${card.textColor}`}>
                       {card.title}
                     </span>
                   </div>
-                  <span className={`${card.valueColor} text-xl font-bold break-all ml-auto sm:ml-0`}>
+                  <span className={`${card.valueColor}`}>
                     {card.value}
                   </span>
                 </div>
@@ -344,15 +342,15 @@ export default function Dashboard() {
             })}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
+          <div>
             {statusCards.map((card) => {
               const Icon = card.icon;
               return (
                 <div
                   key={card.label}
-                  className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
+                  className={`border ${card.borderColor} ${card.bgColor}`}>
                   <Icon size={12} className={card.iconColor} />
-                  <span className={`text-xs sm:text-sm font-medium ${card.textColor} break-all text-center`}>
+                  <span className={`${card.textColor}`}>
                     {card.label}
                   </span>
                 </div>
@@ -362,21 +360,20 @@ export default function Dashboard() {
         </RoleComponentGuard>
 
         <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
-          <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
+          <h3>Últimas solicitações</h3>
 
-          <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+          <div>
             {requests.length > 0 ? (
               requests.map((request, index) => (
                 <div className="table-card" key={`dashboard-table-card-${index}`}>
                   <div className="table-card__header">
-                    <span className="mr-2">Ações</span>
+                    <span>Ações</span>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <EllipsisVertical size={20} />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          className="flex flex-row gap-2"
                           onClick={() => handleNavigateToRequestDetails(request.id)}>
                           <ReceiptText size={16} />
                           <span>Detalhes</span>
@@ -405,14 +402,14 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="hidden lg:flex">
+          <div>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
                   <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
                   <TableHead width="calc(33.4% - 34px)">Status</TableHead>
-                  <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
+                  <TableHead width="100px">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -422,14 +419,13 @@ export default function Dashboard() {
                       <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
                       <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
                       <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
-                      <TableCell width="100px" className="flex items-center justify-center">
+                      <TableCell width="100px">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              className="flex flex-row gap-2"
                               onClick={() => handleNavigateToRequestDetails(request.id)}>
                               <ReceiptText size={16} />
                               <span>Detalhes</span>
@@ -441,8 +437,8 @@ export default function Dashboard() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell {...{ colSpan: 4 }} className="py-6">
-                      <div className="flex justify-center w-full">
+                    <TableCell {...{ colSpan: 4 }}>
+                      <div>
                         <EmptyState message="Nenhuma solicitação encontrada" />
                       </div>
                     </TableCell>
@@ -452,13 +448,13 @@ export default function Dashboard() {
             </Table>
           </div>
         </RoleComponentGuard>
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-col w-full">
-            <div className="pt-4 pb-0">
-              <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
+        <div>
+          <div>
+            <div>
+              <h3>Sistemas que você tem acesso</h3>
             </div>
             {attachedClients.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
                 {attachedClients.map((client) => (
                   <ClientCard
                     key={client.clientId}
@@ -469,18 +465,18 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="flex justify-center w-full">
+              <div>
                 <EmptyState message="Nenhum sistema com acesso encontrado" />
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col pb-6">
-          <div className="pt-4 pb-0">
-            <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
+        <div>
+          <div>
+            <h3>Sistemas para solicitar acesso</h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
+          <div>
             {detachedClients.length > 0 ? (
               detachedClients.map((client) => (
                 <ClientCard
@@ -491,7 +487,7 @@ export default function Dashboard() {
                 />
               ))
             ) : (
-              <div className="col-span-full">
+              <div>
                 <EmptyState message="Nenhum sistema disponível para solicitação" />
               </div>
             )}

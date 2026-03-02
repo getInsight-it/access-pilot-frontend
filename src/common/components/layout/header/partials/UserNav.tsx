@@ -55,36 +55,36 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="relative rounded-full flex flex-row items-center cursor-pointer min-w-0">
-          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 md:mr-4 flex-shrink-0">
-            <AvatarImage src="/img/ap.svg" alt={displayName} />
+        <div>
+          <Avatar>
+            {/* <AvatarImage src="/img/ap.svg" alt={displayName} /> */}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
 
-          <div className="hidden md:flex flex-col space-y-1 mr-2 min-w-0">
-            <p className="text-sm font-medium leading-none truncate">{displayName}</p>
-            <p className="text-xs leading-none text-muted-foreground truncate">{email}</p>
+          <div>
+            <p>{displayName}</p>
+            <p>{email}</p>
           </div>
 
-          <ChevronDown className="hidden md:block w-4 h-4 text-gray-400 flex-shrink-0" />
+          <ChevronDown />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <div className="md:hidden">
+      <DropdownMenuContent align="end" forceMount>
+        <div>
           <DropdownMenuLabel>
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{displayName}</p>
-              <p className="text-xs leading-none text-muted-foreground font-normal">{email}</p>
+            <div>
+              <p>{displayName}</p>
+              <p>{email}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
         </div>
-        <Link className="flex items-center p-2 text-sm hover:opacity-55" to={PRIVATE_ROUTES.HELP_AND_SUPPORT}>
-          <HelpCircle className="w-4 h-4 mr-2" />
+        <Link to={PRIVATE_ROUTES.HELP_AND_SUPPORT}>
+          <HelpCircle />
           Ajuda e suporte
         </Link>
-        <div className="flex items-center p-2 text-sm hover:opacity-55 cursor-pointer" onClick={signOut}>
-          <LogOut className="w-4 h-4 mr-2" />
+        <div onClick={signOut}>
+          <LogOut />
           Sair
         </div>
       </DropdownMenuContent>

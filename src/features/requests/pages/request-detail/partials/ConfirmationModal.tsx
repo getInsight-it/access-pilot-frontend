@@ -40,7 +40,6 @@ export function ConfirmationModal({ isOpen, onClose, onConfirm, title, action, f
                   <FormControl>
                     <Textarea
                       placeholder="Descreva o motivo aqui..."
-                      className="col-span-4"
                       {...field}
                     />
                   </FormControl>
@@ -52,7 +51,7 @@ export function ConfirmationModal({ isOpen, onClose, onConfirm, title, action, f
           {action === 'aprovação' && (
             <p>Deseja prosseguir com a aprovação desta solicitação?</p>
           )}
-          <DialogFooter className="mt-6">
+          <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>

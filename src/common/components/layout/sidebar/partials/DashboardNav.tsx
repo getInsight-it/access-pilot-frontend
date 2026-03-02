@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { Icons } from "./Icons.tsx";
-import { cn } from "../../../../../config/lib/utils.ts";
 import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
@@ -33,7 +32,7 @@ export function DashboardNav({
   };
 
   return (
-    <nav className="grid items-start gap-1">
+    <nav>
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon as keyof typeof Icons || "arrowRight"];
@@ -44,38 +43,15 @@ export function DashboardNav({
               <TooltipTrigger asChild>
                 <Link
                   to={item.disabled ? "/" : item.href!}
-                  className={cn(
-                    "flex items-center gap-2 overflow-hidden h-11 group",
-
-                    "rounded-md",
-                    "text-sm sm:text-base font-semibold",
-                    "text-gray-700 dark:text-gray-300",
-                    "hover:bg-primary-100 hover:text-primary-800 dark:hover:bg-primary-900/20 dark:hover:text-primary-800",
-                    "transition-colors duration-200",
-                    isActive ?
-                      "bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-800" :
-                      "transparent",
-                    item.disabled && "cursor-not-allowed opacity-80",
-                    isMinimized && "px-3 justify-start",
-                    isMobileNav && "px-3"
-                  )}
                   onClick={() => {
                     if(setOpen) setOpen(false);
                   }}>
-                  <Icon
-                    className={cn(
-                      isMinimized ? "ml-0" : isMobileNav ? "ml-0" : "ml-4",
-                      "size-5 flex-shrink-0",
-                      "text-gray-500 dark:text-gray-100",
-                      "group-hover:text-primary-800",
-                      isActive && "text-primary-800 dark:text-primary-800"
-                    )}
-                  />
+                  <Icon />
                   {theme === "gov" && (
-                    <hr className="absolute left-0 mt-[52px] h-[1px] w-full bg-gray-100 dark:bg-gray-700" />
+                    <hr />
                   )}
                   {(isMobileNav || (!isMinimized && !isMobileNav)) && (
-                    <span className="mr-2 truncate">
+                    <span>
                       {item.title}
                     </span>
                   )}
@@ -84,8 +60,7 @@ export function DashboardNav({
               <TooltipContent
                 align="center"
                 side="right"
-                sideOffset={8}
-                className={!isMinimized ? "hidden" : "inline-block"}>
+                sideOffset={8}>
                 {item.title}
               </TooltipContent>
             </Tooltip>
@@ -99,12 +74,12 @@ export function DashboardNav({
         })}
       </TooltipProvider>
 
-      {theme === "gov" && (isMobileNav || (!isMinimized && !isMobileNav)) && (
-        <div className="absolute bottom-0 p-4 pointer-events-none truncate">
-          <p className="text-xs font-regular text-gray-600 dark:text-gray-400">Powered by:</p>
-          <img className="w-36" src="/img/accesspilot-logo.svg" />
+      {/* {theme === "gov" && (isMobileNav || (!isMinimized && !isMobileNav)) && (
+        <div>
+          <p>Powered by:</p>
+          <img src="/img/accesspilot-logo.svg" />
         </div>
-      )}
+      )} */}
     </nav>
   );
 }

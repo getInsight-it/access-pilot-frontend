@@ -141,7 +141,7 @@ export const CreateItem: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
+      <div>
         <HighlightLoader />
       </div>
     );
@@ -154,23 +154,22 @@ export const CreateItem: React.FC = () => {
   ];
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea>
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div>
               <Heading
                 title={`Criar item`}
                 returnButton={true}
                 onReturnClick={() => goToPreviousRoute(navigate)}
                 customDescription={
-                  <span className="text-md">
+                  <span>
                     Esfera: <span className="text-primary-600">{level?.name}</span>
                   </span>
                 }
@@ -181,18 +180,18 @@ export const CreateItem: React.FC = () => {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="px-6 py-6 max-w-content-container m-auto">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-content-container m-auto">
-              <div className="space-y-4 pb-10">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ScrollArea>
+          <div className="max-w-content-container m-auto">
+            <form onSubmit={handleSubmit(onSubmit)} className="max-w-content-container m-auto">
+              <div>
+                <div>
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
-                    <div className="relative">
+                    <Label htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
+                    <div>
                       <Input
                         id="name"
                         placeholder="Escreva o nome do item"
-                        className={`mt-2 ${errors.name ? "border-red-500" : ""}`}
+                        className={errors.name ? "border-red-500" : ""}
                         {...register("name", {
                           required: "Nome é obrigatório",
                           minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" },
@@ -203,23 +202,23 @@ export const CreateItem: React.FC = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/3 transform -translate-y-1/2" />
+                                <AlertCircle className="text-red-500" />
                               </TooltipTrigger>
                             </Tooltip>
                           </TooltipProvider>
-                          <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>
+                          <p className="text-red-500">{errors.name.message}</p>
                         </>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código <span className="text-primary-600">*</span></Label>
-                    <div className="relative">
+                    <Label htmlFor="externalCode">Código <span className="text-primary-600">*</span></Label>
+                    <div>
                       <Input
                         id="externalCode"
                         placeholder="Escreva o código do item"
-                        className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
+                        className={errors.externalCode ? "border-red-500" : ""}
                         {...register("externalCode", {
                           required: "O Código é obrigatório",
                           minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" },
@@ -231,11 +230,11 @@ export const CreateItem: React.FC = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                                <AlertCircle className="text-red-500" />
                               </TooltipTrigger>
                             </Tooltip>
                           </TooltipProvider>
-                          <p className="text-red-500 text-xs mt-2">{errors.externalCode.message}</p>
+                          <p className="text-red-500">{errors.externalCode.message}</p>
                         </>
                       )}
                     </div>
@@ -243,12 +242,12 @@ export const CreateItem: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
-                  <div className="relative">
+                  <Label htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
+                  <div>
                     <Textarea
                       id="description"
                       placeholder="Escreva uma descrição para o item"
-                      className={`mt-2 ${errors.description ? "border-red-500" : ""}`}
+                      className={errors.description ? "border-red-500" : ""}
                       {...register("description", {
                         required: "Descrição é obrigatória",
                         minLength: { value: 3, message: "A descrição deve conter no mínimo 3 caracteres" }
@@ -259,11 +258,11 @@ export const CreateItem: React.FC = () => {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
+                              <AlertCircle className="text-red-500" />
                             </TooltipTrigger>
                           </Tooltip>
                         </TooltipProvider>
-                        <p className="text-red-500 text-xs mt-2">{errors.description.message}</p>
+                        <p className="text-red-500">{errors.description.message}</p>
                       </>
                     )}
                   </div>
@@ -271,14 +270,14 @@ export const CreateItem: React.FC = () => {
 
                 {level?.parent && (
                   <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="parentId">Selecione o item pai:</Label>
+                    <Label htmlFor="parentId">Selecione o item pai:</Label>
                     <Controller
                       name="parentId"
                       control={control}
                       defaultValue=""
                       rules={{ required: "Item pai é obrigatório" }}
                       render={({ field }) => (
-                        <div className="relative mt-2">
+                        <div>
                           <DynamicSphereForm
                             initialId={level.parent!.id}
                             simpleLabel={true}
@@ -307,7 +306,7 @@ export const CreateItem: React.FC = () => {
           </div>
         </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg- border-t">
+        <footer>
           <Button
             type="submit"
             onClick={handleSubmit(onSubmit)}
@@ -315,7 +314,7 @@ export const CreateItem: React.FC = () => {
           >
             {submitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="animate-spin" />
                 Criando...
               </>
             ) : (

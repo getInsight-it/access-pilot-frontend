@@ -38,11 +38,11 @@ export function RolesTable({
   onEditRole
 }: RolesTableProps) {
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-        <UserCog size={24} className="text-gray-400" />
+    <div>
+      <div>
+        <UserCog size={24} />
       </div>
-      <span className="text-sm text-gray-500">Nenhum papel encontrado</span>
+      <span>Nenhum papel encontrado</span>
     </div>
   );
 
@@ -52,14 +52,12 @@ export function RolesTable({
         <EllipsisVertical size={20} className="cursor-pointer" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem 
-          className="flex flex-row gap-2" 
+        <DropdownMenuItem
           onClick={() => { navigator.clipboard?.writeText(role.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
           <Copy size={16} />
           <span>Copiar Código</span>
       </DropdownMenuItem>
         <DropdownMenuItem
-          className="flex flex-row gap-2"
           onClick={() => onEditRole(role.id)}>
           <Edit size={16} />
           <span>Editar</span>
@@ -71,14 +69,14 @@ export function RolesTable({
   return (
     <>
       {/* Mobile View */}
-      <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
+      <div>
         {roles && roles.length > 0 ? (
           <>
             {roles.map((role, index) => (
               <div className="table-card" key={`mobile-table-card-${index}`}>
                 <div className="table-card__header">
-                  <div className="flex items-center justify-between">
-                    <span className="mr-2">Ações</span>
+                  <div>
+                    <span>Ações</span>
                     <RoleActions role={role} />
                   </div>
                 </div>
@@ -106,7 +104,7 @@ export function RolesTable({
                 </div>
               </div>
             ))}
-            <div className="p-4">
+            <div>
               <PaginationWrapper
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -121,7 +119,7 @@ export function RolesTable({
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-col gap-4">
+      <div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -129,7 +127,7 @@ export function RolesTable({
               <TableHead width="calc(25% - 25px)">Label papel pai</TableHead>
               <TableHead width="calc(25% - 25px)">Descrição</TableHead>
               <TableHead width="calc(25% - 25px)">Esfera</TableHead>
-              <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+              <TableHead width="100px">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -144,21 +142,21 @@ export function RolesTable({
                   <TableCell width="calc(25% - 25px)">
                     {role.level?.name || <span className="text-gray-400">Não informado</span>}
                   </TableCell>
-                  <TableCell className="flex align-center justify-center" width="100px">
+                  <TableCell width="100px">
                     <RoleActions role={role} />
                   </TableCell>
                 </TableRow>
               ))
             ) : !loading ? (
               <TableRow>
-                <TableCell {...{ colSpan: 5 }} className="py-12 justify-center">
+                <TableCell {...{ colSpan: 5 }}>
                   <EmptyState />
                 </TableCell>
               </TableRow>
             ) : null}
           </TableBody>
           <TableFooter>
-            <div className="p-4">
+            <div>
               <PaginationWrapper
                 currentPage={currentPage}
                 totalPages={totalPages}

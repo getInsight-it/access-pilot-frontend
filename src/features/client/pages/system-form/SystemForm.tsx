@@ -43,15 +43,14 @@ export default function SystemForm() {
   if(initialLoading) {
     return (
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex items-start justify-between">
+            <div className="pl-1">
               <Heading
                 title="Carregando sistema..."
                 headerStepper={true}
@@ -64,20 +63,20 @@ export default function SystemForm() {
           <Separator />
         </div>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-3 sm:px-5 md:px-7">
-          <div className="h-full flex items-center justify-center">
-            <div className="flex items-center justify-center min-h-[60vh]">
+        <ScrollArea viewportClassName="px-3 sm:px-5 md:px-7">
+          <div>
+            <div>
               <HighlightLoader />
             </div>
           </div>
         </ScrollArea>
 
-        <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg-gray-900 border-t gap-2">
-          <Button variant="outline" disabled className="text-sm sm:text-base">
+        <footer>
+          <Button variant="outline" disabled>
             <span>Voltar</span>
           </Button>
-          <Button disabled className="text-sm sm:text-base">
-            <div className="flex flex-row items-center gap-2">
+          <Button disabled>
+            <div>
               <Loader2 size={16} className="animate-spin" />
               <span>Carregando...</span>
             </div>
@@ -89,15 +88,14 @@ export default function SystemForm() {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
           <Breadcrumbs items={breadcrumbItems} />
 
-          <div className="pl-1 flex items-start justify-between">
+          <div className="pl-1">
             <Heading
               title={isEditing ? "Editar sistema" : "Novo sistema"}
               headerStepper={true}
@@ -113,11 +111,10 @@ export default function SystemForm() {
         <Separator />
       </div>
 
-      <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-3 sm:px-5 md:px-7">
-        <div className="py-4 sm:py-5 md:py-6 max-w-content-container m-auto">
+      <ScrollArea viewportClassName="px-3 sm:px-5 md:px-7">
+        <div className="max-w-content-container m-auto">
           {activeIndex === 1 && (
             <motion.div
-              className="px-2 sm:px-4 md:px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
               <AttachmentConfigurationForm
@@ -129,32 +126,29 @@ export default function SystemForm() {
           )}
           {activeIndex === 0 && (
             <motion.div
-              className="px-2 sm:px-4 md:px-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
               <FormProvider {...methods}>
                 <form className="max-w-content-container m-auto" onSubmit={methods.handleSubmit(onSubmit)}>
                   <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-4">
+                    <div>
                       <FormField
                         control={methods.control}
                         name="name"
                         render={({ field }) => (
-                          <FormItem className="mb-2">
-                            <Label className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                                   htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
+                          <FormItem>
+                            <Label htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
                             <FormControl>
                               <Input
                                 id="name"
                                 disabled={loading}
                                 placeholder="Nome do sistema"
                                 {...field}
-                                className={`mt-2 ${methods.formState.errors.name ? "border-red-500" : ""}`}
+                                className={`${methods.formState.errors.name ? "border-red-500" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.name && (
-                              <p
-                                className="text-sm text-red-500 mt-1">{methods.formState.errors.name?.message?.toString()}</p>
+                              <p>{methods.formState.errors.name?.message?.toString()}</p>
                             )}
                           </FormItem>
                         )}
@@ -163,8 +157,8 @@ export default function SystemForm() {
                         control={methods.control}
                         name="clientId"
                         render={({ field }) => (
-                          <FormItem className="mb-2">
-                            <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="clientId">Client
+                          <FormItem>
+                            <Label htmlFor="clientId">Client
                               Id <span className="text-primary-600">*</span></Label>
                             <FormControl>
                               <Input
@@ -172,12 +166,11 @@ export default function SystemForm() {
                                 disabled={loading}
                                 placeholder="ClientId do IDP"
                                 {...field}
-                                className={`mt-2 ${methods.formState.errors.clientId ? "border-red-500" : ""}`}
+                                className={`${methods.formState.errors.clientId ? "border-red-500" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.clientId && (
-                              <p
-                                className="text-sm text-red-500 mt-1">{methods.formState.errors.clientId?.message?.toString()}</p>
+                              <p>{methods.formState.errors.clientId?.message?.toString()}</p>
                             )}
                           </FormItem>
                         )}
@@ -186,21 +179,19 @@ export default function SystemForm() {
                         control={methods.control}
                         name="description"
                         render={({ field }) => (
-                          <FormItem className="mb-2 col-span-1 md:col-span-2">
-                            <Label className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                                   htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
+                          <FormItem className="col-span-1 md:col-span-2">
+                            <Label htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
                             <FormControl>
                               <Textarea
                                 id="description"
                                 disabled={loading}
                                 placeholder="Descrição do sistema"
                                 {...field}
-                                className={`mt-2 ${methods.formState.errors.description ? "border-red-500" : ""}`}
+                                className={`${methods.formState.errors.description ? "border-red-500" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.description && (
-                              <p
-                                className="text-sm text-red-500 mt-1">{methods.formState.errors.description?.message?.toString()}</p>
+                              <p>{methods.formState.errors.description?.message?.toString()}</p>
                             )}
                           </FormItem>
                         )}
@@ -210,34 +201,32 @@ export default function SystemForm() {
                         control={methods.control}
                         name="baseUrl"
                         render={({ field }) => (
-                          <FormItem className="mb-2 md:col-span-2">
-                            <Label className="text-sm font-normal text-gray-700 dark:text-gray-300"
-                                   htmlFor="baseUrl">Url <span className="text-primary-600">*</span></Label>
+                          <FormItem className="md:col-span-2">
+                            <Label htmlFor="baseUrl">Url <span className="text-primary-600">*</span></Label>
                             <FormControl>
                               <Input
                                 id="baseUrl"
                                 disabled={loading}
                                 placeholder="Url do sistema"
                                 {...field}
-                                className={`mt-2 ${methods.formState.errors.baseUrl ? "border-red-500" : ""}`}
+                                className={`${methods.formState.errors.baseUrl ? "border-red-500" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.baseUrl && (
-                              <p
-                                className="text-sm text-red-500 mt-1">{methods.formState.errors.baseUrl?.message?.toString()}</p>
+                              <p>{methods.formState.errors.baseUrl?.message?.toString()}</p>
                             )}
                           </FormItem>
                         )}
                       />
 
-                      <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-6">
+                      <div className="col-span-1 md:col-span-2">
                         <FormField
                           control={methods.control}
                           name="status"
                           render={({ field }) => (
-                            <FormItem className="mb-2">
-                              <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
+                            <FormItem>
+                              <div>
+                                <div>
                                   <FormControl>
                                     <Switch
                                       checked={field.value === ClientStatusEnum.PUBLISHED}
@@ -247,13 +236,11 @@ export default function SystemForm() {
                                       disabled={loading}
                                     />
                                   </FormControl>
-                                  <span
-                                    className="text-sm font-normal text-gray-700 dark:text-gray-300">{field.value === ClientStatusEnum.PUBLISHED ? "Publicado" : "Não publicado"}</span>
+                                  <span>{field.value === ClientStatusEnum.PUBLISHED ? "Publicado" : "Não publicado"}</span>
                                 </div>
-                                <span className="text-sm font-normal text-gray-700 dark:text-gray-300">Ative para indicar o status publicado.</span>
+                                <span>Ative para indicar o status publicado.</span>
                                 {methods.formState.errors.status && (
-                                  <p
-                                    className="text-sm text-red-500">{methods.formState.errors.status?.message?.toString()}</p>
+                                  <p>{methods.formState.errors.status?.message?.toString()}</p>
                                 )}
                               </div>
                             </FormItem>
@@ -264,19 +251,17 @@ export default function SystemForm() {
                           control={methods.control}
                           name="managed"
                           render={({ field }) => (
-                            <FormItem className="mb-2 flex-1">
-                              <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
+                            <FormItem>
+                              <div>
+                                <div>
                                   <FormControl>
                                     <Switch checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
                                   </FormControl>
-                                  <span
-                                    className="text-sm font-normal text-gray-700 dark:text-gray-300">{field.value ? "Gerenciado" : "Não gerenciado"}</span>
+                                  <span>{field.value ? "Gerenciado" : "Não gerenciado"}</span>
                                 </div>
-                                <span className="text-sm font-normal text-gray-700 dark:text-gray-300">Ative para indicar que o sistema é gerenciado.</span>
+                                <span>Ative para indicar que o sistema é gerenciado.</span>
                                 {methods.formState.errors.managed && (
-                                  <p
-                                    className="text-sm text-red-500">{methods.formState.errors.managed?.message?.toString()}</p>
+                                  <p>{methods.formState.errors.managed?.message?.toString()}</p>
                                 )}
                               </div>
                             </FormItem>
@@ -292,14 +277,14 @@ export default function SystemForm() {
         </div>
       </ScrollArea>
 
-      <footer className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 h-[72px] sm:h-[80px] md:h-[88px] flex items-center justify-between dark:bg-gray-900 border-t gap-2">
-        <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack} className="text-sm sm:text-base">
+      <footer>
+        <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack}>
           <span>Voltar</span>
         </Button>
 
         {activeIndex === 0 && (
-          <Button onClick={handleNext} className="text-sm sm:text-base">
-            <div className="flex flex-row items-center gap-2">
+          <Button onClick={handleNext}>
+            <div>
               <ArrowRight size={16}></ArrowRight>
               <span>Continuar</span>
             </div>
@@ -307,8 +292,8 @@ export default function SystemForm() {
         )}
 
         {activeIndex === 1 && (
-          <Button onClick={methods.handleSubmit(onSubmit)} disabled={loading} className="text-sm sm:text-base">
-            <div className="flex flex-row items-center gap-2">
+          <Button onClick={methods.handleSubmit(onSubmit)} disabled={loading}>
+            <div>
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               <span>{loading ? "Salvando..." : "Salvar"}</span>
             </div>

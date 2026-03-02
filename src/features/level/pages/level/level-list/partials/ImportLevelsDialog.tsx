@@ -44,7 +44,7 @@ export const ImportLevelsDialog = ({
       />
 
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[520px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Importar esferas</DialogTitle>
             <DialogDescription>
@@ -52,13 +52,13 @@ export const ImportLevelsDialog = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div>
+            <div className="border border-gray-200 dark:border-gray-700">
+              <div>
+                <span className="text-gray-900 dark:text-gray-100">
                   Arquivo JSON
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
+                <span className="text-gray-600 dark:text-gray-400">
                   {importFile ? importFile.name : "Nenhum arquivo selecionado"}
                 </span>
               </div>
@@ -68,7 +68,7 @@ export const ImportLevelsDialog = ({
             </div>
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={importLoading}>
               Cancelar
             </Button>

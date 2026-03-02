@@ -23,23 +23,23 @@ export const SuccessFeedback = ({
 }: SuccessFeedbackProps) => {
   return (
     <>
-      <div className="md:grid grid-cols-1 lg:max-w-xl">
-        <div className="bg-primary flex px-6 py-6">
-          <div className="text-2xl font-normal text-primary-foreground">
+      <div>
+        <div>
+          <div>
             Solicitação criada
             <FlipWords words={words} />
           </div>
         </div>
-        <div className="bg-green-500 p-1"></div>
+        <div></div>
 
-        <div className="grid grid-cols-2 gap-5 mt-6 px-1">
-          <div className="font-bold space-y-3">
+        <div>
+          <div>
             <p>Sistema:</p>
             <p>Papel solicitado:</p>
             <p>Motivo:</p>
             {attachments.length > 0 && <p>Anexos:</p>}
           </div>
-          <div className="space-y-3">
+          <div>
             <p>{selectedClient}</p>
             <p>{selectedRole}</p>
             <p>{description}</p>
@@ -53,11 +53,10 @@ export const SuccessFeedback = ({
       </div>
 
       <Link
-        className="bg-[var(--dashboard-nav-bg)] text-primary rounded-full text-sm font-medium transition-colors hover:bg-[var(--button-hover)] hover:text-[var(--button-hover-text)] h-10 px-4 py-2.5 mt-4"
         to={PRIVATE_ROUTES.MY_ACCESS_REQUESTS}>
         Listar solicitações
       </Link>
-      <Button className="ml-4 mt-4" onClick={onRequestNew}>
+      <Button onClick={onRequestNew}>
         Solicitar novo acesso
       </Button>
     </>

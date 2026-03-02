@@ -10,19 +10,18 @@ import Notifications from "./partials/Notifications.tsx";
 
 export default function Header() {
   return (
-    <div
-      className="supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur">
-      <nav className="flex h-16 items-center justify-between px-2 sm:px-4">
-        <div className="hidden md:block flex-shrink-0">
+    <div>
+      <nav>
+        <div>
           <Link to={PRIVATE_ROUTES.DASHBOARD}>
             <ThemedLogo />
           </Link>
         </div>
-        <div className={cn("block md:!hidden flex-shrink-0")}>
+        <div>
           <MobileSidebar />
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-3 md:gap-4 flex-shrink-0">
+        <div>
           <ThemeToggle />
           <Notifications />
           <UserNav />

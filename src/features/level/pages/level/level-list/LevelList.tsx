@@ -155,7 +155,7 @@ export const LevelList = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
+      <div>
         <HighlightLoader />
       </div>
     );
@@ -163,29 +163,27 @@ export const LevelList = () => {
 
   if (error) {
     return (
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">Erro: {error}</div>
+      <div>Erro: {error}</div>
     );
   }
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
+          <div>
             <Heading
               title="Gerenciar Esferas"
               description="Gerenciar esferas cadastradas no ambiente."
             />
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <div>
               <Button
                 variant="outline"
                 onClick={() => setExportOpen(true)}
                 disabled={exportLoading || loading}
-                className="w-full sm:w-auto flex items-center justify-center"
                 title="Exportar esferas">
                 {exportLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
               </Button>
@@ -193,13 +191,12 @@ export const LevelList = () => {
                 variant="outline"
                 onClick={openImportModal}
                 disabled={importLoading || loading}
-                className="w-full sm:w-auto flex items-center justify-center"
                 title="Importar esferas">
                 <FileUp className="h-4 w-4" />
               </Button>
               <Link
                 to={PRIVATE_ROUTES.CREATE_LEVEL}
-                className={cn(buttonVariants({ variant: "default" }), "w-full sm:w-auto flex items-center justify-center")}
+                className={cn(buttonVariants({ variant: "default" }))}
                 onClick={() => savePreviousRoute(PRIVATE_ROUTES.LEVELS)}>
                 <Plus className="mr-2 h-4 w-4" /> Adicionar nova esfera
               </Link>
@@ -208,23 +205,23 @@ export const LevelList = () => {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
+      <ScrollArea viewportClassName="px-4 md:px-7">
         <div className="py-6 max-w-content-container m-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead width="calc(100% - 100px)">Esfera</TableHead>
-                <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
+                <TableHead width="100px">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {flatSpheres && flatSpheres.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell width="calc(100% - 100px)">
-                    <div className="flex items-center" style={{ paddingLeft: `${(item.level || 0) * 20}px` }}>
-                      <div className="w-8 mr-2 flex justify-center">
+                    <div style={{ paddingLeft: `${(item.level || 0) * 20}px` }}>
+                      <div>
                         {item.children && item.children.length > 0 ? (
-                          <Button variant="ghost" size="icon" onClick={() => toggleExpand(item.id)} className="h-6 w-6">
+                          <Button variant="ghost" size="icon" onClick={() => toggleExpand(item.id)}>
                             {expandedItems.has(item.id) ? (
                               <ChevronDown className="h-3 w-3" />
                             ) : (
@@ -234,45 +231,44 @@ export const LevelList = () => {
                         ) : null}
                       </div>
                       <div
-                        className="h-8 w-8 flex items-center justify-center border border-gray-200 rounded-lg mr-3 shadow-xs-skeumorphic bg-white dark:bg-gray-800 dark:border-gray-700">
+                        className="border border-gray-200 dark:border-gray-700">
                         <Globe2 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                       </div>
-                      <div className="flex flex-col">
-                        <div className="flex items-center">
-                          <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">{item.name}</span>
+                      <div>
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">{item.name}</span>
                           {item.children && item.children.length > 0 && (
                             <Badge variant="outline" size="sm">
                               {item.children.length}
                             </Badge>
                           )}
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                        <span className="text-gray-500 dark:text-gray-400 capitalize">
                           {getTypeDisplayName(item.type)}
                         </span>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="flex align-center justify-center" width="100px">
+                  <TableCell width="100px">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <EllipsisVertical size={20} className="cursor-pointer text-gray-500 dark:text-gray-400" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem 
-                          className="flex flex-row gap-2" 
+                        <DropdownMenuItem
                           onClick={() => { navigator.clipboard?.writeText(item.id ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
                           <Copy size={16} />
                           <span>Copiar código</span>
                         </DropdownMenuItem>
                         {(item.isBuiltIn || item.type === "BUSINESS" || item.type === "EXTERNAL") && (
-                          <DropdownMenuItem className="flex flex-row gap-2" onClick={() => handleViewItems(item)}>
+                          <DropdownMenuItem onClick={() => handleViewItems(item)}>
                             <List size={16} />
                             <span>Ver itens</span>
                           </DropdownMenuItem>
                         )}
                         {!item.isBuiltIn && (
                           <>
-                            <DropdownMenuItem className="flex flex-row gap-2" asChild>
+                            <DropdownMenuItem asChild>
                               <Link to={`${PRIVATE_ROUTES.CREATE_LEVEL}?id=${item.id}`}>
                                 <Edit size={16} />
                                 <span>Editar</span>
@@ -281,7 +277,6 @@ export const LevelList = () => {
                             <Dialog>
                               <DialogTrigger asChild>
                                 <DropdownMenuItem
-                                  className="flex flex-row gap-2"
                                   onSelect={(e) => { e.preventDefault(); }}>
                                   <Trash size={16} />
                                   <span>Excluir</span>
@@ -324,11 +319,11 @@ export const LevelList = () => {
                         )}
                         {item.isBuiltIn && (
                           <>
-                            <DropdownMenuItem className="flex flex-row gap-2" disabled>
+                            <DropdownMenuItem disabled>
                               <Edit size={16} />
                               <span>Editar</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="flex flex-row gap-2" disabled>
+                            <DropdownMenuItem disabled>
                               <Trash size={16} />
                               <span>Excluir</span>
                             </DropdownMenuItem>

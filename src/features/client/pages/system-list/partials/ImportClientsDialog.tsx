@@ -59,7 +59,7 @@ export const ImportClientsDialog = ({
       />
 
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[560px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Importar exportações</DialogTitle>
             <DialogDescription>
@@ -69,49 +69,49 @@ export const ImportClientsDialog = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          <div>
+            <div>
+              <div>
+                <span>
                   Forçar importação?
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
+                <span>
                   Atualiza registros existentes e remove ausentes.
                 </span>
               </div>
               <Switch checked={importForce} onCheckedChange={onImportForceChange} disabled={importLoading} />
             </div>
 
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div>
+              <div>
+                <span>
                   Importar papéis?
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
+                <span>
                   Inclui roles na exportação quando o sistema é gerenciado.
                 </span>
               </div>
               <Switch checked={importRoles} onCheckedChange={onImportRolesChange} disabled={importLoading} />
             </div>
 
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div>
+              <div>
+                <span>
                   Importar configurações de anexo?
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
+                <span>
                   Substitui as configurações do sistema.
                 </span>
               </div>
               <Switch checked={importConfigurations} onCheckedChange={onImportConfigurationsChange} disabled={importLoading} />
             </div>
 
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div>
+              <div>
+                <span>
                   Arquivo JSON
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
+                <span>
                   {importFile ? importFile.name : "Nenhum arquivo selecionado"}
                 </span>
               </div>
@@ -121,12 +121,12 @@ export const ImportClientsDialog = ({
             </div>
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={importLoading}>
               Cancelar
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
-              {importLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
+              {importLoading ? <Loader2 className="animate-spin" /> : <FileUp />}
               {importLoading ? "Importando..." : "Importar"}
             </Button>
           </DialogFooter>

@@ -11,16 +11,16 @@ interface ClientDetailDescriptionProps {
 
 export const ClientDetailDescription = ({ clientId, description }: ClientDetailDescriptionProps) => {
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row items-start border bg-zebra-background-2 rounded-[12px] p-4">
-        <div className="flex-shrink-0 mr-4">
+    <div>
+      <div className="bg-zebra-background-2">
+        <div>
           <MonitorIcon size={20} />
         </div>
-        <div className="flex flex-col">
-          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-300">
+        <div>
+          <p className="text-[14px]">
             {clientId}
           </p>
-          <div className="mt-1 relative">
+          <div>
             <TruncatedText
               text={description}
               autoManage={true}

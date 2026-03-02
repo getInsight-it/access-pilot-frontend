@@ -18,17 +18,17 @@ const Error = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="flex justify-center">
+    <div>
+      <div>
+        <div>
           <AlertCircle className="w-24 h-24 text-destructive" />
         </div>
 
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">
+        <div>
+          <h1>
             {errorCode || "Error"}
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p>
             {getErrorMessage(errorCode)}
           </p>
         </div>

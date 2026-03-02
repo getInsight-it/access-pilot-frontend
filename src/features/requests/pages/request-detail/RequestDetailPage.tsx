@@ -272,12 +272,11 @@ export default function RequestDetailPage() {
 
   return (
     <motion.div
-      className="flex flex-col h-full"
       {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
 
-      <div className="flex-none">
+      <div>
         <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
+          <div>
             <Heading
               title="Detalhes da solicitação"
               description="Gerenciar solicitações de acesso para sistemas."
@@ -288,16 +287,16 @@ export default function RequestDetailPage() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow bg-background">
+      <ScrollArea>
         {isDataLoading ? (
           <ContentLoader />
         ) : (
-          <div className="max-w-content-container m-auto flex flex-col h-full">
+          <div className="max-w-content-container">
             <DetailContainer
               background="highlight"
               border={true}
               titleContent={
-                <span className="text-sm font-semibold">Informações da solicitação</span>
+                <span>Informações da solicitação</span>
               }>
               <RequestStatus
                 status={selectedStatus}
@@ -319,7 +318,7 @@ export default function RequestDetailPage() {
 
             <DetailContainer
               titleContent={
-                <span className="text-sm font-semibold">Sistema</span>
+                <span>Sistema</span>
               }>
               <RequestSystemDescription
                 clientName={request.role?.client?.name}
@@ -332,7 +331,7 @@ export default function RequestDetailPage() {
               background="highlight"
               border={true}
               titleContent={
-                <span className="text-sm font-semibold">Hierarquia</span>
+                <span>Hierarquia</span>
               }>
               <RequestSphere itemHierarchy={itemHierarchy} />
             </DetailContainer>
@@ -340,9 +339,9 @@ export default function RequestDetailPage() {
             <DetailContainer
               grow={true}
               titleContent={
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold">Anexos da solicitação</span>
-                  <span className="text-xs font-normal">Anexos enviados para esta solicitação de acesso.</span>
+                <div>
+                  <span>Anexos da solicitação</span>
+                  <span>Anexos enviados para esta solicitação de acesso.</span>
                 </div>
               }>
               <AttachmentConfigurationPresentation

@@ -87,7 +87,6 @@ function App() {
   if(!isInitialized) {
     return (
       <motion.div
-        className="flex items-center justify-center h-dvh md:h-screen bg-gray-100"
         style={{ height: "calc(var(--mobile-vh, 1vh) * 100)" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

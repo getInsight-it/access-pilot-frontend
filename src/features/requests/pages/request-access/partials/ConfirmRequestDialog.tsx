@@ -30,27 +30,27 @@ export const ConfirmRequestDialog = ({
 }: ConfirmRequestDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Confirmar envio</DialogTitle>
-          <DialogDescription className="text-sm">
+          <DialogTitle>Confirmar envio</DialogTitle>
+          <DialogDescription>
             Você tem certeza que deseja enviar esta solicitação?
           </DialogDescription>
         </DialogHeader>
-        <div className="py-3 sm:py-4">
-          <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-3">Resumo da solicitação:</h4>
-          <ul className="space-y-2 text-sm">
-            <li className="break-words"><strong>Sistema:</strong> {clientId}</li>
-            <li className="break-words">
+        <div>
+          <h4>Resumo da solicitação:</h4>
+          <ul>
+            <li><strong>Sistema:</strong> {clientId}</li>
+            <li>
               <strong>Papel:</strong> {roleLabel}
             </li>
-            <li className="break-words"><strong>Motivo:</strong> {reason}</li>
+            <li><strong>Motivo:</strong> {reason}</li>
             {attachments.length > 0 && (
               <li>
                 <strong>Anexos:</strong>
-                <ul className="mt-1 space-y-1">
+                <ul>
                   {attachments.map((file, index) => (
-                    <li key={index} className="break-words ml-2">- {file.fileName}</li>
+                    <li key={index}>- {file.fileName}</li>
                   ))}
                 </ul>
               </li>
@@ -58,10 +58,10 @@ export const ConfirmRequestDialog = ({
           </ul>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={onConfirm} className="w-full sm:w-auto">Confirmar</Button>
+          <Button onClick={onConfirm}>Confirmar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

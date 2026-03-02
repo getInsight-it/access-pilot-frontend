@@ -58,51 +58,50 @@ export default function ManageRoles() {
   return (
     <>
       <motion.div
-        className="flex flex-col h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div className="flex-none">
+        <div>
           <HeaderContainer>
             <Breadcrumbs items={breadcrumbItems} />
 
-            <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
+            <div>
               <Heading
                 title="Gerenciar papéis"
                 badgeValue={allRoles.length.toString() || "0"}
                 customDescription={
-                  <div className="flex flex-col">
-                    <span className="text-md">
+                  <div>
+                    <span>
                       Client-id: <span
                         onClick={navigateToSystemDetails}
-                        className="text-primary-600 cursor-pointer">{clientId}</span>
+                        className="text-primary-600">{clientId}</span>
                     </span>
                     {client?.name && (
-                      <span className="text-md">
+                      <span>
                         Sistema: <span
                           onClick={navigateToSystemDetails}
-                          className="text-primary-600 cursor-pointer">{client.name}</span>
+                          className="text-primary-600">{client.name}</span>
                       </span>
                     )}
                   </div>
                 }
               />
               <Button onClick={navigateToNewRole}>
-                <Plus className="mr-2 h-4 w-4" /> Novo papel
+                <Plus /> Novo papel
               </Button>
             </div>
           </HeaderContainer>
           <Separator></Separator>
         </div>
 
-        <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-6">
-          <div className="py-6 max-w-content-container m-auto">
+        <ScrollArea viewportClassName="px-4 md:px-6">
+          <div className="max-w-content-container m-auto">
             <Tabs defaultValue="roles">
-              <TabsList className="my-4">
+              <TabsList>
                 <TabsTrigger value="roles">Papéis</TabsTrigger>
                 <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
               </TabsList>
-              <TabsContent value="roles" className="flex flex-col gap-4">
+              <TabsContent value="roles">
                 <RolesTable
                   roles={paginatedRoles}
                   allRoles={allRoles}
@@ -115,7 +114,7 @@ export default function ManageRoles() {
               </TabsContent>
               <TabsContent value="roles_hierarchy">
                 <div>
-                  <h2 className="text-xl mb-4">Arraste para organizar a hierarquia.</h2>
+                  <h2>Arraste para organizar a hierarquia.</h2>
                   {!loading && <RoleHierarchy data={allRoles} onSuccess={() => getData()} />}
                 </div>
               </TabsContent>
