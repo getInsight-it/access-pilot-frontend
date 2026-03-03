@@ -2,7 +2,7 @@ import { Sheet, SheetContent, SheetTrigger } from "../../../external/ui/sheet.ts
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 import { navItems } from "./constant/sidebar.constant.ts";
-import { DashboardNav } from "./partials/DashboardNav.tsx";
+import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false);

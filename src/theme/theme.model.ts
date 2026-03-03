@@ -26,15 +26,22 @@ export interface ThemeColorConfiguration {
 export interface ThemeAttributes {
   "font-family"?: string,
   "background": string,
+  "content-background-color": string,
   "border-color": string,
+  "size-layout-header": string,
+  "size-layout-sidebar": string,
+  "size-layout-sidebar-collapsed": string,
+  "space-layout-sidebar-items": string,
+  "border-layout-default": string,
+  "motion-layout-default": string,
+  "sidebar-background-color": string,
+  "sidebar-item-color": string,
+  "sidebar-item-selected-color": string,
+  "sidebar-item-hover-color": string,
 }
 
-export interface ThemeColorPalette {
-  primary: ThemeColorConfiguration,
-  neutral: ThemeColorConfiguration,
-  error  : ThemeColorConfiguration,
-  warning: ThemeColorConfiguration,
-  success: ThemeColorConfiguration,
+export interface ThemeColorPalette { 
+  primary: ThemeColorConfiguration 
 }
 
 export interface DefaultThemeColorPalette extends ThemeColorPalette { }

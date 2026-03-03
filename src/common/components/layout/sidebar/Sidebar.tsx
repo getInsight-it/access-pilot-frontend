@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { cn } from "../../../../config/lib/utils.ts";
 import { ChevronLeft } from "lucide-react";
 import { useSidebar } from "../../../hooks/useSidebar.tsx";
 import { navItems, supportNavItems } from "./constant/sidebar.constant.ts";
-import { DashboardNav } from "./partials/DashboardNav.tsx";
+import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
+import "./Sidebar.scss";
 
 type SidebarProps = {
   className?: string;
@@ -11,30 +11,44 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
-  const [status, setStatus] = useState(false);
-
-  const handleToggle = () => {
-    setStatus(true);
-    toggle();
-    setTimeout(() => setStatus(false), 500);
-  };
 
   return (
     <nav
       className={cn(
+        "dashboard-sidebar",
+        isMinimized && "dashboard-sidebar--collapsed",
         className
       )}>
-      <ChevronLeft
-        onClick={handleToggle}
-      />
-
-      <div>
-        <DashboardNav items={navItems} />
+      <div className="dashboard-sidebar__content">
+        <div className="dashboard-sidebar__nav-items">
+          <div className="dashboard-sidebar__group">
+            <DashboardNav items={navItems} />
+          </div>
+          <div className="dashboard-sidebar__group">
+            <DashboardNav items={supportNavItems} />
+          </div>
+        </div>
       </div>
 
-      <div>
-        <DashboardNav items={supportNavItems}></DashboardNav>
-      </div>
+      <footer className="dashboard-sidebar__footer">
+        <button
+          type="button"
+          className="dashboard-sidebar__toggle-button"
+          onClick={toggle}
+          aria-label={isMinimized ? "Expandir menu" : "Recolher menu"}>
+          <ChevronLeft
+            className={cn(
+              "dashboard-sidebar__toggle-icon",
+              isMinimized && "dashboard-sidebar__toggle-icon--collapsed"
+            )}
+          />
+          {!isMinimized && (
+            <span className="dashboard-sidebar__toggle-label">
+              Recolher menu
+            </span>
+          )}
+        </button>
+      </footer>
     </nav>
   );
 }

@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Icons } from "./Icons.tsx";
+import { Icons } from "../partials/Icons.tsx";
 import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../external/ui/tooltip.tsx";
 import { useTheme } from "../../../../../theme/theme-provider.tsx";
 import { RoleComponentGuard } from "../../../../context/auth/RoleGuard.tsx";
+import { cn } from "../../../../../config/lib/utils.ts";
+import "./DashboardNav.scss";
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -32,26 +34,35 @@ export function DashboardNav({
   };
 
   return (
-    <nav>
+    <nav
+      className={cn(
+        "dashboard-nav",
+        isMinimized && !isMobileNav && "dashboard-nav--collapsed"
+      )}>
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon as keyof typeof Icons || "arrowRight"];
           const isActive = isActiveItem(item.href!);
+          const itemKey = `${item.href}-${index}`;
 
           const content = (
-            <Tooltip key={index}>
+            <Tooltip>
               <TooltipTrigger asChild>
                 <Link
+                  className={cn(
+                    "dashboard-nav__link",
+                    isActive && "dashboard-nav__link--active"
+                  )}
                   to={item.disabled ? "/" : item.href!}
                   onClick={() => {
                     if(setOpen) setOpen(false);
                   }}>
-                  <Icon />
+                  <Icon className="dashboard-nav__icon" />
                   {theme === "gov" && (
-                    <hr />
+                    <hr className="dashboard-nav__separator" />
                   )}
                   {(isMobileNav || (!isMinimized && !isMobileNav)) && (
-                    <span>
+                    <span className="dashboard-nav__label">
                       {item.title}
                     </span>
                   )}
@@ -67,9 +78,11 @@ export function DashboardNav({
           );
 
           return item.href ? (
-            item.protected
-              ? (<RoleComponentGuard roles={item.roles || undefined} key={index}>{content}</RoleComponentGuard>)
-              : content
+            <div className="dashboard-nav__item" key={itemKey}>
+              {item.protected
+                ? <RoleComponentGuard roles={item.roles || undefined}>{content}</RoleComponentGuard>
+                : content}
+            </div>
           ) : null;
         })}
       </TooltipProvider>

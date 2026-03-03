@@ -1,4 +1,3 @@
-import { cn } from "../../../../config/lib/utils.ts";
 import { Link } from "react-router-dom";
 import { UserNav } from "./partials/UserNav.tsx";
 import { MobileSidebar } from "../sidebar/MobileSidebar.tsx";
@@ -7,26 +6,27 @@ import { PRIVATE_ROUTES } from "../../../constants/routes.ts";
 import ThemeToggle from "../../../../theme/theme-toggle.tsx";
 import ThemedLogo from "./partials/ThemedLogo.tsx";
 import Notifications from "./partials/Notifications.tsx";
+import "./Header.scss";
 
 export default function Header() {
   return (
-    <div>
-      <nav>
-        <div>
+    <header className="dashboard-header">
+      <nav className="dashboard-header__nav">
+        <div className="dashboard-header__brand">
           <Link to={PRIVATE_ROUTES.DASHBOARD}>
             <ThemedLogo />
           </Link>
         </div>
-        <div>
+        <div className="dashboard-header__mobile-toggle">
           <MobileSidebar />
         </div>
 
-        <div>
+        <div className="dashboard-header__actions">
           <ThemeToggle />
           <Notifications />
           <UserNav />
         </div>
       </nav>
-    </div>
+    </header>
   );
 }
