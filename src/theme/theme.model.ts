@@ -40,6 +40,8 @@ export interface ThemeAttributes {
   "title-size"?: string,
   "description-color"?: string,
   "description-size"?: string,
+  "meta-label-color"?: string,
+  "meta-value-color"?: string,
 
   // table
   "table-header-filter-background-color"?: string,

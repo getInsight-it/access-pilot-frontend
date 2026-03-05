@@ -1,0 +1,240 @@
+.level-list {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+
+  &__loader,
+  &__error {
+    padding: 24px;
+  }
+
+  &__header-container {
+    display: flex;
+    align-items: center;
+    padding-inline: 28px;
+    padding-top: 36px;
+    padding-bottom: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__actions-group {
+    display: flex;
+    align-items: stretch;
+    border: var(--border-layout-default);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--background);
+  }
+
+  &__action-button {
+    border: 0;
+    border-right: var(--border-layout-default);
+    border-radius: 0;
+    cursor: pointer;
+    height: 36px;
+    min-width: 34px;
+    padding-inline: 8px;
+  }
+
+  &__action-button:last-child {
+    border-right: 0;
+  }
+
+  &__action-button svg {
+    height: 16px;
+    width: 16px;
+  }
+
+  &__primary-action {
+    gap: 12px;
+  }
+
+  &__scroll-viewport {
+    padding-inline: 28px;
+  }
+
+  &__content {
+    width: 100%;
+  }
+
+  &__mobile {
+    display: none;
+  }
+
+  &__desktop {
+    display: flex;
+    width: 100%;
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__card {
+    border: var(--border-layout-default);
+    border-radius: 8px;
+    background-color: var(--background);
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: var(--border-layout-default);
+    font-size: var(--table-header-text-size);
+    font-weight: 700;
+    color: var(--table-header-text-color);
+  }
+
+  &__card-content {
+    padding: 12px;
+  }
+
+  &__table {
+    width: 100%;
+  }
+
+  &__table-cell {
+    flex: 1 1 0;
+  }
+
+  &__table-cell--sphere {
+    flex: 1 1 auto;
+  }
+
+  &__table-cell--actions {
+    justify-content: center;
+  }
+
+  &__row-actions-button {
+    min-width: 36px;
+    min-height: 36px;
+    padding-inline: 8px;
+  }
+
+  &__sphere {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  &__expand-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--description-color);
+    cursor: pointer;
+    flex: 0 0 24px;
+  }
+
+  &__expand-placeholder {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  &__sphere-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--description-color);
+    border: var(--border-layout-default);
+    border-radius: 6px;
+    flex: 0 0 24px;
+  }
+
+  &__sphere-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__sphere-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__sphere-title {
+    color: var(--default-text-color);
+    font-size: var(--table-row-text-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__sphere-type {
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    text-transform: capitalize;
+  }
+
+  &__empty-state {
+    justify-content: center;
+    gap: 12px;
+    flex: 1 1 auto;
+  }
+
+  &__dialog-note {
+    margin-top: 8px;
+  }
+
+  &__dialog-warning {
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  &__dropdown-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dropdown-item-gap);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (max-width: 1024px) {
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    &__mobile {
+      display: block;
+    }
+
+    &__desktop {
+      display: none;
+    }
+  }
+}

@@ -21,6 +21,8 @@ export const GOV_THEME: Theme = {
     "title-size": "24px",
     "description-color": "#6c727f",
     "description-size": "14px",
+    "meta-label-color": "#94A3B8",
+    "meta-value-color": "#334155",
 
     // table
     "table-header-filter-background-color": "#fcfdfd",

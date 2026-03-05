@@ -21,6 +21,8 @@ export const LIGHT_THEME: Theme = {
     "title-size": "24px",
     "description-color": "#6c727f",
     "description-size": "14px",
+    "meta-label-color": "#94A3B8",
+    "meta-value-color": "#334155",
 
     // table
     "table-header-filter-background-color": "#fcfdfd",
@@ -63,12 +65,14 @@ export const LIGHT_THEME: Theme = {
     "badge-padding-inline": "10px",
     "badge-icon-size": "10px",
     "badge-icon-gap": "6px",
+    // badge - systems list feature
     "badge-status-published-text-color": "#01bc78",
     "badge-status-published-background-color": "rgba(16, 185, 129, 0.1)",
     "badge-status-published-border-color": "rgba(16, 185, 129, 0.3)",
     "badge-status-unpublished-text-color": "#fcb600",
     "badge-status-unpublished-background-color": "rgba(245, 158, 11, 0.1)",
     "badge-status-unpublished-border-color": "rgba(245, 158, 11, 0.2)",
+    // badge - common
     "badge-header-text-color": "#1d4ed8",
     "badge-header-background-color": "rgba(59, 130, 246, 0.2)",
     "badge-header-border-color": "rgba(59, 130, 246, 0.4)",
@@ -103,7 +107,7 @@ export const LIGHT_THEME: Theme = {
     "space-layout-sidebar-items": "16px",
     "border-layout-default": "1px solid var(--border-color)",
     "motion-layout-default": "220ms ease",
-    
+
     // sidebar
     "sidebar-background-color": "#ffffff",
     "sidebar-item-color": "#677389",
