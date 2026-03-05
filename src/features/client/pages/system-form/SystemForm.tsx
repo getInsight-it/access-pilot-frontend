@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@components/breadcrumbs.tsx";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "@components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { Separator } from "@ui/separator.tsx";
 import { Button } from "@ui/button.tsx";
 import { ArrowRight, Loader2, Save } from "lucide-react";

@@ -1,0 +1,36 @@
+.app-input {
+  width: 100%;
+  height: var(--input-height);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--input-radius);
+  padding-inline: var(--input-padding-inline);
+  box-sizing: border-box;
+  background-color: var(--background);
+  color: var(--default-text-color);
+  font-size: var(--default-button-font-size);
+  font-weight: var(--default-text-font-weight);
+
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
+}
+
+.app-input-group {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    position: absolute;
+    left: var(--input-icon-left-offset);
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
+    color: var(--input-placeholder-color);
+    pointer-events: none;
+  }
+
+  &--icon-left .app-input {
+    padding-inline-start: var(--input-padding-inline-with-icon);
+  }
+}

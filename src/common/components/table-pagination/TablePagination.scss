@@ -1,0 +1,95 @@
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pagination-gap);
+  width: 100%;
+  color: var(--default-text-color);
+
+  &--align-end {
+    justify-content: flex-end;
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    display: flex;
+  }
+
+  &__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-control-min-width);
+    height: var(--pagination-control-height);
+    padding-inline: var(--pagination-control-padding-inline);
+    border: var(--pagination-border);
+    background-color: var(--background);
+    color: var(--description-color);
+    font-size: var(--pagination-font-size);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  &__control--previous {
+    border-top-left-radius: var(--pagination-control-radius);
+    border-bottom-left-radius: var(--pagination-control-radius);
+  }
+
+  &__control--next {
+    border-top-right-radius: var(--pagination-control-radius);
+    border-bottom-right-radius: var(--pagination-control-radius);
+  }
+
+  &__page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-item-min-width);
+    height: var(--pagination-control-height);
+    padding-inline: var(--pagination-item-padding-inline);
+    border: var(--pagination-border);
+    border-left: 0;
+    border-radius: 0;
+    background-color: var(--background);
+    color: var(--default-text-color);
+    font-size: var(--pagination-font-size);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  &__page--active {
+    background-color: var(--color-primary-500);
+    color: var(--inverse-default-text-color);
+  }
+
+  &__item:first-child &__page {
+    border-left: var(--pagination-border);
+  }
+
+  &__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-item-min-width);
+    height: var(--pagination-control-height);
+    padding-inline: var(--pagination-item-padding-inline);
+    border: var(--pagination-border);
+    border-left: 0;
+    color: var(--default-text-color);
+    font-size: var(--pagination-font-size);
+    line-height: 1;
+    background-color: var(--background);
+  }
+
+  &__control:disabled {
+    cursor: default;
+    opacity: var(--pagination-disabled-opacity);
+  }
+}

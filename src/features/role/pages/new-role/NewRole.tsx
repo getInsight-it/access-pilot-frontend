@@ -6,7 +6,7 @@ import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";

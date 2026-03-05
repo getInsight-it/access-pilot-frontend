@@ -11,7 +11,7 @@ import {
   TableRow
 } from "../../../../../common/external/ui/table.tsx";
 import { Breadcrumbs } from "../../../../../common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { Copy, Edit, EllipsisVertical, Plus, Trash } from "lucide-react";

@@ -13,7 +13,7 @@ import {
   DialogTrigger
 } from "../../../../../common/external/ui/dialog.tsx";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { cn } from "../../../../../config/lib/utils.ts";
 import {
   DropdownMenu,

@@ -1,3 +1,8 @@
+@use "./theme/scss/components/button";
+@use "./theme/scss/components/badge";
+@use "./theme/scss/components/input";
+@use "./theme/scss/components/table";
+
 :root {
   --vh: 1vh;
   --mobile-vh: 1vh;
@@ -15,6 +20,12 @@ body {
 html {
   overflow: hidden;
   scroll-behavior: smooth;
+}
+
+.max-w-content-container {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
 }
 
 .table-card {

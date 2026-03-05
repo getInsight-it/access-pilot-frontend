@@ -1,5 +1,5 @@
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { motion } from "framer-motion";
 import { cn } from "../../../../config/lib/utils.ts";
 import { Check } from "lucide-react";

@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { Plus } from "lucide-react";

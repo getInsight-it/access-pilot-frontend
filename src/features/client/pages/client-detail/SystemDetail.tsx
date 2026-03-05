@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
 import { Breadcrumbs } from "@components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 import { Separator } from "@ui/separator.tsx";
 import { motion } from "framer-motion";
@@ -20,6 +19,7 @@ import { ClientResponseInterface } from "@features/client/common/model/client.mo
 import { clientService } from "@features/client/common/service/client-service.ts";
 import { roleService } from "@features/role/common/service/role-service.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 
 const breadcrumbItems = [
   { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },

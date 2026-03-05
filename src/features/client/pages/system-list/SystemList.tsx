@@ -1,28 +1,26 @@
-import { HeaderContainer, Heading } from "@components/heading.tsx";
 import { Link } from "react-router-dom";
 import useAuthStore, { type AuthState } from "@store/authStore.ts";
 import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@ui/button.tsx";
 import { cn } from "@config/lib/utils.ts";
-import { EllipsisVertical, Plus, Edit, MonitorCog, RefreshCw, UserCog, Cog, LaptopMinimal, Copy, Loader2, FileUp, FileDown } from "lucide-react";
+import { EllipsisVertical, RefreshCw, LaptopMinimal, Copy, Loader2, Search, Circle, Eye, PencilLine, Download, Upload, ShieldUser, RefreshCcw, Power, CirclePlus } from "lucide-react";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@ui/scroll-area.tsx";
-import { Input } from "@ui/input.tsx";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@ui/table.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/dropdown-menu.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { Switch } from "@ui/switch.tsx";
-import { PaginationWrapper } from "@components/PaginationWrapper.tsx";
+import { TablePagination } from "@components/table-pagination/TablePagination.tsx";
 import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/common/enum/client-status.enum";
-import { Badge } from "@ui/badge.tsx";
 import { useSystemListData, useSystemOperations, useSystemNavigation } from "./useSystemList.ts";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { clientService } from "../../common/service/client-service.ts";
 import type { ClientExport } from "../../common/model/client-export.model.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { ImportClientsDialog } from "./partials/ImportClientsDialog.tsx";
+import "./SystemList.scss";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 
 export default function SystemList() {
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
@@ -51,6 +49,24 @@ export default function SystemList() {
   const [importLoading, setImportLoading] = useState(false);
   const [importTargetClientId, setImportTargetClientId] = useState<string | null>(null);
   const [exportAllLoading, setExportAllLoading] = useState(false);
+  const startItem = totalSystems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const endItem = totalSystems > 0 ? Math.min(currentPage * pageSize, totalSystems) : 0;
+
+  const renderStatusBadge = (status?: ClientStatusEnum) => {
+    const statusLabel = !status
+      ? "Desconhecido"
+      : ClientStatusTranslationEnum[status as keyof typeof ClientStatusTranslationEnum];
+    const badgeModifier = status === ClientStatusEnum.PUBLISHED
+      ? "app-badge--status-published"
+      : "app-badge--status-unpublished";
+
+    return (
+      <span className={cn("app-badge", badgeModifier)}>
+        <Circle className="app-badge__icon" />
+        <span>{statusLabel}</span>
+      </span>
+    );
+  };
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -220,59 +236,70 @@ export default function SystemList() {
   return (
     <>
       <motion.div
+        className="system-list"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
         <div>
-          <HeaderContainer>
-            <div className="pl-1">
+          <HeaderContainer className="system-list__header-container">
+            <div className="system-list__header">
               <Heading
+                className="system-list__heading"
                 title="Sistemas"
                 badgeValue={totalSystems}
+                badgeClassName="app-badge app-badge--header"
                 description="Gerenciar sistemas cadastrados no ambiente."
               />
-              <div>
-                <Button
-                  variant="outline"
-                  onClick={openSyncAllModal}
-                  disabled={syncAllLoading}
-                  title="Sincronizar todos os sistemas do IDP">
-                  <RefreshCw />
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleExportAllClients}
-                  disabled={exportAllLoading || isLoading}
-                  title="Exportar todos os sistemas filtrados">
-                  {exportAllLoading ? <Loader2 className="animate-spin" /> : <FileDown />}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => openImportModal()}
-                  title="Importar exportações de sistemas">
-                  <FileUp />
-                </Button>
+              <div className="system-list__actions">
+                <div className="system-list__actions-group">
+                  <Button
+                    className="system-list__action-button"
+                    variant="white"
+                    onClick={openSyncAllModal}
+                    disabled={syncAllLoading}
+                    title="Sincronizar todos os sistemas do IDP">
+                    <RefreshCcw />
+                  </Button>
+                  <Button
+                    className="system-list__action-button"
+                    variant="white"
+                    onClick={handleExportAllClients}
+                    disabled={exportAllLoading || isLoading}
+                    title="Exportar todos os sistemas filtrados">
+                    {exportAllLoading ? <Loader2 className="animate-spin" /> : <Download />}
+                  </Button>
+                  <Button
+                    className="system-list__action-button"
+                    variant="white"
+                    onClick={() => openImportModal()}
+                    title="Importar exportações de sistemas">
+                    <Upload />
+                  </Button>
+                </div>
                 <Link
                   to={PRIVATE_ROUTES.NEW_SYSTEM}
-                  className={cn(buttonVariants({ variant: "default" }))}
+                  className={cn(buttonVariants({ variant: "default" }), "theme-button--primary", "system-list__primary-action")}
                   onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
-                  <Plus /> Adicionar novo sistema
+                  <CirclePlus /> Adicionar novo sistema
                 </Link>
               </div>
             </div>
           </HeaderContainer>
         </div>
 
-        <ScrollArea viewportClassName="px-4 md:px-7">
-          <div className="max-w-content-container m-auto">
-            <div className="lg:hidden">
+        <ScrollArea className="system-list__scroll-area" viewportClassName="system-list__scroll-viewport">
+          <div className="max-w-content-container system-list__content">
+            <div className="system-list__mobile">
               <div>
-                <Input
-                  variant="dark"
-                  placeholder="Filtrar..."
-                  value={searchFilter}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                />
+                <div className="app-input-group app-input-group--icon-left">
+                  <Search className="app-input-group__icon" />
+                  <input
+                    className="app-input"
+                    placeholder="Filtrar..."
+                    value={searchFilter}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                  />
+                </div>
               </div>
               {clients && clients.length > 0 ? (
                 <>
@@ -293,37 +320,37 @@ export default function SystemList() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
-                                <MonitorCog size={16} />
+                                <Eye size={16} />
                                 <span>Detalhes</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
-                                <Edit size={16} />
+                                <PencilLine size={16} />
                                 <span>Editar</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleExportClient(client.id, client.clientId); }}>
-                                <FileDown size={16} />
+                                <Download size={16} />
                                 <span>Exportar</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { openImportModal(client.clientId); }}>
-                                <FileUp size={16} />
+                                <Upload size={16} />
                                 <span>Importar</span>
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem
                                   onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
-                                  <UserCog size={16}/>
+                                  <ShieldUser size={16}/>
                                   Gerenciar Papéis
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem onClick={() => { syncClient(client) }}>
-                                <RefreshCw size={16}/>
+                                <RefreshCcw size={16}/>
                                 Sincronizar
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
-                                <Cog size={16}/>
+                                <Power size={16}/>
                                 {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -342,22 +369,18 @@ export default function SystemList() {
                         <div className="table-card__content__row">
                           <span className="table-card__label">Status</span>
                           <span className="table-card__value">
-                            {!client.status
-                              ? (<Badge variant="secondary">Desconhecido</Badge>)
-                              : (client.status === ClientStatusEnum.PUBLISHED
-                                ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
-                                : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
-                            }
+                            {renderStatusBadge(client.status)}
                           </span>
                         </div>
                       </div>
                     </div>
                   ))}
                   <div>
-                    <PaginationWrapper
+                    <TablePagination
+                      className="system-list__table-pagination"
+                      align="end"
                       currentPage={currentPage}
                       totalPages={totalPages}
-                      totalItems={totalSystems}
                       onPageChange={(page) => handlePageChange(page)}
                     />
                   </div>
@@ -371,118 +394,136 @@ export default function SystemList() {
                 </div>
               ) : null}
             </div>
-            <div className="hidden lg:flex">
-              <div>
-                <Input
-                  placeholder="Filtrar..."
-                  value={searchFilter}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                />
-              </div>
-              <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead width="calc(40% - 33px)">Sistema</TableHead>
-                  <TableHead width="calc(40% - 33px)">Descrição</TableHead>
-                  <TableHead width="calc(20% - 34px)">Status</TableHead>
-                  <TableHead className="flex align-center justify-center" width="100px">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clients && clients.length > 0 ? (
-                  clients.map((client) => (
-                    <TableRow key={client.id}>
-                      <TableCell width="calc(40% - 33px)">
-                        <div>
+            <div className="system-list__desktop">
+              <div className="app-table app-table--icon system-list__table">
+                <div className="app-table__filter">
+                  <div className="system-list__table-filter-content">
+                    <div className="app-input-group app-input-group--icon-left system-list__table-filter-input">
+                      <Search className="app-input-group__icon" />
+                      <input
+                        className="app-input"
+                        placeholder="Filtrar..."
+                        value={searchFilter}
+                        onChange={(e) => handleSearchChange(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="app-table__header">
+                  <div className="app-table__row">
+                    <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--name">
+                      <span>Sistema</span>
+                    </div>
+                    <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--description">
+                      <span>Descrição</span>
+                    </div>
+                    <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--status">
+                      <span>Status</span>
+                    </div>
+                    <div className="app-table__cell app-table__cell--icon system-list__table-cell system-list__table-cell--actions">
+                      <span>Ações</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="app-table__body">
+                  {clients && clients.length > 0 ? (
+                    clients.map((client) => (
+                      <div key={client.id} className="app-table__row">
+                        <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--name">
                           <span>{client.name}</span>
                         </div>
-                      </TableCell>
-                      <TableCell width="calc(40% - 33px)">{client.description || '-'}</TableCell>
-                      <TableCell width="calc(20% - 34px)">
-                        {!client.status
-                          ? (<Badge variant="secondary">Desconhecido</Badge>)
-                          : (client.status === ClientStatusEnum.PUBLISHED
-                            ? (<Badge variant="info">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>)
-                            : (<Badge variant="warning">{ClientStatusTranslationEnum[client.status as keyof typeof ClientStatusTranslationEnum]}</Badge>))
-                        }
-                      </TableCell>
-                      <TableCell className="flex align-center justify-center" width="100px">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
-                              <Copy size={16} />
-                              <span>Copiar Código</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
-                              <MonitorCog size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
-                              <Edit size={16} />
-                              <span>Editar</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => { handleExportClient(client.id, client.clientId); }}>
-                              <FileDown size={16} />
-                              <span>Exportar</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => { openImportModal(client.clientId); }}>
-                              <FileUp size={16} />
-                              <span>Importar</span>
-                            </DropdownMenuItem>
-                            {client.managed && (
+                        <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--description">
+                          <span>{client.description || '-'}</span>
+                        </div>
+                        <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--status">
+                          {renderStatusBadge(client.status)}
+                        </div>
+                        <div className="app-table__cell app-table__cell--icon system-list__table-cell system-list__table-cell--actions">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="white" className="system-list__row-actions-button">
+                                <EllipsisVertical size={20} />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
-                                <UserCog size={16}/>
-                                Gerenciar Papéis
+                                onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                <Copy size={16} />
+                                <span>Copiar Código</span>
                               </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem onClick={() => { syncClient(client) }}>
-                              <RefreshCw size={16}/>
-                              Sincronizar
-                            </DropdownMenuItem>
-                            {client.managed && (
-                              <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
-                                <Cog size={16}/>
-                                {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
+                              <DropdownMenuItem
+                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
+                                <Eye size={16} />
+                                <span>Detalhes</span>
                               </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : !isLoading ? (
-                  <TableRow>
-                    <TableCell {...{ colSpan: 2 }}>
-                      <div>
+                              <DropdownMenuItem
+                                onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
+                                <PencilLine size={16} />
+                                <span>Editar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => { handleExportClient(client.id, client.clientId); }}>
+                                <Download size={16} />
+                                <span>Exportar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => { openImportModal(client.clientId); }}>
+                                <Upload size={16} />
+                                <span>Importar</span>
+                              </DropdownMenuItem>
+                              {client.managed && (
+                                <DropdownMenuItem
+                                  onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
+                                  <ShieldUser size={16}/>
+                                  Gerenciar Papéis
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => { syncClient(client) }}>
+                                <RefreshCcw size={16}/>
+                                Sincronizar
+                              </DropdownMenuItem>
+                              {client.managed && (
+                                <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
+                                  <Power size={16}/>
+                                  {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                    ))
+                  ) : !isLoading ? (
+                    <div className="app-table__row">
+                      <div className="app-table__cell system-list__table-empty-state">
                         <div>
                           <LaptopMinimal size={24} />
                         </div>
                         <span>Nenhum sistema encontrado</span>
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-              <TableFooter>
-                <div>
-                  <PaginationWrapper
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    totalItems={totalSystems}
-                    onPageChange={(page) => handlePageChange(page)}
-                  />
+                    </div>
+                  ) : null}
                 </div>
-              </TableFooter>
-            </Table>
+
+                <div className="app-table__footer">
+                  <div className="system-list__table-footer">
+                    <div className="system-list__table-footer-info">
+                      {startItem}-{endItem} de {totalSystems} itens
+                    </div>
+                    <div className="system-list__table-footer-pagination">
+                      <TablePagination
+                        className="system-list__table-pagination"
+                        align="end"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={(page) => handlePageChange(page)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </ScrollArea>

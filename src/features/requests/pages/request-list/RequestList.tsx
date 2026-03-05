@@ -1,4 +1,4 @@
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useRef } from "react";
 import { buttonVariants } from "../../../../common/external/ui/button.tsx";

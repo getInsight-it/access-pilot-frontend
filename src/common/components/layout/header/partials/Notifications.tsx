@@ -83,7 +83,7 @@ export default function Notifications() {
       <div>
         <Popover open={isOpen} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="white" size="icon">
               <Bell />
             </Button>
           </PopoverTrigger>

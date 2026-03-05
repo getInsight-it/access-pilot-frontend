@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { motion } from "framer-motion";

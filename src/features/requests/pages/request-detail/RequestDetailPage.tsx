@@ -1,4 +1,4 @@
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../../../store/authStore.ts";

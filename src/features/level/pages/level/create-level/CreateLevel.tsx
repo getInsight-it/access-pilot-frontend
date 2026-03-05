@@ -9,7 +9,7 @@ import { Textarea } from "../../../../../common/external/ui/textarea.tsx";
 import { Breadcrumbs } from "../../../../../common/components/breadcrumbs.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { Separator } from "../../../../../common/external/ui/separator.tsx";
-import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
 import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
 import { motion } from "framer-motion";
@@ -276,4 +276,3 @@ export default function CreateOrEditLevel() {
     </ScrollArea>
   );
 }
-

@@ -1,7 +1,7 @@
 import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
 import { Separator } from "../../../common/external/ui/separator.tsx";
-import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,

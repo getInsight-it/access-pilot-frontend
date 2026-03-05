@@ -1,0 +1,24 @@
+.ui-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: var(--default-button-font-size);
+  font-weight: var(--default-text-font-weight);
+}
+
+.ui-button--primary {
+  color: var(--inverse-default-text-color);
+  background-color: var(--color-primary-500);
+}
+
+.ui-button--white {
+  color: var(--sidebar-item-color);
+  background-color: var(--background);
+}
+
+.ui-button:disabled {
+  pointer-events: none;
+}
