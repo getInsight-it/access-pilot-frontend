@@ -1,5 +1,6 @@
 import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { motion } from "framer-motion";
+import { Paperclip } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../../../store/authStore.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -9,9 +10,9 @@ import {
   FileAttachment
 } from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
 import { downloadFile } from "../../../storage/common/api/storage-service.ts";
-import RequestStatus from "./partials/RequestStatus.tsx";
-import RequestSystemDescription from "./partials/RequestSystemDescription.tsx";
-import RequestSphere from "./partials/RequestSphere.tsx";
+import RequestStatus from "./partials/request-status/RequestStatus.tsx";
+import RequestSystemDescription from "./partials/request-system-description/RequestSystemDescription.tsx";
+import RequestSphere from "./partials/request-sphere/RequestSphere.tsx";
 import { format } from "date-fns";
 import { RequestAttachmentInterface } from "../../common/types/request-attachment.model.ts";
 import { RequestInterface } from "../../common/types/request.model.ts";
@@ -20,12 +21,12 @@ import { ItemHierarchyInterface } from "../../../level/common/types/item-hierarc
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import AttachmentConfigurationPresentation
   from "../../../../common/components/AttachmentConfigurationPresentation.tsx";
-import { DetailContainer } from "../../../../common/components/DetailContainer.tsx";
 import { getPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
 import { STATUS } from "./constant/status.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import "./RequestDetailPage.scss";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "REVOKED" | "APPROVED";
 
@@ -46,7 +47,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
   const generatePresentationAttachments = useCallback((requestAttachments: RequestAttachmentInterface[]): FileAttachment[] => {
     const attachmentsByConfig = new Map<string, any[]>();
 
-    requestAttachments.forEach(attachment => {
+    requestAttachments.forEach((attachment) => {
       const configKey = attachment.configuration.key;
       if(!attachmentsByConfig.has(configKey)) {
         attachmentsByConfig.set(configKey, []);
@@ -62,7 +63,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       presentationAttachments.push({
         key,
         files,
-        fileName: requestAttachments.find(a => a.configuration.key === key)?.configuration.description || key
+        fileName: requestAttachments.find((attachment) => attachment.configuration.key === key)?.configuration.description || key
       });
     });
 
@@ -80,7 +81,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
       ]);
 
       let hierarchy: ItemHierarchyInterface[] = [];
-      if (request.level?.id && request.codeItem) {
+      if(request.level?.id && request.codeItem) {
         try {
           hierarchy = await levelService.getItemHierarchy(request.level.id, request.codeItem);
         } catch (error: unknown) {
@@ -171,12 +172,12 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     try {
       const response = await downloadFile(file.id);
       const url = window.URL.createObjectURL(response.data as Blob);
-      const a = document.createElement("a");
+      const link = document.createElement("a");
 
-      a.href = url;
-      a.download = response.headers["content-disposition"]?.match(/filename="(.+)"/)?.[1] || file.originalFilename;
-      document.body.appendChild(a);
-      a.click();
+      link.href = url;
+      link.download = response.headers["content-disposition"]?.match(/filename="(.+)"/)?.[1] || file.originalFilename;
+      document.body.appendChild(link);
+      link.click();
       window.URL.revokeObjectURL(url);
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
@@ -217,7 +218,7 @@ const useRequestDerivedData = (request: RequestInterface | undefined) => {
   const requestType = getPreviousRoute()?.data;
 
   const selectedStatus = useMemo(() => {
-    return STATUS.filter((o) => o.value === request?.status).map((o) => o.value)[0];
+    return STATUS.filter((option) => option.value === request?.status).map((option) => option.value)[0];
   }, [request?.status]);
 
   const formattedDate = useMemo(() => {
@@ -272,12 +273,14 @@ export default function RequestDetailPage() {
 
   return (
     <motion.div
-      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
-
+      className="request-detail-page"
+      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}
+    >
       <div>
-        <HeaderContainer>
-          <div>
+        <HeaderContainer className="request-detail-page__header-container">
+          <div className="request-detail-page__header">
             <Heading
+              className="request-detail-page__heading"
               title="Detalhes da solicitação"
               description="Gerenciar solicitações de acesso para sistemas."
               returnButton={true}
@@ -287,17 +290,12 @@ export default function RequestDetailPage() {
         </HeaderContainer>
       </div>
 
-      <ScrollArea>
+      <ScrollArea className="request-detail-page__scroll-area" viewportClassName="request-detail-page__scroll-viewport">
         {isDataLoading ? (
           <ContentLoader />
         ) : (
-          <div className="max-w-content-container">
-            <DetailContainer
-              background="highlight"
-              border={true}
-              titleContent={
-                <span>Informações da solicitação</span>
-              }>
+          <div className="max-w-content-container request-detail-page__content">
+            <section className="request-detail-page__section">
               <RequestStatus
                 status={selectedStatus}
                 protocolCode={request.protocolCode}
@@ -314,43 +312,33 @@ export default function RequestDetailPage() {
                 requestingUserName={request?.requestingUser?.firstName}
                 requestDescription={request.description}
               />
-            </DetailContainer>
+            </section>
 
-            <DetailContainer
-              titleContent={
-                <span>Sistema</span>
-              }>
+            <section className="request-detail-page__details-grid">
               <RequestSystemDescription
                 clientName={request.role?.client?.name}
                 clientDescription={request.role?.client?.description}
                 isContentLoading={false}
               />
-            </DetailContainer>
-
-            <DetailContainer
-              background="highlight"
-              border={true}
-              titleContent={
-                <span>Hierarquia</span>
-              }>
               <RequestSphere itemHierarchy={itemHierarchy} />
-            </DetailContainer>
+            </section>
 
-            <DetailContainer
-              grow={true}
-              titleContent={
-                <div>
-                  <span>Anexos da solicitação</span>
-                  <span>Anexos enviados para esta solicitação de acesso.</span>
-                </div>
-              }>
+            <section className="request-detail-page__section request-detail-page__attachments-section">
+              <div className="request-detail-page__section-title-row">
+                <Paperclip className="request-detail-page__section-icon" />
+                <h3 className="request-detail-page__section-title">Anexos da solicitação</h3>
+              </div>
+              <p className="request-detail-page__section-description">
+                Anexos enviados para esta solicitação de acesso.
+              </p>
               <AttachmentConfigurationPresentation
+                className="request-detail-page__attachments"
                 attachments={attachments}
                 direction="row"
                 onDownload={handleDownload}
                 collapsible={true}
               />
-            </DetailContainer>
+            </section>
           </div>
         )}
       </ScrollArea>

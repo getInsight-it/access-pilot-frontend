@@ -1,0 +1,83 @@
+.request-sphere {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-detail-card-content-gap);
+  padding: var(--request-detail-card-padding);
+  border: var(--request-detail-card-border);
+  border-radius: var(--request-detail-card-radius);
+  background-color: var(--background);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--request-detail-content-gap);
+    padding-bottom: var(--request-detail-content-gap);
+    border-bottom: var(--request-detail-card-border);
+  }
+
+  &__icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-detail-info-icon-box-size);
+    height: var(--request-detail-info-icon-box-size);
+    border-radius: var(--request-detail-info-icon-box-radius);
+    background-color: var(--request-status-tone-neutral-surface-color);
+    color: var(--request-status-tone-neutral-text-color);
+  }
+
+  &__icon {
+    width: var(--request-detail-info-icon-size);
+    height: var(--request-detail-info-icon-size);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-detail-section-title-font-size);
+    font-weight: var(--request-detail-title-font-weight);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__empty-state {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--request-detail-hierarchy-empty-min-height);
+    padding: var(--request-detail-file-row-padding);
+    border-radius: var(--request-detail-control-radius);
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    background-color: var(--request-status-tone-neutral-surface-color);
+  }
+
+  &__trail {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__trail-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__trail-label {
+    color: var(--default-text-color);
+    font-size: var(--request-detail-info-value-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__trail-separator {
+    width: var(--request-detail-copy-icon-size);
+    height: var(--request-detail-copy-icon-size);
+    color: var(--request-detail-info-label-color);
+  }
+}
