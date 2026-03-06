@@ -1,19 +1,13 @@
 import React, { useRef, useState } from "react";
 import { Download, Plus, Settings, Upload, X } from "lucide-react";
-import { Input } from "@ui/input.tsx";
-import { Button } from "@ui/button.tsx";
-import { Switch } from "@ui/switch.tsx";
-import { Textarea } from "@ui/textarea.tsx";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/accordion.tsx";
-import { Label } from "@ui/label.tsx";
-import { Card } from "@ui/card.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { toast } from "@ui/use-toast.ts";
+import "./AttachmentConfigurationForm.scss";
 
 export interface AttachmentConfigSectionProps {
   configurations: AttachmentConfigurationInterface[];
@@ -40,7 +34,6 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [duplicateNames, setDuplicateNames] = useState<string[]>([]);
   const [importedConfigs, setImportedConfigs] = useState<AttachmentConfigurationInterface[]>([]);
-  const [accordionValue, setAccordionValue] = useState<string>("add-config");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeConfigurations = configurations.filter(config => config.active !== false);
@@ -64,7 +57,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
     setFormError({});
     onAddConfiguration({
-      key: '',
+      key: "",
       name,
       description,
       required,
@@ -137,7 +130,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             setImportModalOpen(true);
           } else {
             importedConfigurations.forEach(config => {
-              onAddConfiguration({...config, active: true});
+              onAddConfiguration({ ...config, active: true });
             });
           }
         }
@@ -159,12 +152,12 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   };
 
   const confirmImport = () => {
-    duplicateNames.forEach(name => {
-      onDeleteConfiguration(name);
+    duplicateNames.forEach(entry => {
+      onDeleteConfiguration(entry);
     });
 
     importedConfigs.forEach(config => {
-      onAddConfiguration({...config, active: true});
+      onAddConfiguration({ ...config, active: true });
     });
 
     setImportModalOpen(false);
@@ -179,7 +172,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   };
 
   const handleExportClick = async () => {
-    if (activeConfigurations.length === 0) {
+    if(activeConfigurations.length === 0) {
       toast({
         title: "Nenhuma configuração para exportar",
         description: "Adicione pelo menos uma configuração antes de exportar.",
@@ -192,15 +185,15 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       setExporting(true);
       const response = await clientService.exportAttachmentConfigurationsPreview(activeConfigurations);
       const url = window.URL.createObjectURL(response.data as Blob);
-      const a = document.createElement("a");
-      const fileName = response.headers["content-disposition"]?.match(/filename=\"?(.+?)\"?$/)?.[1]
+      const link = document.createElement("a");
+      const fileName = response.headers["content-disposition"]?.match(/filename="?(.+?)"?$/)?.[1]
         || "attachments_configurations.csv";
 
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
@@ -215,187 +208,185 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   };
 
   return (
-    <div>
-      <h3>Anexos</h3>
+    <div className="attachment-configuration-form">
+      <h3 className="attachment-configuration-form__title">Anexos</h3>
 
-      <div>
-        <Accordion type="single" collapsible value={accordionValue} onValueChange={setAccordionValue}>
-          <AccordionItem value="add-config" className="!border-outline-button-border">
-            <AccordionTrigger>
-              <div>
-                <Plus className="text-primary-600" />
-                <span>
-                  Adicionar Novo Tipo de Anexo
+      <div className="attachment-configuration-form__surface">
+        <div className="attachment-configuration-form__form-content">
+          <div className="attachment-configuration-form__top-row">
+            <div className="attachment-configuration-form__field">
+              <label className="attachment-configuration-form__label" htmlFor="config-name">
+                Nome <span className="attachment-configuration-form__required">*</span>
+              </label>
+              <input
+                id="config-name"
+                value={name}
+                onChange={handleNameChange}
+                placeholder="Nome da configuração"
+                className={`app-input attachment-configuration-form__input${formError.name ? " attachment-configuration-form__input--error" : ""}`}
+              />
+              {formError.name && (
+                <p className="attachment-configuration-form__error">{formError.name}</p>
+              )}
+            </div>
+
+            <div className="attachment-configuration-form__field">
+              <span className="attachment-configuration-form__label">Ícone</span>
+              <div className="attachment-configuration-form__icon-row">
+                <span className="attachment-configuration-form__icon-preview">
+                  <Settings className="attachment-configuration-form__icon-preview-icon" />
                 </span>
+                <button
+                  type="button"
+                  className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+                >
+                  Selecionar ícone
+                </button>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div>
-                <div>
-                  <div>
-                    <Label htmlFor="config-name">
-                      Nome <span className="text-primary-600">*</span>
-                    </Label>
-                    <Input
-                      id="config-name"
-                      value={name}
-                      onChange={handleNameChange}
-                      placeholder="Nome da configuração"
-                      className={`${formError.name ? "border-red-500" : ""}`}
-                    />
-                    {formError.name && (
-                      <p>{formError.name}</p>
-                    )}
-                  </div>
+            </div>
+          </div>
 
-                  <div>
-                    <Label>
-                      Tornar anexo obrigatório
-                    </Label>
-                    <div>
-                      <Switch
-                        checked={required}
-                        onCheckedChange={setRequired}
-                      />
-                      <span>
-                        {required ? "Obrigatório" : "Opcional"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="config-description">
-                    Descrição <span className="text-primary-600">*</span>
-                  </Label>
-                  <Textarea
-                    id="config-description"
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    placeholder="Descrição da configuração"
-                    className={`${formError.description ? "border-red-500" : ""}`}
-                  />
-                  {formError.description && (
-                    <p>{formError.description}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label>
-                    Extensões Permitidas <span className="text-primary-600">*</span>
-                  </Label>
-                  <div>
-                    {AVAILABLE_EXTENSIONS.map((extension) => (
-                      <div
-                        key={extension}
-                        onClick={() => toggleExtension(extension)}
-                        className={`${
-                          selectedExtensions.includes(extension)
-                            ? "bg-primary-600"
-                            : ""
-                        }`}
-                      >
-                        {extension}
-                      </div>
-                    ))}
-                  </div>
-                  {formError.extensions && (
-                    <p>{formError.extensions}</p>
-                  )}
-                </div>
-
-                <Button onClick={handleAddConfig} type="button">
-                  <Plus />
-                  Adicionar Configuração
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <div>
-          <Button
-            variant="outline"
-            onClick={handleImportClick}
-            disabled={loading}
-          >
-            <Upload className="text-primary-600" />
-            <span>Importar Configuração</span>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".csv"
-              className="hidden"
-              disabled={loading}
+          <div className="attachment-configuration-form__field">
+            <label className="attachment-configuration-form__label" htmlFor="config-description">
+              Descrição <span className="attachment-configuration-form__required">*</span>
+            </label>
+            <textarea
+              id="config-description"
+              value={description}
+              onChange={handleDescriptionChange}
+              placeholder="Descrição da configuração"
+              className={`app-textarea attachment-configuration-form__textarea${formError.description ? " attachment-configuration-form__textarea--error" : ""}`}
             />
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleExportClick}
-            disabled={exporting}
+            {formError.description && (
+              <p className="attachment-configuration-form__error">{formError.description}</p>
+            )}
+          </div>
+
+          <div className="attachment-configuration-form__field">
+            <span className="attachment-configuration-form__label">
+              Extensões Permitidas <span className="attachment-configuration-form__required">*</span>
+            </span>
+            <div className="attachment-configuration-form__extensions-picker">
+              {AVAILABLE_EXTENSIONS.map((extension) => (
+                <button
+                  type="button"
+                  key={extension}
+                  onClick={() => toggleExtension(extension)}
+                  className={`attachment-configuration-form__extension-option${selectedExtensions.includes(extension) ? " attachment-configuration-form__extension-option--selected" : ""}`}
+                >
+                  {extension}
+                </button>
+              ))}
+            </div>
+            {formError.extensions && (
+              <p className="attachment-configuration-form__error">{formError.extensions}</p>
+            )}
+          </div>
+
+          <div className="attachment-configuration-form__toggle-row">
+            <div className="attachment-configuration-form__toggle-control">
+              <Toggle
+                checked={required}
+                onCheckedChange={setRequired}
+              />
+              <span className="attachment-configuration-form__label">Tornar anexo obrigatório</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="ui-button ui-button--primary attachment-configuration-form__action-button attachment-configuration-form__action-button--primary attachment-configuration-form__action-button--add"
+            onClick={handleAddConfig}
           >
-            <Download className="text-primary-600" />
-            <span>Exportar Configuração</span>
-          </Button>
+            <span className="attachment-configuration-form__button-content">
+              <Plus className="attachment-configuration-form__button-icon" />
+              <span>Adicionar Configuração</span>
+            </span>
+          </button>
         </div>
       </div>
 
-      <div>
+      <div className="attachment-configuration-form__import-export-actions">
+        <button
+          type="button"
+          className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+          onClick={handleImportClick}
+          disabled={loading}
+        >
+          <span className="attachment-configuration-form__button-content">
+            <Upload className="attachment-configuration-form__button-icon" />
+            <span>Importar Configuração</span>
+          </span>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".csv"
+            className="attachment-configuration-form__file-input"
+            disabled={loading}
+          />
+        </button>
+
+        <button
+          type="button"
+          className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+          onClick={handleExportClick}
+          disabled={exporting}
+        >
+          <span className="attachment-configuration-form__button-content">
+            <Download className="attachment-configuration-form__button-icon" />
+            <span>Exportar Configuração</span>
+          </span>
+        </button>
+      </div>
+
+      <div className="attachment-configuration-form__list-section">
         {activeConfigurations.length === 0 ? (
-          <div>
-            <p>Nenhum tipo de anexo adicionado</p>
+          <div className="attachment-configuration-form__empty-state">
+            <p className="attachment-configuration-form__empty-state-text">Nenhum tipo de anexo adicionado</p>
           </div>
         ) : (
-          <div>
+          <div className="attachment-configuration-form__list-grid">
             {activeConfigurations.map((config) => (
-              <Card
+              <div
                 key={config.name}
-                className="!border-outline-button-border"
+                className="attachment-configuration-form__card"
               >
-                <button
-                  onClick={() => onDeleteConfiguration(config.name)}
-                  aria-label="Remover configuração"
-                  type="button"
-                >
-                  <X />
-                </button>
+                <div className="attachment-configuration-form__card-header">
+                  <span className="attachment-configuration-form__card-icon-box">
+                    <Settings className="attachment-configuration-form__card-icon" />
+                  </span>
+                  <button
+                    onClick={() => onDeleteConfiguration(config.name)}
+                    aria-label="Remover configuração"
+                    type="button"
+                    className="attachment-configuration-form__delete-button"
+                  >
+                    <X className="attachment-configuration-form__delete-icon" />
+                  </button>
+                </div>
 
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <div>
-                      <Settings />
-                      <span>
-                        {truncateText(config.name, 50)}
+                <p className="attachment-configuration-form__card-name">{truncateText(config.name, 50)}</p>
+
+                <div className="attachment-configuration-form__card-badge-wrap">
+                  {config.required ? (
+                    <span className="app-badge app-badge--header">Obrigatório</span>
+                  ) : (
+                    <span className="attachment-configuration-form__optional-badge">Opcional</span>
+                  )}
+                </div>
+
+                <div className="attachment-configuration-form__card-extensions-section">
+                  <span className="attachment-configuration-form__card-extensions-label">Extensões permitidas:</span>
+                  <div className="attachment-configuration-form__card-extensions-list">
+                    {config.allowedExtensions.map((extension) => (
+                      <span key={`${config.name}-${extension}`} className="attachment-configuration-form__extension-badge">
+                        {extension}
                       </span>
-                      <span
-                        className={`${config.required ? "text-primary-600" : ""}`}>
-                        {config.required ? "Obrigatório" : "Opcional"}
-                      </span>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div>
-                      <div>
-                        <span>Nome:</span>
-                        <p>{config.name}</p>
-                      </div>
-                      <div>
-                        <span>Descrição:</span>
-                        <p>{config.description}</p>
-                      </div>
-                      <div>
-                        <span>Obrigatório:</span>
-                        <p>{config.required ? "Sim" : "Não"}</p>
-                      </div>
-                      <div>
-                        <span>Extensões:</span>
-                        <p>{config.allowedExtensions.join(", ")}</p>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </Card>
+                    ))}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -409,34 +400,30 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </DialogTitle>
           </DialogHeader>
 
-          <div>
-            <div>
-              <h4>
-                Configurações duplicadas
-              </h4>
-              <div>
-                <p>
+          <div className="attachment-configuration-form__dialog-content">
+            <div className="attachment-configuration-form__dialog-section">
+              <h4 className="attachment-configuration-form__dialog-title">Configurações duplicadas</h4>
+              <div className="attachment-configuration-form__dialog-body">
+                <p className="attachment-configuration-form__dialog-description">
                   As seguintes configurações já existem e serão sobrescritas:
                 </p>
-                <ul>
-                  {duplicateNames.map(name => (
-                    <li key={name}>
-                      <strong>{name}</strong>
+                <ul className="attachment-configuration-form__dialog-list">
+                  {duplicateNames.map(entry => (
+                    <li key={entry}>
+                      <strong>{entry}</strong>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div>
-              <h4>
-                Configurações a serem importadas
-              </h4>
-              <div>
-                <ul>
+            <div className="attachment-configuration-form__dialog-section">
+              <h4 className="attachment-configuration-form__dialog-title">Configurações a serem importadas</h4>
+              <div className="attachment-configuration-form__dialog-body">
+                <ul className="attachment-configuration-form__dialog-list">
                   {importedConfigs.map(config => (
                     <li key={config.name}>
-                      <div>
+                      <div className="attachment-configuration-form__dialog-item">
                         <div>
                           <span>Nome:</span>{" "}
                           <span>{config.name}</span>
@@ -462,12 +449,20 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={cancelImport}>
+            <button
+              type="button"
+              className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+              onClick={cancelImport}
+            >
               Cancelar
-            </Button>
-            <Button onClick={confirmImport}>
+            </button>
+            <button
+              type="button"
+              className="ui-button ui-button--primary attachment-configuration-form__action-button attachment-configuration-form__action-button--primary"
+              onClick={confirmImport}
+            >
               Confirmar Importação
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -210,9 +210,10 @@
   }
 
   &__dropdown-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: var(--dropdown-item-gap);
+    width: 100%;
     color: inherit;
     text-decoration: none;
   }

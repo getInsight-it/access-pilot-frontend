@@ -1,23 +1,21 @@
 import { FormProvider } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@ui/form.tsx";
-import { Input } from "@ui/input.tsx";
-import { Breadcrumbs } from "@components/breadcrumbs.tsx";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
-import { Separator } from "@ui/separator.tsx";
-import { Button } from "@ui/button.tsx";
-import { ArrowRight, Loader2, Save } from "lucide-react";
+import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import { ArrowLeft, ArrowRight, Loader2, Save } from "lucide-react";
 import HighlightLoader from "@components/loading/HighLightLoader.tsx";
-import { Textarea } from "@ui/textarea.tsx";
-import { Switch } from "@ui/switch.tsx";
-import { Label } from "@ui/label.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { useSystemFormData, useFormNavigation, useAttachmentConfigs } from "./useSystemForm.ts";
 import { useNavigate } from "react-router-dom";
 import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum.ts";
 import { AttachmentConfigurationForm } from "@features/client/common/components/AttachmentConfigurationForm.tsx";
+import "./SystemForm.scss";
+
+const STEP_ITEMS = ["Detalhes do sistema", "Configuração de anexos"];
+const DESCRIPTION_MAX_LENGTH = 150;
 
 export default function SystemForm() {
   const {
@@ -34,165 +32,223 @@ export default function SystemForm() {
   const { handleNext, handleBack } = useFormNavigation(activeIndex, setActiveIndex, methods as any);
   const { handleAddAttachmentConfig, handleDeleteAttachmentConfig } = useAttachmentConfigs(setAttachmentConfigs);
   const navigate = useNavigate();
+  const descriptionValue = methods.watch("description") || "";
+  const descriptionCount = descriptionValue.length;
+  const pageTitle = initialLoading
+    ? "Carregando sistema..."
+    : isEditing ? "Editar sistema" : "Novo sistema";
+  const pageDescription = initialLoading
+    ? "Aguarde enquanto os dados do sistema são carregados."
+    : "Preencha os dados gerais e avance para configurar os anexos.";
 
-  const breadcrumbItems = [
-    { title: "Gerenciar sistemas", link: PRIVATE_ROUTES.SYSTEMS },
-    { title: isEditing ? "Editar sistema" : "Adicionar novo sistema", link: "" }
-  ];
+  const renderStepHeader = () => (
+    <div className="system-form__card-header">
+      <div className="system-form__steps">
+        {STEP_ITEMS.map((item, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <div
+              className={`system-form__step-item${isActive ? " system-form__step-item--active" : ""}`}
+              key={item}
+            >
+              <span className="system-form__step-number">{index + 1}</span>
+              <span className="system-form__step-label">{item}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   if(initialLoading) {
     return (
       <motion.div
+        className="system-form"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-        <div>
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
+        <HeaderContainer className="system-form__header-container">
+          <div className="system-form__header">
+            <div className="system-form__header-main">
+              <button
+                type="button"
+                className="system-form__back-button"
+                onClick={() => navigate(PRIVATE_ROUTES.SYSTEMS)}
+              >
+                <ArrowLeft size={18} />
+              </button>
 
-            <div className="pl-1">
-              <Heading
-                title="Carregando sistema..."
-                headerStepper={true}
-                headerStepperActiveIndex={activeIndex}
-                headerStepperItems={["Detalhes do sistema", "Configuração de anexos"]}
-              />
+              <div className="system-form__heading-content">
+                <div className="system-form__title-row">
+                  <h2 className="system-form__title">{pageTitle}</h2>
+                </div>
+                <p className="system-form__description">{pageDescription}</p>
+              </div>
             </div>
-          </HeaderContainer>
+          </div>
+        </HeaderContainer>
 
-          <Separator />
-        </div>
+        <ScrollArea className="system-form__scroll-area" viewportClassName="system-form__scroll-viewport">
+          <div className="system-form__content-wrapper">
+            <div className="system-form__card">
+              {renderStepHeader()}
 
-        <ScrollArea viewportClassName="px-3 sm:px-5 md:px-7">
-          <div>
-            <div>
-              <HighlightLoader />
+              <div className="system-form__card-content">
+                <HighlightLoader />
+              </div>
+            </div>
+            <div className="system-form__actions">
+              <button
+                type="button"
+                className="ui-button ui-button--white system-form__action-button system-form__action-button--white"
+                disabled
+              >
+                <span>Voltar</span>
+              </button>
+              <button
+                type="button"
+                className="ui-button ui-button--primary system-form__action-button system-form__action-button--primary"
+                disabled
+              >
+                <span className="system-form__footer-action-content">
+                  <Loader2 size={16} />
+                  <span>Carregando...</span>
+                </span>
+              </button>
             </div>
           </div>
         </ScrollArea>
-
-        <footer>
-          <Button variant="outline" disabled>
-            <span>Voltar</span>
-          </Button>
-          <Button disabled>
-            <div>
-              <Loader2 size={16} className="animate-spin" />
-              <span>Carregando...</span>
-            </div>
-          </Button>
-        </footer>
       </motion.div>
     );
   }
 
   return (
     <motion.div
+      className="system-form"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
 
-      <div>
-        <HeaderContainer>
-          <Breadcrumbs items={breadcrumbItems} />
+      <HeaderContainer className="system-form__header-container">
+        <div className="system-form__header">
+          <div className="system-form__header-main">
+            <button
+              type="button"
+              className="system-form__back-button"
+              onClick={() => navigate(PRIVATE_ROUTES.SYSTEMS)}
+            >
+              <ArrowLeft size={18} />
+            </button>
 
-          <div className="pl-1">
-            <Heading
-              title={isEditing ? "Editar sistema" : "Novo sistema"}
-              headerStepper={true}
-              headerStepperActiveIndex={activeIndex}
-              headerStepperItems={["Detalhes do sistema", "Configuração de anexos"]}
-              returnButton={true}
-              onReturnClick={() => {navigate(PRIVATE_ROUTES.SYSTEMS);}}
-              code={methods.getValues("id")}
-            />
+            <div className="system-form__heading-content">
+              <div className="system-form__title-row">
+                <h2 className="system-form__title">{pageTitle}</h2>
+              </div>
+              <p className="system-form__description">{pageDescription}</p>
+            </div>
           </div>
-        </HeaderContainer>
+        </div>
+      </HeaderContainer>
 
-        <Separator />
-      </div>
+      <ScrollArea className="system-form__scroll-area" viewportClassName="system-form__scroll-viewport">
+        <div className="system-form__content-wrapper">
+          <div className="system-form__card">
+            {renderStepHeader()}
 
-      <ScrollArea viewportClassName="px-3 sm:px-5 md:px-7">
-        <div className="max-w-content-container m-auto">
-          {activeIndex === 1 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-              <AttachmentConfigurationForm
-                configurations={attachmentConfigs}
-                onAddConfiguration={handleAddAttachmentConfig}
-                onDeleteConfiguration={handleDeleteAttachmentConfig}
-              />
-            </motion.div>
-          )}
-          {activeIndex === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-              <FormProvider {...methods}>
-                <form className="max-w-content-container m-auto" onSubmit={methods.handleSubmit(onSubmit)}>
-                  <div>
-                    <div>
-                      <FormField
-                        control={methods.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <Label htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
-                            <FormControl>
-                              <Input
-                                id="name"
-                                disabled={loading}
-                                placeholder="Nome do sistema"
-                                {...field}
-                                className={`${methods.formState.errors.name ? "border-red-500" : ""}`}
-                              />
-                            </FormControl>
-                            {methods.formState.errors.name && (
-                              <p>{methods.formState.errors.name?.message?.toString()}</p>
-                            )}
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={methods.control}
-                        name="clientId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <Label htmlFor="clientId">Client
-                              Id <span className="text-primary-600">*</span></Label>
-                            <FormControl>
-                              <Input
-                                id="clientId"
-                                disabled={loading}
-                                placeholder="ClientId do IDP"
-                                {...field}
-                                className={`${methods.formState.errors.clientId ? "border-red-500" : ""}`}
-                              />
-                            </FormControl>
-                            {methods.formState.errors.clientId && (
-                              <p>{methods.formState.errors.clientId?.message?.toString()}</p>
-                            )}
-                          </FormItem>
-                        )}
-                      />
+            <div className="system-form__card-content">
+              {activeIndex === 1 && (
+                <motion.div
+                  className="system-form__attachment-step"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+                  <AttachmentConfigurationForm
+                    configurations={attachmentConfigs}
+                    onAddConfiguration={handleAddAttachmentConfig}
+                    onDeleteConfiguration={handleDeleteAttachmentConfig}
+                  />
+                </motion.div>
+              )}
+
+              {activeIndex === 0 && (
+                <motion.div
+                  className="system-form__form-step"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+                  <FormProvider {...methods}>
+                    <form className="system-form__form" onSubmit={methods.handleSubmit(onSubmit)}>
+                      <div className="system-form__form-row">
+                        <FormField
+                          control={methods.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem className="system-form__field">
+                              <label className="system-form__label" htmlFor="name">
+                                Nome <span className="system-form__required">*</span>
+                              </label>
+                              <FormControl>
+                                <input
+                                  id="name"
+                                  type="text"
+                                  disabled={loading}
+                                  placeholder="Nome do sistema"
+                                  {...field}
+                                  className={`app-input system-form__input${methods.formState.errors.name ? " system-form__input--error" : ""}`}
+                                />
+                              </FormControl>
+                              {methods.formState.errors.name && (
+                                <p className="system-form__error">{methods.formState.errors.name?.message?.toString()}</p>
+                              )}
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={methods.control}
+                          name="clientId"
+                          render={({ field }) => (
+                            <FormItem className="system-form__field">
+                              <label className="system-form__label" htmlFor="clientId">
+                                Client Id <span className="system-form__required">*</span>
+                              </label>
+                              <FormControl>
+                                <input
+                                  id="clientId"
+                                  type="text"
+                                  disabled={loading}
+                                  placeholder="ClientId do IDP"
+                                  {...field}
+                                  className={`app-input system-form__input${methods.formState.errors.clientId ? " system-form__input--error" : ""}`}
+                                />
+                              </FormControl>
+                              {methods.formState.errors.clientId && (
+                                <p className="system-form__error">{methods.formState.errors.clientId?.message?.toString()}</p>
+                              )}
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
                       <FormField
                         control={methods.control}
                         name="description"
                         render={({ field }) => (
-                          <FormItem className="col-span-1 md:col-span-2">
-                            <Label htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
+                          <FormItem className="system-form__field">
+                            <label className="system-form__label" htmlFor="description">
+                              Descrição <span className="system-form__required">*</span>
+                            </label>
                             <FormControl>
-                              <Textarea
+                              <textarea
                                 id="description"
                                 disabled={loading}
                                 placeholder="Descrição do sistema"
+                                maxLength={DESCRIPTION_MAX_LENGTH}
                                 {...field}
-                                className={`${methods.formState.errors.description ? "border-red-500" : ""}`}
+                                className={`app-textarea system-form__textarea${methods.formState.errors.description ? " system-form__textarea--error" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.description && (
-                              <p>{methods.formState.errors.description?.message?.toString()}</p>
+                              <p className="system-form__error">{methods.formState.errors.description?.message?.toString()}</p>
                             )}
+                            <p className="system-form__counter">{descriptionCount}/{DESCRIPTION_MAX_LENGTH}</p>
                           </FormItem>
                         )}
                       />
@@ -201,48 +257,52 @@ export default function SystemForm() {
                         control={methods.control}
                         name="baseUrl"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
-                            <Label htmlFor="baseUrl">Url <span className="text-primary-600">*</span></Label>
+                          <FormItem className="system-form__field">
+                            <label className="system-form__label" htmlFor="baseUrl">
+                              Url <span className="system-form__required">*</span>
+                            </label>
                             <FormControl>
-                              <Input
+                              <input
                                 id="baseUrl"
+                                type="text"
                                 disabled={loading}
                                 placeholder="Url do sistema"
                                 {...field}
-                                className={`${methods.formState.errors.baseUrl ? "border-red-500" : ""}`}
+                                className={`app-input system-form__input${methods.formState.errors.baseUrl ? " system-form__input--error" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.baseUrl && (
-                              <p>{methods.formState.errors.baseUrl?.message?.toString()}</p>
+                              <p className="system-form__error">{methods.formState.errors.baseUrl?.message?.toString()}</p>
                             )}
                           </FormItem>
                         )}
                       />
 
-                      <div className="col-span-1 md:col-span-2">
+                      <div className="system-form__toggle-row">
                         <FormField
                           control={methods.control}
                           name="status"
                           render={({ field }) => (
-                            <FormItem>
-                              <div>
-                                <div>
-                                  <FormControl>
-                                    <Switch
-                                      checked={field.value === ClientStatusEnum.PUBLISHED}
-                                      onCheckedChange={(checked) => {
-                                        field.onChange(checked ? ClientStatusEnum.PUBLISHED : ClientStatusEnum.UNPUBLISHED);
-                                      }}
-                                      disabled={loading}
-                                    />
-                                  </FormControl>
-                                  <span>{field.value === ClientStatusEnum.PUBLISHED ? "Publicado" : "Não publicado"}</span>
-                                </div>
-                                <span>Ative para indicar o status publicado.</span>
-                                {methods.formState.errors.status && (
-                                  <p>{methods.formState.errors.status?.message?.toString()}</p>
-                                )}
+                            <FormItem className="system-form__toggle-field">
+                              <div className="system-form__toggle-control">
+                                <FormControl>
+                                  <Toggle
+                                    checked={field.value === ClientStatusEnum.PUBLISHED}
+                                    onCheckedChange={(checked) => {
+                                      field.onChange(checked ? ClientStatusEnum.PUBLISHED : ClientStatusEnum.UNPUBLISHED);
+                                    }}
+                                    disabled={loading}
+                                  />
+                                </FormControl>
+                                <span className="system-form__toggle-value">
+                                  {field.value === ClientStatusEnum.PUBLISHED ? "Publicado" : "Não publicado"}
+                                </span>
                               </div>
+
+                              <span className="system-form__toggle-description">Ative para indicar o status publicado.</span>
+                              {methods.formState.errors.status && (
+                                <p className="system-form__error">{methods.formState.errors.status?.message?.toString()}</p>
+                              )}
                             </FormItem>
                           )}
                         />
@@ -251,55 +311,67 @@ export default function SystemForm() {
                           control={methods.control}
                           name="managed"
                           render={({ field }) => (
-                            <FormItem>
-                              <div>
-                                <div>
-                                  <FormControl>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
-                                  </FormControl>
-                                  <span>{field.value ? "Gerenciado" : "Não gerenciado"}</span>
-                                </div>
-                                <span>Ative para indicar que o sistema é gerenciado.</span>
-                                {methods.formState.errors.managed && (
-                                  <p>{methods.formState.errors.managed?.message?.toString()}</p>
-                                )}
+                            <FormItem className="system-form__toggle-field">
+                              <div className="system-form__toggle-control">
+                                <FormControl>
+                                  <Toggle checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
+                                </FormControl>
+                                <span className="system-form__toggle-value">{field.value ? "Gerenciado" : "Não gerenciado"}</span>
                               </div>
+
+                              <span className="system-form__toggle-description">Ative para indicar que o sistema é gerenciado.</span>
+                              {methods.formState.errors.managed && (
+                                <p className="system-form__error">{methods.formState.errors.managed?.message?.toString()}</p>
+                              )}
                             </FormItem>
                           )}
                         />
                       </div>
-                    </div>
-                  </div>
-                </form>
-              </FormProvider>
-            </motion.div>
-          )}
+                    </form>
+                  </FormProvider>
+                </motion.div>
+              )}
+            </div>
+          </div>
+          <div className="system-form__actions">
+            <button
+              type="button"
+              className="ui-button ui-button--white system-form__action-button system-form__action-button--white"
+              disabled={activeIndex === 0}
+              onClick={handleBack}
+            >
+              <span>Voltar</span>
+            </button>
+
+            {activeIndex === 0 && (
+              <button
+                type="button"
+                className="ui-button ui-button--primary system-form__action-button system-form__action-button--primary"
+                onClick={handleNext}
+              >
+                <span className="system-form__footer-action-content">
+                  <ArrowRight className="system-form__continue-icon" />
+                  <span>Continuar</span>
+                </span>
+              </button>
+            )}
+
+            {activeIndex === 1 && (
+              <button
+                type="button"
+                className="ui-button ui-button--primary system-form__action-button system-form__action-button--primary"
+                onClick={methods.handleSubmit(onSubmit)}
+                disabled={loading}
+              >
+                <span className="system-form__footer-action-content">
+                  {loading ? <Loader2 size={16} /> : <Save size={16} />}
+                  <span>{loading ? "Salvando..." : "Salvar"}</span>
+                </span>
+              </button>
+            )}
+          </div>
         </div>
       </ScrollArea>
-
-      <footer>
-        <Button variant="outline" disabled={activeIndex === 0} onClick={handleBack}>
-          <span>Voltar</span>
-        </Button>
-
-        {activeIndex === 0 && (
-          <Button onClick={handleNext}>
-            <div>
-              <ArrowRight size={16}></ArrowRight>
-              <span>Continuar</span>
-            </div>
-          </Button>
-        )}
-
-        {activeIndex === 1 && (
-          <Button onClick={methods.handleSubmit(onSubmit)} disabled={loading}>
-            <div>
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              <span>{loading ? "Salvando..." : "Salvar"}</span>
-            </div>
-          </Button>
-        )}
-      </footer>
     </motion.div>
   );
 }

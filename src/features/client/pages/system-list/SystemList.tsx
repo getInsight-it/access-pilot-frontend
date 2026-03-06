@@ -369,7 +369,7 @@ export default function SystemList() {
                         <div className="table-card__content__row">
                           <span className="table-card__label">Status</span>
                           <span className="table-card__value">
-                            {renderStatusBadge(client.status)}
+                            {renderStatusBadge(client.status as any)}
                           </span>
                         </div>
                       </div>
@@ -438,7 +438,7 @@ export default function SystemList() {
                           <span>{client.description || '-'}</span>
                         </div>
                         <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--status">
-                          {renderStatusBadge(client.status)}
+                          {renderStatusBadge(client.status as any)}
                         </div>
                         <div className="app-table__cell app-table__cell--icon system-list__table-cell system-list__table-cell--actions">
                           <DropdownMenu>
