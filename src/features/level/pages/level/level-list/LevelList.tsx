@@ -390,7 +390,7 @@ export const LevelList = () => {
           </div>
 
           <div className="level-list__desktop">
-            <div className="app-table app-table--icon level-list__table">
+            <div className="app-table app-table--icon app-table--no-filter app-table--no-footer level-list__table">
               <div className="app-table__header">
                 <div className="app-table__row">
                   <div className="app-table__cell app-table__cell--content level-list__table-cell level-list__table-cell--sphere">

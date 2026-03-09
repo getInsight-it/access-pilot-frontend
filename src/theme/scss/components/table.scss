@@ -46,7 +46,7 @@
   }
 
   &__body &__row {
-    min-height: 57px;
+    min-height: var(--app-table-row-min-height, 57px);
     background-color: var(--background);
     color: var(--default-text-color);
     font-size: var(--table-row-text-size);

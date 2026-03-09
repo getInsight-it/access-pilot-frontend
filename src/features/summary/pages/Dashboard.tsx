@@ -1,8 +1,6 @@
 import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
-import { Separator } from "../../../common/external/ui/separator.tsx";
 import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../common/external/ui/table.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,15 +31,16 @@ import { requestService } from "../../requests/common/api/request-service.ts";
 import { clientService } from "../../client/common/service/client-service.ts";
 import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
 import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
-import { ClientCard } from "./partials/ClientCard.tsx";
+import { ClientCard } from "./partials/client-card/ClientCard.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { SummaryCardData } from "./types/status-card-data.model.ts";
 import { StatusCardData } from "./types/summary-card-data.model.ts";
-import { EmptyState } from "./partials/EmptyState.tsx";
+import { EmptyState } from "./partials/empty-state/EmptyState.tsx";
 import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 import useAuthStore, { UserInfo } from "../../../store/authStore.ts";
 import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
 import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
+import "./Dashboard.scss";
 
 const REQUEST_PAGINATION = {
   PAGE: 1,
@@ -69,7 +68,7 @@ const useDashboardData = () => {
       );
       setRequests(pageResponse?.items || []);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
         title: "Erro ao carregar solicitações",
         description: errorMessage,
@@ -86,7 +85,7 @@ const useDashboardData = () => {
       const clients = await clientService.getClientsAssociates(attached);
       setter(clients || []);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar sistemas",
         description: errorMessage,
@@ -100,7 +99,7 @@ const useDashboardData = () => {
       const summaryData = await summaryService.getSummary();
       setSummary(summaryData);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
         title: "Erro ao buscar sumário",
         description: errorMessage,
@@ -119,7 +118,7 @@ const useDashboardData = () => {
         fetchRequests()
       ]);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
         title: "Erro ao carregar dados do dashboard",
         description: errorMessage,
@@ -146,9 +145,10 @@ const useNavigation = () => {
   const handleRequestAccess = useCallback((client?: ClientResponseInterface): void => {
     if (client) {
       navigate(PRIVATE_ROUTES.REQUEST_ACCESS, { state: client });
-    } else {
-      navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+      return;
     }
+
+    navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
   }, [navigate]);
 
   const handleSeeClientDetails = useCallback((clientId: string): void => {
@@ -168,22 +168,19 @@ const useNavigation = () => {
   };
 };
 
-/**
- * Gets the display name for a user
- *
- * @param user - User information object
- * @returns Formatted user display name or fallback text
- */
 const getUserDisplayName = (user: UserInfo | null | undefined): string => {
   if (user?.firstName && user?.lastName) {
     return `${user.firstName} ${user.lastName}`;
   }
+
   if (user?.firstName) {
     return user.firstName;
   }
+
   if (user?.username) {
     return user.username;
   }
+
   return "Usuário";
 };
 
@@ -192,17 +189,18 @@ const LoadingState = () => {
   const displayName = getUserDisplayName(user);
 
   return (
-    <motion.div
-      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+    <motion.div className="dashboard-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
       <div>
-        <HeaderContainer>
-          <div>
-            <Heading title={`Olá, ${displayName}`} />
-          </div>
+        <HeaderContainer className="dashboard-page__header-container">
+          <Heading
+            className="dashboard-page__heading"
+            title={`Olá, ${displayName}`}
+            description="Carregando o panorama geral do ambiente."
+          />
         </HeaderContainer>
-        <Separator />
       </div>
-      <div>
+
+      <div className="dashboard-page__loading">
         <HighlightLoader />
       </div>
     </motion.div>
@@ -235,68 +233,51 @@ export default function Dashboard() {
   const summaryCards = useMemo((): SummaryCardData[] => [
     {
       title: "Solicitações aprovadas",
+      description: "Demandas concluídas e liberadas para uso no ambiente.",
       value: summary?.totalApprovedRequests || 0,
       icon: Users,
-      bgColor: "bg-success-25",
-      iconBg: "bg-success-100",
-      iconColor: "text-success-700",
-      textColor: "text-success-900",
-      valueColor: "text-success-700"
+      tone: "success"
     },
     {
       title: "Solicitações pendentes",
+      description: "Itens aguardando análise ou ação do fluxo de aprovação.",
       value: summary?.totalPendingRequests || 0,
       icon: FileText,
-      bgColor: "bg-warning-50",
-      iconBg: "bg-warning-100",
-      iconColor: "text-warning-700",
-      textColor: "text-warning-900",
-      valueColor: "text-warning-700"
+      tone: "warning"
     },
     {
-      title: "Total de sistemas",
+      title: "Sistemas monitorados",
+      description: "Sistemas disponíveis no ambiente para consulta e solicitação.",
       value: summary?.totalClients || 0,
       icon: TrendingUp,
-      bgColor: "bg-indigo-25",
-      iconBg: "bg-indigo-100",
-      iconColor: "text-indigo-700",
-      textColor: "text-indigo-900",
-      valueColor: "text-indigo-700"
+      tone: "primary"
     }
   ], [summary]);
 
   const statusCards = useMemo((): StatusCardData[] => [
     {
-      label: `${summary?.totalApprovedUsers || 0} usuários com acesso aprovado`,
+      label: "usuários com acesso aprovado",
+      value: summary?.totalApprovedUsers || 0,
       icon: CheckCircle,
-      bgColor: "bg-success-50",
-      borderColor: "border-success-200",
-      iconColor: "text-success-500",
-      textColor: "text-success-700"
+      tone: "success"
     },
     {
-      label: `${summary?.totalRoles || 0} papéis`,
+      label: "papéis cadastrados",
+      value: summary?.totalRoles || 0,
       icon: Clock,
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      iconColor: "text-blue-500",
-      textColor: "text-blue-700"
+      tone: "primary"
     },
     {
-      label: `${summary?.totalClients || 0} sistemas`,
+      label: "sistemas monitorados",
+      value: summary?.totalClients || 0,
       icon: AlertCircle,
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      iconColor: "text-purple-500",
-      textColor: "text-purple-700"
+      tone: "violet"
     },
     {
-      label: `${summary?.totalPendingUsers || 0} usuários com solicitações pendentes`,
+      label: "usuários com solicitações pendentes",
+      value: summary?.totalPendingUsers || 0,
       icon: XCircle,
-      bgColor: "bg-error-50",
-      borderColor: "border-error-200",
-      iconColor: "text-red-500",
-      textColor: "text-error-700"
+      tone: "danger"
     }
   ], [summary]);
 
@@ -304,193 +285,224 @@ export default function Dashboard() {
     return <LoadingState />;
   }
 
-  return (
-    <motion.div
-      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+  const renderRequestActions = (requestId: number) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button type="button" className="dashboard-page__table-actions-button" aria-label="Abrir ações da solicitação">
+          <EllipsisVertical size={18} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleNavigateToRequestDetails(requestId)}>
+          <ReceiptText size={16} />
+          <span>Detalhes</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
+  return (
+    <motion.div className="dashboard-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
       <div>
-        <HeaderContainer>
-          <div>
-            <Heading title={`Olá, ${displayName}`} />
-          </div>
+        <HeaderContainer className="dashboard-page__header-container">
+          <Heading
+            className="dashboard-page__heading"
+            title={`Olá, ${displayName}`}
+            description="Acompanhe solicitações, acessos e sistemas disponíveis em um único lugar."
+          />
         </HeaderContainer>
-        <Separator />
       </div>
 
-      <ScrollArea viewportClassName="px-4 md:px-7">
-        <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
-          <div>
-            {summaryCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.title}
-                  className={`${card.bgColor}`}>
-                  <div>
-                    <div className={`${card.iconBg}`}>
-                      <Icon size={20} className={card.iconColor} />
-                    </div>
-                    <span className={`${card.textColor}`}>
-                      {card.title}
-                    </span>
-                  </div>
-                  <span className={`${card.valueColor}`}>
-                    {card.value}
-                  </span>
+      <ScrollArea className="dashboard-page__scroll-area" viewportClassName="dashboard-page__scroll-viewport">
+        <div className="max-w-content-container dashboard-page__content">
+          <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
+            <section className="dashboard-page__section">
+              <div className="dashboard-page__metrics-grid">
+                {summaryCards.map((card) => {
+                  const Icon = card.icon;
+                  const toneClass = `dashboard-page__metric-card--${card.tone}`;
+
+                  return (
+                    <article key={card.title} className={`dashboard-page__metric-card ${toneClass}`}>
+                      <div className="dashboard-page__metric-main">
+                        <div className="dashboard-page__metric-icon-box">
+                          <Icon className="dashboard-page__metric-icon" />
+                        </div>
+                        <div className="dashboard-page__metric-copy">
+                          <p className="dashboard-page__metric-title">{card.title}</p>
+                          <p className="dashboard-page__metric-description">{card.description}</p>
+                        </div>
+                      </div>
+                      <p className="dashboard-page__metric-value">{card.value}</p>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className="dashboard-page__status-grid">
+                {statusCards.map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <article key={card.label} className={`dashboard-page__status-card dashboard-page__status-card--${card.tone}`}>
+                      <div className="dashboard-page__status-icon-box">
+                        <Icon className="dashboard-page__status-icon" />
+                      </div>
+                      <div className="dashboard-page__status-copy">
+                        <p className="dashboard-page__status-value">{card.value}</p>
+                        <p className="dashboard-page__status-label">{card.label}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          </RoleComponentGuard>
+
+          <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">Últimas solicitações</h3>
+                  <p className="dashboard-page__section-description">
+                    Solicitações recentes atribuídas ao seu fluxo de aprovação.
+                  </p>
                 </div>
-              );
-            })}
-          </div>
+                <span className="app-badge app-badge--header">{requests.length}</span>
+              </div>
 
-          <div>
-            {statusCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.label}
-                  className={`border ${card.borderColor} ${card.bgColor}`}>
-                  <Icon size={12} className={card.iconColor} />
-                  <span className={`${card.textColor}`}>
-                    {card.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </RoleComponentGuard>
-
-        <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
-          <h3>Últimas solicitações</h3>
-
-          <div>
-            {requests.length > 0 ? (
-              requests.map((request, index) => (
-                <div className="table-card" key={`dashboard-table-card-${index}`}>
-                  <div className="table-card__header">
-                    <span>Ações</span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <EllipsisVertical size={20} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => handleNavigateToRequestDetails(request.id)}>
-                          <ReceiptText size={16} />
-                          <span>Detalhes</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="table-card__content">
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Sistema:</span>
-                      <span className="table-card__value">{request.role?.client?.name}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Papel:</span>
-                      <span className="table-card__value">{request.role?.name}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Status:</span>
-                      {RequestStatusBadge(request.status)}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <EmptyState message="Nenhuma solicitação encontrada" />
-            )}
-          </div>
-
-          <div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
-                  <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
-                  <TableHead width="calc(33.4% - 34px)">Status</TableHead>
-                  <TableHead width="100px">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+              <div className="dashboard-page__request-cards">
                 {requests.length > 0 ? (
                   requests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
-                      <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
-                      <TableCell width="100px">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleNavigateToRequestDetails(request.id)}>
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                    <article className="dashboard-page__request-card" key={request.id}>
+                      <div className="dashboard-page__request-card-header">
+                        <span className="dashboard-page__request-card-title">Ações</span>
+                        {renderRequestActions(request.id)}
+                      </div>
+                      <div className="dashboard-page__request-card-content">
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">Sistema</span>
+                          <span className="dashboard-page__request-card-value">{request.role?.client?.name || "-"}</span>
+                        </div>
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">Papel</span>
+                          <span className="dashboard-page__request-card-value">{request.role?.name || "-"}</span>
+                        </div>
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">Status</span>
+                          <span className="dashboard-page__request-card-badge">{RequestStatusBadge(request.status)}</span>
+                        </div>
+                      </div>
+                    </article>
                   ))
                 ) : (
-                  <TableRow>
-                    <TableCell {...{ colSpan: 4 }}>
-                      <div>
-                        <EmptyState message="Nenhuma solicitação encontrada" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <EmptyState message="Nenhuma solicitação encontrada" />
                 )}
-              </TableBody>
-            </Table>
-          </div>
-        </RoleComponentGuard>
-        <div>
-          <div>
-            <div>
-              <h3>Sistemas que você tem acesso</h3>
-            </div>
-            {attachedClients.length > 0 ? (
-              <div>
-                {attachedClients.map((client) => (
-                  <ClientCard
-                    key={client.clientId}
-                    client={client}
-                    hasAccess={true}
-                    onActionClick={() => handleSeeClientDetails(client.clientId)}
-                  />
-                ))}
               </div>
-            ) : (
-              <div>
-                <EmptyState message="Nenhum sistema com acesso encontrado" />
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div>
-          <div>
-            <h3>Sistemas para solicitar acesso</h3>
-          </div>
-          <div>
-            {detachedClients.length > 0 ? (
-              detachedClients.map((client) => (
-                <ClientCard
-                  key={client.clientId}
-                  client={client}
-                  hasAccess={false}
-                  onActionClick={() => handleRequestAccess(client)}
-                />
-              ))
-            ) : (
-              <div>
-                <EmptyState message="Nenhum sistema disponível para solicitação" />
+              <div className="dashboard-page__requests-table">
+                <div className="app-table app-table--icon app-table--no-filter app-table--no-footer dashboard-page__table">
+                  <div className="app-table__header">
+                    <div className="app-table__row">
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--system">
+                        <span>Sistema</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--role">
+                        <span>Papel</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--status">
+                        <span>Status</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--icon dashboard-page__table-cell dashboard-page__table-cell--actions">
+                        <span>Ações</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="app-table__body">
+                    {requests.length > 0 ? (
+                      requests.map((request) => (
+                        <div key={request.id} className="app-table__row">
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--system">
+                            <span>{request.role?.client?.name || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--role">
+                            <span>{request.role?.name || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--status">
+                            {RequestStatusBadge(request.status)}
+                          </div>
+                          <div className="app-table__cell app-table__cell--icon dashboard-page__table-cell dashboard-page__table-cell--actions">
+                            {renderRequestActions(request.id)}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="app-table__row">
+                        <div className="app-table__cell dashboard-page__table-empty-state">
+                          <EmptyState message="Nenhuma solicitação encontrada" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
+            </section>
+          </RoleComponentGuard>
+
+          <div className="dashboard-page__systems-grid">
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">Sistemas que você tem acesso</h3>
+                  <p className="dashboard-page__section-description">
+                    Consulte detalhes, permissões e informações dos sistemas já liberados para seu perfil.
+                  </p>
+                </div>
+                <span className="app-badge app-badge--header">{attachedClients.length}</span>
+              </div>
+
+              {attachedClients.length > 0 ? (
+                <div className="dashboard-page__client-grid">
+                  {attachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={true}
+                      onActionClick={() => handleSeeClientDetails(client.clientId)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="Nenhum sistema com acesso encontrado" />
+              )}
+            </section>
+
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">Sistemas para solicitar acesso</h3>
+                  <p className="dashboard-page__section-description">
+                    Descubra os sistemas disponíveis e inicie uma solicitação com os dados mais relevantes.
+                  </p>
+                </div>
+                <span className="app-badge app-badge--header">{detachedClients.length}</span>
+              </div>
+
+              {detachedClients.length > 0 ? (
+                <div className="dashboard-page__client-grid">
+                  {detachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={false}
+                      onActionClick={() => handleRequestAccess(client)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message="Nenhum sistema disponível para solicitação" />
+              )}
+            </section>
           </div>
         </div>
       </ScrollArea>

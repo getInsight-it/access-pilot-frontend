@@ -102,6 +102,7 @@ export interface ThemeAttributes {
   "table-footer-min-height"?: string,
   "table-border-color"?: string,
   "table-icon-cell-width"?: string,
+  "level-list-table-row-min-height"?: string,
 
   // pagination
   "pagination-border-color"?: string,

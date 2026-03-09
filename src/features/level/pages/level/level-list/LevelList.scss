@@ -107,6 +107,7 @@
 
   &__table {
     width: 100%;
+    --app-table-row-min-height: var(--level-list-table-row-min-height);
   }
 
   &__table-cell {
