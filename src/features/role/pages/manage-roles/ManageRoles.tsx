@@ -8,7 +8,7 @@ import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../common/external/ui/tabs.tsx";
 import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
-import RoleHierarchy from "./partials/RoleHierarchy.tsx";
+import RoleHierarchy from "./partials/role-hierarchy/RoleHierarchy.tsx";
 import { RolesTable } from "./partials/roles-table/RolesTable.tsx";
 import { useManageRolesData, useRoleNavigation } from "./useManageRoles.ts";
 import "./ManageRoles.scss";
@@ -129,7 +129,6 @@ export default function ManageRoles() {
             </TabsContent>
             <TabsContent value="roles_hierarchy" className="manage-roles__tabs-content">
               <div className="manage-roles__hierarchy">
-                <h2 className="manage-roles__hierarchy-title">Arraste para organizar a hierarquia.</h2>
                 {!loading && <RoleHierarchy data={allRoles} onSuccess={() => getData()} />}
               </div>
             </TabsContent>

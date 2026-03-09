@@ -13,21 +13,32 @@ import {
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
 import { catchError, finalize, from, tap } from "rxjs";
-import { toast } from "../../../../../common/external/ui/use-toast.ts";
-import { Button } from "../../../../../common/external/ui/button.tsx";
-import { Badge } from "../../../../../common/external/ui/badge.tsx";
+import { toast } from "../../../../../../common/external/ui/use-toast.ts";
+import { Button } from "../../../../../../common/external/ui/button.tsx";
+import { Badge } from "../../../../../../common/external/ui/badge.tsx";
 import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
-import { StepLoader } from "../../../../../common/components/loading/StepLoader.tsx";
-import { roleService } from "../../../common/service/role-service.ts";
-import { RoleResponseInterface } from "../../../common/types/role.model.ts";
-import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
-import { ArboristNode, RoleHierarchyProps, RoleUpdatePayload } from "../../../common/types/role-hierarchy.model.ts";
+import { StepLoader } from "../../../../../../common/components/loading/StepLoader.tsx";
+import { roleService } from "../../../../common/service/role-service.ts";
+import { RoleResponseInterface } from "../../../../common/types/role.model.ts";
+import { formatErrorMessages } from "../../../../../../common/utils/error-utils.ts";
+import { ArboristNode, RoleHierarchyProps, RoleUpdatePayload } from "../../../../common/types/role-hierarchy.model.ts";
+import "./role-hierarchy.scss";
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const NODE_WIDTH = 160;
 const NODE_HEIGHT = 40;
+const TREE_FALLBACK_HEIGHT = 420;
+const TREE_FALLBACK_ROW_HEIGHT = 38;
+const TREE_FALLBACK_INDENT = 20;
+
+function getThemeSizeToken(token: string, fallback: number): number {
+  if (typeof window === "undefined") return fallback;
+  const rawValue = window.getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  const parsed = Number.parseFloat(rawValue);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
 
 function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
   const nodeMap = new Map<number, ArboristNode>();
@@ -111,93 +122,57 @@ function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: Node[]; edg
   return { nodes: flowNodes, edges: flowEdges };
 }
 
-const INDENT = 20;
-
 function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNode>) {
   const hasChildren = !node.isLeaf;
+  const indent = getThemeSizeToken("--system-detail-role-indent-size", TREE_FALLBACK_INDENT);
+  const iconBoxHalf = getThemeSizeToken("--system-detail-role-icon-box-size", 24) / 2;
 
-  const isLastSibling = (n: typeof node): boolean => {
-    const siblings = n.parent?.children;
-    if (!siblings || siblings.length === 0) return true;
-    return siblings[siblings.length - 1].id === n.id;
-  };
-
-  const getAncestorAtLevel = (targetLevel: number): typeof node | null => {
-    let current: typeof node | null = node;
-    while (current && current.level > targetLevel) {
-      current = current.parent;
-    }
-    return current;
-  };
+  const nodeClassName = [
+    "role-hierarchy__node",
+    node.isSelected ? "role-hierarchy__node--selected" : "",
+    node.isDragging ? "role-hierarchy__node--dragging" : "",
+    node.willReceiveDrop ? "role-hierarchy__node--drop-target" : ""
+  ].filter(Boolean).join(" ");
 
   return (
     <div
-      style={{ ...style, paddingLeft: 0 }}
+      style={style}
       ref={dragHandle}
-      className="cursor-pointer hover:bg-muted rounded"
+      className={nodeClassName}
     >
-      {node.level > 0 && Array.from({ length: node.level }, (_, i) => {
-        const isLastColumn = i === node.level - 1;
-
-        if (isLastColumn) {
-          const nodeIsLast = isLastSibling(node);
-          return (
-            <div
-              key={i}
-              className="relative"
-              style={{ width: INDENT, alignSelf: "stretch" }}
-            >
-              <div
-                className="absolute w-px bg-border/60"
-                style={{ left: 8, top: 0, bottom: nodeIsLast ? "50%" : 0 }}
-              />
-              <div
-                className="absolute h-px bg-border/60"
-                style={{ left: 8, width: INDENT - 8, top: "50%" }}
-              />
-            </div>
-          );
-        }
-
-        const ancestor = getAncestorAtLevel(i);
-        const ancestorIsLast = ancestor ? isLastSibling(ancestor) : true;
-
-        return (
-          <div
-            key={i}
-            className="relative"
-            style={{ width: INDENT, alignSelf: "stretch" }}
-          >
-            {!ancestorIsLast && (
-              <div
-                className="absolute w-px bg-border/60"
-                style={{ left: 8, top: 0, bottom: 0 }}
-              />
-            )}
-          </div>
-        );
-      })}
+      {node.level > 0 && Array.from({ length: node.level }, (_, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className="role-hierarchy__node-guide"
+          style={{ left: i * indent + iconBoxHalf }}
+        />
+      ))}
 
       {hasChildren ? (
         <button
+          type="button"
+          className="role-hierarchy__node-toggle"
           onClick={e => { e.stopPropagation(); node.toggle(); }}
         >
           {node.isOpen
-            ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-            : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
+            ? <ChevronDown className="role-hierarchy__node-toggle-icon" />
+            : <ChevronRight className="role-hierarchy__node-toggle-icon" />}
         </button>
       ) : (
-        <span className="w-4 h-4" />
+        <span className="role-hierarchy__node-toggle-placeholder" />
       )}
 
       {hasChildren
-        ? <Users className="w-4 h-4 text-primary" />
-        : <User className="w-4 h-4 text-muted-foreground" />}
+        ? <Users className="role-hierarchy__node-icon role-hierarchy__node-icon--group" />
+        : <User className="role-hierarchy__node-icon role-hierarchy__node-icon--single" />}
 
-      <span className="truncate">{node.data.name}</span>
+      <span className="role-hierarchy__node-name" title={node.data.name}>
+        {node.data.name}
+      </span>
 
       {node.data.levelName && (
-        <Badge variant="outline" className="font-medium">
+        <Badge variant="outline" className="role-hierarchy__node-level">
           {node.data.levelName}
         </Badge>
       )}
@@ -211,14 +186,26 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [loading, setLoading] = useState(false);
   const treeContainerRef = useRef<HTMLDivElement>(null);
+  const [treeHeight, setTreeHeight] = useState(0);
   const [treeWidth, setTreeWidth] = useState(0);
+  const [treeRowHeight, setTreeRowHeight] = useState(TREE_FALLBACK_ROW_HEIGHT);
+  const [treeIndent, setTreeIndent] = useState(TREE_FALLBACK_INDENT);
 
   useEffect(() => {
     const el = treeContainerRef.current;
     if (!el) return;
-    const observer = new ResizeObserver(() => setTreeWidth(el.clientWidth));
+
+    const updateMetrics = () => {
+      setTreeWidth(el.clientWidth);
+      setTreeHeight(el.clientHeight);
+      setTreeRowHeight(getThemeSizeToken("--input-height", TREE_FALLBACK_ROW_HEIGHT));
+      setTreeIndent(getThemeSizeToken("--system-detail-role-indent-size", TREE_FALLBACK_INDENT));
+    };
+
+    const observer = new ResizeObserver(updateMetrics);
     observer.observe(el);
-    setTreeWidth(el.clientWidth);
+    updateMetrics();
+
     return () => observer.disconnect();
   }, []);
 
@@ -316,27 +303,44 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
 
   return (
     <>
-      <div className="border border-gray-300 dark:border-gray-700">
-        <div>
-          <div ref={treeContainerRef}>
+      <div className="role-hierarchy">
+        <div className="role-hierarchy__panel role-hierarchy__panel--editor">
+          <div className="role-hierarchy__panel-header">
+            <h3 className="role-hierarchy__panel-title">Organização de papéis</h3>
+            <p className="role-hierarchy__panel-description">Arraste os nós para redefinir a estrutura hierárquica.</p>
+          </div>
+
+          <div className="role-hierarchy__tree-surface" ref={treeContainerRef}>
             <Tree<ArboristNode>
+              className="role-hierarchy__tree"
               data={treeData}
               onMove={handleMove}
               width={treeWidth || undefined}
-              height={400}
-              rowHeight={36}
-              indent={INDENT}
+              height={treeHeight || TREE_FALLBACK_HEIGHT}
+              rowHeight={treeRowHeight}
+              indent={treeIndent}
             >
               {NodeRenderer}
             </Tree>
           </div>
-          <Button onClick={handleSave} className="rounded-sm mt-4">
-            Salvar
-          </Button>
+
+          <div className="role-hierarchy__panel-footer">
+            <Button onClick={handleSave} className="theme-button--primary role-hierarchy__save-button">
+              Salvar hierarquia
+            </Button>
+          </div>
         </div>
-        <div className="bg-gray-300" />
-        <div className="rounded-r-xl overflow-hidden">
+
+        <div className="role-hierarchy__divider" />
+
+        <div className="role-hierarchy__panel role-hierarchy__panel--preview">
+          <div className="role-hierarchy__panel-header">
+            <h3 className="role-hierarchy__panel-title">Visualização</h3>
+          </div>
+
+          <div className="role-hierarchy__flow-surface">
           <ReactFlow
+            className="role-hierarchy__flow"
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
@@ -344,12 +348,15 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
             fitView
             nodesDraggable={false}
             nodesConnectable={false}
+            proOptions={{ hideAttribution: true }}
           >
             <Background variant={BackgroundVariant.Dots} />
             <Controls />
           </ReactFlow>
+          </div>
         </div>
       </div>
+
       <StepLoader loading={loading} onClose={() => setLoading(false)} />
     </>
   );
