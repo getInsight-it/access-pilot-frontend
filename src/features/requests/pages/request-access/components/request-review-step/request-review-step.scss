@@ -5,6 +5,74 @@
   padding: var(--request-access-system-step-padding);
   box-sizing: border-box;
 
+  &__highlight {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-access-justification-gap);
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-step-panel-surface-color);
+  }
+
+  &__highlight-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__highlight-eyebrow {
+    margin: 0;
+    color: var(--request-access-system-step-icon-color-active);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+    text-transform: uppercase;
+  }
+
+  &__highlight-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-step-panel-title-font-size);
+    font-weight: var(--request-access-step-panel-title-font-weight);
+  }
+
+  &__highlight-description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__highlight-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--request-access-stepper-item-min-width), 1fr));
+    gap: var(--request-access-system-step-grid-gap);
+  }
+
+  &__metric {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-justification-card-background);
+  }
+
+  &__metric-label {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__metric-value {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-step-panel-title-font-size);
+    font-weight: var(--request-access-step-panel-title-font-weight);
+  }
+
   &__summary,
   &__attachments {
     display: flex;

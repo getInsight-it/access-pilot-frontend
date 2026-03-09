@@ -22,9 +22,35 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
 }) => {
   const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || "Não selecionado";
   const reasonValue = reason || "Não informado";
+  const attachmentGroupCount = attachments.length;
+  const totalAttachedFiles = attachments.reduce((total, attachment) => total + attachment.files.length, 0);
 
   return (
     <div className="request-review-step">
+      <div className="request-review-step__highlight">
+        <div className="request-review-step__highlight-content">
+          <p className="request-review-step__highlight-eyebrow">Conferência final</p>
+          <h4 className="request-review-step__highlight-title">Revise os dados antes de enviar sua solicitação</h4>
+          <p className="request-review-step__highlight-description">
+            Depois do envio, a aprovação seguirá o fluxo do sistema selecionado.
+          </p>
+        </div>
+        <div className="request-review-step__highlight-metrics">
+          <article className="request-review-step__metric">
+            <p className="request-review-step__metric-label">Itens revisados</p>
+            <p className="request-review-step__metric-value">3</p>
+          </article>
+          <article className="request-review-step__metric">
+            <p className="request-review-step__metric-label">Tipos de anexo</p>
+            <p className="request-review-step__metric-value">{attachmentGroupCount}</p>
+          </article>
+          <article className="request-review-step__metric">
+            <p className="request-review-step__metric-label">Arquivos anexados</p>
+            <p className="request-review-step__metric-value">{totalAttachedFiles}</p>
+          </article>
+        </div>
+      </div>
+
       <div className="request-review-step__summary">
         <h4 className="request-review-step__section-title">Resumo da solicitação</h4>
 

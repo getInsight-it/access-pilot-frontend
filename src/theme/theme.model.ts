@@ -342,6 +342,12 @@ export interface ThemeAttributes {
   "request-status-tone-neutral-text-color"?: string,
   "request-status-tone-neutral-surface-color"?: string,
   "request-status-tone-neutral-solid-color"?: string,
+  "request-status-tone-warning-text-color"?: string,
+  "request-status-tone-warning-surface-color"?: string,
+  "request-status-tone-warning-solid-color"?: string,
+  "request-status-tone-violet-text-color"?: string,
+  "request-status-tone-violet-surface-color"?: string,
+  "request-status-tone-violet-solid-color"?: string,
 
   // request-access
   "request-access-page-padding-inline"?: string,
