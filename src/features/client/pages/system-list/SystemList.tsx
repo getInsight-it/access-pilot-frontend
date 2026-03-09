@@ -9,8 +9,8 @@ import { motion } from "framer-motion";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ui/dropdown-menu.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
-import { Switch } from "@ui/switch.tsx";
 import { TablePagination } from "@components/table-pagination/TablePagination.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/common/enum/client-status.enum";
 import { useSystemListData, useSystemOperations, useSystemNavigation } from "./useSystemList.ts";
@@ -554,16 +554,18 @@ export default function SystemList() {
             </DialogDescription>
           </DialogHeader>
 
-          <div>
-            <div>
-              <span>
-                Sincronizar papéis também?
-              </span>
-              <span>
-                Pode aumentar o tempo da operação.
-              </span>
+          <div className="app-dialog__body">
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
+                  Sincronizar papéis também?
+                </span>
+                <span className="app-dialog__surface-description">
+                  Pode aumentar o tempo da operação.
+                </span>
+              </div>
+              <Toggle checked={syncRoles} onCheckedChange={setSyncRoles} disabled={syncAllLoading} />
             </div>
-            <Switch checked={syncRoles} onCheckedChange={setSyncRoles} disabled={syncAllLoading} />
           </div>
 
           <DialogFooter>
@@ -571,7 +573,7 @@ export default function SystemList() {
               Cancelar
             </Button>
             <Button onClick={handleSyncAll} disabled={syncAllLoading}>
-              {syncAllLoading ? <Loader2 className="animate-spin" /> : <RefreshCw />}
+              {syncAllLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <RefreshCw className="app-dialog__button-icon" />}
               {syncAllLoading ? "Sincronizando..." : "Sincronizar"}
             </Button>
           </DialogFooter>

@@ -1,6 +1,7 @@
 import { cn } from "../../../config/lib/utils.ts";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import "./step-loader.scss";
 
 const loadingStates = [
   { text: "Carregando" },
@@ -58,10 +59,12 @@ const LoaderCore = ({
   value?: number;
 }) => {
   return (
-    <div>
+    <div className="step-loader__list">
       {loadingStates.map((loadingState, index) => {
         const distance = Math.abs(index - value);
         const opacity = Math.max(1 - distance * 0.2, 0);
+        const isCompleted = index < value;
+        const isActive = index === value;
 
         return (
           <motion.div
@@ -69,16 +72,22 @@ const LoaderCore = ({
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
+            className={cn(
+              "step-loader__item",
+              isCompleted && "step-loader__item--completed",
+              isActive && "step-loader__item--active",
+              index > value && "step-loader__item--upcoming"
+            )}
           >
-            <div>
+            <div className="step-loader__icon-wrapper">
               {index > value && (
-                <CheckIcon />
+                <CheckIcon className="step-loader__icon" />
               )}
               {index <= value && (
-                <CheckFilled />
+                <CheckFilled className="step-loader__icon" />
               )}
             </div>
-            <span>
+            <span className="step-loader__text">
               {loadingState.text}
             </span>
           </motion.div>
@@ -131,14 +140,14 @@ export const MultiStepLoader = ({
     <AnimatePresence mode="wait">
       {loading && (
         <motion.div
+          className="step-loader__overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}>
-          <div>
+          exit={{ opacity: 0 }}
+        >
+          <div className="step-loader__card">
             <LoaderCore value={currentState} loadingStates={loadingStates} />
           </div>
-
-          <div />
         </motion.div>
       )}
     </AnimatePresence>
@@ -147,7 +156,7 @@ export const MultiStepLoader = ({
 
 export function StepLoader({ onClose, loading }: StepLoaderProps) {
   return (
-    <div>
+    <div className="step-loader">
       <MultiStepLoader
         loadingStates={loadingStates}
         loading={loading}

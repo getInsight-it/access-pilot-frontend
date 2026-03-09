@@ -1,9 +1,10 @@
-import { Logo } from "../../../common/components/Logo.tsx";
 import { Button } from "../../../common/external/ui/button.tsx";
 import { authService } from "../common/AuthService.ts";
 import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 import { useState } from "react";
 import { useToast } from "../../../common/external/ui/use-toast.ts";
+import ThemedLogo from "../../../common/components/layout/header/partials/themed-logo/ThemedLogo.tsx";
+import "./Login.scss";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,31 +27,32 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
+    <div className="login-page">
+      <section className="login-page__visual">
+        <div className="login-page__visual-canvas">
+          <LoginBandCanvas />
+        </div>
+      </section>
 
-      <div>
-        &nbsp;
-        <Logo />
-      </div>
-      <div>
-        <div />
-        <LoginBandCanvas />
-      </div>
-      <div>
-        <div>
-          <div>
-            <h1>
+      <section className="login-page__panel">
+        <div className="login-page__panel-content">
+          <div className="login-page__brand">
+            <ThemedLogo />
+          </div>
+          <div className="login-page__heading">
+            <h1 className="login-page__title">
               Acesse sua conta
             </h1>
+            <p className="login-page__description">
+              Entre com sua conta para continuar no AccessPilot.
+            </p>
           </div>
-          <Button type="button" onClick={signIn} disabled={isLoading}>
+          <Button type="button" className="login-page__action" onClick={signIn} disabled={isLoading}>
             {isLoading ? "Entrando..." : "Entrar"}
           </Button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
-
 

@@ -1,7 +1,7 @@
 import { NavItem } from "../../../../types";
 import { UserRoleEnum } from "../../../../types/user/user.model.ts";
 
-export const navItems: NavItem[] = [
+export const primaryNavItems: NavItem[] = [
   {
     title: "Dashboard",
     href: "/dashboard/general-info",
@@ -12,22 +12,14 @@ export const navItems: NavItem[] = [
   {
     title: "Minhas solicitações",
     href: "/my-access-requests",
-    icon: "book",
+    icon: "post",
     label: "Minhas solicitações"
   },
   {
     title: "Solicitar acesso",
     href: "/request-access",
-    icon: "key",
+    icon: "hand",
     label: "Solicitar acesso"
-  },
-  {
-    title: "Gerenciar sistemas",
-    href: "/systems",
-    icon: "cog",
-    label: "Gerenciar Sistemas",
-    protected: true,
-    roles: [UserRoleEnum.ADMIN]
   },
   {
     title: "Gerenciar solicitações",
@@ -36,6 +28,17 @@ export const navItems: NavItem[] = [
     label: "Gerenciar solicitações",
     protected: true,
     roles: [UserRoleEnum.APPROVER]
+  },
+];
+
+export const administrationNavItems: NavItem[] = [
+  {
+    title: "Gerenciar sistemas",
+    href: "/systems",
+    icon: "settings",
+    label: "Gerenciar Sistemas",
+    protected: true,
+    roles: [UserRoleEnum.ADMIN]
   },
   {
     title: "Gerenciar esferas",
@@ -47,4 +50,10 @@ export const navItems: NavItem[] = [
   }
 ];
 
-export const supportNavItems: NavItem[] = []
+export const supportNavItems: NavItem[] = [];
+
+export const navItems: NavItem[] = [
+  ...primaryNavItems,
+  ...administrationNavItems,
+  ...supportNavItems
+];

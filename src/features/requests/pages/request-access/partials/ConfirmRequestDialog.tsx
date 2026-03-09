@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "../../../../../common/external/ui/dialog.tsx";
-import { FileAttachment } from "./AttachmentStep.tsx";
+import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
 
 interface ConfirmRequestDialogProps {
   isOpen: boolean;

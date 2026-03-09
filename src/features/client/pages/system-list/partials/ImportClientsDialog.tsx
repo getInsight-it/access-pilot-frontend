@@ -3,7 +3,7 @@ import type { ChangeEvent } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "@ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
-import { Switch } from "@ui/switch.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
 
 interface ImportClientsDialogProps {
   open: boolean;
@@ -54,7 +54,7 @@ export const ImportClientsDialog = ({
         ref={fileInputRef}
         type="file"
         accept="application/json"
-        className="hidden"
+        className="app-dialog__hidden-input"
         onChange={handleFileChange}
       />
 
@@ -69,49 +69,49 @@ export const ImportClientsDialog = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div>
-            <div>
-              <div>
-                <span>
+          <div className="app-dialog__body">
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
                   Forçar importação?
                 </span>
-                <span>
+                <span className="app-dialog__surface-description">
                   Atualiza registros existentes e remove ausentes.
                 </span>
               </div>
-              <Switch checked={importForce} onCheckedChange={onImportForceChange} disabled={importLoading} />
+              <Toggle checked={importForce} onCheckedChange={onImportForceChange} disabled={importLoading} />
             </div>
 
-            <div>
-              <div>
-                <span>
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
                   Importar papéis?
                 </span>
-                <span>
+                <span className="app-dialog__surface-description">
                   Inclui roles na exportação quando o sistema é gerenciado.
                 </span>
               </div>
-              <Switch checked={importRoles} onCheckedChange={onImportRolesChange} disabled={importLoading} />
+              <Toggle checked={importRoles} onCheckedChange={onImportRolesChange} disabled={importLoading} />
             </div>
 
-            <div>
-              <div>
-                <span>
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
                   Importar configurações de anexo?
                 </span>
-                <span>
+                <span className="app-dialog__surface-description">
                   Substitui as configurações do sistema.
                 </span>
               </div>
-              <Switch checked={importConfigurations} onCheckedChange={onImportConfigurationsChange} disabled={importLoading} />
+              <Toggle checked={importConfigurations} onCheckedChange={onImportConfigurationsChange} disabled={importLoading} />
             </div>
 
-            <div>
-              <div>
-                <span>
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
                   Arquivo JSON
                 </span>
-                <span>
+                <span className="app-dialog__surface-description">
                   {importFile ? importFile.name : "Nenhum arquivo selecionado"}
                 </span>
               </div>
@@ -126,7 +126,7 @@ export const ImportClientsDialog = ({
               Cancelar
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
-              {importLoading ? <Loader2 className="animate-spin" /> : <FileUp />}
+              {importLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileUp className="app-dialog__button-icon" />}
               {importLoading ? "Importando..." : "Importar"}
             </Button>
           </DialogFooter>

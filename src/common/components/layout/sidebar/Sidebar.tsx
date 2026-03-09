@@ -1,7 +1,7 @@
 import { cn } from "../../../../config/lib/utils.ts";
 import { ChevronLeft } from "lucide-react";
 import { useSidebar } from "../../../hooks/useSidebar.tsx";
-import { navItems, supportNavItems } from "./constant/sidebar.constant.ts";
+import { administrationNavItems, primaryNavItems, supportNavItems } from "./constant/sidebar.constant.ts";
 import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
 import "./Sidebar.scss";
 
@@ -22,11 +22,19 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="dashboard-sidebar__content">
         <div className="dashboard-sidebar__nav-items">
           <div className="dashboard-sidebar__group">
-            <DashboardNav items={navItems} />
+            <DashboardNav items={primaryNavItems} />
           </div>
-          <div className="dashboard-sidebar__group">
-            <DashboardNav items={supportNavItems} />
-          </div>
+          {administrationNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <p className="dashboard-sidebar__section-title">Administração</p>
+              <DashboardNav items={administrationNavItems} />
+            </div>
+          )}
+          {supportNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <DashboardNav items={supportNavItems} />
+            </div>
+          )}
         </div>
       </div>
 

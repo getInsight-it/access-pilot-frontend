@@ -1,7 +1,7 @@
 import { Button } from "../../../../../common/external/ui/button.tsx";
 import { FlipWords } from "../../../../../common/external/ui/flip-words.tsx";
 import { Link } from "react-router-dom";
-import { FileAttachment } from "./AttachmentStep.tsx";
+import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 
 interface SuccessFeedbackProps {

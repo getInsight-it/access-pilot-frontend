@@ -321,7 +321,7 @@ export default function LevelItems() {
           <DialogHeader>
             <DialogTitle>Você tem certeza?</DialogTitle>
           </DialogHeader>
-          <p>
+          <p className="app-dialog__text">
             Esta ação não pode ser desfeita. Isso irá permanentemente excluir o item
             {operations.itemToDelete && <strong> {operations.itemToDelete.name}</strong>}.
           </p>

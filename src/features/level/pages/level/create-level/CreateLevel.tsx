@@ -1,48 +1,54 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../../../../common/external/ui/button.tsx";
-import { Input } from "../../../../../common/external/ui/input.tsx";
-import { Label } from "../../../../../common/external/ui/label.tsx";
-import { RadioGroup, RadioGroupItem } from "../../../../../common/external/ui/radio-group.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../../common/external/ui/select.tsx";
-import { Textarea } from "../../../../../common/external/ui/textarea.tsx";
-import { Breadcrumbs } from "../../../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
-import { Separator } from "../../../../../common/external/ui/separator.tsx";
-import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
-import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
-import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronDown } from "lucide-react";
+import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
+import { Button } from "../../../../../common/external/ui/button.tsx";
+import { RadioGroup, RadioGroupItem } from "../../../../../common/external/ui/radio-group.tsx";
+import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
+import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
 import { useCreateLevelData, useCreateLevelOperations } from "./useCreateLevel.ts";
+import "./CreateLevel.scss";
+
+interface FormErrors {
+  name?: string;
+  sigla?: string;
+  description?: string;
+  endpoint?: string;
+  apiKey?: string;
+}
 
 export default function CreateOrEditLevel() {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const formData = useCreateLevelData();
   const { handleSubmit } = useCreateLevelOperations(formData);
-  const [errors, setErrors] = useState<{ name?: string; sigla?: string; description?: string; endpoint?: string; apiKey?: string }>({});
+  const { initializeForm } = formData;
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const breadcrumbItems = [
-    { title: "Gerenciar Esferas", link: PRIVATE_ROUTES.LEVELS },
-    { title: formData.isEditing ? "Editar esfera" : "Criar esfera", link: "" }
-  ];
+  const pageTitle = formData.isEditing ? "Editar esfera" : "Nova esfera";
+  const pageDescription = formData.isEditing
+    ? "Atualize os dados da esfera e salve as alteracoes."
+    : "Preencha os dados gerais para criar uma nova esfera.";
 
   useEffect(() => {
     if (isAuthenticated) {
-      formData.initializeForm();
+      initializeForm();
     }
-  }, [isAuthenticated, formData.initializeForm]);
+  }, [isAuthenticated, initializeForm]);
 
-  if (formData.loading)
+  if (formData.loading) {
     return (
-      <div>
-        <HighlightLoader />{" "}
+      <div className="create-level__loader">
+        <HighlightLoader />
       </div>
     );
+  }
 
   const validateForm = (): boolean => {
-    const newErrors: { name?: string; sigla?: string; description?: string; endpoint?: string; apiKey?: string } = {};
+    const newErrors: FormErrors = {};
     const name = formData.name?.trim() || "";
     const sigla = formData.sigla?.trim() || "";
     const description = formData.description?.trim() || "";
@@ -64,14 +70,13 @@ export default function CreateOrEditLevel() {
 
     if (formData.type === "EXTERNAL") {
       const endpoint = formData.endpoint?.trim() || "";
+      const apiKeyValue = formData.apiKey?.trim() || "";
 
       if (endpoint.length < 3) {
         newErrors.endpoint = "O endpoint é obrigatório para esferas externas.";
       }
 
-      const apiKeyValue = formData.apiKey?.trim() || "";
-
-      if(apiKeyValue.length === 0 && !formData.hasExistingApiKey) {
+      if (apiKeyValue.length === 0 && !formData.hasExistingApiKey) {
         newErrors.apiKey = "A API Key é obrigatória para esferas externas.";
       }
     }
@@ -80,199 +85,244 @@ export default function CreateOrEditLevel() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSave = (event?: React.FormEvent) => {
+    event?.preventDefault();
     if (!validateForm()) return;
-    handleSubmit(e);
+    handleSubmit(event);
   };
 
   return (
-    <ScrollArea>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+    <motion.div
+      className="create-level"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <HeaderContainer className="create-level__header-container">
+        <div className="create-level__header">
+          <div className="create-level__header-main">
+            <button
+              type="button"
+              className="create-level__back-button"
+              onClick={() => navigate(PRIVATE_ROUTES.LEVELS)}
+            >
+              <ArrowLeft size={18} />
+            </button>
 
-        <div>
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div>
-              <Heading
-                title={formData.isEditing ? "Editar esfera" : "Nova esfera"}
-                returnButton={true}
-                onReturnClick={() => { navigate(PRIVATE_ROUTES.LEVELS); }}
-                code={formData.sphereId}
-              />
+            <div className="create-level__heading-content">
+              <div className="create-level__title-row">
+                <h2 className="create-level__title">{pageTitle}</h2>
+              </div>
+              <p className="create-level__description">{pageDescription}</p>
             </div>
-          </HeaderContainer>
-
-          <Separator />
+          </div>
         </div>
+      </HeaderContainer>
 
-        <ScrollArea>
-          <div className="max-w-content-container m-auto">
-            <form onSubmit={(e) => { e.preventDefault(); handleSave(e); }} className="max-w-content-container m-auto">
-              <div>
-                <div>
-                  <div>
-                    <Label htmlFor="name">
-                      Nome <span className="text-primary-600">*</span>
-                    </Label>
-                    <Input
-                      className={errors.name ? "border-red-500" : ""}
+      <ScrollArea className="create-level__scroll-area" viewportClassName="create-level__scroll-viewport">
+        <div className="create-level__content-wrapper">
+          <form className="create-level__form" onSubmit={handleSave}>
+            <div className="create-level__card">
+              <div className="create-level__card-content">
+                <div className="create-level__row">
+                  <div className="create-level__field">
+                    <label className="create-level__label" htmlFor="name">
+                      Nome <span className="create-level__required">*</span>
+                    </label>
+                    <input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => { formData.setName(e.target.value); if (errors.name) setErrors(prev => ({ ...prev, name: undefined })); }}
                       placeholder="Nome da esfera"
+                      className={`app-input create-level__input${errors.name ? " create-level__input--error" : ""}`}
+                      onChange={(event) => {
+                        formData.setName(event.target.value);
+                        if (errors.name) {
+                          setErrors((previous) => ({ ...previous, name: undefined }));
+                        }
+                      }}
                       required
                     />
-                    {errors.name && <p className="text-red-500">{errors.name}</p>}
+                    {errors.name && <p className="create-level__error">{errors.name}</p>}
                   </div>
-                  <div>
-                    <Label htmlFor="sigla">
-                      Sigla <span className="text-primary-600">*</span>
-                    </Label>
-                    <Input
-                      className={errors.sigla ? "border-red-500" : ""}
+
+                  <div className="create-level__field">
+                    <label className="create-level__label" htmlFor="sigla">
+                      Sigla <span className="create-level__required">*</span>
+                    </label>
+                    <input
                       id="sigla"
                       value={formData.sigla}
-                      onChange={(e) => { formData.setSigla(e.target.value); if (errors.sigla) setErrors(prev => ({ ...prev, sigla: undefined })); }}
                       placeholder="Sigla da esfera (ex: FED, EST)"
-                      required />
+                      className={`app-input create-level__input${errors.sigla ? " create-level__input--error" : ""}`}
+                      onChange={(event) => {
+                        formData.setSigla(event.target.value);
+                        if (errors.sigla) {
+                          setErrors((previous) => ({ ...previous, sigla: undefined }));
+                        }
+                      }}
+                      required
+                    />
                     {errors.sigla ? (
-                      <p className="text-red-500">{errors.sigla}</p>
+                      <p className="create-level__error">{errors.sigla}</p>
                     ) : (
-                      <p>A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.</p>
+                      <p className="create-level__hint">
+                        A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.
+                      </p>
                     )}
                   </div>
-                  <div>
-                    <Label htmlFor="parentSphere">
-                      Esfera pai <span className="text-primary-600">*</span>
-                    </Label>
-                    <div>
-                      <Select
+
+                  <div className="create-level__field">
+                    <label className="create-level__label" htmlFor="parentSphere">
+                      Esfera pai <span className="create-level__required">*</span>
+                    </label>
+                    <div className="app-select-field">
+                      <select
+                        id="parentSphere"
                         value={formData.parentId ?? "0"}
-                        onValueChange={(value) => {
+                        className="app-input app-select create-level__select"
+                        onChange={(event) => {
+                          const value = event.target.value;
                           formData.setParentId(value);
-                          const selectedSphere = formData.allSpheres.find((s) => s.id === value);
+                          const selectedSphere = formData.allSpheres.find((sphere) => sphere.id === value);
                           formData.setSelectedSphereName(value === "0" ? "Nenhuma (esfera pai)" : selectedSphere?.name || "");
                         }}
-                        disabled={formData.isEditing && formData.hasItems}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione a esfera pai">{formData.selectedSphereName}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0">Nenhuma (esfera pai)</SelectItem>
-                          {formData.allSpheres.filter((s) => s.name !== formData.name).map((sphere) => (
-                            <SelectItem key={sphere.id} value={sphere.id}>
+                        disabled={formData.isEditing && formData.hasItems}
+                      >
+                        <option value="0">Nenhuma (esfera pai)</option>
+                        {formData.allSpheres
+                          .filter((sphere) => sphere.name !== formData.name)
+                          .map((sphere) => (
+                            <option key={sphere.id} value={sphere.id}>
                               {sphere.name}
-                            </SelectItem>
+                            </option>
                           ))}
-                        </SelectContent>
-                      </Select>
-                      {formData.isEditing && formData.hasItems && (
-                        <p className="text-blue-600">
-                          A esfera pai não pode ser alterada porque esta esfera já possui itens.
-                        </p>
-                      )}
+                      </select>
+                      <ChevronDown className="app-select-field__icon" />
                     </div>
+                    {formData.isEditing && formData.hasItems && (
+                      <p className="create-level__notice">A esfera pai não pode ser alterada porque esta esfera já possui itens.</p>
+                    )}
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="description">
-                    Descrição <span className="text-primary-600">*</span>
-                  </Label>
-                  <Textarea
-                    placeholder="Escreva uma descrição para a esfera"
-                    className="resize-none"
+                <div className="create-level__field">
+                  <label className="create-level__label" htmlFor="description">
+                    Descrição <span className="create-level__required">*</span>
+                  </label>
+                  <textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => { formData.setDescription(e.target.value); if (errors.description) setErrors(prev => ({ ...prev, description: undefined })); }}
-                    required
+                    placeholder="Escreva uma descrição para a esfera"
                     maxLength={200}
+                    className={`app-textarea create-level__textarea${errors.description ? " create-level__textarea--error" : ""}`}
+                    onChange={(event) => {
+                      formData.setDescription(event.target.value);
+                      if (errors.description) {
+                        setErrors((previous) => ({ ...previous, description: undefined }));
+                      }
+                    }}
+                    required
                   />
                   {errors.description ? (
-                    <p className="text-red-500">{errors.description}</p>
+                    <p className="create-level__error">{errors.description}</p>
                   ) : (
-                    <div>{formData.description.length}/200 caracteres</div>
+                    <p className="create-level__counter">{formData.description.length}/200 caracteres</p>
                   )}
                 </div>
 
-                <div>
-                  <Label>
-                    Tipo <span className="text-primary-600">*</span>
-                  </Label>
+                <div className="create-level__field">
+                  <label className="create-level__label">
+                    Tipo <span className="create-level__required">*</span>
+                  </label>
                   <RadioGroup
+                    className="app-option-select create-level__type-group"
                     value={formData.type}
                     onValueChange={(value: "BUSINESS" | "EXTERNAL") => {
                       formData.setType(value);
-
                       if (value !== "EXTERNAL") {
                         formData.setHasExistingApiKey(false);
                       }
                     }}
-                    disabled={formData.isEditing}>
-                    <div>
-                      <RadioGroupItem value="BUSINESS" id="BUSINESS" disabled={formData.isEditing} />
-                      <Label htmlFor="BUSINESS">Negocial</Label>
-                    </div>
-                    <div>
-                      <RadioGroupItem value="EXTERNAL" id="EXTERNAL" disabled={formData.isEditing} />
-                      <Label htmlFor="EXTERNAL">Externa</Label>
-                    </div>
+                    disabled={formData.isEditing}
+                  >
+                    <label
+                      className={`app-option-select__item${formData.type === "BUSINESS" ? " app-option-select__item--active" : ""}${formData.isEditing ? " app-option-select__item--disabled" : ""}`}
+                      htmlFor="BUSINESS"
+                    >
+                      <RadioGroupItem className="app-option-select__control" value="BUSINESS" id="BUSINESS" disabled={formData.isEditing} />
+                      <span className="app-option-select__label">Negocial</span>
+                    </label>
+
+                    <label
+                      className={`app-option-select__item${formData.type === "EXTERNAL" ? " app-option-select__item--active" : ""}${formData.isEditing ? " app-option-select__item--disabled" : ""}`}
+                      htmlFor="EXTERNAL"
+                    >
+                      <RadioGroupItem className="app-option-select__control" value="EXTERNAL" id="EXTERNAL" disabled={formData.isEditing} />
+                      <span className="app-option-select__label">Externa</span>
+                    </label>
                   </RadioGroup>
                   {formData.isEditing && (
-                    <p className="text-blue-600">O tipo da esfera não pode ser alterado após a criação.</p>
+                    <p className="create-level__notice">O tipo da esfera não pode ser alterado após a criação.</p>
                   )}
                 </div>
 
                 {formData.type === "EXTERNAL" && (
-                  <div>
-                    <div>
-                      <Label htmlFor="endpoint">
-                        Endpoint <span className="text-primary-600">*</span>
-                      </Label>
-                      <Input
-                        placeholder="https://api.exemplo.com"
-                        className={errors.endpoint ? "border-red-500" : ""}
+                  <div className="create-level__external-grid">
+                    <div className="create-level__field">
+                      <label className="create-level__label" htmlFor="endpoint">
+                        Endpoint <span className="create-level__required">*</span>
+                      </label>
+                      <input
                         id="endpoint"
                         value={formData.endpoint}
-                        onChange={(e) => { formData.setEndpoint(e.target.value); if (errors.endpoint) setErrors(prev => ({ ...prev, endpoint: undefined })); }}
-                        required />
-                      {errors.endpoint && <p className="text-red-500">{errors.endpoint}</p>}
-                      <div>
-                        <span><span className="bold text-primary-600 cursor-pointer font-bold">Clique aqui</span> Para mais informações sobre a criação do seu endpoint.</span>
-                      </div>
+                        placeholder="https://api.exemplo.com"
+                        className={`app-input create-level__input${errors.endpoint ? " create-level__input--error" : ""}`}
+                        onChange={(event) => {
+                          formData.setEndpoint(event.target.value);
+                          if (errors.endpoint) {
+                            setErrors((previous) => ({ ...previous, endpoint: undefined }));
+                          }
+                        }}
+                        required
+                      />
+                      {errors.endpoint && <p className="create-level__error">{errors.endpoint}</p>}
+                      <p className="create-level__hint">
+                        <span className="create-level__endpoint-link">Clique aqui</span>
+                        para mais informações sobre a criação do seu endpoint.
+                      </p>
                     </div>
-                    <div>
-                      <Label htmlFor="apiKey">
-                        API Key <span className="text-primary-600">*</span>
-                      </Label>
-                      <Input
-                        placeholder={formData.isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
-                        className={errors.apiKey ? "border-red-500" : ""}
+
+                    <div className="create-level__field">
+                      <label className="create-level__label" htmlFor="apiKey">
+                        API Key <span className="create-level__required">*</span>
+                      </label>
+                      <input
                         id="apiKey"
                         value={formData.apiKey}
-                        onChange={(e) => { formData.setApiKey(e.target.value); if (errors.apiKey) setErrors(prev => ({ ...prev, apiKey: undefined })); }}
-                        required={!formData.isEditing} />
-                      {errors.apiKey && <p className="text-red-500">{errors.apiKey}</p>}
+                        placeholder={formData.isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
+                        className={`app-input create-level__input${errors.apiKey ? " create-level__input--error" : ""}`}
+                        onChange={(event) => {
+                          formData.setApiKey(event.target.value);
+                          if (errors.apiKey) {
+                            setErrors((previous) => ({ ...previous, apiKey: undefined }));
+                          }
+                        }}
+                        required={!formData.isEditing}
+                      />
+                      {errors.apiKey && <p className="create-level__error">{errors.apiKey}</p>}
                     </div>
                   </div>
                 )}
-
               </div>
-            </form>
-          </div>
-        </ScrollArea>
+            </div>
 
-        <footer>
-          <Button onClick={handleSave}>
-            {formData.isEditing ? "Atualizar esfera" : "Criar esfera"}
-          </Button>
-        </footer>
-
-      </motion.div>
-    </ScrollArea>
+            <div className="create-level__actions">
+              <Button type="submit" className="create-level__action-button">
+                {formData.isEditing ? "Atualizar esfera" : "Criar esfera"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 }

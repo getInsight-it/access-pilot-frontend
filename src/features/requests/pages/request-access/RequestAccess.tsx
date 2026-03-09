@@ -1,32 +1,27 @@
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
+import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
-import { cn } from "../../../../config/lib/utils.ts";
-import { Check } from "lucide-react";
-import { AutoHeight } from "../../../../common/components/AutoHeigth.tsx";
-import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../common/external/ui/card.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
 import { ErrorFeedback } from "./partials/ErrorFeedbackComponent.tsx";
 import { SuccessFeedback } from "./partials/SuccessFeedbackForm.tsx";
-import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
+import { StepLoader } from "@common/components/loading/StepLoader.tsx";
 import { ConfirmRequestDialog } from "./partials/ConfirmRequestDialog.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
-import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
-import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
-import useAuthStore from "../../../../store/authStore.ts";
-import { useToast } from "../../../../common/external/ui/use-toast.ts";
-import { clientService } from "../../../client/common/service/client-service.ts";
-import { roleService } from "../../../role/common/service/role-service.ts";
-import useWindowSize from "../../../../common/hooks/use-window-size.ts";
-import { ClientStep } from "./partials/ClientSelectionStep.tsx";
-import { RoleStep } from "./partials/RoleSelectionStep.tsx";
-import AttachmentStep, { FileAttachment } from "./partials/AttachmentStep.tsx";
-import { DetailsStep } from "./partials/DetailsStep.tsx";
+import { ReactNode, useEffect, useState, useCallback } from "react";
+import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
+import useAuthStore from "@store/authStore.ts";
+import { useToast } from "@common/external/ui/use-toast.ts";
+import { clientService } from "@features/client/common/service/client-service.ts";
+import { roleService } from "@features/role/common/service/role-service.ts";
 import { requestService } from "../../common/api/request-service.ts";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { formatErrorMessages } from "@common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { RequestStepper } from "./components/request-stepper/RequestStepper.tsx";
+import { RequestStepLayout } from "./components/request-step-layout/RequestStepLayout.tsx";
+import { RequestSystemStep } from "./components/request-system-step/RequestSystemStep.tsx";
+import { RequestRoleStep } from "./components/request-role-step/RequestRoleStep.tsx";
+import { FileAttachment, RequestJustificationStep } from "./components/request-justification-step/RequestJustificationStep.tsx";
+import { RequestReviewStep } from "./components/request-review-step/RequestReviewStep.tsx";
+import "./RequestAccess.scss";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -38,6 +33,15 @@ export interface BasicFormFieldInterface {
 
 export type RequestFormFieldType = "clientId" | "roleId" | "codeItem" | "externalCode" | "reason" | "attachments";
 
+interface RequestStepConfig {
+  id: number;
+  number: number;
+  title: string;
+  description: string;
+  panelTitle: string;
+  content: ReactNode;
+}
+
 export default function RequestAccess() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
@@ -47,13 +51,6 @@ export default function RequestAccess() {
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [stepsState, setStepsState] = useState<Record<number, "pending" | "completed" | "error">>({
-    1: "pending",
-    2: "pending",
-    3: "pending",
-    4: "pending"
-  });
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { toast } = useToast();
   const location = useLocation();
@@ -130,17 +127,11 @@ export default function RequestAccess() {
     }
 
     if(isValid) {
-      const currentStepAux = currentStep;
       setCurrentStep(currentStep + 1);
-      setStepsState((prevState) => {
-        const newState = { ...prevState };
-        newState[currentStepAux] = "completed";
-        return newState;
-      });
     } else {
       toast({
         title: "Campos obrigatórios",
-        description: `Por favor, preencha todos os campos obrigatórios antes de prosseguir.`,
+        description: "Por favor, preencha todos os campos obrigatórios antes de prosseguir.",
         variant: "destructive"
       });
     }
@@ -176,6 +167,26 @@ export default function RequestAccess() {
     }
   }, [toast]);
 
+  const handleSelectRole = useCallback(async (role: RoleResponseInterface) => {
+    setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
+    setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
+    setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
+
+    try {
+      const roleWithDetails = await roleService.getRoleById(role.id.toString());
+      setRoles((prevRoles) => prevRoles.map((item) => (
+        item.id === roleWithDetails.id ? roleWithDetails : item
+      )));
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: "Erro ao carregar detalhes do papel",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [setBasicFormFieldValue, toast]);
+
   const handlerSelectedClient = useCallback((client: ClientResponseInterface, autoAdvance: boolean = false) => {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
     setBasicFormFieldValue({ field: "roleId", value: "", error: null });
@@ -185,19 +196,17 @@ export default function RequestAccess() {
     setBasicFormFieldValue({ field: "attachments", value: [], error: null });
 
     if (autoAdvance) {
-      setStepsState({ 1: "completed", 2: "pending", 3: "pending", 4: "pending" });
       setCurrentStep(2);
     } else {
-      setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
       setCurrentStep(1);
     }
 
     getRolesByClientId(client.clientId);
-  }, [setBasicFormFieldValue, setStepsState, setCurrentStep, getRolesByClientId]);
+  }, [setBasicFormFieldValue, setCurrentStep, getRolesByClientId]);
 
   const init = useCallback(() => {
     if(isAuthenticated) {
-      getClients();
+      void getClients();
       const client = location.state;
       if(client) {
         handlerSelectedClient(client, true);
@@ -209,39 +218,37 @@ export default function RequestAccess() {
     init();
   }, [init]);
 
-  const { width } = useWindowSize();
-  const isLargeScreen = width >= 1024;
-
-  const steps = [
+  const steps: RequestStepConfig[] = [
     {
       id: 1,
-      title: "Para qual sistema você quer acesso?",
+      title: "Sistema",
       number: 1,
-      description: "Escolha o sistema que você quer se conectar.",
+      description: "Para qual sistema você precisa de acesso",
+      panelTitle: "Escolha o sistema que você precisa de acesso:",
       content: (
-        <ClientStep
-          form={customForm}
+        <RequestSystemStep
           clients={clients}
-          selectedClient={customForm["clientId"].value}
-          handlerSelectedClient={handlerSelectedClient}
-          isLargeScreen={isLargeScreen}
-          isFormSubmitted={isFormSubmitted}
+          selectedClientId={customForm["clientId"].value || null}
+          errorMessage={customForm["clientId"].error}
+          onSelectClient={(client) => handlerSelectedClient(client)}
         />
       )
     },
     {
       id: 2,
-      title: "Qual será o seu papel?",
+      title: "Papel",
       number: 2,
-      description: "Escolha como você irá usar o sistema.",
+      description: "Qual seria seu papel?",
+      panelTitle: "Escolha o tipo de acesso que você precisa:",
       content: (
-        <RoleStep
-          form={customForm}
+        <RequestRoleStep
           roles={roles}
-          handlerSelectedRole={(role) => {
-            setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
-          }}
-          handlerSelectedSphere={(codeItem, externalCode) => {
+          selectedRoleId={customForm["roleId"].value || null}
+          roleError={customForm["roleId"].error}
+          currentCodeItem={customForm["codeItem"].value}
+          codeItemError={!!customForm["codeItem"].error}
+          onSelectRole={handleSelectRole}
+          onSelectSphere={(codeItem, externalCode) => {
             if(codeItem) {
               setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
               setBasicFormFieldValue({ field: "externalCode", value: externalCode || "", error: null });
@@ -250,23 +257,20 @@ export default function RequestAccess() {
               setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
             }
           }}
-          handlerClearSphereHierarchyError={() => {
+          onClearSphereError={() => {
             clearError("codeItem");
           }}
-          isLargeScreen={isLargeScreen}
-          isFormSubmitted={isFormSubmitted}
-          selectedRole={null}
-          selectedClientId={customForm["clientId"].value}
         />
       )
     },
     {
       id: 3,
-      title: "Por que você precisa desse acesso?",
+      title: "Justificativa",
       number: 3,
-      description: "Nos ajude a entender o porquê deste acesso.",
+      description: "Por que você precisa desse acesso",
+      panelTitle: "Descreva a justificativa para este acesso:",
       content: (
-        <AttachmentStep
+        <RequestJustificationStep
           onAttach={(attachments: FileAttachment[]) => {
             setBasicFormFieldValue({ field: "attachments", value: attachments, error: null });
           }}
@@ -280,17 +284,17 @@ export default function RequestAccess() {
             attachments: !!customForm["attachments"].error,
             reason: !!customForm["reason"].error
           }}
-        >
-        </AttachmentStep>
+        />
       )
     },
     {
       id: 4,
-      title: "Confira os detalhes antes de enviar!",
+      title: "Revisão",
       number: 4,
-      description: "Certifique-se de que está tudo certo antes de enviar.",
+      description: "Confira os detalhes antes de enviar.",
+      panelTitle: "Revise as informações antes de enviar:",
       content: (
-        <DetailsStep
+        <RequestReviewStep
           selectedClient={customForm["clientId"].value}
           selectedRole={customForm["roleId"].value}
           reason={customForm["reason"].value}
@@ -302,7 +306,6 @@ export default function RequestAccess() {
   ];
 
   const handleFinalSubmit = async () => {
-    setIsFormSubmitted(true);
     setIsConfirmModalOpen(true);
   };
 
@@ -351,8 +354,6 @@ export default function RequestAccess() {
   const handleNewRequest = () => {
     setCustomForm(initialFormState);
     setCurrentStep(1);
-    setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
-    setIsFormSubmitted(false);
   };
 
   const handleLoaderClose = () => {
@@ -372,140 +373,70 @@ export default function RequestAccess() {
 
   return (
     <motion.div
+      className="request-access"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-
-      <div>
-        <HeaderContainer>
-          <div>
-            <Heading
-              title="Solicitar acesso"
-              description="Preencha o formulário e solicite o acesso a um sistema."
-            />
-          </div>
-        </HeaderContainer>
-      </div>
-
-      <ScrollArea>
-        <div className="max-w-content-container">
-          <div>
-            {showContent && !hasError && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
-                }}>
-
-                <div>
-                  {steps.map((step, index) => (
-                    <motion.div
-                      key={step.id}
-                      initial={false}
-                      animate={{
-                        opacity: step.id <= currentStep ? 1 : 0.5,
-                        transition: { duration: 0.3, ease: "easeInOut" }
-                      }}>
-                      <motion.div
-                        initial={{ opacity: 0, x: -500 }}
-                        animate={{
-                          scale: step.id === currentStep ? 1.1 : 1,
-                          transition: { duration: 0.3, ease: "easeOut", delay: 0.3 },
-                          opacity: 1, x: 0
-                        }}>
-                        <motion.span
-                          key={step.number}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}>
-                          {stepsState[step.id] === "completed" ? (
-                            <Check />
-                          ) : (
-                            <span>{step.number}</span>
-                          )}
-                        </motion.span>
-                      </motion.div>
-
-                      <div>
-                        <h3>
-                          {step.title}
-                        </h3>
-                      </div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: -100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 2.8 }}>
-                      </motion.div>
-
-                      {index < steps.length - 1 && (
-                        <motion.div
-                          initial={{ backgroundColor: "var(--color-primary-500)", y: -500 }}
-                          animate={{
-                            backgroundColor: stepsState[step.id] === "completed" ? "var(--color-primary-500)" : "var(--color-gray-200)",
-                            opacity: step.id < currentStep ? 1 : 0,
-                            y: 0
-                          }}
-                          transition={{ duration: 0.3, delay: 0.5 }}
-                        />
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-
-                <AutoHeight>
-                  <CardHeader>
-                    <CardTitle>
-                      Passo {currentStep}/{steps.length}
-                    </CardTitle>
-                    <Separator />
-                  </CardHeader>
-
-                  <CardContent>{steps[currentStep - 1].content}</CardContent>
-
-                  <CardFooter>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={handleBack}
-                      disabled={currentStep === 1}>
-                      Voltar
-                    </Button>
-                    {currentStep < steps.length
-                      ? (<Button onClick={goToNextStep}>Próximo</Button>)
-                      : (<Button onClick={handleFinalSubmit}>Enviar</Button>)
-                    }
-                  </CardFooter>
-                </AutoHeight>
-              </motion.div>
-            )}
-
-            {hasError && (
-              <ErrorFeedback words={["Tente novamente.", "Vamos tentar de novo!"]} onRetry={handleNewRequest} />)}
-            {!showContent && !hasError && (
-              <SuccessFeedback
-                words={["com sucesso.", "rapidamente."]}
-                selectedClient={customForm["clientId"].value}
-                selectedRole={roles.find(role => role.id.toString() === customForm["roleId"].value)!.name}
-                description={customForm["description"].value}
-                attachments={customForm["attachments"].value}
-                onRequestNew={handleNewRequest}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <ScrollArea className="request-access__scroll-area" viewportClassName="request-access__scroll-viewport">
+        <div className="request-access__content">
+          {showContent && !hasError && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
+              }}
+            >
+              <RequestStepper
+                currentStep={currentStep}
+                steps={steps.map((step) => ({
+                  id: step.id,
+                  number: step.number,
+                  title: step.title,
+                  description: step.description
+                }))}
               />
-            )}
 
-            <StepLoader loading={loading} onClose={handleLoaderClose} />
+              <div className="request-access__step-content">
+                <RequestStepLayout
+                  title={steps[currentStep - 1].panelTitle}
+                  onBack={handleBack}
+                  onNext={currentStep < steps.length ? goToNextStep : handleFinalSubmit}
+                  backButtonDisabled={currentStep === 1}
+                  nextButtonLabel={currentStep < steps.length ? "Próximo" : "Enviar"}
+                  showNextIcon={currentStep < steps.length}
+                >
+                  {steps[currentStep - 1].content}
+                </RequestStepLayout>
+              </div>
+            </motion.div>
+          )}
 
-            <ConfirmRequestDialog
-              isOpen={isConfirmModalOpen}
-              onOpenChange={setIsConfirmModalOpen}
-              reason={customForm["reason"].value}
-              clientId={customForm["clientId"].value}
-              roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
+          {hasError && (
+            <ErrorFeedback words={["Tente novamente.", "Vamos tentar de novo!"]} onRetry={handleNewRequest} />)}
+
+          {!showContent && !hasError && (
+            <SuccessFeedback
+              words={["com sucesso.", "rapidamente."]}
+              selectedClient={customForm["clientId"].value}
+              selectedRole={roles.find(role => role.id.toString() === customForm["roleId"].value)?.name || ""}
+              description={customForm["reason"].value}
               attachments={customForm["attachments"].value}
-              onConfirm={handleSubmitForm}
+              onRequestNew={handleNewRequest}
             />
-          </div>
+          )}
+
+          <StepLoader loading={loading} onClose={handleLoaderClose} />
+
+          <ConfirmRequestDialog
+            isOpen={isConfirmModalOpen}
+            onOpenChange={setIsConfirmModalOpen}
+            reason={customForm["reason"].value}
+            clientId={customForm["clientId"].value}
+            roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
+            attachments={customForm["attachments"].value}
+            onConfirm={handleSubmitForm}
+          />
         </div>
       </ScrollArea>
     </motion.div>

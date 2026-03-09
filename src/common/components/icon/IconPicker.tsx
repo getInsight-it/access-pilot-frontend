@@ -1,169 +1,191 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { icons, X } from "lucide-react";
-import { Button } from "../../external/ui/button.tsx";
+import { type MouseEvent, useEffect, useMemo, useState } from "react";
+import { icons, Search, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
-import { ShuffleLoader } from "../loading/ShuffleLoader.tsx";
 import { iconCategories } from "./constant/iconCategories.ts";
 import { cn } from "../../../config/lib/utils.ts";
-import { useMediaQuery } from "../../hooks/use-media-query.ts";
+import "./IconPicker.scss";
 
-type IconName = keyof typeof icons
+type IconName = keyof typeof icons;
 
-const INITIAL_ICON_COUNT = 100;
+const ICON_BATCH_SIZE = 96;
 
 interface IconPickerProps {
   value?: string;
   onChange?: (value: string) => void;
+  disabled?: boolean;
 }
 
-export function IconPicker({ value, onChange }: IconPickerProps) {
+export function IconPicker({ value, onChange, disabled = false }: IconPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [visibleIconCount, setVisibleIconCount] = useState(ICON_BATCH_SIZE);
   const [selectedIcon, setSelectedIcon] = useState<IconName | null>((value as IconName) || null);
-  const [iconNames, setIconNames] = useState<IconName[]>([]);
-  const [visibleIconCount, setVisibleIconCount] = useState(INITIAL_ICON_COUNT);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
-  const iconCategoryMap = useRef<Map<string, string>>(new Map());
-
-  useEffect(() => {
-    const names = Object.keys(icons) as IconName[];
-    setIconNames(names);
-    setIsLoading(false);
-
-    const catMap = new Map<string, string>();
-    names.forEach((iconName) => {
-      const match = iconCategories.find((cat) => cat.id !== "outros" && cat.test(iconName));
-      catMap.set(iconName, match?.id ?? "outros");
-    });
-    iconCategoryMap.current = catMap;
-  }, []);
-
-  const filteredIcons = useMemo(() => {
-    if (!selectedCategory) return iconNames;
-    return iconNames.filter((n) => iconCategoryMap.current.get(n) === selectedCategory);
-  }, [iconNames, selectedCategory]);
-
-  const visibleIcons = useMemo(() => {
-    let count = visibleIconCount;
-    if (selectedIcon) {
-      const idx = filteredIcons.indexOf(selectedIcon);
-      if (idx >= count) count = idx + 1;
-    }
-    return filteredIcons.slice(0, count);
-  }, [filteredIcons, visibleIconCount, selectedIcon]);
-
-  const handleCategorySelect = (catId: string | null) => {
-    setSelectedCategory(catId);
-    setVisibleIconCount(INITIAL_ICON_COUNT);
-  };
-
-  const handleIconClick = (iconName: IconName) => {
-    setSelectedIcon(iconName);
-    setIsOpen(false);
-    onChange?.(iconName);
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedIcon(null);
-    onChange?.("");
-  };
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-      setVisibleIconCount((prev) => prev + 50);
-    }
-  };
+  const allIconNames = useMemo(() => Object.keys(icons) as IconName[], []);
 
   useEffect(() => {
     if (value !== undefined && value !== selectedIcon) {
       setSelectedIcon((value as IconName) || null);
     }
-  }, [value]);
+  }, [selectedIcon, value]);
+
+  useEffect(() => {
+    setVisibleIconCount(ICON_BATCH_SIZE);
+  }, [searchTerm, selectedCategory]);
+
+  const filteredIconNames = useMemo(() => {
+    return allIconNames.filter((iconName) => {
+      const matchesCategory =
+        selectedCategory === "all" ||
+        iconCategories.find((category) => category.id === selectedCategory)?.test(iconName);
+      const matchesSearch = iconName.toLowerCase().includes(searchTerm.trim().toLowerCase());
+      return Boolean(matchesCategory) && matchesSearch;
+    });
+  }, [allIconNames, searchTerm, selectedCategory]);
+
+  const visibleIcons = useMemo(
+    () => filteredIconNames.slice(0, visibleIconCount),
+    [filteredIconNames, visibleIconCount]
+  );
 
   const SelectedIconComponent = selectedIcon ? icons[selectedIcon] : null;
 
+  const handleSelectIcon = (iconName: IconName) => {
+    setSelectedIcon(iconName);
+    onChange?.(iconName);
+    setIsOpen(false);
+  };
+
+  const handleClearSelection = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setSelectedIcon(null);
+    onChange?.("");
+  };
+
   return (
-    <div>
+    <div className="icon-picker">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline">
-            {SelectedIconComponent ? (
-              <>
-                <SelectedIconComponent />
-                <span>{selectedIcon}</span>
-              </>
-            ) : (
-              <>
-                <span />
-                <span>Selecione um ícone</span>
-              </>
+          <button
+            id="icon-picker-trigger"
+            type="button"
+            className={cn(
+              "icon-picker__trigger",
+              selectedIcon && "icon-picker__trigger--selected"
             )}
-          </Button>
+            disabled={disabled}
+          >
+            <span className="icon-picker__trigger-main">
+              {SelectedIconComponent ? (
+                <>
+                  <span className="icon-picker__trigger-icon">
+                    <SelectedIconComponent className="icon-picker__trigger-icon-svg" />
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="icon-picker__trigger-placeholder">Nenhum ícone selecionado</span>
+                </>
+              )}
+            </span>
+            <span className="icon-picker__trigger-action">Selecionar</span>
+          </button>
         </PopoverTrigger>
-        <PopoverContent
-          side={isLargeScreen ? "right" : "bottom"}
-          align={isLargeScreen ? "start" : "end"}
-        >
-          <div>
-            <h4>Escolha um ícone</h4>
+
+        <PopoverContent className="icon-picker__content" align="start" sideOffset={4}>
+          <div className="icon-picker__section icon-picker__section--search">
+            <div className="icon-picker__search app-input-group app-input-group--icon-left">
+              <Search className="app-input-group__icon" />
+              <input
+                type="text"
+                className="app-input icon-picker__search-input"
+                value={searchTerm}
+                placeholder="Pesquisar por nome do ícone"
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </div>
           </div>
-          <div>
-            <Button
-              size="sm"
-              variant={selectedCategory === null ? "default" : "outline"}
-              onClick={() => handleCategorySelect(null)}
-            >
-              Todos
-            </Button>
-            {iconCategories.map((cat) => (
-              <Button
-                key={cat.id}
-                size="sm"
-                variant={selectedCategory === cat.id ? "default" : "outline"}
-                onClick={() => handleCategorySelect(cat.id)}
+
+          <div className="icon-picker__section icon-picker__section--categories">
+            <div className="icon-picker__categories">
+              <button
+                type="button"
+                className={cn(
+                  "icon-picker__category",
+                  selectedCategory === "all" && "icon-picker__category--active"
+                )}
+                onClick={() => setSelectedCategory("all")}
               >
-                {cat.label}
-              </Button>
-            ))}
+                Todos
+              </button>
+
+              {iconCategories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className={cn(
+                    "icon-picker__category",
+                    selectedCategory === category.id && "icon-picker__category--active"
+                  )}
+                  onClick={() => setSelectedCategory(category.id)}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
           </div>
-          {isLoading ? (
-            <div>
-              <ShuffleLoader />
+
+          {filteredIconNames.length ? (
+            <div className="icon-picker__section icon-picker__section--results">
+              <div className="icon-picker__grid" role="listbox" aria-label="Ícones disponíveis">
+                {visibleIcons.map((iconName) => {
+                  const IconComponent = icons[iconName];
+                  const isActive = iconName === selectedIcon;
+
+                  return (
+                    <button
+                      key={iconName}
+                      type="button"
+                      className={cn("icon-picker__option", isActive && "icon-picker__option--active")}
+                      title={iconName}
+                      onClick={() => handleSelectIcon(iconName)}
+                    >
+                      <span className="icon-picker__option-icon">
+                        <IconComponent className="icon-picker__option-icon-svg" />
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {visibleIconCount < filteredIconNames.length && (
+                <button
+                  type="button"
+                  className="icon-picker__load-more"
+                  onClick={() => setVisibleIconCount((previous) => previous + ICON_BATCH_SIZE)}
+                >
+                  Mostrar mais ícones
+                </button>
+              )}
             </div>
           ) : (
-            <div onScroll={handleScroll}>
-              {visibleIcons.map((iconName) => {
-                const IconComponent = icons[iconName];
-                const isSelected = iconName === selectedIcon;
-                return (
-                  <Button
-                    key={iconName}
-                    variant="ghost"
-                    onClick={() => handleIconClick(iconName)}
-                  >
-                    <IconComponent />
-                  </Button>
-                );
-              })}
+            <div className="icon-picker__section icon-picker__section--results">
+              <div className="icon-picker__empty">Nenhum ícone encontrado para os filtros selecionados.</div>
             </div>
           )}
         </PopoverContent>
       </Popover>
 
       {selectedIcon && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleClear}
+        <button
           type="button"
-          aria-label="Remover ícone"
+          className="icon-picker__clear"
+          onClick={handleClearSelection}
+          aria-label="Remover ícone selecionado"
         >
-          <X />
-        </Button>
+          <X className="icon-picker__clear-icon" />
+        </button>
       )}
     </div>
   );

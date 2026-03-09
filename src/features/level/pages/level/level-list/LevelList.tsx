@@ -214,14 +214,14 @@ export const LevelList = () => {
                     Confirme se deseja excluir permanentemente esta esfera do sistema.
                   </DialogDescription>
                 </DialogHeader>
-                <p>
+                <p className="app-dialog__text">
                   Tem certeza que deseja excluir a esfera
                   <strong> "{item.name}"</strong>?
                 </p>
-                <p className="level-list__dialog-note">
+                <p className="app-dialog__text level-list__dialog-note">
                   Esta ação não pode ser desfeita. A esfera será permanentemente removida do sistema.
                 </p>
-                <p className="level-list__dialog-warning">
+                <p className="app-dialog__text level-list__dialog-warning">
                   Atenção: Certifique-se de que esta esfera não possui esferas filhas ou outros itens associados.
                 </p>
                 <DialogFooter>

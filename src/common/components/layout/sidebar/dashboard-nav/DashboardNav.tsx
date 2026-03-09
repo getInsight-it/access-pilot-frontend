@@ -3,7 +3,6 @@ import { Icons } from "../partials/Icons.tsx";
 import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../external/ui/tooltip.tsx";
 import { useTheme } from "../../../../../theme/theme-provider.tsx";
 import { RoleComponentGuard } from "../../../../context/auth/RoleGuard.tsx";
 import { cn } from "../../../../../config/lib/utils.ts";
@@ -24,6 +23,7 @@ export function DashboardNav({
   const path = location.pathname;
   const { isMinimized } = useSidebar();
   const { theme } = useTheme();
+  const isCollapsedDesktop = isMinimized && !isMobileNav;
 
   if(!items?.length) {
     return null;
@@ -37,55 +37,48 @@ export function DashboardNav({
     <nav
       className={cn(
         "dashboard-nav",
-        isMinimized && !isMobileNav && "dashboard-nav--collapsed"
+        isCollapsedDesktop && "dashboard-nav--collapsed"
       )}>
-      <TooltipProvider>
-        {items.map((item, index) => {
-          const Icon = Icons[item.icon as keyof typeof Icons || "arrowRight"];
-          const isActive = isActiveItem(item.href!);
-          const itemKey = `${item.href}-${index}`;
+      {items.map((item, index) => {
+        const Icon = Icons[item.icon as keyof typeof Icons || "arrowRight"];
+        const isActive = isActiveItem(item.href!);
+        const itemKey = `${item.href}-${index}`;
 
-          const content = (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  className={cn(
-                    "dashboard-nav__link",
-                    isActive && "dashboard-nav__link--active"
-                  )}
-                  to={item.disabled ? "/" : item.href!}
-                  onClick={() => {
-                    if(setOpen) setOpen(false);
-                  }}>
-                  <Icon className="dashboard-nav__icon" />
-                  {theme === "gov" && (
-                    <hr className="dashboard-nav__separator" />
-                  )}
-                  {(isMobileNav || (!isMinimized && !isMobileNav)) && (
-                    <span className="dashboard-nav__label">
-                      {item.title}
-                    </span>
-                  )}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent
-                align="center"
-                side="right"
-                sideOffset={8}>
+        const content = (
+          <Link
+            className={cn(
+              "dashboard-nav__link",
+              isActive && "dashboard-nav__link--active"
+            )}
+            to={item.disabled ? "/" : item.href!}
+            onClick={() => {
+              if(setOpen) setOpen(false);
+            }}>
+            <Icon className="dashboard-nav__icon" />
+            {theme === "gov" && (
+              <hr className="dashboard-nav__separator" />
+            )}
+            {(isMobileNav || !isCollapsedDesktop) && (
+              <span className="dashboard-nav__label">
                 {item.title}
-              </TooltipContent>
-            </Tooltip>
-          );
+              </span>
+            )}
+            {isCollapsedDesktop && (
+              <span className="dashboard-nav__hover-label">
+                {item.title}
+              </span>
+            )}
+          </Link>
+        );
 
-          return item.href ? (
-            <div className="dashboard-nav__item" key={itemKey}>
-              {item.protected
-                ? <RoleComponentGuard roles={item.roles || undefined}>{content}</RoleComponentGuard>
-                : content}
-            </div>
-          ) : null;
-        })}
-      </TooltipProvider>
+        return item.href ? (
+          <div className="dashboard-nav__item" key={itemKey}>
+            {item.protected
+              ? <RoleComponentGuard roles={item.roles || undefined}>{content}</RoleComponentGuard>
+              : content}
+          </div>
+        ) : null;
+      })}
 
       {/* {theme === "gov" && (isMobileNav || (!isMinimized && !isMobileNav)) && (
         <div>

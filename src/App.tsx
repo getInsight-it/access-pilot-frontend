@@ -87,11 +87,11 @@ function App() {
   if(!isInitialized) {
     return (
       <motion.div
-        style={{ height: "calc(var(--mobile-vh, 1vh) * 100)" }}
+        className="app-loader"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}>
-        <HighlightLoader />
+        <HighlightLoader size="lg" />
       </motion.div>
     );
   }

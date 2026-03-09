@@ -1,0 +1,26 @@
+.app-select {
+  appearance: none;
+  cursor: pointer;
+  padding-inline-end: var(--input-padding-inline-with-icon);
+}
+
+.app-select:disabled {
+  cursor: default;
+  opacity: var(--dropdown-disabled-opacity);
+}
+
+.app-select-field {
+  position: relative;
+  width: 100%;
+
+  &__icon {
+    position: absolute;
+    right: var(--input-icon-left-offset);
+    top: 50%;
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
+    color: var(--input-placeholder-color);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}

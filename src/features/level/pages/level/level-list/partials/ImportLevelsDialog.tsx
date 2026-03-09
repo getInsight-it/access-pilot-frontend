@@ -39,7 +39,7 @@ export const ImportLevelsDialog = ({
         ref={fileInputRef}
         type="file"
         accept="application/json"
-        className="hidden"
+        className="app-dialog__hidden-input"
         onChange={handleFileChange}
       />
 
@@ -52,13 +52,13 @@ export const ImportLevelsDialog = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div>
-            <div className="border border-gray-200 dark:border-gray-700">
-              <div>
-                <span className="text-gray-900 dark:text-gray-100">
+          <div className="app-dialog__body">
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
                   Arquivo JSON
                 </span>
-                <span className="text-gray-600 dark:text-gray-400">
+                <span className="app-dialog__surface-description">
                   {importFile ? importFile.name : "Nenhum arquivo selecionado"}
                 </span>
               </div>
@@ -73,7 +73,7 @@ export const ImportLevelsDialog = ({
               Cancelar
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
-              {importLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
+              {importLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileUp className="app-dialog__button-icon" />}
               {importLoading ? "Importando..." : "Importar"}
             </Button>
           </DialogFooter>

@@ -1,0 +1,149 @@
+.request-role-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-access-system-step-section-gap);
+  padding: var(--request-access-system-step-padding);
+  box-sizing: border-box;
+
+  &__filter {
+    width: 100%;
+  }
+
+  &__search-input {
+    height: var(--request-access-system-step-search-height);
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--system-form-required-color);
+    font-size: var(--system-form-error-font-size);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--request-access-system-step-card-min-width), 1fr));
+    gap: var(--request-access-system-step-grid-gap);
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--request-access-system-step-card-gap);
+    width: 100%;
+    padding: var(--request-access-system-step-card-padding);
+    border: var(--request-access-system-step-card-border-inactive);
+    border-radius: var(--request-access-system-step-card-radius);
+    background-color: var(--request-access-system-step-card-background-inactive);
+    cursor: pointer;
+    box-sizing: border-box;
+    text-align: start;
+  }
+
+  &__card--active {
+    border: var(--request-access-system-step-card-border-active);
+    background-color: var(--request-access-system-step-card-background-active);
+  }
+
+  &__card-main {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--request-access-system-step-card-main-gap);
+    min-width: 0;
+  }
+
+  &__icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-system-step-icon-box-size);
+    height: var(--request-access-system-step-icon-box-size);
+    border-radius: var(--request-access-system-step-icon-box-radius);
+    background-color: var(--request-access-system-step-icon-box-background-inactive);
+    color: var(--request-access-system-step-icon-color-inactive);
+    flex: 0 0 auto;
+  }
+
+  &__card--active &__icon-box {
+    background-color: var(--request-access-system-step-icon-box-background-active);
+    color: var(--request-access-system-step-icon-color-active);
+  }
+
+  &__icon {
+    width: var(--request-access-system-step-icon-size);
+    height: var(--request-access-system-step-icon-size);
+  }
+
+  &__card-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    min-width: 0;
+  }
+
+  &__name {
+    margin: 0;
+    color: var(--request-access-system-step-name-color-inactive);
+    font-size: var(--request-access-system-step-name-font-size);
+    font-weight: var(--request-access-system-step-name-font-weight);
+  }
+
+  &__card--active &__name {
+    color: var(--request-access-system-step-name-color-active);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__selected-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-system-step-selected-indicator-size);
+    height: var(--request-access-system-step-selected-indicator-size);
+    border-radius: var(--request-access-system-step-selected-indicator-radius);
+    background-color: var(--color-primary-500);
+    color: var(--inverse-default-text-color);
+    flex: 0 0 auto;
+  }
+
+  &__selected-icon {
+    width: var(--request-access-system-step-selected-icon-size);
+    height: var(--request-access-system-step-selected-icon-size);
+  }
+
+  &__empty-state {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__hierarchy-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--request-access-step-content-gap);
+    gap: var(--system-form-field-gap);
+  }
+
+  &__hierarchy-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__hierarchy-info {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+}

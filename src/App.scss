@@ -2,8 +2,11 @@
 @use "./theme/scss/components/badge";
 @use "./theme/scss/components/input";
 @use "./theme/scss/components/textarea";
+@use "./theme/scss/components/select";
 @use "./theme/scss/components/table";
 @use "./theme/scss/components/tabs";
+@use "./theme/scss/components/option-select";
+@use "./theme/scss/components/dialog";
 
 :root {
   --vh: 1vh;
@@ -22,6 +25,15 @@ body {
 html {
   overflow: hidden;
   scroll-behavior: smooth;
+}
+
+.app-loader {
+  width: 100%;
+  min-height: 100dvh;
+  min-height: calc(var(--mobile-vh, 1vh) * 100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .max-w-content-container {

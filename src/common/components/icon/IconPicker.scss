@@ -1,0 +1,212 @@
+.icon-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--system-form-field-gap);
+
+  &__trigger {
+    width: 100%;
+    min-height: calc(var(--input-height) + var(--dropdown-content-padding));
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background-color: var(--background);
+    color: var(--default-text-color);
+    padding-inline: var(--input-padding-inline);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dropdown-item-gap);
+    cursor: pointer;
+    transition: border-color var(--motion-layout-default), box-shadow var(--motion-layout-default);
+  }
+
+  &__trigger--selected {
+    width: calc(var(--system-form-field-min-width) / 2);
+    min-height: calc(var(--input-height) + var(--dropdown-content-padding));
+    padding-block: var(--dropdown-content-padding);
+  }
+
+  &__trigger:disabled {
+    opacity: var(--dropdown-disabled-opacity);
+    cursor: default;
+  }
+
+  &__trigger-main {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dropdown-item-gap);
+    min-width: 0;
+  }
+
+  &__trigger-icon {
+    width: calc(var(--pagination-control-height) - var(--dropdown-content-padding));
+    height: calc(var(--pagination-control-height) - var(--dropdown-content-padding));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--system-form-control-radius);
+    background: var(--badge-header-background-color);
+    color: var(--color-primary-500);
+    flex: 0 0 auto;
+  }
+
+  &__trigger-icon-svg {
+    width: calc(var(--input-icon-size) + var(--dropdown-content-padding));
+    height: calc(var(--input-icon-size) + var(--dropdown-content-padding));
+  }
+
+  &__trigger-placeholder {
+    color: var(--input-placeholder-color);
+    font-size: var(--description-size);
+  }
+
+  &__trigger-action {
+    color: var(--color-primary-500);
+    font-size: var(--description-size);
+    font-weight: var(--title-font-weight);
+    flex: 0 0 auto;
+  }
+
+  &__content {
+    width: var(--system-detail-attachment-popover-width);
+    max-width: var(--system-detail-attachment-popover-width);
+    border: var(--system-form-control-border);
+    border-radius: var(--dropdown-radius);
+    background: var(--dropdown-background-color);
+    box-shadow: var(--dropdown-shadow);
+    padding: var(--dropdown-content-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--dropdown-item-gap);
+    overflow: hidden;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dropdown-item-gap);
+  }
+
+  &__section + &__section {
+    padding-top: var(--dropdown-item-gap);
+    border-top: var(--system-form-control-border);
+  }
+
+  &__search {
+    width: 100%;
+  }
+
+  &__search-input {
+    height: var(--input-height);
+  }
+
+  &__categories {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--dropdown-item-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: var(--dropdown-content-padding);
+  }
+
+  &__category {
+    border: var(--system-form-control-border);
+    border-radius: var(--badge-radius);
+    background: var(--background);
+    color: var(--description-color);
+    font-size: var(--badge-font-size);
+    padding-inline: var(--badge-padding-inline);
+    min-height: var(--dropdown-item-height);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  &__category--active {
+    color: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+    background: var(--badge-header-background-color);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--dropdown-item-gap);
+    max-height: var(--system-detail-attachment-popover-width);
+    overflow: auto;
+    padding-inline-end: var(--dropdown-content-padding);
+  }
+
+  &__option {
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background: var(--background);
+    color: var(--default-text-color);
+    min-height: var(--system-form-header-min-height);
+    width: 100%;
+    padding-inline: var(--dropdown-content-padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  &__option-icon {
+    width: var(--pagination-control-height);
+    height: var(--pagination-control-height);
+    border-radius: var(--system-form-control-radius);
+    background: var(--badge-header-background-color);
+    color: var(--color-primary-500);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+
+  &__option-icon-svg {
+    width: calc(var(--input-icon-size) + var(--badge-icon-gap));
+    height: calc(var(--input-icon-size) + var(--badge-icon-gap));
+  }
+
+  &__option--active {
+    border-color: var(--color-primary-500);
+    background: var(--badge-header-background-color);
+  }
+
+  &__load-more {
+    width: 100%;
+    min-height: var(--dropdown-item-height);
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background: var(--background);
+    color: var(--color-primary-500);
+    font-size: var(--description-size);
+    cursor: pointer;
+  }
+
+  &__empty {
+    color: var(--description-color);
+    font-size: var(--description-size);
+    min-height: var(--dropdown-item-height);
+    display: flex;
+    align-items: center;
+  }
+
+  &__clear {
+    flex: 0 0 auto;
+    width: calc(var(--input-height) + var(--dropdown-content-padding));
+    height: calc(var(--input-height) + var(--dropdown-content-padding));
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background-color: var(--background);
+    color: var(--description-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  &__clear-icon {
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
+  }
+}

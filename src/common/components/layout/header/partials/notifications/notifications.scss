@@ -1,0 +1,142 @@
+.notifications {
+  &__trigger {
+    position: relative;
+    width: var(--header-control-size);
+    height: var(--header-control-size);
+    border-radius: var(--header-control-radius);
+    border: var(--header-control-border);
+    background-color: var(--header-control-background-color);
+    color: var(--header-control-icon-color);
+  }
+
+  &__trigger:hover {
+    background-color: var(--header-control-hover-background-color);
+  }
+
+  &__trigger-icon {
+    width: var(--header-control-icon-size);
+    height: var(--header-control-icon-size);
+  }
+
+  &__badge {
+    position: absolute;
+    inset-inline-end: var(--header-notification-badge-offset-inline);
+    inset-block-start: var(--header-notification-badge-offset-block);
+    min-width: var(--header-notification-badge-size);
+    height: var(--header-notification-badge-size);
+    border-radius: var(--header-notification-badge-radius);
+    padding-inline: var(--header-notification-badge-padding-inline);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--inverse-default-text-color);
+    background-color: var(--color-primary-500);
+    font-size: var(--header-notification-badge-font-size);
+    font-weight: var(--header-notification-badge-font-weight);
+    border: var(--header-notification-badge-border);
+    box-sizing: border-box;
+  }
+
+  &__panel {
+    width: var(--header-notification-panel-width);
+    max-height: var(--header-notification-panel-max-height);
+    overflow: auto;
+    padding: var(--header-notification-panel-padding);
+    background-color: var(--background);
+    border: var(--header-control-border);
+    border-radius: var(--header-control-radius);
+    box-shadow: var(--header-panel-shadow);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--header-notification-header-gap);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--header-title-color);
+    font-size: var(--header-notification-title-font-size);
+    font-weight: var(--header-notification-title-font-weight);
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--header-subtitle-color);
+    font-size: var(--header-subtitle-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__divider {
+    width: 100%;
+    height: var(--header-divider-size);
+    margin-block: var(--header-notification-divider-gap);
+    background-color: var(--table-border-color);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--header-notification-list-gap);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--header-notification-item-gap);
+    border: var(--header-notification-item-border);
+    border-radius: var(--header-notification-item-radius);
+    background-color: var(--header-notification-item-background-color);
+    padding: var(--header-notification-item-padding);
+  }
+
+  &__item-title {
+    margin: 0;
+    color: var(--default-text-color);
+    font-size: var(--header-notification-item-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--header-notification-item-actions-gap);
+    flex-shrink: 0;
+  }
+
+  &__item-status,
+  &__item-open-icon {
+    width: var(--header-notification-item-icon-size);
+    height: var(--header-notification-item-icon-size);
+  }
+
+  &__item-status {
+    color: var(--header-subtitle-color);
+  }
+
+  &__item-open {
+    width: var(--header-notification-open-size);
+    height: var(--header-notification-open-size);
+    border-radius: var(--header-notification-open-radius);
+    border: var(--header-control-border);
+    background-color: var(--background);
+    color: var(--header-control-icon-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  &__item-open:hover {
+    background-color: var(--header-control-hover-background-color);
+  }
+
+  &__empty {
+    margin: 0;
+    color: var(--header-subtitle-color);
+    font-size: var(--header-subtitle-font-size);
+  }
+}

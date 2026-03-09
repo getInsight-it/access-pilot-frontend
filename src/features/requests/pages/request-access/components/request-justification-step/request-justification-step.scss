@@ -1,0 +1,196 @@
+.request-justification-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-access-justification-gap);
+  padding: var(--request-access-system-step-padding);
+  box-sizing: border-box;
+
+  &__reason-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__required {
+    color: var(--system-form-required-color);
+  }
+
+  &__textarea {
+    min-height: var(--request-access-justification-textarea-min-height);
+    resize: none;
+  }
+
+  &__textarea--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--system-form-required-color);
+    font-size: var(--system-form-error-font-size);
+  }
+
+  &__attachments-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-access-justification-gap);
+    margin-top: var(--request-access-justification-attachments-gap);
+  }
+
+  &__attachments-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--request-access-justification-card-min-width), 1fr));
+    gap: var(--request-access-justification-grid-gap);
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-access-justification-card-gap);
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-justification-card-background);
+  }
+
+  &__card--empty {
+    border: var(--request-access-justification-card-border-empty);
+  }
+
+  &__card--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__card-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    border: var(--request-access-justification-dropzone-border);
+    border-radius: var(--request-access-justification-dropzone-radius);
+    background-color: var(--request-access-justification-dropzone-background);
+    padding: var(--request-access-justification-dropzone-padding);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  &__dropzone-icon {
+    width: var(--request-access-justification-dropzone-icon-size);
+    height: var(--request-access-justification-dropzone-icon-size);
+    color: var(--request-access-justification-dropzone-icon-color);
+  }
+
+  &__dropzone-text {
+    margin: 0;
+    color: var(--request-access-justification-dropzone-text-color);
+    font-size: var(--request-access-justification-dropzone-text-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__dropzone-hint {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-access-justification-file-list-gap);
+  }
+
+  &__file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-field-gap);
+    padding: var(--request-access-justification-file-item-padding);
+    border: var(--request-access-justification-file-item-border);
+    border-radius: var(--request-access-justification-file-item-radius);
+    background-color: var(--request-access-justification-file-item-background);
+  }
+
+  &__file-main {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    min-width: 0;
+  }
+
+  &__file-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    min-width: 0;
+  }
+
+  &__file-name,
+  &__file-meta {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__file-name {
+    color: var(--title-color);
+    font-size: var(--request-access-justification-file-name-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__file-meta {
+    color: var(--description-color);
+    font-size: var(--request-access-justification-file-meta-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-justification-remove-button-size);
+    height: var(--request-access-justification-remove-button-size);
+    border: 0;
+    background-color: transparent;
+    color: var(--description-color);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  &__remove-icon {
+    width: var(--request-access-justification-remove-icon-size);
+    height: var(--request-access-justification-remove-icon-size);
+  }
+}

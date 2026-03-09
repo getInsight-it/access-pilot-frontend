@@ -1,24 +1,18 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
-import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import { Textarea } from "../../../../common/external/ui/textarea.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../common/external/ui/select.tsx";
-import { IconPicker } from "../../../../common/components/icon/IconPicker.tsx";
-import { Label } from "../../../../common/external/ui/label.tsx";
-import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
-import { formSchema, RoleFormData, useNewRoleData, useRoleSubmit, useRoleNavigation } from "./useNewRole.ts";
-import { Badge } from "@common/external/ui/badge.tsx";
+import { ArrowLeft, ChevronDown } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import { IconPicker } from "@common/components/icon/IconPicker.tsx";
+import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
+import { Button } from "@common/external/ui/button.tsx";
+import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
+import { formSchema, RoleFormData, useNewRoleData, useRoleNavigation, useRoleSubmit } from "./useNewRole.ts";
+import "./NewRole.scss";
 
 const defaultValues: RoleFormData = {
   name: "",
@@ -48,12 +42,23 @@ export default function NewRole() {
 
   const methods = useForm<RoleFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
+    defaultValues,
     mode: "onChange"
   });
 
   const { onSubmit } = useRoleSubmit(client, initialData, isEditing, setLoading);
   const { navigateToSystemDetails } = useRoleNavigation(clientId);
+
+  const pageTitle = isEditing ? "Editar papel" : "Novo papel";
+  const pageDescription = isEditing
+    ? "Atualize os dados do papel e salve as alterações."
+    : "Preencha os dados para criar um novo papel para o sistema selecionado.";
+
+  const rolesRoute = clientId
+    ? PRIVATE_ROUTES.ROLES.replace(":clientId", clientId)
+    : PRIVATE_ROUTES.SYSTEMS;
+
+  const descriptionValue = methods.watch("description", "");
 
   useEffect(() => {
     const initializeData = async () => {
@@ -67,255 +72,174 @@ export default function NewRole() {
       }
     };
 
-    initializeData();
+    void initializeData();
   }, [isAuthenticated, loadData, methods, setDataLoading]);
-
-  const breadcrumbItems = [
-    { title: isEditing ? "Editar papel" : "Adicionar novo papel", link: "" }
-  ];
 
   if (dataLoading || loadingLevels) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-
-        <div>
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div>
-              <Heading
-                title={isEditing ? "Carregando papel..." : "Carregando..."}
-                returnButton={true}
-                onReturnClick={() => {goToPreviousRoute(navigate);}}
-              />
-            </div>
-          </HeaderContainer>
-
-          <Separator />
-        </div>
-
-        <ScrollArea>
-          <div>
-            <div>
-              <HighlightLoader />
-            </div>
-          </div>
-        </ScrollArea>
-
-        <footer>
-          <Button disabled>
-            {isEditing ? "Atualizando..." : "Criando..."}
-          </Button>
-        </footer>
-      </motion.div>
+      <div className="new-role__loader">
+        <HighlightLoader />
+      </div>
     );
   }
 
   return (
-    <ScrollArea>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+    <motion.div
+      className="new-role"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <HeaderContainer className="new-role__header-container">
+        <div className="new-role__header">
+          <div className="new-role__header-main">
+            <button
+              type="button"
+              className="new-role__back-button"
+              onClick={() => navigate(rolesRoute)}
+            >
+              <ArrowLeft size={18} />
+            </button>
 
-        <div>
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div>
-              <Heading
-                title={isEditing ? "Editar papel" : "Novo papel"}
-                returnButton={true}
-                onReturnClick={() => {goToPreviousRoute(navigate);}}
-                customDescription={
-                  <span>
-                    Sistema: <span
-                    onClick={navigateToSystemDetails}
-                    className="text-primary-600">{client?.name || ""}</span>
-                  </span>
-                }
-                code={ isEditing ? client?.id?.toString() || "" : null}
-              />
+            <div className="new-role__heading-content">
+              <div className="new-role__title-row">
+                <h2 className="new-role__title">{pageTitle}</h2>
+              </div>
+              <p className="new-role__description">{pageDescription}</p>
+              <p className="new-role__context">
+                Sistema:
+                <button
+                  type="button"
+                  className="new-role__system-link"
+                  onClick={navigateToSystemDetails}
+                >
+                  {client?.name || "-"}
+                </button>
+              </p>
             </div>
-          </HeaderContainer>
-
-          <Separator />
+          </div>
         </div>
+      </HeaderContainer>
 
-        <ScrollArea viewportClassName="px-6">
-          <div className="max-w-content-container m-auto">
-            <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmit)} className="max-w-content-container m-auto">
-                <div>
-                  <div>
-                    <FormField
-                      control={methods.control}
+      <ScrollArea className="new-role__scroll-area" viewportClassName="new-role__scroll-viewport">
+        <div className="new-role__content-wrapper">
+          <form className="new-role__form" onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className="new-role__card">
+              <div className="new-role__card-content">
+                <div className="new-role__row">
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="name">
+                      Nome <span className="new-role__required">*</span>
+                    </label>
+                    <Controller
                       name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label htmlFor="name">
-                            Nome <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Input
-                              id="name"
-                              className={methods.formState.errors.name ? "border-red-500" : ""}
-                              placeholder="Nome do papel"
-                              disabled={loading}
-                              {...field}
-                              value={(field.value || "").toString().toUpperCase()}
-                              onChange={(e) => {
-                                const upper = e.target.value.toString().toUpperCase();
-                                field.value = upper;
-                                field.onChange(upper);
-                              }}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.name && (
-                            <p className="text-red-500">
-                              {methods.formState.errors.name?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
                       control={methods.control}
-                      name="label"
                       render={({ field }) => (
-                        <FormItem>
-                          <Label htmlFor="label">
-                            Label <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Input
-                              id="label"
-                              className={methods.formState.errors.label ? "border-red-500" : ""}
-                              placeholder="Label do papel"
-                              disabled={loading}
-                              {...field}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.label && (
-                            <p className="text-red-500">
-                              {methods.formState.errors.label?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
+                        <input
+                          id="name"
+                          placeholder="Nome do papel"
+                          disabled={loading}
+                          className={`app-input new-role__input${methods.formState.errors.name ? " new-role__input--error" : ""}`}
+                          value={(field.value || "").toUpperCase()}
+                          onChange={(event) => {
+                            const uppercaseName = event.target.value.toUpperCase();
+                            field.onChange(uppercaseName);
+                          }}
+                        />
                       )}
                     />
-
-                    <FormField
-                      control={methods.control}
-                      name="levelId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label htmlFor="levelId">
-                            Esfera
-                          </Label>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                              disabled={loading}
-                            >
-                              <SelectTrigger className={methods.formState.errors.levelId ? "border-red-500" : ""}>
-                                <SelectValue placeholder="Selecione uma esfera" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="empty">Nenhuma esfera</SelectItem>
-                                {levels && levels.length > 0 && levels.map((level) => (
-                                  <SelectItem key={level.id} value={level.id.toString()}>
-                                    <span>
-                                      <span>{level.name}</span>
-                                      <Badge variant="outline">
-                                        {level.type}
-                                      </Badge>
-                                    </span>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          {methods.formState.errors.levelId && (
-                            <p className="text-red-500">
-                              {methods.formState.errors.levelId?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
+                    {methods.formState.errors.name && (
+                      <p className="new-role__error">{methods.formState.errors.name.message?.toString()}</p>
+                    )}
                   </div>
 
-                  <div>
-                    <FormField
-                      control={methods.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label htmlFor="description">
-                            Descrição <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Textarea
-                              id="description"
-                              placeholder="Descrição do papel"
-                              className={`resize-none ${methods.formState.errors.description ? "border-red-500" : ""}`}
-                              disabled={loading}
-                              {...field}
-                              maxLength={200}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.description && (
-                            <p className="text-red-500">
-                              {methods.formState.errors.description?.message?.toString()}
-                            </p>
-                          )}
-                          <div>
-                            {field.value?.length || 0}/200 caracteres
-                          </div>
-                        </FormItem>
-                      )}
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="label">
+                      Label <span className="new-role__required">*</span>
+                    </label>
+                    <input
+                      id="label"
+                      placeholder="Label do papel"
+                      disabled={loading}
+                      className={`app-input new-role__input${methods.formState.errors.label ? " new-role__input--error" : ""}`}
+                      {...methods.register("label")}
                     />
+                    {methods.formState.errors.label && (
+                      <p className="new-role__error">{methods.formState.errors.label.message?.toString()}</p>
+                    )}
                   </div>
 
-                  <div>
-                    <FormField
-                      control={methods.control}
-                      name="icon"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label>
-                            Ícone <span className="italic">(opcional)</span>
-                          </Label>
-                          <FormControl>
-                            <div>
-                              <IconPicker value={field.value} onChange={field.onChange} />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="levelId">
+                      Esfera
+                    </label>
+                    <div className="app-select-field">
+                      <select
+                        id="levelId"
+                        disabled={loading}
+                        className={`app-input app-select new-role__select${methods.formState.errors.levelId ? " new-role__select--error" : ""}`}
+                        {...methods.register("levelId")}
+                      >
+                        <option value="">Nenhuma esfera</option>
+                        {levels.map((level) => (
+                          <option key={level.id} value={level.id.toString()}>
+                            {`${level.name} (${level.type})`}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="app-select-field__icon" />
+                    </div>
+                    {methods.formState.errors.levelId && (
+                      <p className="new-role__error">{methods.formState.errors.levelId.message?.toString()}</p>
+                    )}
                   </div>
                 </div>
-              </form>
-            </FormProvider>
-          </div>
-        </ScrollArea>
 
-        <footer>
-          <Button
-            type="submit"
-            onClick={methods.handleSubmit(onSubmit)}
-            disabled={loading}
-          >
-            {loading ? (isEditing ? "Atualizando..." : "Criando...") : (isEditing ? "Atualizar papel" : "Adicionar papel")}
-          </Button>
-        </footer>
-      </motion.div>
-    </ScrollArea>
+                <div className="new-role__field">
+                  <label className="new-role__label" htmlFor="description">
+                    Descrição <span className="new-role__required">*</span>
+                  </label>
+                  <textarea
+                    id="description"
+                    placeholder="Descrição do papel"
+                    disabled={loading}
+                    maxLength={200}
+                    className={`app-textarea new-role__textarea${methods.formState.errors.description ? " new-role__textarea--error" : ""}`}
+                    {...methods.register("description")}
+                  />
+                  {methods.formState.errors.description ? (
+                    <p className="new-role__error">{methods.formState.errors.description.message?.toString()}</p>
+                  ) : (
+                    <p className="new-role__counter">{descriptionValue.length}/200 caracteres</p>
+                  )}
+                </div>
+
+                <div className="new-role__field new-role__field--icon">
+                  <label className="new-role__label" htmlFor="icon-picker-trigger">
+                    Ícone <span className="new-role__optional">(opcional)</span>
+                  </label>
+                  <Controller
+                    name="icon"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <IconPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={loading}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="new-role__actions">
+              <Button type="submit" className="new-role__action-button" disabled={loading}>
+                {loading ? (isEditing ? "Atualizando..." : "Criando...") : (isEditing ? "Atualizar papel" : "Adicionar papel")}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 }
-

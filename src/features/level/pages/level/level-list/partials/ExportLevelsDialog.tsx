@@ -1,7 +1,7 @@
 import { FileDown, Loader2 } from "lucide-react";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
-import { Switch } from "../../../../../../common/external/ui/switch.tsx";
+import { Toggle } from "../../../../../../common/components/toggle/Toggle.tsx";
 
 interface ExportLevelsDialogProps {
   open: boolean;
@@ -34,29 +34,29 @@ export const ExportLevelsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div>
-          <div className="border border-gray-200 dark:border-gray-700">
-            <div>
-              <span className="text-gray-900 dark:text-gray-100">
+        <div className="app-dialog__body">
+          <div className="app-dialog__surface">
+            <div className="app-dialog__surface-main">
+              <span className="app-dialog__surface-title">
                 Incluir esferas Built-in?
               </span>
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="app-dialog__surface-description">
                 Esferas Built-in são ignoradas na importação.
               </span>
             </div>
-            <Switch checked={exportIncludeBuiltIn} onCheckedChange={onExportIncludeBuiltInChange} disabled={exportLoading} />
+            <Toggle checked={exportIncludeBuiltIn} onCheckedChange={onExportIncludeBuiltInChange} disabled={exportLoading} />
           </div>
 
-          <div className="border border-gray-200 dark:border-gray-700">
-            <div>
-              <span className="text-gray-900 dark:text-gray-100">
+          <div className="app-dialog__surface">
+            <div className="app-dialog__surface-main">
+              <span className="app-dialog__surface-title">
                 Incluir itens?
               </span>
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="app-dialog__surface-description">
                 Exporta os itens associados a cada esfera.
               </span>
             </div>
-            <Switch checked={exportIncludeItems} onCheckedChange={onExportIncludeItemsChange} disabled={exportLoading} />
+            <Toggle checked={exportIncludeItems} onCheckedChange={onExportIncludeItemsChange} disabled={exportLoading} />
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export const ExportLevelsDialog = ({
             Cancelar
           </Button>
           <Button onClick={onExport} disabled={exportLoading}>
-            {exportLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileDown className="mr-2 h-4 w-4" />}
+            {exportLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileDown className="app-dialog__button-icon" />}
             {exportLoading ? "Exportando..." : "Exportar"}
           </Button>
         </DialogFooter>

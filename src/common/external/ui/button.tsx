@@ -15,7 +15,7 @@ const buttonVariants = cva(
         destructive: "ui-button--primary",
         success: "ui-button--primary",
         warning: "ui-button--primary",
-        outline: "ui-button--primary",
+        outline: "ui-button--white",
         secondary: "ui-button--primary",
         ghost: "ui-button--primary",
         link: "ui-button--primary"
