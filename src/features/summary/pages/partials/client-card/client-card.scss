@@ -14,7 +14,7 @@
   }
 
   &--detached {
-    border-color: var(--request-status-tone-warning-solid-color);
+    border-color: var(--request-status-tone-primary-solid-color);
   }
 
   &__header {
@@ -49,8 +49,8 @@
   }
 
   &--detached &__icon-box {
-    color: var(--request-status-tone-warning-text-color);
-    background-color: var(--request-status-tone-warning-surface-color);
+    color: var(--request-status-tone-primary-text-color);
+    background-color: var(--request-status-tone-primary-surface-color);
   }
 
   &__icon {
@@ -82,11 +82,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: var(--badge-height);
-    padding-inline: var(--badge-padding-inline);
+    min-height: var(--attachment-configuration-extension-badge-height);
+    padding-inline: var(--attachment-configuration-extension-badge-padding-inline);
     border: var(--system-detail-control-border-width) solid transparent;
     border-radius: var(--badge-radius);
-    font-size: var(--badge-font-size);
+    font-size: var(--attachment-configuration-extension-badge-font-size);
     font-weight: var(--default-text-font-weight);
     box-sizing: border-box;
     white-space: nowrap;
@@ -99,9 +99,9 @@
   }
 
   &__state--detached {
-    color: var(--request-status-tone-warning-text-color);
-    background-color: var(--request-status-tone-warning-surface-color);
-    border-color: var(--request-status-tone-warning-solid-color);
+    color: var(--request-status-tone-primary-text-color);
+    background-color: var(--request-status-tone-primary-surface-color);
+    border-color: var(--request-status-tone-primary-solid-color);
   }
 
   &__description {

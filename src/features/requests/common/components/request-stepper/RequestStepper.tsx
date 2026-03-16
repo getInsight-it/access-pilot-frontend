@@ -1,13 +1,7 @@
 import React from "react";
 import { Check } from "lucide-react";
+import { RequestStepItem } from "../../types/access-request.model.ts";
 import "./request-stepper.scss";
-
-export interface RequestStepItem {
-  id: number;
-  number: number;
-  title: string;
-  description: string;
-}
 
 interface RequestStepperProps {
   steps: RequestStepItem[];

@@ -9,6 +9,9 @@ export const primaryNavItems: NavItem[] = [
     label: "Dashboard",
     protected: true,
   },
+];
+
+export const requestNavItems: NavItem[] = [
   {
     title: "Minhas solicitações",
     href: "/my-access-requests",
@@ -29,6 +32,27 @@ export const primaryNavItems: NavItem[] = [
     protected: true,
     roles: [UserRoleEnum.APPROVER]
   },
+];
+
+export const inviteNavItems: NavItem[] = [
+  {
+    title: "Meus convites",
+    href: "/my-invites",
+    icon: "mail",
+    label: "Meus convites"
+  },
+  {
+    title: "Convidar",
+    href: "/invite",
+    icon: "userplus",
+    label: "Convidar"
+  },
+  {
+    title: "Gerenciar convites",
+    href: "/manage-invites",
+    icon: "bookuser",
+    label: "Gerenciar convites"
+  }
 ];
 
 export const administrationNavItems: NavItem[] = [
@@ -54,6 +78,8 @@ export const supportNavItems: NavItem[] = [];
 
 export const navItems: NavItem[] = [
   ...primaryNavItems,
+  ...requestNavItems,
+  ...inviteNavItems,
   ...administrationNavItems,
   ...supportNavItems
 ];

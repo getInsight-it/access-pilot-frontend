@@ -1,0 +1,65 @@
+.manage-invites-page {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header-container {
+    display: flex;
+    align-items: center;
+    padding-inline: 28px;
+    padding-top: 36px;
+    padding-bottom: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--request-access-step-panel-footer-gap);
+    width: 100%;
+  }
+
+  &__heading {
+    flex: 1 1 auto;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+  }
+
+  &__primary-action {
+    min-height: var(--login-action-height);
+    border-radius: var(--request-access-step-panel-action-radius);
+  }
+
+  &__scroll-area {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__scroll-viewport {
+    padding-inline: var(--request-access-page-padding-inline);
+    box-sizing: border-box;
+  }
+
+  &__content {
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

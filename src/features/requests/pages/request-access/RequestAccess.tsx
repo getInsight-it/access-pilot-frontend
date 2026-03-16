@@ -15,12 +15,13 @@ import { roleService } from "@features/role/common/service/role-service.ts";
 import { requestService } from "../../common/api/request-service.ts";
 import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
-import { RequestStepper } from "./components/request-stepper/RequestStepper.tsx";
-import { RequestStepLayout } from "./components/request-step-layout/RequestStepLayout.tsx";
-import { RequestSystemStep } from "./components/request-system-step/RequestSystemStep.tsx";
-import { RequestRoleStep } from "./components/request-role-step/RequestRoleStep.tsx";
-import { FileAttachment, RequestJustificationStep } from "./components/request-justification-step/RequestJustificationStep.tsx";
-import { RequestReviewStep } from "./components/request-review-step/RequestReviewStep.tsx";
+import { RequestStepper } from "../../common/components/request-stepper/RequestStepper.tsx";
+import { RequestStepLayout } from "../../common/components/request-step-layout/RequestStepLayout.tsx";
+import { RequestSystemStep } from "../../common/components/request-system-step/RequestSystemStep.tsx";
+import { RequestRoleStep } from "../../common/components/request-role-step/RequestRoleStep.tsx";
+import { RequestJustificationStep } from "../../common/components/request-justification-step/RequestJustificationStep.tsx";
+import { RequestReviewStep } from "../../common/components/request-review-step/RequestReviewStep.tsx";
+import { FileAttachment } from "../../common/types/access-request.model.ts";
 import "./RequestAccess.scss";
 
 export interface BasicFormFieldInterface {

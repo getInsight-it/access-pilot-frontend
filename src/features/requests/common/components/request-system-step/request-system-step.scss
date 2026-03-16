@@ -45,6 +45,10 @@
     background-color: var(--request-access-system-step-card-background-active);
   }
 
+  &__card--locked {
+    cursor: default;
+  }
+
   &__card-main {
     display: inline-flex;
     align-items: center;

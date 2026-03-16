@@ -1,7 +1,13 @@
 import { Sheet, SheetContent, SheetTrigger } from "../../../external/ui/sheet.tsx";
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
-import { navItems } from "./constant/sidebar.constant.ts";
+import {
+  administrationNavItems,
+  inviteNavItems,
+  primaryNavItems,
+  requestNavItems,
+  supportNavItems
+} from "./constant/sidebar.constant.ts";
 import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
 
 export function MobileSidebar() {
@@ -21,11 +27,19 @@ export function MobileSidebar() {
                 Menu
               </h2>
               <div>
-                <DashboardNav
-                  items={navItems}
-                  isMobileNav={true}
-                  setOpen={setOpen}
-                />
+                <DashboardNav items={primaryNavItems} isMobileNav={true} setOpen={setOpen} />
+                {requestNavItems.length > 0 && (
+                  <DashboardNav items={requestNavItems} isMobileNav={true} setOpen={setOpen} />
+                )}
+                {inviteNavItems.length > 0 && (
+                  <DashboardNav items={inviteNavItems} isMobileNav={true} setOpen={setOpen} />
+                )}
+                {administrationNavItems.length > 0 && (
+                  <DashboardNav items={administrationNavItems} isMobileNav={true} setOpen={setOpen} />
+                )}
+                {supportNavItems.length > 0 && (
+                  <DashboardNav items={supportNavItems} isMobileNav={true} setOpen={setOpen} />
+                )}
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { ClipboardList, FileText, LaptopMinimal, ShieldUser } from "lucide-react";
 import { FileIcon } from "@common/components/FileIcon.tsx";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
-import { FileAttachment } from "../request-justification-step/RequestJustificationStep.tsx";
+import { FileAttachment } from "../../types/access-request.model.ts";
 import "./request-review-step.scss";
 
 interface RequestReviewStepProps {

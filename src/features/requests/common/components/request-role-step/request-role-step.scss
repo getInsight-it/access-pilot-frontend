@@ -45,6 +45,10 @@
     background-color: var(--request-access-system-step-card-background-active);
   }
 
+  &__card--locked {
+    cursor: default;
+  }
+
   &__card-main {
     display: inline-flex;
     align-items: center;
@@ -145,5 +149,12 @@
     color: var(--description-color);
     font-size: var(--description-size);
     font-weight: var(--default-text-font-weight);
+  }
+
+  &__locked-sphere {
+    padding: var(--request-access-system-step-card-padding);
+    border: var(--request-access-system-step-card-border-active);
+    border-radius: var(--request-access-system-step-card-radius);
+    background-color: var(--request-access-system-step-card-background-active);
   }
 }

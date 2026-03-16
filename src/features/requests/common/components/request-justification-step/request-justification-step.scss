@@ -30,6 +30,10 @@
     border-color: var(--system-form-required-color);
   }
 
+  &__textarea--locked {
+    background-color: var(--request-access-justification-card-background);
+  }
+
   &__error {
     margin: 0;
     color: var(--system-form-required-color);

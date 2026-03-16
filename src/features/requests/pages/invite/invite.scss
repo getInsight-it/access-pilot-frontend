@@ -1,0 +1,22 @@
+.invite-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-access-content-gap);
+  padding-inline: var(--request-access-page-padding-inline);
+  padding-top: var(--request-access-page-padding-top);
+  padding-bottom: var(--request-access-page-padding-bottom);
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-step-panel-title-font-size);
+    font-weight: var(--request-access-step-panel-title-font-weight);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+}

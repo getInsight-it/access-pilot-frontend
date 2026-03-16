@@ -47,7 +47,7 @@
     border: var(--system-detail-control-border-width) solid var(--system-detail-border-color);
     border-radius: var(--system-detail-card-radius);
     background-color: var(--background);
-    box-shadow: var(--dropdown-shadow);
+    box-shadow: none;
   }
 
   &__section-header {
@@ -93,7 +93,7 @@
     border: var(--system-detail-control-border-width) solid var(--system-detail-border-color);
     border-radius: var(--system-detail-card-radius);
     background-color: var(--background);
-    box-shadow: var(--dropdown-shadow);
+    box-shadow: none;
   }
 
   &__metric-card--success {

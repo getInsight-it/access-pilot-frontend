@@ -8,38 +8,46 @@ interface RequestSystemStepProps {
   selectedClientId: string | null;
   errorMessage?: string | null;
   onSelectClient: (client: ClientResponseInterface) => void;
+  readOnly?: boolean;
 }
 
 export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
   clients,
   selectedClientId,
   errorMessage,
-  onSelectClient
+  onSelectClient,
+  readOnly = false
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredClients = useMemo(() => {
+    if (readOnly) {
+      return clients;
+    }
+
     return clients.filter((client) => {
       const normalizedSearch = searchTerm.toLowerCase();
       const clientName = (client.name || "").toLowerCase();
       const clientId = (client.clientId || "").toLowerCase();
       return clientName.includes(normalizedSearch) || clientId.includes(normalizedSearch);
     });
-  }, [clients, searchTerm]);
+  }, [clients, readOnly, searchTerm]);
 
   return (
     <div className="request-system-step">
-      <div className="request-system-step__filter">
-        <div className="app-input-group app-input-group--icon-left">
-          <Search className="app-input-group__icon" />
-          <input
-            className="app-input request-system-step__search-input"
-            placeholder="Filtrar sistemas"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
+      {!readOnly && (
+        <div className="request-system-step__filter">
+          <div className="app-input-group app-input-group--icon-left">
+            <Search className="app-input-group__icon" />
+            <input
+              className="app-input request-system-step__search-input"
+              placeholder="Filtrar sistemas"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {errorMessage && (
         <p className="request-system-step__error">{errorMessage}</p>
@@ -52,8 +60,9 @@ export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
             <button
               key={client.clientId}
               type="button"
-              className={`request-system-step__card${isActive ? " request-system-step__card--active" : ""}`}
+              className={`request-system-step__card${isActive ? " request-system-step__card--active" : ""}${readOnly ? " request-system-step__card--locked" : ""}`}
               onClick={() => onSelectClient(client)}
+              disabled={readOnly}
             >
               <div className="request-system-step__card-main">
                 <div className="request-system-step__icon-box">

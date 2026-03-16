@@ -11,9 +11,11 @@ interface RequestRoleStepProps {
   roleError?: string | null;
   currentCodeItem?: string;
   codeItemError?: boolean;
-  onSelectRole: (role: RoleResponseInterface) => void;
+  onSelectRole: (role: RoleResponseInterface) => void | Promise<void>;
   onSelectSphere: (codeItem: string, externalCode?: string) => void;
   onClearSphereError: () => void;
+  readOnly?: boolean;
+  lockedSphereLabel?: string | null;
 }
 
 export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
@@ -24,7 +26,9 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   codeItemError = false,
   onSelectRole,
   onSelectSphere,
-  onClearSphereError
+  onClearSphereError,
+  readOnly = false,
+  lockedSphereLabel
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const hierarchyNotCompletedRef = useRef(false);
@@ -40,6 +44,10 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   }, [selectedRoleId]);
 
   const filteredRoles = useMemo(() => {
+    if (readOnly) {
+      return roles;
+    }
+
     const normalizedSearch = searchTerm.toLowerCase();
 
     return roles.filter((role) => {
@@ -52,9 +60,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
         roleDescription.includes(normalizedSearch)
       );
     });
-  }, [roles, searchTerm]);
+  }, [readOnly, roles, searchTerm]);
 
   const handleHierarchyNotCompleted = () => {
+    if (readOnly) {
+      return;
+    }
+
     if(currentCodeItemRef.current && !hierarchyNotCompletedRef.current) {
       hierarchyNotCompletedRef.current = true;
       onSelectSphere("");
@@ -62,6 +74,10 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   };
 
   const handleHierarchyComplete = (codeItem: number, externalCode?: string) => {
+    if (readOnly) {
+      return;
+    }
+
     const codeItemAsString = codeItem.toString();
 
     if(currentCodeItemRef.current !== codeItemAsString) {
@@ -72,17 +88,19 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
 
   return (
     <div className="request-role-step">
-      <div className="request-role-step__filter">
-        <div className="app-input-group app-input-group--icon-left">
-          <Search className="app-input-group__icon" />
-          <input
-            className="app-input request-role-step__search-input"
-            placeholder="Filtrar papéis"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
+      {!readOnly && (
+        <div className="request-role-step__filter">
+          <div className="app-input-group app-input-group--icon-left">
+            <Search className="app-input-group__icon" />
+            <input
+              className="app-input request-role-step__search-input"
+              placeholder="Filtrar papéis"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {roleError && (
         <p className="request-role-step__error">{roleError}</p>
@@ -97,10 +115,11 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
               <button
                 key={role.id}
                 type="button"
-                className={`request-role-step__card${isActive ? " request-role-step__card--active" : ""}`}
+                className={`request-role-step__card${isActive ? " request-role-step__card--active" : ""}${readOnly ? " request-role-step__card--locked" : ""}`}
                 onClick={() => {
                   void onSelectRole(role);
                 }}
+                disabled={readOnly}
               >
                 <div className="request-role-step__card-main">
                   <div className="request-role-step__icon-box">
@@ -129,7 +148,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
       {selectedRoleObject && (
         <div className="request-role-step__hierarchy-section">
           <h4 className="request-role-step__hierarchy-title">Preencha os detalhes da esfera:</h4>
-          {selectedRoleObject.level?.id ? (
+          {readOnly ? (
+            <div className="request-role-step__locked-sphere">
+              <p className="request-role-step__hierarchy-info">
+                {lockedSphereLabel || currentCodeItem || "Esfera previamente definida para este convite."}
+              </p>
+            </div>
+          ) : selectedRoleObject.level?.id ? (
             <DynamicSphereForm
               initialId={selectedRoleObject.level.id}
               onHierarchyNotCompleted={handleHierarchyNotCompleted}

@@ -27,6 +27,7 @@ import {
   LucideProps,
   Moon,
   MoreVertical,
+  Mail,
   Pizza,
   Plus,
   Settings,
@@ -34,6 +35,7 @@ import {
   Trash,
   Twitter,
   User,
+  UserPlus,
   User2Icon,
   UserX2Icon,
   X
@@ -67,6 +69,7 @@ export const Icons = {
   pizza: Pizza,
   sun: SunMedium,
   moon: Moon,
+  mail: Mail,
   laptop: Laptop,
   hand: HandHelping,
   key: Key,
@@ -75,6 +78,7 @@ export const Icons = {
   book: BookText,
   bookuser: BookUser,
   globe2: Globe2,
+  userplus: UserPlus,
   dot: Dot,
   gitHub: ({ ...props }: LucideProps) => (
     <svg

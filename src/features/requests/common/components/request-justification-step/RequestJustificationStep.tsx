@@ -3,13 +3,8 @@ import { FileUp, X } from "lucide-react";
 import { useToast } from "@common/external/ui/use-toast.ts";
 import { AttachmentConfigurationInterface } from "@features/client/common/model/configuration.model.ts";
 import { FileIcon } from "@common/components/FileIcon.tsx";
+import { FileAttachment } from "../../types/access-request.model.ts";
 import "./request-justification-step.scss";
-
-export interface FileAttachment {
-  key: string;
-  files: File[];
-  fileName: string;
-}
 
 interface RequestJustificationStepProps {
   onAttach?: (files: FileAttachment[]) => void;
@@ -22,6 +17,7 @@ interface RequestJustificationStepProps {
     attachments?: boolean;
     reason?: boolean;
   };
+  readOnlyReason?: boolean;
 }
 
 export const RequestJustificationStep: React.FC<RequestJustificationStepProps> = ({
@@ -31,7 +27,8 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
   onReasonChange,
   initialAttachments = [],
   initialReason = "",
-  hasError = { attachments: false, reason: false }
+  hasError = { attachments: false, reason: false },
+  readOnlyReason = false
 }) => {
   const [attachments, setAttachments] = useState<FileAttachment[]>(initialAttachments);
   const [reason, setReason] = useState<string>(initialReason);
@@ -172,7 +169,8 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
           value={reason}
           onChange={handleReasonChange}
           placeholder="Descreva o motivo da sua solicitação"
-          className={`app-textarea request-justification-step__textarea${hasError.reason ? " request-justification-step__textarea--error" : ""}`}
+          className={`app-textarea request-justification-step__textarea${hasError.reason ? " request-justification-step__textarea--error" : ""}${readOnlyReason ? " request-justification-step__textarea--locked" : ""}`}
+          readOnly={readOnlyReason}
         />
         {hasError.reason && (
           <p className="request-justification-step__error">Por favor, informe o motivo da solicitação.</p>
