@@ -30,7 +30,6 @@ import { RequestInterface } from "../../requests/common/types/request.model.ts";
 import { requestService } from "../../requests/common/api/request-service.ts";
 import { clientService } from "../../client/common/service/client-service.ts";
 import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
-import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
 import { ClientCard } from "./partials/client-card/ClientCard.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { SummaryCardData } from "./types/status-card-data.model.ts";
@@ -40,6 +39,7 @@ import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 import useAuthStore, { UserInfo } from "../../../store/authStore.ts";
 import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
 import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
+import { SectionLoader } from "../../../common/components/loading/section-loader/SectionLoader.tsx";
 import "./Dashboard.scss";
 
 const REQUEST_PAGINATION = {
@@ -189,7 +189,7 @@ const LoadingState = () => {
   const displayName = getUserDisplayName(user);
 
   return (
-    <motion.div className="dashboard-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+    <motion.div className="dashboard-page dashboard-page--loading-state" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
       <div>
         <HeaderContainer className="dashboard-page__header-container">
           <Heading
@@ -201,7 +201,7 @@ const LoadingState = () => {
       </div>
 
       <div className="dashboard-page__loading">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     </motion.div>
   );

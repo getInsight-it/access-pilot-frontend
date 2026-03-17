@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MobileSidebar } from "../sidebar/MobileSidebar.tsx";
+import { MobileSidebar } from "../sidebar/mobile-sidebar/MobileSidebar.tsx";
 import { PRIVATE_ROUTES } from "../../../constants/routes.ts";
 import ThemeToggle from "../../../../theme/theme-toggle.tsx";
 import ThemedLogo from "./partials/themed-logo/ThemedLogo.tsx";

@@ -39,7 +39,7 @@ import {
   DropdownMenuTrigger
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
-import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
 import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
 import { levelService } from "../../../common/api/level-service.ts";
 import type { LevelExport } from "../../../common/types/level-export.model.ts";
@@ -300,7 +300,7 @@ export const LevelList = () => {
   if (loading) {
     return (
       <div className="level-list__loader">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     );
   }

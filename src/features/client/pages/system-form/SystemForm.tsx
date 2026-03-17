@@ -5,7 +5,7 @@ import { ScrollArea } from "@ui/scroll-area.tsx";
 import { motion } from "framer-motion";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
 import { ArrowLeft, ArrowRight, Loader2, Save } from "lucide-react";
-import HighlightLoader from "@components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "@components/loading/section-loader/SectionLoader.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { useSystemFormData, useFormNavigation, useAttachmentConfigs } from "./useSystemForm.ts";
@@ -94,7 +94,7 @@ export default function SystemForm() {
               {renderStepHeader()}
 
               <div className="system-form__card-content">
-                <HighlightLoader />
+                <SectionLoader />
               </div>
             </div>
             <div className="system-form__actions">

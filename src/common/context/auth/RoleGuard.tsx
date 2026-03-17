@@ -3,7 +3,7 @@ import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
 import { ERROR_ROUTES } from "../../constants/routes.ts";
 import { STORAGE_KEYS } from "../../constants/storage.ts";
-import HighlightLoader from "../../components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "../../components/loading/section-loader/SectionLoader.tsx";
 import { KeycloakClientRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
 import { UserRoleEnum } from "../../types/user/user.model.ts";
 import { KeycloakSystemsEnum } from "../../types/keycloak/keycloak-systems.enum.ts";
@@ -47,11 +47,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
   }, [location]);
 
   if(!authData.isAuthenticated || !authData.user) {
-    return (
-      <div style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
-        <HighlightLoader />
-      </div>
-    );
+    return <SectionLoader fullHeight={true} />;
   }
 
   if(!hasRequiredRoles(roles, authData)) {

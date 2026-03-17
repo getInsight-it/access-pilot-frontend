@@ -84,21 +84,19 @@ function App() {
     initMobileViewportFix();
   }, []);
 
-  if(!isInitialized) {
-    return (
-      <motion.div
-        className="app-loader"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}>
-        <HighlightLoader size="lg" />
-      </motion.div>
-    );
-  }
-
   return (
     <ThemeProvider>
-      <AppRouter />
+      {!isInitialized ? (
+        <motion.div
+          className="app-loader"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}>
+          <HighlightLoader size="lg" />
+        </motion.div>
+      ) : (
+        <AppRouter />
+      )}
     </ThemeProvider>
   );
 }

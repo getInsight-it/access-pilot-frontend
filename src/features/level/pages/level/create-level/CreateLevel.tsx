@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
-import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { Button } from "../../../../../common/external/ui/button.tsx";
 import { RadioGroup, RadioGroupItem } from "../../../../../common/external/ui/radio-group.tsx";
@@ -42,7 +42,7 @@ export default function CreateOrEditLevel() {
   if (formData.loading) {
     return (
       <div className="create-level__loader">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     );
   }

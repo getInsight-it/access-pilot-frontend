@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
-import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
 import { type Item, useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
 import "./LevelItems.scss";
 
@@ -90,7 +90,7 @@ export default function LevelItems() {
   if (itemsData.loading && !itemsData.sphere) {
     return (
       <div className="level-items__loader">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     );
   }

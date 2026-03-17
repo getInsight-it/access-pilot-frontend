@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { Button } from "@common/external/ui/button.tsx";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
 import { levelService } from "@features/level/common/api/level-service.ts";
 import { LevelInterface } from "@features/level/common/types/level.model.ts";
 import DynamicSphereForm from "@features/level/common/components/DynamicSphereForm.tsx";
@@ -130,7 +130,7 @@ export const EditItem: React.FC = () => {
   if(loading) {
     return (
       <div className="edit-item__loader">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     );
   }

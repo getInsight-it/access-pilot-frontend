@@ -1,8 +1,5 @@
-import HighlightLoader from "./loading/HighLightLoader.tsx";
-import "./content-loader.scss";
+import { SectionLoader } from "./loading/section-loader/SectionLoader.tsx";
 
 export const ContentLoader = () => (
-  <div className="content-loader">
-    <HighlightLoader />
-  </div>
+  <SectionLoader />
 );

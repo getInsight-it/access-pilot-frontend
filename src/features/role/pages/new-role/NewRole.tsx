@@ -8,7 +8,7 @@ import { HeaderContainer } from "@common/components/heading/heading.tsx";
 import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { Button } from "@common/external/ui/button.tsx";
-import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
 import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
 import { formSchema, RoleFormData, useNewRoleData, useRoleNavigation, useRoleSubmit } from "./useNewRole.ts";
@@ -78,7 +78,7 @@ export default function NewRole() {
   if (dataLoading || loadingLevels) {
     return (
       <div className="new-role__loader">
-        <HighlightLoader />
+        <SectionLoader />
       </div>
     );
   }

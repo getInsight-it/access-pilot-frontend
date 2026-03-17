@@ -14,23 +14,19 @@ export default function HighlightLoader({ message, size = "md" }: HighlightLoade
         <div className="highlight-loader__track-glow" />
         <motion.div
           className="highlight-loader__bar"
-          initial={{ x: "-8%", width: "0%" }}
-          animate={{
-            x: ["-8%", "0%", "0%", "100%", "-8%"],
-            width: ["0%", "100%", "100%", "0%", "0%"]
-          }}
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: [0, 1] }}
           transition={{
-            duration: 2.4,
-            ease: "easeInOut",
+            duration: 1.8,
+            ease: "linear",
             repeat: Infinity,
-            repeatDelay: 0.2,
-            times: [0, 0.42, 0.56, 0.92, 1]
+            repeatDelay: 0.25
           }}
         />
         <motion.div
           className="highlight-loader__logo"
           initial={{ opacity: 0.84, scale: 0.98 }}
-          animate={{ opacity: [0.84, 1, 0.84], scale: [0.98, 1.03, 0.98], y: ["0%", "-5%", "0%"] }}
+          animate={{ opacity: [0.84, 1, 0.84], scale: [0.98, 1.0, 0.98], y: ["0%", "-5%", "0%"] }}
           transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
         >
           <img className="highlight-loader__logo-image" src="/img/accesspilot-logo.svg" alt="AccessPilot logo" />
