@@ -169,6 +169,17 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
           )}
         </div>
       )}
+
+      {!selectedRoleObject && readOnly && (lockedSphereLabel || currentCodeItem) && (
+        <div className="request-role-step__hierarchy-section">
+          <h4 className="request-role-step__hierarchy-title">Detalhes da esfera:</h4>
+          <div className="request-role-step__locked-sphere">
+            <p className="request-role-step__hierarchy-info">
+              {lockedSphereLabel || currentCodeItem}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

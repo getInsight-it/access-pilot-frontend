@@ -50,7 +50,7 @@ export default function MyInvites() {
   }, [debouncedSearchFilter, handlePageChange]);
 
   const handleAcceptInvitation = useCallback((invitation: InvitationListItemInterface) => {
-    navigate(PRIVATE_ROUTES.MY_INVITE_REQUEST.replace(":token", invitation.protocolCode));
+    navigate(PRIVATE_ROUTES.MY_INVITE_REQUEST_WITH_ID.replace(":id", invitation.id.toString()));
   }, [navigate]);
 
   return (

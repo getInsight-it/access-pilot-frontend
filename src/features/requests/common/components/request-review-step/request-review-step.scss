@@ -151,6 +151,58 @@
     word-break: break-word;
   }
 
+  &__email-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__email-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-field-gap);
+    min-height: var(--request-access-system-step-icon-box-size);
+    min-width: var(--request-access-justification-card-min-width);
+    padding: var(--request-access-justification-file-item-padding);
+    border-radius: var(--request-access-justification-file-item-radius);
+    background-color: var(--request-access-justification-file-item-background);
+    border: var(--request-access-justification-file-item-border);
+    box-sizing: border-box;
+    flex: 1 1 var(--request-access-justification-card-min-width);
+  }
+
+  &__email-chip-main {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    min-width: 0;
+  }
+
+  &__email-chip-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--request-access-system-step-selected-indicator-size) + var(--pagination-gap));
+    height: calc(var(--request-access-system-step-selected-indicator-size) + var(--pagination-gap));
+    border-radius: var(--request-access-step-panel-action-radius);
+    background-color: var(--request-access-system-step-icon-box-background-active);
+    color: var(--request-access-system-step-icon-color-active);
+    flex: 0 0 auto;
+  }
+
+  &__email-chip-icon {
+    width: var(--request-access-system-step-selected-icon-size);
+    height: var(--request-access-system-step-selected-icon-size);
+  }
+
+  &__email-chip-label {
+    color: var(--title-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    word-break: break-word;
+  }
+
   &__attachments-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--request-access-justification-card-min-width), 1fr));

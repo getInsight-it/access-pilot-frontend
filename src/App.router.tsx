@@ -89,6 +89,7 @@ const appRoutes = [
           { path: PRIVATE_ROUTES.MANAGE_INVITES, element: <ManageInvites /> },
           { path: PRIVATE_ROUTES.MY_INVITES, element: <MyInvites /> },
           { path: PRIVATE_ROUTES.MY_INVITE_REQUEST, element: <MyInviteRequest /> },
+          { path: PRIVATE_ROUTES.MY_INVITE_REQUEST_WITH_ID, element: <MyInviteRequest /> },
           { path: PRIVATE_ROUTES.INVITE, element: <Invite /> },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,

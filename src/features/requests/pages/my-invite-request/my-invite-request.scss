@@ -55,4 +55,27 @@
   &__step-content {
     margin-top: var(--request-access-step-content-gap);
   }
+
+  &__status-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+    padding: var(--request-access-step-content-gap);
+    border-radius: var(--request-access-step-panel-action-radius);
+    background: var(--color-neutral-0);
+    border: 1px solid var(--color-danger-300);
+  }
+
+  &__status-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-step-panel-title-font-size);
+    font-weight: var(--request-access-step-panel-title-font-weight);
+  }
+
+  &__status-description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+  }
 }

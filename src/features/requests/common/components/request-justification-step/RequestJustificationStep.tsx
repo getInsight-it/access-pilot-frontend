@@ -6,6 +6,8 @@ import { FileIcon } from "@common/components/FileIcon.tsx";
 import { FileAttachment } from "../../types/access-request.model.ts";
 import "./request-justification-step.scss";
 
+const EMPTY_ATTACHMENTS: FileAttachment[] = [];
+
 interface RequestJustificationStepProps {
   onAttach?: (files: FileAttachment[]) => void;
   maxSize?: number;
@@ -25,7 +27,7 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
   maxSize = 5 * 1024 * 1024,
   requiredAttachments = [],
   onReasonChange,
-  initialAttachments = [],
+  initialAttachments = EMPTY_ATTACHMENTS,
   initialReason = "",
   hasError = { attachments: false, reason: false },
   readOnlyReason = false

@@ -8,7 +8,9 @@ import { ContentLoader } from "@common/components/ContentLoader.tsx";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "@common/constants/animation.ts";
+import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { invitationService } from "../../common/api/invitation-service.ts";
 import { InvitationsTable } from "../../common/components/invitations-table/InvitationsTable.tsx";
 import {
   useInvitationFormatting,
@@ -51,11 +53,25 @@ export default function ManageInvites() {
   }, [debouncedSearchFilter, handlePageChange]);
 
   const handleCancelInvitation = useCallback((invitation: InvitationListItemInterface) => {
-    toast({
-      title: "Integração pendente",
-      description: `O cancelamento do convite ${invitation.protocolCode} será conectado quando o endpoint estiver disponível.`
-    });
-  }, []);
+    void (async () => {
+      try {
+        await invitationService.cancelInvitation(invitation.id);
+        toast({
+          title: "Convite cancelado com sucesso!",
+          description: `O convite ${invitation.protocolCode} foi cancelado.`
+        });
+
+        const nextPage = currentPage > 1 && invitations.length === 1 ? currentPage - 1 : currentPage;
+        handlePageChange(nextPage, debouncedSearchFilter);
+      } catch (error: unknown) {
+        toast({
+          title: "Erro ao cancelar convite",
+          description: formatErrorMessages(error),
+          variant: "destructive"
+        });
+      }
+    })();
+  }, [currentPage, debouncedSearchFilter, handlePageChange, invitations.length]);
 
   return (
     <motion.div className="manage-invites-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
