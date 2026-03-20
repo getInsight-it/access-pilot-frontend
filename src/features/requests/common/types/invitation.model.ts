@@ -41,6 +41,7 @@ export interface CreateInvitationPayload {
   roleId: number;
   codeItem?: string;
   description: string;
+  expiresAt: string;
 }
 
 export type InvitationListResponse = PaginatedResponse<InvitationListItemInterface>;

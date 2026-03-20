@@ -13,6 +13,7 @@ import { roleService } from "@features/role/common/service/role-service.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import useAuthStore from "@store/authStore.ts";
 import { RequestJustificationStep } from "../../common/components/request-justification-step/RequestJustificationStep.tsx";
+import { RequestInviteExpirationStep } from "../../common/components/request-invite-expiration-step/RequestInviteExpirationStep.tsx";
 import { RequestReviewStep } from "../../common/components/request-review-step/RequestReviewStep.tsx";
 import { RequestRoleStep } from "../../common/components/request-role-step/RequestRoleStep.tsx";
 import { RequestInviteEmailsStep } from "../../common/components/request-invite-emails-step/RequestInviteEmailsStep.tsx";
@@ -37,7 +38,8 @@ export type InviteFormFieldType =
   | "externalCode"
   | "reason"
   | "emails"
-  | "emailDraft";
+  | "emailDraft"
+  | "expiresAt";
 
 interface InviteStepConfig {
   id: number;
@@ -67,7 +69,8 @@ export default function Invite() {
     externalCode: { invalid: false, error: "", value: "" },
     reason: { invalid: false, error: "", value: "" },
     emails: { invalid: false, error: "", value: [] },
-    emailDraft: { invalid: false, error: "", value: "" }
+    emailDraft: { invalid: false, error: "", value: "" },
+    expiresAt: { invalid: false, error: "", value: "" }
   };
   const [customForm, setCustomForm] = useState<InviteFormFieldInterface>(initialFormState);
 
@@ -143,6 +146,7 @@ export default function Invite() {
     setFormFieldValue({ field: "reason", value: "", error: null });
     setFormFieldValue({ field: "emails", value: [], error: null });
     setFormFieldValue({ field: "emailDraft", value: "", error: null });
+    setFormFieldValue({ field: "expiresAt", value: "", error: null });
 
     setCurrentStep(autoAdvance ? 2 : 1);
     void getRolesByClientId(client.clientId);
@@ -258,6 +262,15 @@ export default function Invite() {
       }
     }
 
+    if (currentStep === 5 && !customForm["expiresAt"].value) {
+      setFormFieldValue({
+        field: "expiresAt",
+        value: customForm["expiresAt"].value,
+        error: "Selecione a data de expiração do convite."
+      });
+      isValid = false;
+    }
+
     if (isValid) {
       setCurrentStep((prevStep) => prevStep + 1);
       return;
@@ -368,6 +381,22 @@ export default function Invite() {
     {
       id: 5,
       number: 5,
+      title: "Validade",
+      description: "Defina até quando o convite ficará disponível",
+      panelTitle: "Escolha a data de expiração do convite:",
+      content: (
+        <RequestInviteExpirationStep
+          value={customForm["expiresAt"].value}
+          errorMessage={customForm["expiresAt"].error}
+          onChange={(value) => {
+            setFormFieldValue({ field: "expiresAt", value, error: null });
+          }}
+        />
+      )
+    },
+    {
+      id: 6,
+      number: 6,
       title: "Revisão",
       description: "Confira os dados do convite antes de enviar",
       panelTitle: "Revise as informações antes de enviar:",
@@ -379,6 +408,7 @@ export default function Invite() {
           roles={roles}
           attachments={[]}
           emails={customForm["emails"].value}
+          expiresAt={customForm["expiresAt"].value}
         />
       )
     }
@@ -392,7 +422,8 @@ export default function Invite() {
         emails: customForm["emails"].value,
         roleId: Number(customForm["roleId"].value),
         codeItem: customForm["externalCode"].value || customForm["codeItem"].value || "",
-        description: customForm["reason"].value
+        description: customForm["reason"].value,
+        expiresAt: customForm["expiresAt"].value
       });
 
       toast({

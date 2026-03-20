@@ -84,8 +84,8 @@ export class InvitationService {
     const payload = {
       ...data,
       codeItem: data.codeItem || "",
-      // TODO: Replace these temporary hardcoded fields when the backend invitation contract is finalized.
-      expiresAt: "2026-12-31T23:59:59.000Z",
+      expiresAt: new Date(`${data.expiresAt}T23:59:59`).toISOString(),
+      // TODO: Replace this temporary hardcoded protocol code when the backend invitation contract is finalized.
       protocolCode: "TEMP-INVITATION-PROTOCOL"
     };
 

@@ -1,5 +1,7 @@
 import React from "react";
-import { ClipboardList, FileText, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { CalendarDays, ClipboardList, FileText, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
 import { FileIcon } from "@common/components/FileIcon.tsx";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import { FileAttachment } from "../../types/access-request.model.ts";
@@ -12,6 +14,7 @@ interface RequestReviewStepProps {
   roles: RoleResponseInterface[];
   attachments: FileAttachment[];
   emails?: string[];
+  expiresAt?: string;
 }
 
 export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
@@ -20,15 +23,23 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   reason,
   roles,
   attachments,
-  emails = []
+  emails = [],
+  expiresAt
 }) => {
   const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || "Não selecionado";
   const reasonValue = reason || "Não informado";
   const showEmailSection = emails.length > 0;
+  const showExpiration = !!expiresAt;
   const attachmentGroupCount = attachments.length;
   const totalAttachedFiles = attachments.reduce((total, attachment) => total + attachment.files.length, 0);
-  const totalReviewedItems = showEmailSection ? 4 : 3;
+  const totalReviewedItems = 3 + Number(showEmailSection) + Number(showExpiration);
   const uniqueEmailDomains = Array.from(new Set(emails.map((email) => email.split("@")[1]).filter(Boolean)));
+  const formattedExpiration = showExpiration
+    ? format(parseISO(`${expiresAt}T00:00:00`), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+    : "Não informado";
+  const expirationMetric = showExpiration
+    ? format(parseISO(`${expiresAt}T00:00:00`), "dd/MM/yyyy")
+    : "";
 
   return (
     <div className="request-review-step">
@@ -52,8 +63,8 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                 <p className="request-review-step__metric-value">{emails.length}</p>
               </article>
               <article className="request-review-step__metric">
-                <p className="request-review-step__metric-label">Domínios</p>
-                <p className="request-review-step__metric-value">{uniqueEmailDomains.length}</p>
+                <p className="request-review-step__metric-label">{showExpiration ? "Validade" : "Domínios"}</p>
+                <p className="request-review-step__metric-value">{showExpiration ? expirationMetric : uniqueEmailDomains.length}</p>
               </article>
             </>
           ) : (
@@ -124,6 +135,18 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                     </div>
                   ))}
                 </div>
+              </div>
+            </article>
+          )}
+
+          {showExpiration && (
+            <article className="request-review-step__summary-card">
+              <div className="request-review-step__summary-icon-box">
+                <CalendarDays className="request-review-step__summary-icon" />
+              </div>
+              <div className="request-review-step__summary-content">
+                <p className="request-review-step__summary-label">Data de expiração</p>
+                <p className="request-review-step__summary-value">{formattedExpiration}</p>
               </div>
             </article>
           )}
