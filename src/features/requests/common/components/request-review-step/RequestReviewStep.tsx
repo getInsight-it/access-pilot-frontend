@@ -26,19 +26,22 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   emails = [],
   expiresAt
 }) => {
+  const parsedExpiration = expiresAt
+    ? parseISO(expiresAt.includes("T") ? expiresAt : `${expiresAt}T00:00:00`)
+    : null;
   const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || "Não selecionado";
   const reasonValue = reason || "Não informado";
   const showEmailSection = emails.length > 0;
-  const showExpiration = !!expiresAt;
+  const showExpiration = Boolean(parsedExpiration && !Number.isNaN(parsedExpiration.getTime()));
   const attachmentGroupCount = attachments.length;
   const totalAttachedFiles = attachments.reduce((total, attachment) => total + attachment.files.length, 0);
   const totalReviewedItems = 3 + Number(showEmailSection) + Number(showExpiration);
   const uniqueEmailDomains = Array.from(new Set(emails.map((email) => email.split("@")[1]).filter(Boolean)));
   const formattedExpiration = showExpiration
-    ? format(parseISO(`${expiresAt}T00:00:00`), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+    ? format(parsedExpiration, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })
     : "Não informado";
   const expirationMetric = showExpiration
-    ? format(parseISO(`${expiresAt}T00:00:00`), "dd/MM/yyyy")
+    ? format(parsedExpiration, "dd/MM HH:mm")
     : "";
 
   return (

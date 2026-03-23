@@ -81,10 +81,13 @@ export class InvitationService {
   }
 
   async createInvitation(data: CreateInvitationPayload): Promise<void> {
+    const normalizedExpiration = data.expiresAt.includes("T")
+      ? data.expiresAt
+      : `${data.expiresAt}T23:59`;
     const payload = {
       ...data,
       codeItem: data.codeItem || "",
-      expiresAt: new Date(`${data.expiresAt}T23:59:59`).toISOString(),
+      expiresAt: new Date(normalizedExpiration).toISOString(),
       // TODO: Replace this temporary hardcoded protocol code when the backend invitation contract is finalized.
       protocolCode: "TEMP-INVITATION-PROTOCOL"
     };

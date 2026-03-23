@@ -28,23 +28,56 @@ interface RequestInviteExpirationStepProps {
 }
 
 const WEEKDAY_LABELS = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+const DEFAULT_EXPIRATION_HOUR = "23";
+const DEFAULT_EXPIRATION_MINUTE = "59";
 
 const getDateFromValue = (value: string) => {
   if (!value) {
     return null;
   }
 
-  return parseISO(`${value}T00:00:00`);
+  const normalizedValue = value.includes("T")
+    ? value
+    : `${value}T00:00:00`;
+  const parsedDate = parseISO(normalizedValue);
+
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+};
+
+const getTimeFieldsFromValue = (value: string) => {
+  const date = getDateFromValue(value);
+
+  if (!date) {
+    return {
+      hour: DEFAULT_EXPIRATION_HOUR,
+      minute: DEFAULT_EXPIRATION_MINUTE
+    };
+  }
+
+  return {
+    hour: format(date, "HH"),
+    minute: format(date, "mm")
+  };
+};
+
+const buildExpirationValue = (date: Date, hour: string, minute: string) => (
+  `${format(date, "yyyy-MM-dd")}T${hour}:${minute}`
+);
+
+const isValidTimeValue = (value: string, maxValue: number) => {
+  const parsedValue = Number.parseInt(value, 10);
+
+  return Number.isInteger(parsedValue) && parsedValue >= 0 && parsedValue <= maxValue;
 };
 
 const formatValueForDisplay = (value: string) => {
   const date = getDateFromValue(value);
 
   if (!date) {
-    return "Selecione uma data";
+    return "Selecione data e horário";
   }
 
-  return format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  return format(date, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR });
 };
 
 export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepProps> = ({
@@ -54,11 +87,16 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectedDate = getDateFromValue(value);
+  const [timeFields, setTimeFields] = useState(() => getTimeFieldsFromValue(value));
   const [visibleMonth, setVisibleMonth] = useState<Date>(() => startOfMonth(selectedDate || new Date()));
   const today = startOfDay(new Date());
 
   useEffect(() => {
     setVisibleMonth(startOfMonth(getDateFromValue(value) || new Date()));
+  }, [value]);
+
+  useEffect(() => {
+    setTimeFields(getTimeFieldsFromValue(value));
   }, [value]);
 
   const calendarDays = useMemo(() => {
@@ -75,6 +113,48 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
     return days;
   }, [visibleMonth]);
 
+  const handleTimeFieldChange = (field: "hour" | "minute", nextValue: string) => {
+    const sanitizedValue = nextValue.replace(/\D/g, "").slice(0, 2);
+    const nextFields = {
+      ...timeFields,
+      [field]: sanitizedValue
+    };
+
+    setTimeFields(nextFields);
+
+    if (!selectedDate) {
+      return;
+    }
+
+    const hasValidHour = isValidTimeValue(nextFields.hour, 23);
+    const hasValidMinute = isValidTimeValue(nextFields.minute, 59);
+
+    if (hasValidHour && hasValidMinute) {
+      onChange(buildExpirationValue(selectedDate, nextFields.hour, nextFields.minute));
+    }
+  };
+
+  const handleTimeFieldBlur = (field: "hour" | "minute") => {
+    const fallbackValue = field === "hour"
+      ? DEFAULT_EXPIRATION_HOUR
+      : DEFAULT_EXPIRATION_MINUTE;
+    const maxValue = field === "hour" ? 23 : 59;
+    const currentValue = timeFields[field];
+    const normalizedValue = isValidTimeValue(currentValue, maxValue)
+      ? currentValue.padStart(2, "0")
+      : fallbackValue;
+    const nextFields = {
+      ...timeFields,
+      [field]: normalizedValue
+    };
+
+    setTimeFields(nextFields);
+
+    if (selectedDate) {
+      onChange(buildExpirationValue(selectedDate, nextFields.hour, nextFields.minute));
+    }
+  };
+
   return (
     <div className="request-invite-expiration-step">
       <div className="request-invite-expiration-step__intro">
@@ -85,7 +165,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
         <div className="request-invite-expiration-step__intro-content">
           <h4 className="request-invite-expiration-step__title">Validade do convite</h4>
           <p className="request-invite-expiration-step__description">
-            Escolha até quando o convite poderá ser utilizado pelos destinatários.
+            Escolha a data e o horário limite até quando o convite poderá ser utilizado pelos destinatários.
           </p>
         </div>
       </div>
@@ -157,7 +237,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
                           return;
                         }
 
-                        onChange(format(day, "yyyy-MM-dd"));
+                        onChange(buildExpirationValue(day, timeFields.hour, timeFields.minute));
                         setIsOpen(false);
                       }}
                       disabled={isDisabled}
@@ -176,10 +256,48 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
         )}
       </div>
 
+      <div className="request-invite-expiration-step__field">
+        <label className="request-invite-expiration-step__label" htmlFor="invite-expiration-hour">
+          Horário de expiração <span className="request-invite-expiration-step__required">*</span>
+        </label>
+
+        <div className="request-invite-expiration-step__time-fields">
+          <div className="request-invite-expiration-step__time-field">
+            <label className="request-invite-expiration-step__time-label" htmlFor="invite-expiration-hour">
+              Hora
+            </label>
+            <input
+              id="invite-expiration-hour"
+              inputMode="numeric"
+              className="app-input request-invite-expiration-step__time-input"
+              placeholder="23"
+              value={timeFields.hour}
+              onChange={(event) => handleTimeFieldChange("hour", event.target.value)}
+              onBlur={() => handleTimeFieldBlur("hour")}
+            />
+          </div>
+
+          <div className="request-invite-expiration-step__time-field">
+            <label className="request-invite-expiration-step__time-label" htmlFor="invite-expiration-minute">
+              Minuto
+            </label>
+            <input
+              id="invite-expiration-minute"
+              inputMode="numeric"
+              className="app-input request-invite-expiration-step__time-input"
+              placeholder="59"
+              value={timeFields.minute}
+              onChange={(event) => handleTimeFieldChange("minute", event.target.value)}
+              onBlur={() => handleTimeFieldBlur("minute")}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="request-invite-expiration-step__summary">
-        <p className="request-invite-expiration-step__summary-label">Data escolhida</p>
+        <p className="request-invite-expiration-step__summary-label">Data e horário escolhidos</p>
         <p className="request-invite-expiration-step__summary-value">
-          {value ? formatValueForDisplay(value) : "Nenhuma data definida até agora."}
+          {value ? formatValueForDisplay(value) : "Nenhuma validade definida até agora."}
         </p>
       </div>
     </div>

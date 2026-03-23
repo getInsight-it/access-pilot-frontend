@@ -70,6 +70,12 @@
     font-weight: var(--request-access-stepper-title-font-weight);
   }
 
+  &__time-label {
+    color: var(--description-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
   &__required,
   &__error {
     color: var(--system-form-required-color);
@@ -103,6 +109,22 @@
     color: var(--default-text-color);
     font-size: var(--default-button-font-size);
     font-weight: var(--default-text-font-weight);
+  }
+
+  &__time-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--system-form-field-gap);
+  }
+
+  &__time-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__time-input {
+    min-height: var(--input-height);
   }
 
   &__popover {
