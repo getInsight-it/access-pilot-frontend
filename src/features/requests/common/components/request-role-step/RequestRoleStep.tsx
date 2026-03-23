@@ -34,6 +34,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   const hierarchyNotCompletedRef = useRef(false);
   const currentCodeItemRef = useRef<string>(currentCodeItem);
   const selectedRoleObject = roles.find((role) => role.id.toString() === selectedRoleId);
+  const hasHierarchyRequirement = Boolean(selectedRoleObject?.level?.id);
+  const hasLockedSphereData = Boolean(lockedSphereLabel || currentCodeItem);
+  const shouldShowHierarchySection = Boolean(selectedRoleObject) && (
+    readOnly
+      ? hasHierarchyRequirement || hasLockedSphereData
+      : hasHierarchyRequirement
+  );
 
   useEffect(() => {
     currentCodeItemRef.current = currentCodeItem || "";
@@ -145,7 +152,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
         <p className="request-role-step__empty-state">Nenhum papel encontrado para este sistema.</p>
       )}
 
-      {selectedRoleObject && (
+      {shouldShowHierarchySection && selectedRoleObject && (
         <div className="request-role-step__hierarchy-section">
           <h4 className="request-role-step__hierarchy-title">Preencha os detalhes da esfera:</h4>
           {readOnly ? (
@@ -154,7 +161,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
                 {lockedSphereLabel || currentCodeItem || "Esfera previamente definida para este convite."}
               </p>
             </div>
-          ) : selectedRoleObject.level?.id ? (
+          ) : hasHierarchyRequirement ? (
             <DynamicSphereForm
               initialId={selectedRoleObject.level.id}
               onHierarchyNotCompleted={handleHierarchyNotCompleted}
@@ -162,11 +169,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
               hasError={codeItemError}
               onErrorClear={onClearSphereError}
             />
-          ) : (
-            <p className="request-role-step__hierarchy-info">
-              Este papel não exige preenchimento de hierarquia de esfera.
-            </p>
-          )}
+          ) : null}
         </div>
       )}
 

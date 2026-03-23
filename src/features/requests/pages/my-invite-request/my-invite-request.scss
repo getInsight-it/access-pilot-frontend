@@ -30,12 +30,47 @@
     gap: var(--system-form-field-gap);
   }
 
-  &__eyebrow {
-    margin: 0;
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--request-access-stepper-item-min-width), 1fr));
+    gap: var(--request-access-step-panel-footer-gap);
+  }
+
+  &__meta-card {
+    display: flex;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-step-panel-surface-color);
+    box-sizing: border-box;
+  }
+
+  &__meta-icon {
+    width: var(--request-access-system-step-icon-size);
+    height: var(--request-access-system-step-icon-size);
+    color: var(--color-primary-600);
+    flex: 0 0 auto;
+  }
+
+  &__meta-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    min-width: 0;
+  }
+
+  &__meta-label {
     color: var(--description-color);
     font-size: var(--request-access-stepper-description-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__meta-value {
+    color: var(--title-color);
+    font-size: var(--description-size);
     font-weight: var(--request-access-stepper-title-font-weight);
-    text-transform: uppercase;
   }
 
   &__title {

@@ -12,6 +12,7 @@ export interface InvitationListItemInterface {
 
 export interface InvitationRequestContextInterface {
   invitationToken: string;
+  expiresAt?: string;
   clientId: string;
   roleId: number;
   roleLabel: string;

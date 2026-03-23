@@ -29,7 +29,7 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
         <div className="request-invite-emails-step__intro-content">
           <h4 className="request-invite-emails-step__title">Destinatários do convite</h4>
           <p className="request-invite-emails-step__description">
-            Adicione um ou mais e-mails. Você pode separar vários destinatários por vírgula, espaço ou quebra de linha.
+            Adicione um ou mais e-mails. Você pode separar vários destinatários por vírgula, espaço ou quebra de linha. Cada endereço receberá um convite individual.
           </p>
         </div>
       </div>
@@ -74,6 +74,10 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
           <h4 className="request-invite-emails-step__summary-title">Lista de destinatários</h4>
           <span className="app-badge request-invite-emails-step__badge">{emails.length}</span>
         </div>
+
+        <p className="request-invite-emails-step__description">
+          Cada destinatário listado abaixo receberá um convite separado.
+        </p>
 
         {emails.length > 0 ? (
           <div className="request-invite-emails-step__chips">

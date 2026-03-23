@@ -18,8 +18,8 @@ interface InviteRequestPreview {
   role: RoleResponseInterface;
   reason: string;
   sphereLabel: string;
+  expiresAt?: string;
   title: string;
-  eyebrow: string;
   description: string;
   protocolCode?: string;
   source: InviteRequestSource;
@@ -93,8 +93,8 @@ const mapTokenContextToPreview = (
   ),
   reason: invitationContext.description || "Solicitação vinculada automaticamente ao convite.",
   sphereLabel: formatSphereLabel(invitationContext.levelName, invitationContext.codeItem),
+  expiresAt: invitationContext.expiresAt,
   title: "Solicitação de convite",
-  eyebrow: "Convite autenticado",
   description: "Os dados abaixo foram carregados a partir do token salvo na sua sessão.",
   source: "token"
 });
@@ -109,10 +109,8 @@ const mapInvitationToPreview = (invitation: InvitationDetailsInterface): InviteR
   ),
   reason: invitation.description || "Solicitação vinculada automaticamente ao convite.",
   sphereLabel: formatSphereLabel(undefined, invitation.codeItem),
+  expiresAt: invitation.expiresAt,
   title: "Solicitação de convite",
-  eyebrow: invitation.protocolCode
-    ? `Convite ${invitation.protocolCode}`
-    : "Convite pendente",
   description: "Os dados abaixo foram carregados a partir do convite selecionado em Meus convites.",
   protocolCode: invitation.protocolCode,
   source: "id"

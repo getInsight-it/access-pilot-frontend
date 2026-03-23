@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import { AUTH_ROUTES, PUBLIC_ROUTES } from "@constants/routes.ts";
+import { PUBLIC_ROUTES } from "@constants/routes.ts";
 import { STORAGE_KEYS } from "@constants/storage.ts";
 import { useToast } from "@ui/use-toast.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
@@ -48,7 +48,6 @@ const formatInvitationExpiry = (expiresAt?: string) => {
 
 export const useInvitation = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const [invitation, setInvitation] = useState<InvitationDetailsInterface | null>(null);
@@ -135,10 +134,6 @@ export const useInvitation = () => {
     }
   }, [toast, token]);
 
-  const handleDeclineInvitation = useCallback(() => {
-    navigate(AUTH_ROUTES.LOGIN);
-  }, [navigate]);
-
   const clientLabel = invitation?.client.label || invitation?.client.name || "-";
   const roleLabel = invitation?.role.label || invitation?.role.name || "-";
   const footerMessage = useMemo(
@@ -156,7 +151,6 @@ export const useInvitation = () => {
     isSubmitting,
     errorMessage,
     isValidInvitation: Boolean(invitation && isValidInvitationStatus(invitation.status) && token),
-    handleAcceptInvitation,
-    handleDeclineInvitation
+    handleAcceptInvitation
   };
 };

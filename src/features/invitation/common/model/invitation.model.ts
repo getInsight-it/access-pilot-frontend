@@ -10,7 +10,7 @@ export interface InvitationClientInterface {
   label: string;
 }
 
-export type InvitationStatus = "VALID" | "EXPIRED" | "USED" | "REVOKED" | "INVALID";
+export type InvitationStatus = "VALID" | "EXPIRED" | "REVOKED" | "INVALID";
 
 export interface InvitationDetailsInterface {
   status: InvitationStatus;

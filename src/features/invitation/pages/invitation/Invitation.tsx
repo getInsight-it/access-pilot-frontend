@@ -3,7 +3,7 @@ import { useInvitation } from "./useInvitation.ts";
 import "./invitation.scss";
 
 const INVITATION_HERO_IMAGE_SRC = "/img/invitation-hero.png";
-const INVITATION_BRAND_ICON_SRC = "/img/invitation-brand-icon.svg";
+const INVITATION_BRAND_ICON_SRC = "/img/ap-icon.svg";
 const INVITATION_ROLE_ICON_SRC = "/img/invitation-role-icon.svg";
 
 export default function Invitation() {
@@ -16,8 +16,7 @@ export default function Invitation() {
     isSubmitting,
     errorMessage,
     isValidInvitation,
-    handleAcceptInvitation,
-    handleDeclineInvitation
+    handleAcceptInvitation
   } = useInvitation();
 
   return (
@@ -83,13 +82,6 @@ export default function Invitation() {
               >
                 {isSubmitting ? "Redirecionando..." : "Aceitar Convite"}
               </Button>
-              <button
-                type="button"
-                className="invitation__secondary-action"
-                onClick={handleDeclineInvitation}
-              >
-                Recusar convite
-              </button>
               <p className="invitation__actions-hint">
                 Ao continuar, você será direcionado para a autenticação adequada ao seu convite.
               </p>
