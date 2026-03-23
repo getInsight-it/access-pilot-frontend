@@ -90,7 +90,8 @@ export default function ManageInvites() {
                 to={PRIVATE_ROUTES.INVITE}
                 className="ui-button ui-button--primary theme-button--primary manage-invites-page__primary-action"
               >
-                <CirclePlus /> Convidar
+                <CirclePlus className="manage-invites-page__primary-action-icon" />
+                <span>Convidar</span>
               </Link>
             </div>
           </div>

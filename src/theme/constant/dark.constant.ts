@@ -132,6 +132,8 @@ const DARK_ATTRIBUTE_OVERRIDES: Theme["attributes"] = {
   "header-user-chevron-color": "#94a3b8",
   "sidebar-background-color": "#0b1220",
   "sidebar-item-color": "#94a3b8",
+  "sidebar-item-selected-color": "var(--color-primary-500)",
+  "sidebar-item-accent-color": "var(--color-primary-500)",
   "sidebar-item-hover-color": "#1e293b",
   "sidebar-tooltip-background-color": "#0f172a",
   "sidebar-tooltip-text-color": "#f8fafc",

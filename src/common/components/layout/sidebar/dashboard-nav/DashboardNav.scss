@@ -25,6 +25,9 @@
     justify-content: flex-start;
     gap: 16px;
     color: var(--sidebar-item-color);
+    font-size: var(--typography-body-md-font-size);
+    line-height: var(--typography-body-md-line-height);
+    font-weight: var(--typography-label-font-weight);
     text-decoration: none;
     text-align: left;
   }
@@ -37,23 +40,17 @@
   &__link--active {
     color: var(--sidebar-item-selected-color);
     background-color: var(--sidebar-item-hover-color);
-    box-shadow: inset -3px 0 0 0 var(--sidebar-item-selected-color);
+    box-shadow: inset -3px 0 0 0 var(--sidebar-item-accent-color);
   }
 
   &__icon {
     flex-shrink: 0;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
   }
 
   &__label {
     text-align: left;
-  }
-
-  &__separator {
-    width: 0;
-    min-height: calc(var(--size-layout-header) - 16px);
-    border: none;
-    border-left: var(--border-layout-default);
-    margin: 0;
   }
 
   &--collapsed &__link {

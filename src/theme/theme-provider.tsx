@@ -15,6 +15,35 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_STORAGE_KEY = 'selected-theme';
 const THEME_TYPE_STORAGE_KEY = 'selected-theme-type';
 
+const resolveColorPalette = (themeType: ThemeType) => {
+  if (themeType !== "gov") {
+    return THEME_COLOR_PALETTE;
+  }
+
+  return {
+    ...THEME_COLOR_PALETTE,
+    primary: {
+      ...THEME_COLOR_PALETTE.primary,
+      ...GOV_COLOR_PALETTE.primary
+    }
+  };
+};
+
+const resolveTheme = (theme: Theme): Theme => {
+  return {
+    ...LIGHT_THEME,
+    ...theme,
+    primary: {
+      ...LIGHT_THEME.primary,
+      ...theme.primary
+    },
+    attributes: {
+      ...LIGHT_THEME.attributes,
+      ...theme.attributes
+    }
+  };
+};
+
 const applyColorPalette = (palette: any) => {
   const root = document.documentElement;
   const properties: Record<string, string> = {};
@@ -33,7 +62,8 @@ const applyColorPalette = (palette: any) => {
 };
 
 const applyTheme = (theme: Theme, themeType: ThemeType) => {
-  const colorPalette = themeType === 'gov' ? GOV_COLOR_PALETTE : THEME_COLOR_PALETTE;
+  const resolvedTheme = resolveTheme(theme);
+  const colorPalette = resolveColorPalette(themeType);
   applyColorPalette(colorPalette);
 
   requestAnimationFrame(() => {
@@ -43,11 +73,11 @@ const applyTheme = (theme: Theme, themeType: ThemeType) => {
 
     const properties: Record<string, string> = {};
 
-    Object.entries(theme.primary).forEach(([key, value]) => {
+    Object.entries(resolvedTheme.primary).forEach(([key, value]) => {
       properties[`--color-primary-${key}`] = value;
     });
 
-    Object.entries(theme['attributes']).forEach(([key, value]) => {
+    Object.entries(resolvedTheme['attributes']).forEach(([key, value]) => {
       properties[`--${key}`] = value;
     });
 
@@ -59,11 +89,11 @@ const applyTheme = (theme: Theme, themeType: ThemeType) => {
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+    return localStorage.getItem(THEME_STORAGE_KEY) || 'gov';
   });
 
   const [themeType, setThemeType] = useState<ThemeType>(() => {
-    return (localStorage.getItem(THEME_TYPE_STORAGE_KEY) as 'light' | 'dark') || 'light';
+    return (localStorage.getItem(THEME_TYPE_STORAGE_KEY) as ThemeType) || 'gov';
   });
 
   const [themeCache] = useState<Map<string, Theme>>(new Map());
@@ -93,14 +123,14 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       executeApplyTheme(themeData, selectedTheme);
     } catch (error) {
       console.error('Error loading theme:', error);
-      if (selectedTheme !== 'light') {
-        executeApplyTheme(LIGHT_THEME, 'light');
+      if (selectedTheme !== 'gov') {
+        executeApplyTheme(BUILT_IN_THEMES.gov, 'gov');
       }
     }
   }, [themeCache, executeApplyTheme]);
 
   useLayoutEffect(() => {
-    const initialTheme = BUILT_IN_THEMES[theme] || LIGHT_THEME;
+    const initialTheme = BUILT_IN_THEMES[theme] || BUILT_IN_THEMES.gov;
     applyTheme(initialTheme, initialTheme['theme-type']);
 
     if (!BUILT_IN_THEMES[theme]) {

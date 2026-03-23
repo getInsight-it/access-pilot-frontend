@@ -33,8 +33,18 @@
   }
 
   &__primary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--request-access-step-panel-action-content-gap);
     min-height: var(--login-action-height);
     border-radius: var(--request-access-step-panel-action-radius);
+    padding-inline: var(--request-detail-action-button-padding-inline);
+  }
+
+  &__primary-action-icon {
+    width: var(--request-access-step-panel-action-icon-size);
+    height: var(--request-access-step-panel-action-icon-size);
+    flex: 0 0 auto;
   }
 
   &__scroll-area {

@@ -370,11 +370,17 @@
     justify-content: center;
     width: var(--pagination-control-height);
     height: var(--pagination-control-height);
-    border: var(--border-layout-default);
+    border: 0;
     border-radius: var(--system-detail-control-radius);
-    background-color: var(--background);
+    background-color: transparent;
     color: var(--default-text-color);
     cursor: pointer;
+
+    &:hover,
+    &:active {
+      background-color: var(--table-header-background-color);
+      color: var(--default-text-color);
+    }
   }
 
   &__table-empty-state {

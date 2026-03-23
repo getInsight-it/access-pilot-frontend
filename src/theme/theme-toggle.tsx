@@ -1,4 +1,4 @@
-import { Building2, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider.tsx";
 
 import { Button } from "../common/external/ui/button.tsx";
@@ -13,17 +13,26 @@ import "./theme-toggle.scss";
 export default function ThemeToggle() {
   const { changeTheme, theme } = useTheme();
 
-  const CurrentIcon = theme === "dark"
-    ? Moon
-    : theme === "gov"
-      ? Building2
-      : Sun;
+  const renderCurrentThemeIcon = () => {
+    if (theme === "gov") {
+      return (
+        <img
+          className="theme-toggle__trigger-logo"
+          src="/govbr/logo.svg"
+          alt="GOV.BR"
+        />
+      );
+    }
+
+    const CurrentIcon = theme === "dark" ? Moon : Sun;
+    return <CurrentIcon className="theme-toggle__trigger-icon" />;
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="white" size="icon" className="theme-toggle__trigger" aria-label="Alterar tema">
-          <CurrentIcon className="theme-toggle__trigger-icon" />
+          {renderCurrentThemeIcon()}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="theme-toggle__menu">
@@ -45,8 +54,11 @@ export default function ThemeToggle() {
           className={`theme-toggle__menu-item${theme === "gov" ? " theme-toggle__menu-item--active" : ""}`}
           onClick={() => changeTheme("gov")}
         >
-          <Building2 className="theme-toggle__menu-item-icon" />
-          <span>GovBr</span>
+          <img
+            className="theme-toggle__menu-item-logo"
+            src="/govbr/logo.svg"
+            alt="GOV.BR"
+          />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

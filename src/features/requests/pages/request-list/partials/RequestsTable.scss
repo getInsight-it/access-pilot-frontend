@@ -107,9 +107,20 @@
   }
 
   &__actions-button {
+    border: 0;
+    border-radius: var(--system-detail-control-radius);
+    background-color: transparent;
+    color: var(--default-text-color);
     min-width: 36px;
     min-height: 36px;
     padding-inline: 8px;
+
+    &:hover,
+    &:active {
+      border-color: transparent;
+      background-color: var(--table-header-background-color);
+      color: var(--default-text-color);
+    }
   }
 
   &__empty-state {

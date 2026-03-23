@@ -20,12 +20,16 @@
   }
 
   &--status-published {
+    gap: 0;
+    inline-size: var(--badge-status-min-width);
     color: var(--badge-status-published-text-color);
     background-color: var(--badge-status-published-background-color);
     border-color: var(--badge-status-published-border-color);
   }
 
   &--status-unpublished {
+    gap: 0;
+    inline-size: var(--badge-status-min-width);
     color: var(--badge-status-unpublished-text-color);
     background-color: var(--badge-status-unpublished-background-color);
     border-color: var(--badge-status-unpublished-border-color);

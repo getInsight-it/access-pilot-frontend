@@ -3,7 +3,7 @@ import useAuthStore, { type AuthState } from "@store/authStore.ts";
 import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@ui/button.tsx";
 import { cn } from "@config/lib/utils.ts";
-import { EllipsisVertical, RefreshCw, LaptopMinimal, Copy, Loader2, Search, Circle, Eye, PencilLine, Download, Upload, ShieldUser, RefreshCcw, Power, CirclePlus } from "lucide-react";
+import { EllipsisVertical, RefreshCw, LaptopMinimal, Copy, Loader2, Search, Eye, PencilLine, Download, Upload, ShieldUser, RefreshCcw, Power, CirclePlus } from "lucide-react";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@ui/scroll-area.tsx";
@@ -62,7 +62,6 @@ export default function SystemList() {
 
     return (
       <span className={cn("app-badge", badgeModifier)}>
-        <Circle className="app-badge__icon" />
         <span>{statusLabel}</span>
       </span>
     );

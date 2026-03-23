@@ -10,9 +10,27 @@
   color: var(--textarea-text-color);
   font-family: var(--font-family);
   font-size: var(--textarea-font-size);
+  line-height: var(--typography-body-md-line-height);
   font-weight: var(--textarea-font-weight);
+  transition: border-color var(--motion-layout-default), box-shadow var(--motion-layout-default), background-color var(--motion-layout-default);
 
   &::placeholder {
     color: var(--textarea-placeholder-color);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--table-header-text-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-200);
+    outline-offset: 2px;
+    border-color: var(--color-primary-700);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: var(--content-background-color);
+    color: var(--description-color);
   }
 }

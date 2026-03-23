@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
 import { motion } from "framer-motion";
-import { Circle, ClipboardCopy, FileText, FolderOpen, Info, PencilLine, Power, ShieldUser, ChevronDown, ChevronRight, UserRound, ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ClipboardCopy, FileText, FolderOpen, Info, PencilLine, Power, ShieldUser, ChevronDown, ChevronRight, UserRound, ArrowLeft, ArrowUpRight } from "lucide-react";
 import { cn } from "@config/lib/utils.ts";
 import { ScrollArea } from "@ui/scroll-area.tsx";
 import { toast } from "@ui/use-toast.ts";
@@ -182,7 +182,6 @@ export const SystemDetail = () => {
 
     return (
       <span className={cn("app-badge", badgeModifier, "system-detail__status-badge")}>
-        <Circle className="app-badge__icon" />
         <span>{statusLabel}</span>
       </span>
     );

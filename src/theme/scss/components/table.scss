@@ -35,7 +35,8 @@
   &__header &__cell span {
     color: var(--table-header-text-color);
     font-size: var(--table-header-text-size);
-    font-weight: 700;
+    line-height: var(--typography-label-line-height);
+    font-weight: var(--typography-label-font-weight);
   }
 
   &__body {
@@ -50,6 +51,7 @@
     background-color: var(--background);
     color: var(--default-text-color);
     font-size: var(--table-row-text-size);
+    line-height: var(--typography-body-md-line-height);
     border: 1px solid var(--table-border-color);
     border-top: 0;
   }

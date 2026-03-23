@@ -18,6 +18,19 @@
     height: var(--header-control-icon-size);
   }
 
+  &__trigger-logo {
+    width: auto;
+    max-width: 100%;
+    height: var(--header-control-icon-size);
+    object-fit: contain;
+  }
+
+  &__menu-item-logo {
+    width: auto;
+    height: var(--header-control-icon-size);
+    object-fit: contain;
+  }
+
   &__menu {
     min-width: var(--header-theme-menu-width);
   }

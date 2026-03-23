@@ -5,7 +5,7 @@
   padding: 8px;
   border: 1px solid var(--table-border-color);
   border-radius: 8px;
-  background-color: #ecedf1;
+  background-color: var(--content-background-color);
   box-sizing: border-box;
 
   &__trigger {
@@ -23,7 +23,7 @@
   }
 
   &__trigger[data-state="active"] {
-    background-color: var(--color-primary-500);
+    background-color: var(--color-primary-700);
     color: var(--inverse-default-text-color);
   }
 

@@ -3,7 +3,6 @@ import { Icons } from "../partials/Icons.tsx";
 import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
-import { useTheme } from "../../../../../theme/theme-provider.tsx";
 import { RoleComponentGuard } from "../../../../context/auth/RoleGuard.tsx";
 import { cn } from "../../../../../config/lib/utils.ts";
 import "./DashboardNav.scss";
@@ -22,7 +21,6 @@ export function DashboardNav({
   const location = useLocation();
   const path = location.pathname;
   const { isMinimized } = useSidebar();
-  const { theme } = useTheme();
   const isCollapsedDesktop = isMinimized && !isMobileNav;
 
   if(!items?.length) {
@@ -55,9 +53,6 @@ export function DashboardNav({
               if(setOpen) setOpen(false);
             }}>
             <Icon className="dashboard-nav__icon" />
-            {theme === "gov" && (
-              <hr className="dashboard-nav__separator" />
-            )}
             {(isMobileNav || !isCollapsedDesktop) && (
               <span className="dashboard-nav__label">
                 {item.title}

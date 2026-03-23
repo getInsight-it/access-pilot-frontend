@@ -14,8 +14,8 @@
   }
 
   &__trigger-icon {
-    width: var(--header-control-icon-size);
-    height: var(--header-control-icon-size);
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
   }
 
   &__badge {
@@ -59,6 +59,7 @@
     margin: 0;
     color: var(--header-title-color);
     font-size: var(--header-notification-title-font-size);
+    line-height: var(--typography-heading-md-line-height);
     font-weight: var(--header-notification-title-font-weight);
   }
 
@@ -66,6 +67,7 @@
     margin: 0;
     color: var(--header-subtitle-color);
     font-size: var(--header-subtitle-font-size);
+    line-height: var(--typography-caption-line-height);
     font-weight: var(--default-text-font-weight);
   }
 
@@ -97,6 +99,7 @@
     margin: 0;
     color: var(--default-text-color);
     font-size: var(--header-notification-item-font-size);
+    line-height: var(--typography-body-sm-line-height);
     font-weight: var(--default-text-font-weight);
   }
 
@@ -109,8 +112,8 @@
 
   &__item-status,
   &__item-open-icon {
-    width: var(--header-notification-item-icon-size);
-    height: var(--header-notification-item-icon-size);
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
   }
 
   &__item-status {
@@ -138,5 +141,6 @@
     margin: 0;
     color: var(--header-subtitle-color);
     font-size: var(--header-subtitle-font-size);
+    line-height: var(--typography-caption-line-height);
   }
 }
