@@ -70,6 +70,10 @@ const isValidTimeValue = (value: string, maxValue: number) => {
   return Number.isInteger(parsedValue) && parsedValue >= 0 && parsedValue <= maxValue;
 };
 
+const isCompleteTimeValue = (value: string, maxValue: number) => (
+  value.length === 2 && isValidTimeValue(value, maxValue)
+);
+
 const formatValueForDisplay = (value: string) => {
   const date = getDateFromValue(value);
 
@@ -126,8 +130,8 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
       return;
     }
 
-    const hasValidHour = isValidTimeValue(nextFields.hour, 23);
-    const hasValidMinute = isValidTimeValue(nextFields.minute, 59);
+    const hasValidHour = isCompleteTimeValue(nextFields.hour, 23);
+    const hasValidMinute = isCompleteTimeValue(nextFields.minute, 59);
 
     if (hasValidHour && hasValidMinute) {
       onChange(buildExpirationValue(selectedDate, nextFields.hour, nextFields.minute));
