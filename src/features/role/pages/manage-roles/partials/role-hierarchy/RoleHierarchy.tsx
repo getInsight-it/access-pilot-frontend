@@ -48,7 +48,7 @@ function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
       id: role.id.toString(),
       name: role.name,
       levelName: role.level?.name || role.level?.sigla || "",
-      children: undefined
+      children: []
     });
   });
 
@@ -123,7 +123,7 @@ function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: Node[]; edg
 }
 
 function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNode>) {
-  const hasChildren = !node.isLeaf;
+  const hasChildren = Boolean(node.data.children?.length);
   const indent = getThemeSizeToken("--system-detail-role-indent-size", TREE_FALLBACK_INDENT);
   const iconBoxHalf = getThemeSizeToken("--system-detail-role-icon-box-size", 24) / 2;
 
@@ -315,6 +315,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
               className="role-hierarchy__tree"
               data={treeData}
               onMove={handleMove}
+              openByDefault={true}
               width={treeWidth || undefined}
               height={treeHeight || TREE_FALLBACK_HEIGHT}
               rowHeight={treeRowHeight}

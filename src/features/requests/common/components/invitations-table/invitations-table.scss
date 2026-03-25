@@ -100,14 +100,22 @@
   }
 
   &__table-cell--actions {
-    flex: 0 0 160px;
-    justify-content: center;
+    flex: 0 0 auto;
+    width: fit-content;
+    min-width: fit-content;
+    max-width: none;
+    justify-content: flex-end;
   }
 
   &__actions-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--request-access-step-panel-action-content-gap);
     min-height: var(--login-action-height);
     padding-inline: var(--request-access-step-panel-action-padding-inline);
     border-radius: var(--request-access-step-panel-action-radius);
+    white-space: nowrap;
   }
 
   &__empty-state {

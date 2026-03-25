@@ -106,7 +106,7 @@ export function InvitationsTable({
       </div>
 
       <div className="invitations-table__desktop">
-        <div className="app-table app-table--icon invitations-table__table">
+        <div className="app-table invitations-table__table">
           <div className="app-table__filter">
             <div className="invitations-table__filter-content">
               <div className="app-input-group app-input-group--icon-left invitations-table__filter-input">
@@ -135,7 +135,7 @@ export function InvitationsTable({
               <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--expiration-date">
                 <span>Expiração</span>
               </div>
-              <div className="app-table__cell app-table__cell--icon invitations-table__table-cell invitations-table__table-cell--actions">
+              <div className="app-table__cell invitations-table__table-cell invitations-table__table-cell--actions">
                 <span>Ações</span>
               </div>
             </div>
@@ -157,7 +157,7 @@ export function InvitationsTable({
                   <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--expiration-date">
                     <span>{formatDate(invitation.expiresAt)}</span>
                   </div>
-                  <div className="app-table__cell app-table__cell--icon invitations-table__table-cell invitations-table__table-cell--actions">
+                  <div className="app-table__cell invitations-table__table-cell invitations-table__table-cell--actions">
                     <Button
                       type="button"
                       variant={actionVariant === "white" ? "white" : undefined}
