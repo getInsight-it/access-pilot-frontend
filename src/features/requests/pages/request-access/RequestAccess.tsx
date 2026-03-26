@@ -155,7 +155,7 @@ export default function RequestAccess() {
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
-      const fetchedRoles = await roleService.getRolesByClientId(clientId, true);
+      const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
