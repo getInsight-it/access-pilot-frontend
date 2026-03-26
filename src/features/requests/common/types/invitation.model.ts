@@ -8,6 +8,8 @@ export interface InvitationListItemInterface {
   roleLabel: string;
   clientId: string;
   clientLabel: string;
+  invitatioToken?: string;
+  invitationToken?: string;
 }
 
 export interface InvitationRequestContextInterface {

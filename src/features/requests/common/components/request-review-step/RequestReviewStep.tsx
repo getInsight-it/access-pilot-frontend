@@ -1,8 +1,9 @@
 import React from "react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarDays, ClipboardList, FileText, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
+import { CalendarDays, ChevronRight, ClipboardList, FileText, Globe, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
 import { FileIcon } from "@common/components/FileIcon.tsx";
+import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import { FileAttachment } from "../../types/access-request.model.ts";
 import "./request-review-step.scss";
@@ -15,6 +16,8 @@ interface RequestReviewStepProps {
   attachments: FileAttachment[];
   emails?: string[];
   expiresAt?: string;
+  sphereLabel?: string;
+  sphereHierarchy?: ItemHierarchyInterface[];
 }
 
 export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
@@ -24,7 +27,9 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   roles,
   attachments,
   emails = [],
-  expiresAt
+  expiresAt,
+  sphereLabel,
+  sphereHierarchy = []
 }) => {
   const parsedExpiration = expiresAt
     ? parseISO(expiresAt.includes("T") ? expiresAt : `${expiresAt}T00:00:00`)
@@ -35,7 +40,8 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   const showExpiration = Boolean(parsedExpiration && !Number.isNaN(parsedExpiration.getTime()));
   const attachmentGroupCount = attachments.length;
   const totalAttachedFiles = attachments.reduce((total, attachment) => total + attachment.files.length, 0);
-  const totalReviewedItems = 3 + Number(showEmailSection) + Number(showExpiration);
+  const showSphereSection = Boolean(sphereLabel || sphereHierarchy.length > 0);
+  const totalReviewedItems = 3 + Number(showSphereSection) + Number(showEmailSection) + Number(showExpiration);
   const uniqueEmailDomains = Array.from(new Set(emails.map((email) => email.split("@")[1]).filter(Boolean)));
   const formattedExpiration = showExpiration
     ? format(parsedExpiration, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })
@@ -43,6 +49,9 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   const expirationMetric = showExpiration
     ? format(parsedExpiration, "dd/MM HH:mm")
     : "";
+  const sphereSummaryValue = sphereHierarchy.length > 0
+    ? sphereHierarchy[sphereHierarchy.length - 1].name
+    : sphereLabel || "Não informado";
 
   return (
     <div className="request-review-step">
@@ -108,6 +117,30 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
               <p className="request-review-step__summary-value">{selectedRoleName}</p>
             </div>
           </article>
+
+          {showSphereSection && (
+            <article className="request-review-step__summary-card request-review-step__summary-card--full">
+              <div className="request-review-step__summary-icon-box">
+                <Globe className="request-review-step__summary-icon" />
+              </div>
+              <div className="request-review-step__summary-content">
+                <p className="request-review-step__summary-label">Esfera</p>
+                <p className="request-review-step__summary-value">{sphereSummaryValue}</p>
+                {sphereHierarchy.length > 0 && (
+                  <div className="request-review-step__hierarchy-trail" aria-label="Hierarquia preenchida">
+                    {sphereHierarchy.map((item, index) => (
+                      <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-review-step__hierarchy-item">
+                        <span className="request-review-step__hierarchy-label">{item.name}</span>
+                        {index < sphereHierarchy.length - 1 && (
+                          <ChevronRight className="request-review-step__hierarchy-separator" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          )}
 
           <article className="request-review-step__summary-card request-review-step__summary-card--full">
             <div className="request-review-step__summary-icon-box">
