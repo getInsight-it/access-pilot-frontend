@@ -7,6 +7,7 @@ import { ContentLoader } from "@common/components/ContentLoader.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "@common/constants/animation.ts";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { STORAGE_KEYS } from "@constants/storage.ts";
 import { InvitationsTable } from "../../common/components/invitations-table/InvitationsTable.tsx";
 import {
   useInvitationFormatting,
@@ -50,6 +51,12 @@ export default function MyInvites() {
   }, [debouncedSearchFilter, handlePageChange]);
 
   const handleAcceptInvitation = useCallback((invitation: InvitationListItemInterface) => {
+    const invitationToken = invitation.invitationToken || invitation.invitatioToken;
+
+    if (invitationToken) {
+      sessionStorage.setItem(STORAGE_KEYS.INVITATION_TOKEN, invitationToken);
+    }
+
     navigate(PRIVATE_ROUTES.MY_INVITE_REQUEST_WITH_ID.replace(":id", invitation.id.toString()));
   }, [navigate]);
 

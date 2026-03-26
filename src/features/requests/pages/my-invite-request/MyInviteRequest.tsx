@@ -1,7 +1,12 @@
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { useToast } from "@common/external/ui/use-toast.ts";
 import { ContentLoader } from "@common/components/ContentLoader.tsx";
+import { StepLoader } from "@common/components/loading/StepLoader.tsx";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { STORAGE_KEYS } from "@common/constants/storage.ts";
+import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { CalendarDays, Clock3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { RequestJustificationStep } from "../../common/components/request-justification-step/RequestJustificationStep.tsx";
 import { RequestReviewStep } from "../../common/components/request-review-step/RequestReviewStep.tsx";
 import { RequestRoleStep } from "../../common/components/request-role-step/RequestRoleStep.tsx";
@@ -10,6 +15,7 @@ import { RequestStepper } from "../../common/components/request-stepper/RequestS
 import { RequestSystemStep } from "../../common/components/request-system-step/RequestSystemStep.tsx";
 import { FileAttachment, RequestStepItem } from "../../common/types/access-request.model.ts";
 import { useState } from "react";
+import { requestService } from "../../common/api/request-service.ts";
 import { useMyInviteRequest } from "./useMyInviteRequest.ts";
 import "./my-invite-request.scss";
 
@@ -39,8 +45,10 @@ const getInviteExpirationDetails = (expiresAt?: string) => {
 
 export default function MyInviteRequest() {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(4);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     invitePreview,
     isLoading,
@@ -88,12 +96,13 @@ export default function MyInviteRequest() {
       <RequestRoleStep
         roles={invitePreview ? [invitePreview.role] : []}
         selectedRoleId={invitePreview?.role.id.toString() || null}
-        currentCodeItem={invitePreview?.sphereLabel || ""}
+        currentCodeItem={invitePreview?.codeItem || ""}
         onSelectRole={() => undefined}
         onSelectSphere={() => undefined}
         onClearSphereError={() => undefined}
         readOnly={true}
         lockedSphereLabel={invitePreview?.sphereLabel || ""}
+        lockedSphereHierarchy={invitePreview?.sphereHierarchy || []}
       />
     ),
     (
@@ -101,7 +110,7 @@ export default function MyInviteRequest() {
         onAttach={setAttachments}
         initialAttachments={attachments}
         initialReason={invitePreview?.reason || ""}
-        requiredAttachments={[]}
+        requiredAttachments={invitePreview?.client.configurations || []}
         hasError={{ attachments: false, reason: false }}
         readOnlyReason={true}
       />
@@ -113,6 +122,8 @@ export default function MyInviteRequest() {
         reason={invitePreview?.reason || ""}
         roles={invitePreview ? [invitePreview.role] : []}
         attachments={attachments}
+        sphereLabel={invitePreview?.sphereLabel || ""}
+        sphereHierarchy={invitePreview?.sphereHierarchy || []}
       />
     )
   ];
@@ -124,16 +135,77 @@ export default function MyInviteRequest() {
     "Revise as informações antes de aceitar:"
   ];
 
+  const handleSubmit = async () => {
+    if (!invitePreview?.invitationToken) {
+      toast({
+        title: "Token do convite não encontrado",
+        description: "Não foi possível identificar o token do convite para concluir o aceite.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const requiredAttachments = invitePreview.client.configurations.filter((configuration) => configuration.required);
+    const missingRequiredAttachments = requiredAttachments.filter((configuration) => {
+      const attachment = attachments.find((item) => item.key === configuration.key);
+      return !attachment || attachment.files.length === 0;
+    });
+
+    if (missingRequiredAttachments.length > 0) {
+      setCurrentStep(3);
+      toast({
+        title: "Anexos obrigatórios pendentes",
+        description: "Inclua todos os anexos exigidos antes de aceitar o convite.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const payloadFormData = new FormData();
+      const request = {
+        clientId: invitePreview.client.clientId,
+        roleId: invitePreview.role.id,
+        ...(invitePreview.codeItem ? { codeItem: invitePreview.codeItem } : {}),
+        description: invitePreview.reason,
+        invitationToken: invitePreview.invitationToken
+      };
+
+      payloadFormData.append("request", JSON.stringify(request));
+      attachments.forEach((attachment) => {
+        attachment.files.forEach((file) => {
+          payloadFormData.append(attachment.key, file);
+        });
+      });
+
+      await requestService.createRequest(payloadFormData);
+      sessionStorage.removeItem(STORAGE_KEYS.INVITATION_TOKEN);
+
+      toast({
+        title: "Convite aceito com sucesso!",
+        description: "A solicitação de acesso foi enviada para processamento."
+      });
+      navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
+    } catch (error: unknown) {
+      toast({
+        title: "Erro ao aceitar convite",
+        description: formatErrorMessages(error),
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < steps.length) {
       setCurrentStep((previousStep) => previousStep + 1);
       return;
     }
 
-    toast({
-      title: "Integração pendente",
-      description: "O envio do aceite do convite será conectado quando o backend estiver disponível."
-    });
+    void handleSubmit();
   };
 
   const handleBack = () => {
@@ -210,7 +282,7 @@ export default function MyInviteRequest() {
               onBack={handleBack}
               onNext={handleNext}
               backButtonDisabled={currentStep === 1}
-              nextButtonLabel={currentStep < steps.length ? "Próximo" : "Aceitar convite"}
+              nextButtonLabel={currentStep < steps.length ? "Próximo" : "Aceitar"}
               showNextIcon={currentStep < steps.length}
             >
               {stepContent[currentStep - 1]}
@@ -218,6 +290,8 @@ export default function MyInviteRequest() {
           </div>
         </div>
       </ScrollArea>
+
+      <StepLoader loading={isSubmitting} onClose={() => setIsSubmitting(false)} />
     </section>
   );
 }

@@ -156,5 +156,36 @@
     border: var(--request-access-system-step-card-border-active);
     border-radius: var(--request-access-system-step-card-radius);
     background-color: var(--request-access-system-step-card-background-active);
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__locked-sphere-trail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pagination-gap);
+  }
+
+  &__locked-sphere-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pagination-gap);
+    min-width: 0;
+  }
+
+  &__locked-sphere-item-label {
+    color: var(--title-color);
+    font-size: var(--description-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+    word-break: break-word;
+  }
+
+  &__locked-sphere-separator {
+    width: var(--request-access-system-step-selected-icon-size);
+    height: var(--request-access-system-step-selected-icon-size);
+    color: var(--description-color);
+    flex: 0 0 auto;
   }
 }

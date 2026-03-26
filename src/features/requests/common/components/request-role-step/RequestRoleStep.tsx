@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Search } from "lucide-react";
+import { Check, ChevronRight, Search } from "lucide-react";
 import IconRenderer from "@common/components/icon/IconRenderer.tsx";
 import DynamicSphereForm from "@features/level/common/components/DynamicSphereForm.tsx";
+import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import "./request-role-step.scss";
 
@@ -16,6 +17,7 @@ interface RequestRoleStepProps {
   onClearSphereError: () => void;
   readOnly?: boolean;
   lockedSphereLabel?: string | null;
+  lockedSphereHierarchy?: ItemHierarchyInterface[];
 }
 
 export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
@@ -28,7 +30,8 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   onSelectSphere,
   onClearSphereError,
   readOnly = false,
-  lockedSphereLabel
+  lockedSphereLabel,
+  lockedSphereHierarchy = []
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const hierarchyNotCompletedRef = useRef(false);
@@ -36,9 +39,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   const selectedRoleObject = roles.find((role) => role.id.toString() === selectedRoleId);
   const hasHierarchyRequirement = Boolean(selectedRoleObject?.level?.id);
   const hasLockedSphereData = Boolean(lockedSphereLabel || currentCodeItem);
+  const hasLockedSphereHierarchy = lockedSphereHierarchy.length > 0;
+  const lastLockedSphereItem = hasLockedSphereHierarchy
+    ? lockedSphereHierarchy[lockedSphereHierarchy.length - 1]
+    : null;
   const shouldShowHierarchySection = Boolean(selectedRoleObject) && (
     readOnly
-      ? hasHierarchyRequirement || hasLockedSphereData
+      ? hasHierarchyRequirement || hasLockedSphereData || hasLockedSphereHierarchy
       : hasHierarchyRequirement
   );
 
@@ -158,8 +165,20 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
           {readOnly ? (
             <div className="request-role-step__locked-sphere">
               <p className="request-role-step__hierarchy-info">
-                {lockedSphereLabel || currentCodeItem || "Esfera previamente definida para este convite."}
+                {lastLockedSphereItem?.name || lockedSphereLabel || currentCodeItem || "Esfera previamente definida para este convite."}
               </p>
+              {hasLockedSphereHierarchy && (
+                <div className="request-role-step__locked-sphere-trail" aria-label="Hierarquia preenchida">
+                  {lockedSphereHierarchy.map((item, index) => (
+                    <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-role-step__locked-sphere-item">
+                      <span className="request-role-step__locked-sphere-item-label">{item.name}</span>
+                      {index < lockedSphereHierarchy.length - 1 && (
+                        <ChevronRight className="request-role-step__locked-sphere-separator" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : hasHierarchyRequirement ? (
             <DynamicSphereForm
@@ -173,13 +192,25 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
         </div>
       )}
 
-      {!selectedRoleObject && readOnly && (lockedSphereLabel || currentCodeItem) && (
+      {!selectedRoleObject && readOnly && (lockedSphereLabel || currentCodeItem || hasLockedSphereHierarchy) && (
         <div className="request-role-step__hierarchy-section">
           <h4 className="request-role-step__hierarchy-title">Detalhes da esfera:</h4>
           <div className="request-role-step__locked-sphere">
             <p className="request-role-step__hierarchy-info">
-              {lockedSphereLabel || currentCodeItem}
+              {lastLockedSphereItem?.name || lockedSphereLabel || currentCodeItem}
             </p>
+            {hasLockedSphereHierarchy && (
+              <div className="request-role-step__locked-sphere-trail" aria-label="Hierarquia preenchida">
+                {lockedSphereHierarchy.map((item, index) => (
+                  <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-role-step__locked-sphere-item">
+                    <span className="request-role-step__locked-sphere-item-label">{item.name}</span>
+                    {index < lockedSphereHierarchy.length - 1 && (
+                      <ChevronRight className="request-role-step__locked-sphere-separator" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

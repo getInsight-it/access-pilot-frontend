@@ -151,6 +151,34 @@
     word-break: break-word;
   }
 
+  &__hierarchy-trail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pagination-gap);
+  }
+
+  &__hierarchy-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pagination-gap);
+    min-width: 0;
+  }
+
+  &__hierarchy-label {
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    word-break: break-word;
+  }
+
+  &__hierarchy-separator {
+    width: var(--request-access-system-step-selected-icon-size);
+    height: var(--request-access-system-step-selected-icon-size);
+    color: var(--description-color);
+    flex: 0 0 auto;
+  }
+
   &__email-list {
     display: flex;
     flex-wrap: wrap;
