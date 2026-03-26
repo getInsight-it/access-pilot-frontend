@@ -163,7 +163,7 @@ export default function RequestAccess() {
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
-      const fetchedRoles = await roleService.getRolesByClientId(clientId, true);
+      const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
@@ -316,7 +316,7 @@ export default function RequestAccess() {
       const request = {
         clientId: customForm["clientId"].value,
         roleId: Number(customForm["roleId"].value),
-        ...(customForm["externalCode"].value ? 
+        ...(customForm["externalCode"].value ?
           { codeItem: customForm["externalCode"].value } :
           customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }
         ),

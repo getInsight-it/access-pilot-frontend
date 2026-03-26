@@ -25,15 +25,13 @@ export class RoleService {
     return response.data as RoleResponseInterface;
   }
 
-  async getRolesByClientId(clientId: string, onlyRolesWithParent?: boolean): Promise<RoleResponseInterface[]> {
+  async getRolesByClientId(clientId: string): Promise<RoleResponseInterface[]> {
     if(!clientId) {
       throw new Error("Client ID is required");
     }
 
     const queryParams = new URLSearchParams({ clientId });
-    if(onlyRolesWithParent == true) {
-      queryParams.append("hasParent", "true");
-    }
+
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(`${ROLE_API.ROLES}?${queryParams.toString()}`);
 
     if(response instanceof HttpRequestError) {
