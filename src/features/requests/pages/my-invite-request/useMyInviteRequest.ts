@@ -20,7 +20,7 @@ interface InviteRequestPreview {
   codeItem: string;
   sphereLabel: string;
   sphereHierarchy: ItemHierarchyInterface[];
-  invitationToken?: string;
+  invitationUuid?: string;
   expiresAt?: string;
   title: string;
   description: string;
@@ -148,7 +148,7 @@ export const useMyInviteRequest = () => {
     try {
       if (id) {
         const invitation = await invitationService.getInvitationById(id);
-        const invitationToken = sessionStorage.getItem(STORAGE_KEYS.INVITATION_TOKEN) || undefined;
+        const invitationUuid = sessionStorage.getItem(STORAGE_KEYS.INVITATION_UUID) || undefined;
         const { client, role } = await resolveInviteEntities(
           invitation.clientId,
           invitation.clientLabel,
@@ -165,7 +165,7 @@ export const useMyInviteRequest = () => {
           codeItem: invitation.codeItem,
           sphereLabel: formatSphereSummary(sphereHierarchy, role.level?.name, invitation.codeItem),
           sphereHierarchy,
-          invitationToken,
+          invitationUuid,
           expiresAt: invitation.expiresAt,
           title: "Solicitação de convite",
           description: "Os dados abaixo foram carregados a partir do convite selecionado em Meus convites.",
@@ -175,16 +175,16 @@ export const useMyInviteRequest = () => {
         return;
       }
 
-      const invitationToken = sessionStorage.getItem(STORAGE_KEYS.INVITATION_TOKEN);
+      const invitationUuid = sessionStorage.getItem(STORAGE_KEYS.INVITATION_UUID);
 
-      if (!invitationToken) {
+      if (!invitationUuid) {
         setInvitePreview(null);
         setErrorMessage("Nenhum convite foi encontrado na sua sessão atual.");
         return;
       }
 
-      const invitationContext = await invitationService.getInvitationRequestContext(invitationToken);
-      sessionStorage.setItem(STORAGE_KEYS.INVITATION_TOKEN, invitationContext.invitationToken);
+      const invitationContext = await invitationService.getInvitationRequestContext(invitationUuid);
+      sessionStorage.setItem(STORAGE_KEYS.INVITATION_UUID, invitationContext.invitationUuid);
       const { client, role } = await resolveInviteEntities(
         invitationContext.clientId,
         invitationContext.clientLabel,
@@ -210,7 +210,7 @@ export const useMyInviteRequest = () => {
           invitationContext.codeItem
         ),
         sphereHierarchy,
-        invitationToken: invitationContext.invitationToken,
+        invitationUuid: invitationContext.invitationUuid,
         expiresAt: invitationContext.expiresAt,
         title: "Solicitação de convite",
         description: "Os dados abaixo foram carregados a partir do token salvo na sua sessão.",

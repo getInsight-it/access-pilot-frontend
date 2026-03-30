@@ -8,12 +8,12 @@ export interface InvitationListItemInterface {
   roleLabel: string;
   clientId: string;
   clientLabel: string;
-  invitatioToken?: string;
-  invitationToken?: string;
+  invitatioUuid?: string;
+  invitationUuid?: string;
 }
 
 export interface InvitationRequestContextInterface {
-  invitationToken: string;
+  invitationUuid: string;
   expiresAt?: string;
   clientId: string;
   roleId: number;

@@ -136,7 +136,7 @@ export default function MyInviteRequest() {
   ];
 
   const handleSubmit = async () => {
-    if (!invitePreview?.invitationToken) {
+    if (!invitePreview?.invitationUuid) {
       toast({
         title: "Token do convite não encontrado",
         description: "Não foi possível identificar o token do convite para concluir o aceite.",
@@ -170,7 +170,7 @@ export default function MyInviteRequest() {
         roleId: invitePreview.role.id,
         ...(invitePreview.codeItem ? { codeItem: invitePreview.codeItem } : {}),
         description: invitePreview.reason,
-        invitationToken: invitePreview.invitationToken
+        invitationUuid: invitePreview.invitationUuid
       };
 
       payloadFormData.append("request", JSON.stringify(request));
@@ -181,7 +181,7 @@ export default function MyInviteRequest() {
       });
 
       await requestService.createRequest(payloadFormData);
-      sessionStorage.removeItem(STORAGE_KEYS.INVITATION_TOKEN);
+      sessionStorage.removeItem(STORAGE_KEYS.INVITATION_UUID);
 
       toast({
         title: "Convite aceito com sucesso!",

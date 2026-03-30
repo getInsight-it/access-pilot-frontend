@@ -51,10 +51,10 @@ export default function MyInvites() {
   }, [debouncedSearchFilter, handlePageChange]);
 
   const handleAcceptInvitation = useCallback((invitation: InvitationListItemInterface) => {
-    const invitationToken = invitation.invitationToken || invitation.invitatioToken;
+    const invitationUuid = invitation.invitationUuid || invitation.invitatioUuid;
 
-    if (invitationToken) {
-      sessionStorage.setItem(STORAGE_KEYS.INVITATION_TOKEN, invitationToken);
+    if (invitationUuid) {
+      sessionStorage.setItem(STORAGE_KEYS.INVITATION_UUID, invitationUuid);
     }
 
     navigate(PRIVATE_ROUTES.MY_INVITE_REQUEST_WITH_ID.replace(":id", invitation.id.toString()));

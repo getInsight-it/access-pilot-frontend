@@ -26,5 +26,5 @@ export interface InvitationAuthIntentInterface {
   status: InvitationStatus;
   nextStep: InvitationAuthNextStep;
   loginHint: string;
-  invitationToken: string;
+  invitationUuid: string;
 }

@@ -8,7 +8,7 @@ import {
 const publicHttpClient = new HttpClient(window.env.API_URL);
 
 export const INVITATION_API = {
-  DETAILS: "/v1/public/invitations",
+  DETAILS: "/public/invitations",
 };
 
 export class InvitationService {

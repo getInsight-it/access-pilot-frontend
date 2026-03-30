@@ -50,9 +50,9 @@ function App() {
         setUserRoles(authService.getRoles());
 
         const currentRoute = window.location.pathname;
-        const invitationToken = sessionStorage.getItem(STORAGE_KEYS.INVITATION_TOKEN);
+        const invitationUuid = sessionStorage.getItem(STORAGE_KEYS.INVITATION_UUID);
         const shouldRedirectToInviteRequest = Boolean(
-          invitationToken &&
+          invitationUuid &&
           (
             currentRoute === "/" ||
             currentRoute === AUTH_ROUTES.LOGIN ||

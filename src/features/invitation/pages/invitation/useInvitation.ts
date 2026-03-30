@@ -23,9 +23,9 @@ const shouldRedirectToLogin = (authIntent: InvitationAuthIntentInterface) =>
 const shouldRedirectToRegistration = (authIntent: InvitationAuthIntentInterface) =>
   authIntent.nextStep.includes("REGISTER");
 
-const getInvitationRedirectUri = (token: string) => {
+const getInvitationRedirectUri = (invitationUuid: string) => {
   const invitationUrl = new URL(PUBLIC_ROUTES.INVITATION, window.location.origin);
-  invitationUrl.searchParams.set("token", token);
+  invitationUrl.searchParams.set("token", invitationUuid);
   return invitationUrl.toString();
 };
 
@@ -55,10 +55,10 @@ export const useInvitation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const token = searchParams.get("token") ?? searchParams.get("invitationToken");
+  const invitationUuid = searchParams.get("token") ?? searchParams.get("invitationUuid");
 
   const loadInvitation = useCallback(async () => {
-    if (!token) {
+    if (!invitationUuid) {
       setInvitation(null);
       setErrorMessage("Convite inválido. O token não foi informado.");
       setIsLoading(false);
@@ -69,7 +69,7 @@ export const useInvitation = () => {
       setIsLoading(true);
       setErrorMessage(null);
 
-      const response = await invitationService.getInvitationDetails(token);
+      const response = await invitationService.getInvitationDetails(invitationUuid);
 
       if (!isValidInvitationStatus(response.status)) {
         setInvitation(response);
@@ -84,14 +84,14 @@ export const useInvitation = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [token]);
+  }, [invitationUuid]);
 
   useEffect(() => {
     void loadInvitation();
   }, [loadInvitation]);
 
   const handleAcceptInvitation = useCallback(async () => {
-    if (!token) {
+    if (!invitationUuid) {
       setErrorMessage("Convite inválido. O token não foi informado.");
       return;
     }
@@ -99,16 +99,16 @@ export const useInvitation = () => {
     try {
       setIsSubmitting(true);
 
-      const authIntent = await invitationService.getInvitationAuthIntent(token);
+      const authIntent = await invitationService.getInvitationAuthIntent(invitationUuid);
 
       if (!isValidInvitationStatus(authIntent.status)) {
         setErrorMessage("Este convite não está mais disponível.");
         return;
       }
 
-      sessionStorage.setItem(STORAGE_KEYS.INVITATION_TOKEN, authIntent.invitationToken);
+      sessionStorage.setItem(STORAGE_KEYS.INVITATION_UUID, authIntent.invitationUuid);
 
-      const redirectUri = getInvitationRedirectUri(authIntent.invitationToken);
+      const redirectUri = getInvitationRedirectUri(authIntent.invitationUuid);
 
       if (shouldRedirectToLogin(authIntent)) {
         await authService.signIn(redirectUri);
@@ -132,7 +132,7 @@ export const useInvitation = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [toast, token]);
+  }, [toast, invitationUuid]);
 
   const clientLabel = invitation?.client.label || invitation?.client.name || "-";
   const roleLabel = invitation?.role.label || invitation?.role.name || "-";
@@ -142,7 +142,7 @@ export const useInvitation = () => {
   );
 
   return {
-    token,
+    invitationUuid,
     invitation,
     clientLabel,
     roleLabel,
@@ -150,7 +150,7 @@ export const useInvitation = () => {
     isLoading,
     isSubmitting,
     errorMessage,
-    isValidInvitation: Boolean(invitation && isValidInvitationStatus(invitation.status) && token),
+    isValidInvitation: Boolean(invitation && isValidInvitationStatus(invitation.status) && invitationUuid),
     handleAcceptInvitation
   };
 };
