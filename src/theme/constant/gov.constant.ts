@@ -115,6 +115,7 @@ export const GOV_THEME: Theme = {
     "table-footer-min-height": "72px",
     "table-border-color": "#c6cace",
     "table-icon-cell-width": "56px",
+    "table-wide-action-cell-width": "220px",
 
     // pagination
     "pagination-border-color": "var(--table-border-color)",

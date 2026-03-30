@@ -26,6 +26,7 @@
   }
 
   &__card {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -121,6 +122,51 @@
   &__selected-icon {
     width: var(--request-access-system-step-selected-icon-size);
     height: var(--request-access-system-step-selected-icon-size);
+  }
+
+  &__tooltip {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(100% + var(--system-form-field-gap));
+    display: flex;
+    flex-direction: column;
+    gap: var(--pagination-gap);
+    padding: var(--request-access-system-step-card-padding);
+    border: var(--sidebar-tooltip-border);
+    border-radius: var(--sidebar-tooltip-radius);
+    background-color: var(--sidebar-tooltip-background-color);
+    color: var(--sidebar-tooltip-text-color);
+    box-shadow: var(--sidebar-tooltip-shadow);
+    z-index: var(--dropdown-z-index);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  &__tooltip-row {
+    color: inherit;
+  }
+
+  &__tooltip-title {
+    color: var(--title-color);
+    font-size: var(--typography-label-font-size);
+    line-height: var(--typography-label-line-height);
+    font-weight: var(--typography-label-font-weight);
+  }
+
+  &__tooltip-description {
+    color: var(--sidebar-tooltip-text-color);
+    font-size: var(--typography-body-md-font-size);
+    line-height: var(--typography-body-md-line-height);
+    font-weight: var(--default-text-font-weight);
+    white-space: normal;
+  }
+
+  &__tooltip-value {
+    color: inherit;
+    font-size: var(--typography-body-md-font-size);
+    line-height: var(--typography-body-md-line-height);
+    font-weight: var(--default-text-font-weight);
+    white-space: normal;
   }
 
   &__empty-state {

@@ -8,9 +8,9 @@
   &__header-container {
     display: flex;
     align-items: center;
-    padding-inline: 28px;
-    padding-top: 36px;
-    padding-bottom: 20px;
+    padding-inline: var(--request-access-page-padding-inline);
+    padding-top: var(--request-access-page-padding-top);
+    padding-bottom: var(--request-access-page-padding-bottom);
   }
 
   &__header {
@@ -67,9 +67,26 @@
       flex-direction: column;
     }
 
+    &__header-container {
+      padding-inline: var(--pagination-control-padding-inline);
+    }
+
     &__actions {
       width: 100%;
-      justify-content: flex-end;
+      justify-content: stretch;
+    }
+
+    &__primary-action {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__scroll-viewport {
+      padding-inline: var(--pagination-control-padding-inline);
+    }
+
+    &__content {
+      padding-bottom: var(--request-access-page-padding-bottom);
     }
   }
 }

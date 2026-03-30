@@ -2,8 +2,8 @@ import { Button } from "@common/external/ui/button.tsx";
 import { useInvitation } from "./useInvitation.ts";
 import "./invitation.scss";
 
-const INVITATION_HERO_IMAGE_SRC = "/img/invitation-hero.png";
-const INVITATION_BRAND_ICON_SRC = "/img/ap-icon.svg";
+const INVITATION_HERO_ARTWORK_SRC = "/img/invitation-icon.png";
+const INVITATION_BRAND_LOGO_SRC = "/img/accesspilot-logo.svg";
 const INVITATION_ROLE_ICON_SRC = "/img/invitation-role-icon.svg";
 
 export default function Invitation() {
@@ -24,14 +24,15 @@ export default function Invitation() {
       <section className="invitation__card" aria-labelledby="invitation-title">
         <div className="invitation__body">
           <div className="invitation__brand">
-            <span className="invitation__brand-icon-box" aria-hidden="true">
-              <img className="invitation__brand-icon" src={INVITATION_BRAND_ICON_SRC} alt="" />
-            </span>
-            <span className="invitation__brand-title">AccessPilot</span>
+            <img
+              className="invitation__brand-logo"
+              src={INVITATION_BRAND_LOGO_SRC}
+              alt="AccessPilot"
+            />
           </div>
 
           <div className="invitation__hero" aria-hidden="true">
-            <img className="invitation__hero-image" src={INVITATION_HERO_IMAGE_SRC} alt="" />
+            <img className="invitation__hero-artwork" src={INVITATION_HERO_ARTWORK_SRC} alt="" />
           </div>
 
           <div className="invitation__content">

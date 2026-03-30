@@ -115,6 +115,7 @@ export const LIGHT_THEME: Theme = {
     "table-footer-min-height": "72px",
     "table-border-color": "#e5e7eb",
     "table-icon-cell-width": "56px",
+    "table-wide-action-cell-width": "220px",
     "level-list-table-row-min-height": "64px",
 
     // pagination

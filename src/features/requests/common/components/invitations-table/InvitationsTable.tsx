@@ -55,7 +55,7 @@ export function InvitationsTable({
               {invitations.map((invitation) => (
                 <div className="invitations-table__card" key={invitation.id}>
                   <div className="invitations-table__card-header">
-                    <span>{invitation.protocolCode}</span>
+                    <span className="invitations-table__card-title">{invitation.protocolCode}</span>
                     <Button
                       type="button"
                       variant={actionVariant === "white" ? "white" : undefined}

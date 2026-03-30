@@ -6,6 +6,8 @@ import { ItemHierarchyInterface } from "@features/level/common/types/item-hierar
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import "./request-role-step.scss";
 
+const ROLE_PARENT_TOOLTIP_DELAY_MS = 1000;
+
 interface RequestRoleStepProps {
   roles: RoleResponseInterface[];
   selectedRoleId: string | null;
@@ -34,8 +36,10 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   lockedSphereHierarchy = []
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [visibleTooltipRoleId, setVisibleTooltipRoleId] = useState<number | null>(null);
   const hierarchyNotCompletedRef = useRef(false);
   const currentCodeItemRef = useRef<string>(currentCodeItem);
+  const hoverTimeoutRef = useRef<number | null>(null);
   const selectedRoleObject = roles.find((role) => role.id.toString() === selectedRoleId);
   const hasHierarchyRequirement = Boolean(selectedRoleObject?.level?.id);
   const hasLockedSphereData = Boolean(lockedSphereLabel || currentCodeItem);
@@ -56,6 +60,14 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
   useEffect(() => {
     hierarchyNotCompletedRef.current = false;
   }, [selectedRoleId]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current !== null) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const filteredRoles = useMemo(() => {
     if (readOnly) {
@@ -100,6 +112,29 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
     }
   };
 
+  const handleRoleMouseEnter = (role: RoleResponseInterface) => {
+    if (!role.roleParent) {
+      return;
+    }
+
+    if (hoverTimeoutRef.current !== null) {
+      window.clearTimeout(hoverTimeoutRef.current);
+    }
+
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      setVisibleTooltipRoleId(role.id);
+    }, ROLE_PARENT_TOOLTIP_DELAY_MS);
+  };
+
+  const handleRoleMouseLeave = () => {
+    if (hoverTimeoutRef.current !== null) {
+      window.clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
+    setVisibleTooltipRoleId(null);
+  };
+
   return (
     <div className="request-role-step">
       {!readOnly && (
@@ -124,13 +159,17 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
         <div className="request-role-step__grid">
           {filteredRoles.map((role) => {
             const isActive = selectedRoleId === role.id.toString();
+            const isTooltipVisible = visibleTooltipRoleId === role.id && Boolean(role.roleParent);
 
             return (
               <button
                 key={role.id}
                 type="button"
                 className={`request-role-step__card${isActive ? " request-role-step__card--active" : ""}${readOnly ? " request-role-step__card--locked" : ""}`}
+                onMouseEnter={() => handleRoleMouseEnter(role)}
+                onMouseLeave={handleRoleMouseLeave}
                 onClick={() => {
+                  handleRoleMouseLeave();
                   void onSelectRole(role);
                 }}
                 disabled={readOnly}
@@ -149,6 +188,21 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
                 {isActive && (
                   <span className="request-role-step__selected-indicator">
                     <Check className="request-role-step__selected-icon" />
+                  </span>
+                )}
+
+                {isTooltipVisible && role.roleParent && (
+                  <span className="request-role-step__tooltip" role="note">
+                    <div className="request-role-step__tooltip-row">
+                      <span className="request-role-step__tooltip-title">Papel pai: </span>
+                      <span className="request-role-step__tooltip-value">{role.roleParent.label}</span>
+                    </div>
+                    <div className="request-role-step__tooltip-row">
+                      <span className="request-role-step__tooltip-title">Descrição: </span>
+                      <span className="request-role-step__tooltip-value">
+                        {role.roleParent.description || "Sem descrição disponível."}
+                      </span>
+                    </div>
                   </span>
                 )}
               </button>

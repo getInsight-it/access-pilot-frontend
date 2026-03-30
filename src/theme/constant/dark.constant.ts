@@ -76,6 +76,7 @@ const DARK_ATTRIBUTE_OVERRIDES: Theme["attributes"] = {
   "table-header-background-color": "#1e293b",
   "table-header-text-color": "#94a3b8",
   "table-border-color": "#334155",
+  "table-wide-action-cell-width": "220px",
   "input-border-color": "#475569",
   "input-placeholder-color": "#94a3b8",
   "textarea-placeholder-color": "#94a3b8",

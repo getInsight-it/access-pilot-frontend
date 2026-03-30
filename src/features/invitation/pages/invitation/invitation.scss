@@ -31,45 +31,31 @@
   &__brand {
     display: inline-flex;
     align-items: center;
-    gap: var(--invitation-brand-gap);
-  }
-
-  &__brand-icon-box {
-    width: var(--invitation-brand-icon-box-size);
-    height: var(--invitation-brand-icon-box-size);
-    border-radius: var(--invitation-brand-icon-box-radius);
-    background-color: var(--invitation-brand-icon-box-background-color);
-    display: inline-flex;
-    align-items: center;
     justify-content: center;
-    overflow: hidden;
+    width: 100%;
   }
 
-  &__brand-icon {
-    width: var(--invitation-brand-icon-size);
-    height: var(--invitation-brand-icon-size);
+  &__brand-logo {
+    display: block;
+    height: var(--invitation-brand-icon-box-size);
+    width: auto;
+    max-width: 100%;
     object-fit: contain;
-  }
-
-  &__brand-title {
-    color: var(--invitation-brand-title-color);
-    font-size: var(--invitation-brand-title-font-size);
-    font-weight: var(--invitation-brand-title-font-weight);
-    letter-spacing: var(--invitation-brand-title-letter-spacing);
   }
 
   &__hero {
     width: 100%;
     height: var(--invitation-hero-height);
-    border-radius: var(--invitation-hero-radius);
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  &__hero-image {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
+  &__hero-artwork {
+    width: auto;
+    max-width: 100%;
+    max-height: 116%;
+    object-fit: contain;
   }
 
   &__content {

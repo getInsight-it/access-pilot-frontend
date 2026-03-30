@@ -138,6 +138,7 @@ export interface ThemeAttributes {
   "table-footer-min-height"?: string,
   "table-border-color"?: string,
   "table-icon-cell-width"?: string,
+  "table-wide-action-cell-width"?: string,
   "level-list-table-row-min-height"?: string,
 
   // pagination
