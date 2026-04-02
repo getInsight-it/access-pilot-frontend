@@ -1,12 +1,13 @@
+import { useTheme } from "../../../../../../theme/theme-provider.tsx";
 import "./themed-logo.scss";
 
 function ThemedLogo() {
+  const { theme } = useTheme();
+  const logoSrc = theme === "dark" ? "/img/accesspilot-w.svg" : "/img/accesspilot.svg";
+
   return (
     <div className="themed-logo">
-      <span className="themed-logo__icon-box">
-        <img className="themed-logo__icon" src="/img/ap-icon.svg" alt="AccessPilot" />
-      </span>
-      <span className="themed-logo__title">AccessPilot</span>
+      <img className="themed-logo__image" src={logoSrc} alt="AccessPilot" />
     </div>
   );
 }

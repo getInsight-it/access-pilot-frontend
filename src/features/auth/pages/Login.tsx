@@ -4,6 +4,7 @@ import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 import { useState } from "react";
 import { useToast } from "../../../common/external/ui/use-toast.ts";
 import ThemedLogo from "../../../common/components/layout/header/partials/themed-logo/ThemedLogo.tsx";
+import LanguageToggle from "../../../common/components/layout/header/partials/language-toggle/LanguageToggle.tsx";
 import { useI18n } from "../../../common/context/i18n/I18nContext.tsx";
 import "./Login.scss";
 
@@ -38,6 +39,9 @@ export default function Login() {
 
       <section className="login-page__panel">
         <div className="login-page__panel-content">
+          <div className="login-page__panel-topbar">
+            <LanguageToggle />
+          </div>
           <div className="login-page__brand">
             <ThemedLogo />
           </div>
