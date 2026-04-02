@@ -4,20 +4,22 @@ import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 import { useState } from "react";
 import { useToast } from "../../../common/external/ui/use-toast.ts";
 import ThemedLogo from "../../../common/components/layout/header/partials/themed-logo/ThemedLogo.tsx";
+import { useI18n } from "../../../common/context/i18n/I18nContext.tsx";
 import "./Login.scss";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const signIn = async () => {
     try {
       setIsLoading(true);
       await authService.signIn();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Authentication failed. Please try again.';
+      const errorMessage = error instanceof Error ? error.message : t("Authentication failed. Please try again.");
       toast({
-        title: "Authentication Error",
+        title: t("Authentication Error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -41,18 +43,17 @@ export default function Login() {
           </div>
           <div className="login-page__heading">
             <h1 className="login-page__title">
-              Acesse sua conta
+              {t("Acesse sua conta")}
             </h1>
             <p className="login-page__description">
-              Entre com sua conta para continuar no AccessPilot.
+              {t("Entre com sua conta para continuar no AccessPilot.")}
             </p>
           </div>
           <Button type="button" className="login-page__action" onClick={signIn} disabled={isLoading}>
-            {isLoading ? "Entrando..." : "Entrar"}
+            {isLoading ? t("Entrando...") : t("Entrar")}
           </Button>
         </div>
       </section>
     </div>
   );
 }
-

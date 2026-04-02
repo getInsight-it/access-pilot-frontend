@@ -3,6 +3,7 @@ import type { ChangeEvent } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 
 interface ImportLevelsDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ export const ImportLevelsDialog = ({
   onImportFileChange,
   onImport
 }: ImportLevelsDialogProps) => {
+  const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const triggerFileSelect = () => {
@@ -46,9 +48,9 @@ export const ImportLevelsDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Importar esferas</DialogTitle>
+            <DialogTitle>{t("Importar esferas")}</DialogTitle>
             <DialogDescription>
-              Importar esferas a partir de um arquivo JSON. Esferas Built-in serão ignoradas.
+              {t("Importar esferas a partir de um arquivo JSON. Esferas Built-in serão ignoradas.")}
             </DialogDescription>
           </DialogHeader>
 
@@ -56,25 +58,25 @@ export const ImportLevelsDialog = ({
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Arquivo JSON
+                  {t("Arquivo JSON")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  {importFile ? importFile.name : "Nenhum arquivo selecionado"}
+                  {importFile ? importFile.name : t("Nenhum arquivo selecionado")}
                 </span>
               </div>
               <Button variant="outline" onClick={triggerFileSelect} disabled={importLoading}>
-                Selecionar arquivo
+                {t("Selecionar arquivo")}
               </Button>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={importLoading}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
               {importLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileUp className="app-dialog__button-icon" />}
-              {importLoading ? "Importando..." : "Importar"}
+              {importLoading ? t("Importando...") : t("Importar")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,4 +1,5 @@
 import { Button } from "@common/external/ui/button.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { useInvitation } from "./useInvitation.ts";
 import "./invitation.scss";
 
@@ -7,6 +8,7 @@ const INVITATION_BRAND_LOGO_SRC = "/img/accesspilot-logo.svg";
 const INVITATION_ROLE_ICON_SRC = "/img/invitation-role-icon.svg";
 
 export default function Invitation() {
+  const { t } = useI18n();
   const {
     invitation,
     clientLabel,
@@ -37,29 +39,29 @@ export default function Invitation() {
 
           <div className="invitation__content">
             <h1 id="invitation-title" className="invitation__title">
-              Você foi convidado para o AccessPilot
+              {t("Você foi convidado para o AccessPilot")}
             </h1>
             <p className="invitation__description">
               {isLoading
-                ? "Estamos validando seu convite para carregar as informações de acesso."
-                : "Aceite o convite para começar a gerenciar seus sistemas e solicitações de acesso com segurança e agilidade."}
+                ? t("Estamos validando seu convite para carregar as informações de acesso.")
+                : t("Aceite o convite para começar a gerenciar seus sistemas e solicitações de acesso com segurança e agilidade.")}
             </p>
           </div>
 
           {errorMessage ? (
             <div className="invitation__message invitation__message--error" role="alert">
-              <h2 className="invitation__message-title">Convite indisponível</h2>
+              <h2 className="invitation__message-title">{t("Convite indisponível")}</h2>
               <p className="invitation__message-description">{errorMessage}</p>
             </div>
           ) : (
             <dl className="invitation__details">
               <div className="invitation__detail-row">
-                <dt className="invitation__detail-label">Organização</dt>
+                <dt className="invitation__detail-label">{t("Organização")}</dt>
                 <dd className="invitation__detail-value">{clientLabel}</dd>
               </div>
 
               <div className="invitation__detail-row">
-                <dt className="invitation__detail-label">Papel atribuído</dt>
+                <dt className="invitation__detail-label">{t("Papel atribuído")}</dt>
                 <dd className="invitation__detail-value invitation__detail-value--with-icon">
                   <img className="invitation__detail-icon" src={INVITATION_ROLE_ICON_SRC} alt="" />
                   <span>{roleLabel}</span>
@@ -67,7 +69,7 @@ export default function Invitation() {
               </div>
 
               <div className="invitation__detail-row invitation__detail-row--last">
-                <dt className="invitation__detail-label">E-mail</dt>
+                <dt className="invitation__detail-label">{t("E-mail")}</dt>
                 <dd className="invitation__detail-value">{invitation?.emailMasked ?? "-"}</dd>
               </div>
             </dl>
@@ -81,10 +83,10 @@ export default function Invitation() {
                 onClick={handleAcceptInvitation}
                 disabled={isSubmitting || isLoading}
               >
-                {isSubmitting ? "Redirecionando..." : "Aceitar Convite"}
+                {isSubmitting ? t("Redirecionando...") : t("Aceitar Convite")}
               </Button>
               <p className="invitation__actions-hint">
-                Ao continuar, você será direcionado para a autenticação adequada ao seu convite.
+                {t("Ao continuar, você será direcionado para a autenticação adequada ao seu convite.")}
               </p>
             </div>
           )}

@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronRight, Search } from "lucide-react";
 import IconRenderer from "@common/components/icon/IconRenderer.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import DynamicSphereForm from "@features/level/common/components/DynamicSphereForm.tsx";
 import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import "./request-role-step.scss";
 
-const ROLE_PARENT_TOOLTIP_DELAY_MS = 1000;
+const ROLE_PARENT_TOOLTIP_DELAY_MS = 1500;
 
 interface RequestRoleStepProps {
   roles: RoleResponseInterface[];
@@ -37,6 +38,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [visibleTooltipRoleId, setVisibleTooltipRoleId] = useState<number | null>(null);
+  const { t } = useI18n();
   const hierarchyNotCompletedRef = useRef(false);
   const currentCodeItemRef = useRef<string>(currentCodeItem);
   const hoverTimeoutRef = useRef<number | null>(null);
@@ -143,7 +145,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
             <Search className="app-input-group__icon" />
             <input
               className="app-input request-role-step__search-input"
-              placeholder="Filtrar papéis"
+              placeholder={t("Filtrar papéis")}
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
             />
@@ -181,7 +183,7 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
 
                   <div className="request-role-step__card-text">
                     <p className="request-role-step__name">{role.label}</p>
-                    <p className="request-role-step__description">{role.description || "Sem descrição disponível."}</p>
+                    <p className="request-role-step__description">{role.description || t("Sem descrição disponível.")}</p>
                   </div>
                 </div>
 
@@ -194,13 +196,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
                 {isTooltipVisible && role.roleParent && (
                   <span className="request-role-step__tooltip" role="note">
                     <div className="request-role-step__tooltip-row">
-                      <span className="request-role-step__tooltip-title">Papel pai: </span>
+                      <span className="request-role-step__tooltip-title">{t("Papel pai: ")}</span>
                       <span className="request-role-step__tooltip-value">{role.roleParent.label}</span>
                     </div>
                     <div className="request-role-step__tooltip-row">
-                      <span className="request-role-step__tooltip-title">Descrição: </span>
+                      <span className="request-role-step__tooltip-title">{t("Descrição: ")}</span>
                       <span className="request-role-step__tooltip-value">
-                        {role.roleParent.description || "Sem descrição disponível."}
+                        {role.roleParent.description || t("Sem descrição disponível.")}
                       </span>
                     </div>
                   </span>
@@ -210,19 +212,19 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
           })}
         </div>
       ) : (
-        <p className="request-role-step__empty-state">Nenhum papel encontrado para este sistema.</p>
+        <p className="request-role-step__empty-state">{t("Nenhum papel encontrado para este sistema.")}</p>
       )}
 
       {shouldShowHierarchySection && selectedRoleObject && (
         <div className="request-role-step__hierarchy-section">
-          <h4 className="request-role-step__hierarchy-title">Preencha os detalhes da esfera:</h4>
+          <h4 className="request-role-step__hierarchy-title">{t("Preencha os detalhes da esfera:")}</h4>
           {readOnly ? (
             <div className="request-role-step__locked-sphere">
               <p className="request-role-step__hierarchy-info">
-                {lastLockedSphereItem?.name || lockedSphereLabel || currentCodeItem || "Esfera previamente definida para este convite."}
+                {lastLockedSphereItem?.name || lockedSphereLabel || currentCodeItem || t("Esfera previamente definida para este convite.")}
               </p>
               {hasLockedSphereHierarchy && (
-                <div className="request-role-step__locked-sphere-trail" aria-label="Hierarquia preenchida">
+                <div className="request-role-step__locked-sphere-trail" aria-label={t("Hierarquia preenchida")}>
                   {lockedSphereHierarchy.map((item, index) => (
                     <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-role-step__locked-sphere-item">
                       <span className="request-role-step__locked-sphere-item-label">{item.name}</span>
@@ -248,13 +250,13 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
 
       {!selectedRoleObject && readOnly && (lockedSphereLabel || currentCodeItem || hasLockedSphereHierarchy) && (
         <div className="request-role-step__hierarchy-section">
-          <h4 className="request-role-step__hierarchy-title">Detalhes da esfera:</h4>
+          <h4 className="request-role-step__hierarchy-title">{t("Detalhes da esfera:")}</h4>
           <div className="request-role-step__locked-sphere">
             <p className="request-role-step__hierarchy-info">
               {lastLockedSphereItem?.name || lockedSphereLabel || currentCodeItem}
             </p>
             {hasLockedSphereHierarchy && (
-              <div className="request-role-step__locked-sphere-trail" aria-label="Hierarquia preenchida">
+              <div className="request-role-step__locked-sphere-trail" aria-label={t("Hierarquia preenchida")}>
                 {lockedSphereHierarchy.map((item, index) => (
                   <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-role-step__locked-sphere-item">
                     <span className="request-role-step__locked-sphere-item-label">{item.name}</span>

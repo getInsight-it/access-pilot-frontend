@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { ContentLoader } from "@common/components/ContentLoader.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "@common/constants/animation.ts";
@@ -21,6 +22,7 @@ import { InvitationListItemInterface } from "../../common/types/invitation.model
 import "./manage-invites.scss";
 
 export default function ManageInvites() {
+  const { t } = useI18n();
   const isInitialMount = useRef(true);
   const {
     searchFilter,
@@ -57,21 +59,21 @@ export default function ManageInvites() {
       try {
         await invitationService.cancelInvitation(invitation.id);
         toast({
-          title: "Convite cancelado com sucesso!",
-          description: `O convite ${invitation.protocolCode} foi cancelado.`
+          title: t("Convite cancelado com sucesso!"),
+          description: t("O convite {{protocol}} foi cancelado.", { protocol: invitation.protocolCode })
         });
 
         const nextPage = currentPage > 1 && invitations.length === 1 ? currentPage - 1 : currentPage;
         handlePageChange(nextPage, debouncedSearchFilter);
       } catch (error: unknown) {
         toast({
-          title: "Erro ao cancelar convite",
+          title: t("Erro ao cancelar convite"),
           description: formatErrorMessages(error),
           variant: "destructive"
         });
       }
     })();
-  }, [currentPage, debouncedSearchFilter, handlePageChange, invitations.length]);
+  }, [currentPage, debouncedSearchFilter, handlePageChange, invitations.length, t]);
 
   return (
     <motion.div className="manage-invites-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
@@ -80,10 +82,10 @@ export default function ManageInvites() {
           <div className="manage-invites-page__header">
             <Heading
               className="manage-invites-page__heading"
-              title="Gerenciar convites"
+              title={t("Gerenciar convites")}
               badgeValue={totalInvitations}
               badgeClassName="app-badge app-badge--header"
-              description="Acompanhe os convites pendentes e inicie novos envios."
+              description={t("Acompanhe os convites pendentes e inicie novos envios.")}
             />
             <div className="manage-invites-page__actions">
               <Link
@@ -91,7 +93,7 @@ export default function ManageInvites() {
                 className="ui-button ui-button--primary theme-button--primary manage-invites-page__primary-action"
               >
                 <CirclePlus className="manage-invites-page__primary-action-icon" />
-                <span>Convidar</span>
+                <span>{t("Convidar")}</span>
               </Link>
             </div>
           </div>
@@ -112,9 +114,9 @@ export default function ManageInvites() {
               formatDate={formatDate}
               onSearchChange={handleSearchChange}
               onPageChange={handlePaginationChange}
-              actionLabel="Cancelar"
+              actionLabel={t("Cancelar")}
               actionVariant="white"
-              emptyStateLabel="Nenhum convite pendente encontrado"
+              emptyStateLabel={t("Nenhum convite pendente encontrado")}
               onAction={handleCancelInvitation}
             />
           </div>

@@ -1,4 +1,5 @@
 import { cn } from "@config/lib/utils.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./TablePagination.scss";
 
 interface TablePaginationProps {
@@ -60,6 +61,8 @@ export function TablePagination({
   className,
   align = "center",
 }: TablePaginationProps) {
+  const { t } = useI18n();
+
   if (totalPages <= 0) {
     return null;
   }
@@ -71,7 +74,7 @@ export function TablePagination({
   return (
     <nav
       className={cn("table-pagination", align === "end" && "table-pagination--align-end", className)}
-      aria-label="Paginação"
+      aria-label={t("Paginação")}
     >
       <button
         type="button"
@@ -83,7 +86,7 @@ export function TablePagination({
         }}
         disabled={!canGoToPrevious}
       >
-        Voltar
+        {t("Voltar")}
       </button>
 
       <ul className="table-pagination__pages">
@@ -127,7 +130,7 @@ export function TablePagination({
         }}
         disabled={!canGoToNext}
       >
-        Próxima
+        {t("Próxima")}
       </button>
     </nav>
   );

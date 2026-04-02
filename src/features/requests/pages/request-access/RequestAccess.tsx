@@ -9,6 +9,7 @@ import { ReactNode, useEffect, useState, useCallback } from "react";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
 import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
 import useAuthStore from "@store/authStore.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { useToast } from "@common/external/ui/use-toast.ts";
 import { clientService } from "@features/client/common/service/client-service.ts";
 import { roleService } from "@features/role/common/service/role-service.ts";
@@ -45,6 +46,7 @@ interface RequestStepConfig {
 
 export default function RequestAccess() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(1);
   const [roles, setRoles] = useState<RoleResponseInterface[]>([]);
   const [clients, setClients] = useState<ClientResponseInterface[]>([]);
@@ -87,25 +89,25 @@ export default function RequestAccess() {
     let isValid = true;
 
     if(currentStep === 1 && !customForm["clientId"].value) {
-      setBasicFormFieldValue({ field: "clientId", error: "Selecione um sistema." });
+      setBasicFormFieldValue({ field: "clientId", error: t("Selecione um sistema.") });
       isValid = false;
     }
 
     if(currentStep === 2) {
       if(!customForm["roleId"].value) {
-        setBasicFormFieldValue({ field: "roleId", error: "Selecione um papel." });
+        setBasicFormFieldValue({ field: "roleId", error: t("Selecione um papel.") });
         isValid = false;
       }
       const role = roles.find(role => role.id.toString() === customForm["roleId"].value);
       if((customForm["roleId"].value && role!.level) && !customForm["codeItem"].value) {
-        setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+        setBasicFormFieldValue({ field: "codeItem", error: t("Preencha a hierarquia de esferas.") });
         isValid = false;
       }
     }
 
     if(currentStep === 3) {
       if(!customForm["reason"].value) {
-        setBasicFormFieldValue({ field: "reason", error: "Preencha o motivo da solicitação." });
+        setBasicFormFieldValue({ field: "reason", error: t("Preencha o motivo da solicitação.") });
         isValid = false;
       }
 
@@ -121,7 +123,7 @@ export default function RequestAccess() {
         setBasicFormFieldValue({
           field: "attachments",
           value: customForm["attachments"].value,
-          error: "Anexe todos os arquivos necessários."
+          error: t("Anexe todos os arquivos necessários.")
         });
         isValid = false;
       }
@@ -131,8 +133,8 @@ export default function RequestAccess() {
       setCurrentStep(currentStep + 1);
     } else {
       toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos obrigatórios antes de prosseguir.",
+        title: t("Campos obrigatórios"),
+        description: t("Por favor, preencha todos os campos obrigatórios antes de prosseguir."),
         variant: "destructive"
       });
     }
@@ -146,12 +148,12 @@ export default function RequestAccess() {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao carregar sistemas",
+        title: t("Erro ao carregar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
@@ -161,12 +163,12 @@ export default function RequestAccess() {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao carregar papéis",
+        title: t("Erro ao carregar papéis"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
 
   const handleSelectRole = useCallback(async (role: RoleResponseInterface) => {
     setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
@@ -181,12 +183,12 @@ export default function RequestAccess() {
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar detalhes do papel",
+        title: t("Erro ao carregar detalhes do papel"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [setBasicFormFieldValue, toast]);
+  }, [setBasicFormFieldValue, t, toast]);
 
   const handlerSelectedClient = useCallback((client: ClientResponseInterface, autoAdvance: boolean = false) => {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
@@ -222,10 +224,10 @@ export default function RequestAccess() {
   const steps: RequestStepConfig[] = [
     {
       id: 1,
-      title: "Sistema",
+      title: t("Sistema"),
       number: 1,
-      description: "Para qual sistema você precisa de acesso",
-      panelTitle: "Escolha o sistema que você precisa de acesso:",
+      description: t("Para qual sistema você precisa de acesso"),
+      panelTitle: t("Escolha o sistema que você precisa de acesso:"),
       content: (
         <RequestSystemStep
           clients={clients}
@@ -237,10 +239,10 @@ export default function RequestAccess() {
     },
     {
       id: 2,
-      title: "Papel",
+      title: t("Papel"),
       number: 2,
-      description: "Qual seria seu papel?",
-      panelTitle: "Escolha o tipo de acesso que você precisa:",
+      description: t("Qual seria seu papel?"),
+      panelTitle: t("Escolha o tipo de acesso que você precisa:"),
       content: (
         <RequestRoleStep
           roles={roles}
@@ -254,7 +256,7 @@ export default function RequestAccess() {
               setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
               setBasicFormFieldValue({ field: "externalCode", value: externalCode || "", error: null });
             } else {
-              setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+              setBasicFormFieldValue({ field: "codeItem", error: t("Preencha a hierarquia de esferas.") });
               setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
             }
           }}
@@ -266,10 +268,10 @@ export default function RequestAccess() {
     },
     {
       id: 3,
-      title: "Justificativa",
+      title: t("Justificativa"),
       number: 3,
-      description: "Por que você precisa desse acesso",
-      panelTitle: "Descreva a justificativa para este acesso:",
+      description: t("Por que você precisa desse acesso"),
+      panelTitle: t("Descreva a justificativa para este acesso:"),
       content: (
         <RequestJustificationStep
           onAttach={(attachments: FileAttachment[]) => {
@@ -290,10 +292,10 @@ export default function RequestAccess() {
     },
     {
       id: 4,
-      title: "Revisão",
+      title: t("Revisão"),
       number: 4,
-      description: "Confira os detalhes antes de enviar.",
-      panelTitle: "Revise as informações antes de enviar:",
+      description: t("Confira os detalhes antes de enviar."),
+      panelTitle: t("Revise as informações antes de enviar:"),
       content: (
         <RequestReviewStep
           selectedClient={customForm["clientId"].value}
@@ -336,14 +338,14 @@ export default function RequestAccess() {
 
       await requestService.createRequest(payloadFormData);
 
-      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada." });
+      toast({ title: t("Solicitação enviada com sucesso!"), description: t("Sua solicitação foi processada.") });
       navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
       setShowContent(false);
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao processar solicitação de acesso",
+        title: t("Erro ao processar solicitação de acesso"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -404,7 +406,7 @@ export default function RequestAccess() {
                   onBack={handleBack}
                   onNext={currentStep < steps.length ? goToNextStep : handleFinalSubmit}
                   backButtonDisabled={currentStep === 1}
-                  nextButtonLabel={currentStep < steps.length ? "Próximo" : "Enviar"}
+                  nextButtonLabel={currentStep < steps.length ? t("Próximo") : t("Enviar")}
                   showNextIcon={currentStep < steps.length}
                 >
                   {steps[currentStep - 1].content}

@@ -6,14 +6,17 @@ import App from "./App.tsx";
 import "./index.scss";
 import { Toaster } from "./common/external/ui/toaster.tsx";
 import { AuthProvider } from "./common/context/auth/AuthContext.tsx";
+import { I18nProvider } from "./common/context/i18n/I18nContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <Toaster />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <App />
+          <Toaster />
+        </AuthProvider>
+      </I18nProvider>
     </BrowserRouter>
   </StrictMode>
 );

@@ -9,6 +9,7 @@ import { ClientStatusEnum } from "@features/client/common/enum/client-status.enu
 import { ClientResponseInterface } from "@features/client/common/model/client.model";
 import { AttachmentConfigurationInterface } from "@features/client/common/model/configuration.model";
 import { clientService } from "@features/client/common/service/client-service";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 
 import * as z from "zod";
 
@@ -41,6 +42,7 @@ const defaultValues: SystemFormData = {
 };
 
 export const useSystemFormData = () => {
+  const { t } = useI18n();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { clientId: urlClientId } = useParams();
@@ -87,14 +89,14 @@ export const useSystemFormData = () => {
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do sistema",
+        title: t("Erro ao buscar dados do sistema"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setInitialLoading(false);
     }
-  }, [clientId, methods, toast]);
+  }, [clientId, methods, t, toast]);
 
   const onSubmit = useCallback(async (form: SystemFormData) => {
     try {
@@ -141,24 +143,24 @@ export const useSystemFormData = () => {
         }
 
         await clientService.updateClient(initialData.id, payload);
-        toast({ title: "Sistema atualizado", description: "O sistema foi atualizado com sucesso" });
+        toast({ title: t("Sistema atualizado"), description: t("O sistema foi atualizado com sucesso") });
         navigate(`${PRIVATE_ROUTES.SYSTEMS}/${form.clientId}/details`);
       } else {
         await clientService.createClient(payload);
-        toast({ title: "Sistema criado", description: "O sistema foi criado com sucesso" });
+        toast({ title: t("Sistema criado"), description: t("O sistema foi criado com sucesso") });
         navigate(`${PRIVATE_ROUTES.SYSTEMS}/${form.clientId}/details`);
       }
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao realizar operação no sistema",
+        title: t("Erro ao realizar operação no sistema"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [attachmentConfigs, initialData, navigate, toast]);
+  }, [attachmentConfigs, initialData, navigate, t, toast]);
 
   useEffect(() => {
     if(isEditing) {

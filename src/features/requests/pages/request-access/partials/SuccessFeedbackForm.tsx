@@ -3,6 +3,7 @@ import { FlipWords } from "../../../../../common/external/ui/flip-words.tsx";
 import { Link } from "react-router-dom";
 import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 interface SuccessFeedbackProps {
   words: string[];
@@ -21,12 +22,14 @@ export const SuccessFeedback = ({
   attachments,
   onRequestNew
 }: SuccessFeedbackProps) => {
+  const { t } = useI18n();
+
   return (
     <>
       <div>
         <div>
           <div>
-            Solicitação criada
+            {t("Solicitação criada")}
             <FlipWords words={words} />
           </div>
         </div>
@@ -34,10 +37,10 @@ export const SuccessFeedback = ({
 
         <div>
           <div>
-            <p>Sistema:</p>
-            <p>Papel solicitado:</p>
-            <p>Motivo:</p>
-            {attachments.length > 0 && <p>Anexos:</p>}
+            <p>{t("Sistema")}:</p>
+            <p>{t("Papel solicitado")}:</p>
+            <p>{t("Motivo")}:</p>
+            {attachments.length > 0 && <p>{t("Anexos")}:</p>}
           </div>
           <div>
             <p>{selectedClient}</p>
@@ -54,10 +57,10 @@ export const SuccessFeedback = ({
 
       <Link
         to={PRIVATE_ROUTES.MY_ACCESS_REQUESTS}>
-        Listar solicitações
+        {t("Listar solicitações")}
       </Link>
       <Button onClick={onRequestNew}>
-        Solicitar novo acesso
+        {t("Solicitar novo acesso")}
       </Button>
     </>
   );

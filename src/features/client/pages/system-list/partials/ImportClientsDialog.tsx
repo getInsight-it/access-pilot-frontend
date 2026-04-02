@@ -4,6 +4,7 @@ import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "@ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 
 interface ImportClientsDialogProps {
   open: boolean;
@@ -36,6 +37,7 @@ export const ImportClientsDialog = ({
   onImportFileChange,
   onImport
 }: ImportClientsDialogProps) => {
+  const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const triggerFileSelect = () => {
@@ -61,11 +63,11 @@ export const ImportClientsDialog = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Importar exportações</DialogTitle>
+            <DialogTitle>{t("Importar exportações")}</DialogTitle>
             <DialogDescription>
               {importTargetClientId
-                ? `Importar exportação para o sistema ${importTargetClientId}.`
-                : "Importar um ou mais sistemas a partir de um arquivo JSON."}
+                ? t("Importar exportação para o sistema {{clientId}}.", { clientId: importTargetClientId })
+                : t("Importar um ou mais sistemas a partir de um arquivo JSON.")}
             </DialogDescription>
           </DialogHeader>
 
@@ -73,10 +75,10 @@ export const ImportClientsDialog = ({
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Forçar importação?
+                  {t("Forçar importação?")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  Atualiza registros existentes e remove ausentes.
+                  {t("Atualiza registros existentes e remove ausentes.")}
                 </span>
               </div>
               <Toggle checked={importForce} onCheckedChange={onImportForceChange} disabled={importLoading} />
@@ -85,10 +87,10 @@ export const ImportClientsDialog = ({
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Importar papéis?
+                  {t("Importar papéis?")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  Inclui roles na exportação quando o sistema é gerenciado.
+                  {t("Inclui papéis na exportação quando o sistema é gerenciado.")}
                 </span>
               </div>
               <Toggle checked={importRoles} onCheckedChange={onImportRolesChange} disabled={importLoading} />
@@ -97,10 +99,10 @@ export const ImportClientsDialog = ({
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Importar configurações de anexo?
+                  {t("Importar configurações de anexo?")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  Substitui as configurações do sistema.
+                  {t("Substitui as configurações do sistema.")}
                 </span>
               </div>
               <Toggle checked={importConfigurations} onCheckedChange={onImportConfigurationsChange} disabled={importLoading} />
@@ -109,25 +111,25 @@ export const ImportClientsDialog = ({
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Arquivo JSON
+                  {t("Arquivo JSON")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  {importFile ? importFile.name : "Nenhum arquivo selecionado"}
+                  {importFile ? importFile.name : t("Nenhum arquivo selecionado")}
                 </span>
               </div>
               <Button variant="outline" onClick={triggerFileSelect} disabled={importLoading}>
-                Selecionar arquivo
+                {t("Selecionar arquivo")}
               </Button>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={importLoading}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
               {importLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileUp className="app-dialog__button-icon" />}
-              {importLoading ? "Importando..." : "Importar"}
+              {importLoading ? t("Importando...") : t("Importar")}
             </Button>
           </DialogFooter>
         </DialogContent>

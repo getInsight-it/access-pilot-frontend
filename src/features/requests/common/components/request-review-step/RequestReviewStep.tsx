@@ -1,6 +1,6 @@
 import React from "react";
 import { format, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { CalendarDays, ChevronRight, ClipboardList, FileText, Globe, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
 import { FileIcon } from "@common/components/FileIcon.tsx";
 import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
@@ -31,11 +31,12 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   sphereLabel,
   sphereHierarchy = []
 }) => {
+  const { t, dateFnsLocale } = useI18n();
   const parsedExpiration = expiresAt
     ? parseISO(expiresAt.includes("T") ? expiresAt : `${expiresAt}T00:00:00`)
     : null;
-  const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || "Não selecionado";
-  const reasonValue = reason || "Não informado";
+  const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || t("Não selecionado");
+  const reasonValue = reason || t("Não informado");
   const showEmailSection = emails.length > 0;
   const showExpiration = Boolean(parsedExpiration && !Number.isNaN(parsedExpiration.getTime()));
   const attachmentGroupCount = attachments.length;
@@ -44,49 +45,49 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
   const totalReviewedItems = 3 + Number(showSphereSection) + Number(showEmailSection) + Number(showExpiration);
   const uniqueEmailDomains = Array.from(new Set(emails.map((email) => email.split("@")[1]).filter(Boolean)));
   const formattedExpiration = showExpiration
-    ? format(parsedExpiration, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })
-    : "Não informado";
+    ? format(parsedExpiration, "dd MMMM yyyy HH:mm", { locale: dateFnsLocale })
+    : t("Não informado");
   const expirationMetric = showExpiration
     ? format(parsedExpiration, "dd/MM HH:mm")
     : "";
   const sphereSummaryValue = sphereHierarchy.length > 0
     ? sphereHierarchy[sphereHierarchy.length - 1].name
-    : sphereLabel || "Não informado";
+    : sphereLabel || t("Não informado");
 
   return (
     <div className="request-review-step">
       <div className="request-review-step__highlight">
         <div className="request-review-step__highlight-content">
-          <p className="request-review-step__highlight-eyebrow">Conferência final</p>
-          <h4 className="request-review-step__highlight-title">Revise os dados antes de enviar sua solicitação</h4>
+          <p className="request-review-step__highlight-eyebrow">{t("Conferência final")}</p>
+          <h4 className="request-review-step__highlight-title">{t("Revise os dados antes de enviar sua solicitação")}</h4>
           <p className="request-review-step__highlight-description">
-            Depois do envio, a aprovação seguirá o fluxo do sistema selecionado.
+            {t("Depois do envio, a aprovação seguirá o fluxo do sistema selecionado.")}
           </p>
         </div>
         <div className="request-review-step__highlight-metrics">
           <article className="request-review-step__metric">
-            <p className="request-review-step__metric-label">Itens revisados</p>
+            <p className="request-review-step__metric-label">{t("Itens revisados")}</p>
             <p className="request-review-step__metric-value">{totalReviewedItems}</p>
           </article>
           {showEmailSection ? (
             <>
               <article className="request-review-step__metric">
-                <p className="request-review-step__metric-label">Destinatários</p>
+                <p className="request-review-step__metric-label">{t("Destinatários")}</p>
                 <p className="request-review-step__metric-value">{emails.length}</p>
               </article>
               <article className="request-review-step__metric">
-                <p className="request-review-step__metric-label">{showExpiration ? "Validade" : "Domínios"}</p>
+                <p className="request-review-step__metric-label">{showExpiration ? t("Validade") : t("Domínios")}</p>
                 <p className="request-review-step__metric-value">{showExpiration ? expirationMetric : uniqueEmailDomains.length}</p>
               </article>
             </>
           ) : (
             <>
               <article className="request-review-step__metric">
-                <p className="request-review-step__metric-label">Tipos de anexo</p>
+                <p className="request-review-step__metric-label">{t("Tipos de anexo")}</p>
                 <p className="request-review-step__metric-value">{attachmentGroupCount}</p>
               </article>
               <article className="request-review-step__metric">
-                <p className="request-review-step__metric-label">Arquivos anexados</p>
+                <p className="request-review-step__metric-label">{t("Arquivos anexados")}</p>
                 <p className="request-review-step__metric-value">{totalAttachedFiles}</p>
               </article>
             </>
@@ -95,7 +96,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
       </div>
 
       <div className="request-review-step__summary">
-        <h4 className="request-review-step__section-title">Resumo da solicitação</h4>
+        <h4 className="request-review-step__section-title">{t("Resumo da solicitação")}</h4>
 
         <div className="request-review-step__summary-grid">
           <article className="request-review-step__summary-card">
@@ -103,8 +104,8 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
               <LaptopMinimal className="request-review-step__summary-icon" />
             </div>
             <div className="request-review-step__summary-content">
-              <p className="request-review-step__summary-label">Sistema</p>
-              <p className="request-review-step__summary-value">{selectedClient || "Não selecionado"}</p>
+              <p className="request-review-step__summary-label">{t("Sistema")}</p>
+              <p className="request-review-step__summary-value">{selectedClient || t("Não selecionado")}</p>
             </div>
           </article>
 
@@ -113,7 +114,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
               <ShieldUser className="request-review-step__summary-icon" />
             </div>
             <div className="request-review-step__summary-content">
-              <p className="request-review-step__summary-label">Papel</p>
+              <p className="request-review-step__summary-label">{t("Papel")}</p>
               <p className="request-review-step__summary-value">{selectedRoleName}</p>
             </div>
           </article>
@@ -124,10 +125,10 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                 <Globe className="request-review-step__summary-icon" />
               </div>
               <div className="request-review-step__summary-content">
-                <p className="request-review-step__summary-label">Esfera</p>
+                <p className="request-review-step__summary-label">{t("Esfera")}</p>
                 <p className="request-review-step__summary-value">{sphereSummaryValue}</p>
                 {sphereHierarchy.length > 0 && (
-                  <div className="request-review-step__hierarchy-trail" aria-label="Hierarquia preenchida">
+                  <div className="request-review-step__hierarchy-trail" aria-label={t("Hierarquia preenchida")}>
                     {sphereHierarchy.map((item, index) => (
                       <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-review-step__hierarchy-item">
                         <span className="request-review-step__hierarchy-label">{item.name}</span>
@@ -147,7 +148,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
               <ClipboardList className="request-review-step__summary-icon" />
             </div>
             <div className="request-review-step__summary-content">
-              <p className="request-review-step__summary-label">Justificativa</p>
+              <p className="request-review-step__summary-label">{t("Justificativa")}</p>
               <p className="request-review-step__summary-value">{reasonValue}</p>
             </div>
           </article>
@@ -158,7 +159,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                 <Mail className="request-review-step__summary-icon" />
               </div>
               <div className="request-review-step__summary-content">
-                <p className="request-review-step__summary-label">Destinatários</p>
+                <p className="request-review-step__summary-label">{t("Destinatários")}</p>
                 <div className="request-review-step__email-list">
                   {emails.map((email) => (
                     <div key={email} className="request-review-step__email-chip">
@@ -181,7 +182,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                 <CalendarDays className="request-review-step__summary-icon" />
               </div>
               <div className="request-review-step__summary-content">
-                <p className="request-review-step__summary-label">Data de expiração</p>
+                <p className="request-review-step__summary-label">{t("Data de expiração")}</p>
                 <p className="request-review-step__summary-value">{formattedExpiration}</p>
               </div>
             </article>
@@ -191,7 +192,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
 
       {!showEmailSection && (
         <div className="request-review-step__attachments">
-          <h4 className="request-review-step__section-title">Anexos</h4>
+          <h4 className="request-review-step__section-title">{t("Anexos")}</h4>
 
           {attachments.length > 0 ? (
             <div className="request-review-step__attachments-grid">
@@ -204,7 +205,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
                     <div className="request-review-step__attachment-heading">
                       <p className="request-review-step__attachment-title">{attachment.fileName}</p>
                       <p className="request-review-step__attachment-meta">
-                        {attachment.files.length} arquivo(s)
+                        {t("{{count}} arquivo(s)", { count: attachment.files.length })}
                       </p>
                     </div>
                   </div>
@@ -227,7 +228,7 @@ export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
               <div className="request-review-step__empty-icon-box">
                 <FileText className="request-review-step__empty-icon" />
               </div>
-              <p className="request-review-step__empty-text">Nenhum anexo informado.</p>
+              <p className="request-review-step__empty-text">{t("Nenhum anexo informado.")}</p>
             </div>
           )}
         </div>

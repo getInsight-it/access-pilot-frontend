@@ -16,10 +16,12 @@ import {
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
 import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 import { type Item, useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
 import "./LevelItems.scss";
 
 export default function LevelItems() {
+  const { t } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,21 +67,21 @@ export default function LevelItems() {
         <DropdownMenuItem
           onClick={() => {
             navigator.clipboard?.writeText(item.externalCode ?? "");
-            toast({ title: "Copiado", description: "Código copiado para a área de transferência." });
+            toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") });
           }}
         >
           <Copy size={16} />
-          <span>Copiar código</span>
+          <span>{t("Copiar código")}</span>
         </DropdownMenuItem>
         {!isBuiltIn && (
           <>
             <DropdownMenuItem onClick={() => handleNavigateToEdit(item.id)}>
               <PencilLine size={16} />
-              <span>Editar</span>
+              <span>{t("Editar")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => operations.handleDelete(item)}>
               <Trash2 size={16} />
-              <span>Excluir</span>
+              <span>{t("Excluir")}</span>
             </DropdownMenuItem>
           </>
         )}
@@ -116,12 +118,12 @@ export default function LevelItems() {
               </button>
               <Heading
                 className="level-items__heading"
-                title="Itens da esfera"
+                title={t("Itens da esfera")}
                 badgeValue={itemsData.totalItems}
                 badgeClassName="app-badge app-badge--header"
                 customDescription={(
                   <span className="level-items__heading-description">
-                    Esfera: <span className="level-items__heading-description-value">{itemsData.sphere?.name}</span>
+                    {t("Esfera")}: <span className="level-items__heading-description-value">{itemsData.sphere?.name}</span>
                   </span>
                 )}
               />
@@ -134,7 +136,7 @@ export default function LevelItems() {
                   className="ui-button ui-button--primary theme-button--primary level-items__primary-action"
                   onClick={handleNavigateToCreate}
                 >
-                  <CirclePlus /> Adicionar novo item
+                  <CirclePlus /> {t("Adicionar novo item")}
                 </button>
               )}
             </div>
@@ -147,13 +149,13 @@ export default function LevelItems() {
           <div className="level-items__mobile">
             <div className="level-items__mobile-filter">
               <div className="app-input-group app-input-group--icon-left level-items__mobile-filter-input">
-                <Search className="app-input-group__icon" />
-                <input
-                  className="app-input"
-                  placeholder="Pesquisar itens..."
-                  value={itemsData.searchTerm}
-                  onChange={operations.handleSearchChange}
-                />
+                  <Search className="app-input-group__icon" />
+                  <input
+                    className="app-input"
+                    placeholder={t("Pesquisar itens...")}
+                    value={itemsData.searchTerm}
+                    onChange={operations.handleSearchChange}
+                  />
               </div>
             </div>
 
@@ -164,27 +166,27 @@ export default function LevelItems() {
                     <div className="level-items__card" key={item.id}>
                       {showActions && (
                         <div className="level-items__card-header">
-                          <span>Ações</span>
+                          <span>{t("Ações")}</span>
                           {renderActionsMenu(item)}
                         </div>
                       )}
                       <div className="level-items__card-content">
                         <div className="level-items__card-row">
-                          <span className="level-items__card-label">Nome</span>
+                          <span className="level-items__card-label">{t("Nome")}</span>
                           <span className="level-items__card-value">{item.name}</span>
                         </div>
                         {showExtendedColumns && (
                           <>
                             <div className="level-items__card-row">
-                              <span className="level-items__card-label">Descrição</span>
+                              <span className="level-items__card-label">{t("Descrição")}</span>
                               <span className="level-items__card-value">{item.description || "-"}</span>
                             </div>
                             <div className="level-items__card-row">
-                              <span className="level-items__card-label">Código</span>
+                              <span className="level-items__card-label">{t("Código")}</span>
                               <span className="level-items__card-value">{item.externalCode || "-"}</span>
                             </div>
                             <div className="level-items__card-row">
-                              <span className="level-items__card-label">Item da esfera pai</span>
+                              <span className="level-items__card-label">{t("Item da esfera pai")}</span>
                               <span className="level-items__card-value">{operations.renderParentItem(item)}</span>
                             </div>
                           </>
@@ -209,7 +211,7 @@ export default function LevelItems() {
                 <div>
                   <Plus size={24} />
                 </div>
-                <span>Nenhum item encontrado para esta esfera.</span>
+                <span>{t("Nenhum item encontrado para esta esfera.")}</span>
               </div>
             ) : null}
           </div>
@@ -222,7 +224,7 @@ export default function LevelItems() {
                     <Search className="app-input-group__icon" />
                     <input
                       className="app-input"
-                      placeholder="Pesquisar itens..."
+                      placeholder={t("Pesquisar itens...")}
                       value={itemsData.searchTerm}
                       onChange={operations.handleSearchChange}
                     />
@@ -233,24 +235,24 @@ export default function LevelItems() {
               <div className="app-table__header">
                 <div className="app-table__row">
                   <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--name">
-                    <span>Nome</span>
+                    <span>{t("Nome")}</span>
                   </div>
                   {showExtendedColumns && (
                     <>
                       <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--description">
-                        <span>Descrição</span>
+                        <span>{t("Descrição")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--code">
-                        <span>Código</span>
+                        <span>{t("Código")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--parent-item">
-                        <span>Item da esfera pai</span>
+                        <span>{t("Item da esfera pai")}</span>
                       </div>
                     </>
                   )}
                   {showActions && (
                     <div className="app-table__cell app-table__cell--icon level-items__table-cell level-items__table-cell--actions">
-                      <span>Ações</span>
+                      <span>{t("Ações")}</span>
                     </div>
                   )}
                 </div>
@@ -289,7 +291,7 @@ export default function LevelItems() {
                       <div>
                         <Plus size={24} />
                       </div>
-                      <span>Nenhum item encontrado para esta esfera.</span>
+                      <span>{t("Nenhum item encontrado para esta esfera.")}</span>
                     </div>
                   </div>
                 ) : null}
@@ -298,7 +300,11 @@ export default function LevelItems() {
               <div className="app-table__footer">
                 <div className="level-items__table-footer">
                   <div className="level-items__table-footer-info">
-                    {startItem}-{endItem} de {itemsData.totalItems} itens
+                    {t("{{start}}-{{end}} de {{total}} itens", {
+                      start: startItem,
+                      end: endItem,
+                      total: itemsData.totalItems
+                    })}
                   </div>
                   <div className="level-items__table-footer-pagination">
                     <TablePagination
@@ -319,18 +325,18 @@ export default function LevelItems() {
       <Dialog open={operations.deleteModalOpen} onOpenChange={operations.setDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Você tem certeza?</DialogTitle>
+            <DialogTitle>{t("Você tem certeza?")}</DialogTitle>
           </DialogHeader>
           <p className="app-dialog__text">
-            Esta ação não pode ser desfeita. Isso irá permanentemente excluir o item
+            {t("Esta ação não pode ser desfeita. Isso irá permanentemente excluir o item")}
             {operations.itemToDelete && <strong> {operations.itemToDelete.name}</strong>}.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => operations.setDeleteModalOpen(false)}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button variant="destructive" onClick={operations.confirmDelete}>
-              Excluir
+              {t("Excluir")}
             </Button>
           </DialogFooter>
         </DialogContent>

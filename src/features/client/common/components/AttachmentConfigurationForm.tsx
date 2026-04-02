@@ -1,12 +1,15 @@
 import React, { useRef, useState } from "react";
-import { Download, Plus, Settings, Upload, X } from "lucide-react";
+import { Download, Plus, Upload, X } from "lucide-react";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
+import IconRenderer from "@common/components/icon/IconRenderer.tsx";
+import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { toast } from "@ui/use-toast.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./AttachmentConfigurationForm.scss";
 
 export interface AttachmentConfigSectionProps {
@@ -20,8 +23,10 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   onAddConfiguration,
   onDeleteConfiguration
 }) => {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [icon, setIcon] = useState("");
   const [required, setRequired] = useState(false);
   const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
   const [formError, setFormError] = useState<{
@@ -60,6 +65,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       key: "",
       name,
       description,
+      icon,
       required,
       allowedExtensions: selectedExtensions,
       active: true
@@ -67,6 +73,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
     setName("");
     setDescription("");
+    setIcon("");
     setRequired(false);
     setSelectedExtensions([]);
   };
@@ -107,7 +114,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     if(!file) return;
 
     if(file.type !== "text/csv" && !file.name.endsWith(".csv")) {
-      alert("Por favor, selecione apenas arquivos CSV.");
+      alert(t("Por favor, selecione apenas arquivos CSV."));
       if(fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -138,7 +145,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       .catch((error: any) => {
         const errorMessage: string = formatErrorMessages(error.error);
         toast({
-          title: "Erro ao importar configurações",
+          title: t("Erro ao importar configurações"),
           description: errorMessage,
           variant: "destructive"
         });
@@ -174,8 +181,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   const handleExportClick = async () => {
     if(activeConfigurations.length === 0) {
       toast({
-        title: "Nenhuma configuração para exportar",
-        description: "Adicione pelo menos uma configuração antes de exportar.",
+        title: t("Nenhuma configuração para exportar"),
+        description: t("Adicione pelo menos uma configuração antes de exportar."),
         variant: "destructive"
       });
       return;
@@ -198,7 +205,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao exportar configurações",
+        title: t("Erro ao exportar configurações"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -209,62 +216,59 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
   return (
     <div className="attachment-configuration-form">
-      <h3 className="attachment-configuration-form__title">Anexos</h3>
+      <h3 className="attachment-configuration-form__title">{t("Anexos")}</h3>
 
       <div className="attachment-configuration-form__surface">
         <div className="attachment-configuration-form__form-content">
           <div className="attachment-configuration-form__top-row">
             <div className="attachment-configuration-form__field">
               <label className="attachment-configuration-form__label" htmlFor="config-name">
-                Nome <span className="attachment-configuration-form__required">*</span>
+                {t("Nome")} <span className="attachment-configuration-form__required">*</span>
               </label>
               <input
                 id="config-name"
                 value={name}
                 onChange={handleNameChange}
-                placeholder="Nome da configuração"
+                placeholder={t("Nome da configuração")}
                 className={`app-input attachment-configuration-form__input${formError.name ? " attachment-configuration-form__input--error" : ""}`}
               />
               {formError.name && (
-                <p className="attachment-configuration-form__error">{formError.name}</p>
+                <p className="attachment-configuration-form__error">{t(formError.name)}</p>
               )}
             </div>
 
             <div className="attachment-configuration-form__field">
-              <span className="attachment-configuration-form__label">Ícone</span>
+              <span className="attachment-configuration-form__label">{t("Ícone")}</span>
               <div className="attachment-configuration-form__icon-row">
-                <span className="attachment-configuration-form__icon-preview">
-                  <Settings className="attachment-configuration-form__icon-preview-icon" />
-                </span>
-                <button
-                  type="button"
-                  className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
-                >
-                  Selecionar ícone
-                </button>
+                <IconPicker
+                  value={icon}
+                  onChange={setIcon}
+                  disabled={loading}
+                  triggerLabel={t("Selecionar ícone")}
+                />
               </div>
             </div>
           </div>
 
           <div className="attachment-configuration-form__field">
             <label className="attachment-configuration-form__label" htmlFor="config-description">
-              Descrição <span className="attachment-configuration-form__required">*</span>
+              {t("Descrição")} <span className="attachment-configuration-form__required">*</span>
             </label>
             <textarea
               id="config-description"
               value={description}
               onChange={handleDescriptionChange}
-              placeholder="Descrição da configuração"
+              placeholder={t("Descrição da configuração")}
               className={`app-textarea attachment-configuration-form__textarea${formError.description ? " attachment-configuration-form__textarea--error" : ""}`}
             />
             {formError.description && (
-              <p className="attachment-configuration-form__error">{formError.description}</p>
+              <p className="attachment-configuration-form__error">{t(formError.description)}</p>
             )}
           </div>
 
           <div className="attachment-configuration-form__field">
             <span className="attachment-configuration-form__label">
-              Extensões Permitidas <span className="attachment-configuration-form__required">*</span>
+              {t("Extensões Permitidas")} <span className="attachment-configuration-form__required">*</span>
             </span>
             <div className="attachment-configuration-form__extensions-picker">
               {AVAILABLE_EXTENSIONS.map((extension) => (
@@ -279,7 +283,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               ))}
             </div>
             {formError.extensions && (
-              <p className="attachment-configuration-form__error">{formError.extensions}</p>
+              <p className="attachment-configuration-form__error">{t(formError.extensions)}</p>
             )}
           </div>
 
@@ -289,7 +293,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                 checked={required}
                 onCheckedChange={setRequired}
               />
-              <span className="attachment-configuration-form__label">Tornar anexo obrigatório</span>
+              <span className="attachment-configuration-form__label">{t("Tornar anexo obrigatório")}</span>
             </div>
           </div>
 
@@ -300,7 +304,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
           >
             <span className="attachment-configuration-form__button-content">
               <Plus className="attachment-configuration-form__button-icon" />
-              <span>Adicionar Configuração</span>
+              <span>{t("Adicionar Configuração")}</span>
             </span>
           </button>
         </div>
@@ -315,7 +319,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         >
           <span className="attachment-configuration-form__button-content">
             <Upload className="attachment-configuration-form__button-icon" />
-            <span>Importar Configuração</span>
+            <span>{t("Importar Configuração")}</span>
           </span>
           <input
             type="file"
@@ -335,7 +339,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         >
           <span className="attachment-configuration-form__button-content">
             <Download className="attachment-configuration-form__button-icon" />
-            <span>Exportar Configuração</span>
+            <span>{t("Exportar Configuração")}</span>
           </span>
         </button>
       </div>
@@ -343,7 +347,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       <div className="attachment-configuration-form__list-section">
         {activeConfigurations.length === 0 ? (
           <div className="attachment-configuration-form__empty-state">
-            <p className="attachment-configuration-form__empty-state-text">Nenhum tipo de anexo adicionado</p>
+            <p className="attachment-configuration-form__empty-state-text">{t("Nenhum tipo de anexo adicionado")}</p>
           </div>
         ) : (
           <div className="attachment-configuration-form__list-grid">
@@ -354,11 +358,15 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               >
                 <div className="attachment-configuration-form__card-header">
                   <span className="attachment-configuration-form__card-icon-box">
-                    <Settings className="attachment-configuration-form__card-icon" />
+                    <IconRenderer
+                      iconName={config.icon}
+                      className="attachment-configuration-form__card-icon"
+                      showPlaceholder={true}
+                    />
                   </span>
                   <button
                     onClick={() => onDeleteConfiguration(config.name)}
-                    aria-label="Remover configuração"
+                    aria-label={t("Remover configuração")}
                     type="button"
                     className="attachment-configuration-form__delete-button"
                   >
@@ -370,14 +378,14 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
                 <div className="attachment-configuration-form__card-badge-wrap">
                   {config.required ? (
-                    <span className="app-badge app-badge--header">Obrigatório</span>
+                    <span className="app-badge app-badge--header">{t("Obrigatório")}</span>
                   ) : (
-                    <span className="attachment-configuration-form__optional-badge">Opcional</span>
+                    <span className="attachment-configuration-form__optional-badge">{t("Opcional")}</span>
                   )}
                 </div>
 
                 <div className="attachment-configuration-form__card-extensions-section">
-                  <span className="attachment-configuration-form__card-extensions-label">Extensões permitidas:</span>
+                  <span className="attachment-configuration-form__card-extensions-label">{t("Extensões permitidas:")}</span>
                   <div className="attachment-configuration-form__card-extensions-list">
                     {config.allowedExtensions.map((extension) => (
                       <span key={`${config.name}-${extension}`} className="attachment-configuration-form__extension-badge">
@@ -396,16 +404,16 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Confirmação de Importação
+              {t("Confirmação de Importação")}
             </DialogTitle>
           </DialogHeader>
 
           <div className="attachment-configuration-form__dialog-content">
             <div className="attachment-configuration-form__dialog-section">
-              <h4 className="attachment-configuration-form__dialog-title">Configurações duplicadas</h4>
+              <h4 className="attachment-configuration-form__dialog-title">{t("Configurações duplicadas")}</h4>
               <div className="attachment-configuration-form__dialog-body">
                 <p className="attachment-configuration-form__dialog-description">
-                  As seguintes configurações já existem e serão sobrescritas:
+                  {t("As seguintes configurações já existem e serão sobrescritas:")}
                 </p>
                 <ul className="attachment-configuration-form__dialog-list">
                   {duplicateNames.map(entry => (
@@ -418,26 +426,26 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
 
             <div className="attachment-configuration-form__dialog-section">
-              <h4 className="attachment-configuration-form__dialog-title">Configurações a serem importadas</h4>
+              <h4 className="attachment-configuration-form__dialog-title">{t("Configurações a serem importadas")}</h4>
               <div className="attachment-configuration-form__dialog-body">
                 <ul className="attachment-configuration-form__dialog-list">
                   {importedConfigs.map(config => (
                     <li key={config.name}>
                       <div className="attachment-configuration-form__dialog-item">
                         <div>
-                          <span>Nome:</span>{" "}
+                          <span>{t("Nome")}:</span>{" "}
                           <span>{config.name}</span>
                         </div>
                         <div>
-                          <span>Descrição:</span>{" "}
+                          <span>{t("Descrição")}:</span>{" "}
                           <span>{config.description}</span>
                         </div>
                         <div>
-                          <span>Obrigatório:</span>{" "}
-                          <span>{config.required ? "Sim" : "Não"}</span>
+                          <span>{t("Obrigatório:")}</span>{" "}
+                          <span>{config.required ? t("Sim") : t("Não")}</span>
                         </div>
                         <div>
-                          <span>Extensões:</span>{" "}
+                          <span>{t("Extensões:")}</span>{" "}
                           <span>{config.allowedExtensions.join(", ")}</span>
                         </div>
                       </div>
@@ -454,14 +462,14 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
               onClick={cancelImport}
             >
-              Cancelar
+              {t("Cancelar")}
             </button>
             <button
               type="button"
               className="ui-button ui-button--primary attachment-configuration-form__action-button attachment-configuration-form__action-button--primary"
               onClick={confirmImport}
             >
-              Confirmar Importação
+              {t("Confirmar Importação")}
             </button>
           </DialogFooter>
         </DialogContent>

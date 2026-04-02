@@ -46,9 +46,11 @@ import type { LevelExport } from "../../../common/types/level-export.model.ts";
 import { ExportLevelsDialog } from "./partials/ExportLevelsDialog.tsx";
 import { ImportLevelsDialog } from "./partials/ImportLevelsDialog.tsx";
 import { getTypeDisplayName, useLevelListData, useLevelOperations } from "./useLevelList.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./LevelList.scss";
 
 export const LevelList = () => {
+  const { t } = useI18n();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
 
   const {
@@ -86,8 +88,8 @@ export const LevelList = () => {
       const exports = await levelService.exportLevels(exportIncludeItems, exportIncludeBuiltIn);
       if (!exports.length) {
         toast({
-          title: "Nada para exportar",
-          description: "Nenhuma esfera encontrada para exportação.",
+          title: t("Nada para exportar"),
+          description: t("Nenhuma esfera encontrada para exportação."),
           variant: "destructive"
         });
         return;
@@ -104,14 +106,14 @@ export const LevelList = () => {
       window.URL.revokeObjectURL(url);
 
       toast({
-        title: "Exportação concluída",
-        description: `Exportadas ${exports.length} esferas.`
+        title: t("Exportação concluída"),
+        description: t("Exportadas {{count}} esferas.", { count: exports.length })
       });
       setExportOpen(false);
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao exportar esferas",
+        title: t("Erro ao exportar esferas"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -123,8 +125,8 @@ export const LevelList = () => {
   const handleImportLevels = async () => {
     if (!importFile) {
       toast({
-        title: "Arquivo não selecionado",
-        description: "Selecione um arquivo JSON para continuar.",
+        title: t("Arquivo não selecionado"),
+        description: t("Selecione um arquivo JSON para continuar."),
         variant: "destructive"
       });
       return;
@@ -146,18 +148,25 @@ export const LevelList = () => {
         : `${summary.duration}ms`;
 
       toast({
-        title: "Importação concluída",
-        description: `Criadas ${summary.created} • Atualizadas ${summary.updated} • Ignoradas ${summary.ignored} • Erros ${summary.errors} • Duração ${durationLabel}${builtInIgnored ? ` • BUILT_IN ignoradas ${builtInIgnored}` : ""}`
+        title: t("Importação concluída"),
+        description: t("Criadas {{created}} • Atualizadas {{updated}} • Ignoradas {{ignored}} • Erros {{errors}} • Duração {{duration}}{{builtInIgnored}}", {
+          created: summary.created,
+          updated: summary.updated,
+          ignored: summary.ignored,
+          errors: summary.errors,
+          duration: durationLabel,
+          builtInIgnored: builtInIgnored ? t(" • BUILT_IN ignoradas {{count}}", { count: builtInIgnored }) : ""
+        })
       });
       await fetchSpheres();
       setImportOpen(false);
     } catch (error: unknown) {
       const errorMessage = error instanceof SyntaxError ? "Arquivo JSON inválido." : "Erro ao importar esferas.";
       toast({
-        title: "Erro ao importar esferas",
+        title: t("Erro ao importar esferas"),
         description: errorMessage === "Erro ao importar esferas."
           ? formatErrorMessages(error)
-          : errorMessage,
+          : t(errorMessage),
         variant: "destructive"
       });
     } finally {
@@ -176,16 +185,16 @@ export const LevelList = () => {
         <DropdownMenuItem
           onClick={() => {
             navigator.clipboard?.writeText(item.id ?? "");
-            toast({ title: "Copiado", description: "Código copiado para a área de transferência." });
+            toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") });
           }}
         >
           <Copy size={16} />
-          <span>Copiar código</span>
+          <span>{t("Copiar código")}</span>
         </DropdownMenuItem>
         {(item.isBuiltIn || item.type === "BUSINESS" || item.type === "EXTERNAL") && (
           <DropdownMenuItem onClick={() => handleViewItems(item)}>
             <Eye size={16} />
-            <span>Ver itens</span>
+            <span>{t("Ver itens")}</span>
           </DropdownMenuItem>
         )}
         {!item.isBuiltIn && (
@@ -193,7 +202,7 @@ export const LevelList = () => {
             <DropdownMenuItem asChild>
               <Link className="level-list__dropdown-link" to={`${PRIVATE_ROUTES.CREATE_LEVEL}?id=${item.id}`}>
                 <PencilLine size={16} />
-                <span>Editar</span>
+                <span>{t("Editar")}</span>
               </Link>
             </DropdownMenuItem>
             <Dialog>
@@ -204,30 +213,30 @@ export const LevelList = () => {
                   }}
                 >
                   <Trash2 size={16} />
-                  <span>Excluir</span>
+                  <span>{t("Excluir")}</span>
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Confirmar exclusão</DialogTitle>
+                  <DialogTitle>{t("Confirmar exclusão")}</DialogTitle>
                   <DialogDescription>
-                    Confirme se deseja excluir permanentemente esta esfera do sistema.
+                    {t("Confirme se deseja excluir permanentemente esta esfera do sistema.")}
                   </DialogDescription>
                 </DialogHeader>
                 <p className="app-dialog__text">
-                  Tem certeza que deseja excluir a esfera
+                  {t("Tem certeza que deseja excluir a esfera")}
                   <strong> "{item.name}"</strong>?
                 </p>
                 <p className="app-dialog__text level-list__dialog-note">
-                  Esta ação não pode ser desfeita. A esfera será permanentemente removida do sistema.
+                  {t("Esta ação não pode ser desfeita. A esfera será permanentemente removida do sistema.")}
                 </p>
                 <p className="app-dialog__text level-list__dialog-warning">
-                  Atenção: Certifique-se de que esta esfera não possui esferas filhas ou outros itens associados.
+                  {t("Atenção: Certifique-se de que esta esfera não possui esferas filhas ou outros itens associados.")}
                 </p>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant="outline">
-                      Cancelar
+                      {t("Cancelar")}
                     </Button>
                   </DialogClose>
                   <DialogClose asChild>
@@ -235,7 +244,7 @@ export const LevelList = () => {
                       variant="destructive"
                       onClick={() => excludeItem(item)}
                     >
-                      Excluir
+                      {t("Excluir")}
                     </Button>
                   </DialogClose>
                 </DialogFooter>
@@ -247,11 +256,11 @@ export const LevelList = () => {
           <>
             <DropdownMenuItem disabled>
               <PencilLine size={16} />
-              <span>Editar</span>
+              <span>{t("Editar")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem disabled>
               <Trash2 size={16} />
-              <span>Excluir</span>
+              <span>{t("Excluir")}</span>
             </DropdownMenuItem>
           </>
         )}
@@ -291,7 +300,7 @@ export const LevelList = () => {
           )}
         </div>
         <span className="level-list__sphere-type">
-          {getTypeDisplayName(item.type)}
+          {t(getTypeDisplayName(item.type))}
         </span>
       </div>
     </div>
@@ -306,8 +315,8 @@ export const LevelList = () => {
   }
 
   if (error) {
-    return (
-      <div className="level-list__error">Erro: {error}</div>
+      return (
+      <div className="level-list__error">{t("Erro")}: {error}</div>
     );
   }
 
@@ -322,10 +331,10 @@ export const LevelList = () => {
           <div className="level-list__header">
             <Heading
               className="level-list__heading"
-              title="Gerenciar Esferas"
+              title={t("Gerenciar Esferas")}
               badgeValue={flatSpheres.length}
               badgeClassName="app-badge app-badge--header"
-              description="Gerenciar esferas cadastradas no ambiente."
+              description={t("Gerenciar esferas cadastradas no ambiente.")}
             />
 
             <div className="level-list__actions">
@@ -335,7 +344,7 @@ export const LevelList = () => {
                   variant="white"
                   onClick={() => setExportOpen(true)}
                   disabled={exportLoading || loading}
-                  title="Exportar esferas"
+                  title={t("Exportar esferas")}
                 >
                   {exportLoading ? <Loader2 className="animate-spin" /> : <Download />}
                 </Button>
@@ -344,7 +353,7 @@ export const LevelList = () => {
                   variant="white"
                   onClick={openImportModal}
                   disabled={importLoading || loading}
-                  title="Importar esferas"
+                  title={t("Importar esferas")}
                 >
                   <Upload />
                 </Button>
@@ -355,7 +364,7 @@ export const LevelList = () => {
                 className="ui-button ui-button--primary theme-button--primary level-list__primary-action"
                 onClick={() => savePreviousRoute(PRIVATE_ROUTES.LEVELS)}
               >
-                <CirclePlus /> Adicionar nova esfera
+                <CirclePlus /> {t("Adicionar nova esfera")}
               </Link>
             </div>
           </div>
@@ -370,7 +379,7 @@ export const LevelList = () => {
                 {flatSpheres.map((item) => (
                   <div className="level-list__card" key={item.id}>
                     <div className="level-list__card-header">
-                      <span>Ações</span>
+                      <span>{t("Ações")}</span>
                       {renderActionsMenu(item)}
                     </div>
                     <div className="level-list__card-content">
@@ -384,7 +393,7 @@ export const LevelList = () => {
                 <div>
                   <Globe2 size={24} />
                 </div>
-                <span>Nenhuma esfera encontrada</span>
+                <span>{t("Nenhuma esfera encontrada")}</span>
               </div>
             )}
           </div>
@@ -394,10 +403,10 @@ export const LevelList = () => {
               <div className="app-table__header">
                 <div className="app-table__row">
                   <div className="app-table__cell app-table__cell--content level-list__table-cell level-list__table-cell--sphere">
-                    <span>Esfera</span>
+                    <span>{t("Esfera")}</span>
                   </div>
                   <div className="app-table__cell app-table__cell--icon level-list__table-cell level-list__table-cell--actions">
-                    <span>Ações</span>
+                    <span>{t("Ações")}</span>
                   </div>
                 </div>
               </div>
@@ -420,7 +429,7 @@ export const LevelList = () => {
                       <div>
                         <Globe2 size={24} />
                       </div>
-                      <span>Nenhuma esfera encontrada</span>
+                      <span>{t("Nenhuma esfera encontrada")}</span>
                     </div>
                   </div>
                 )}

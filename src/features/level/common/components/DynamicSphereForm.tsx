@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../../..
 import { toast } from "../../../../common/external/ui/use-toast.ts";
 import { cn } from "../../../../config/lib/utils.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 import { levelService } from "../api/level-service.ts";
 import { ItemHierarchyInterface } from "../types/item-hierarchy.model.ts";
 import { LevelInterface } from "../types/level.model.ts";
@@ -41,6 +42,7 @@ const DynamicSphereForm = ({
   simpleLabel = false,
   codeItem
 }: DynamicSphereFormProps) => {
+  const { t } = useI18n();
   const subItemPageSize = 25;
   const [spheresData, setSpheresData] = useState<DynamicSphereInterface[]>([]);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
@@ -165,7 +167,7 @@ const DynamicSphereForm = ({
       } catch (searchError: any) {
         const errorMessage: string = formatErrorMessages(searchError.error);
         toast({
-          title: "Erro ao buscar itens",
+          title: t("Erro ao buscar itens"),
           description: errorMessage,
           variant: "destructive"
         });
@@ -258,7 +260,7 @@ const DynamicSphereForm = ({
     } catch (hierarchyError: any) {
       const errorMessage: string = formatErrorMessages(hierarchyError.error);
       toast({
-        title: "Erro ao carregar hierarquia de itens",
+        title: t("Erro ao carregar hierarquia de itens"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -304,11 +306,11 @@ const DynamicSphereForm = ({
     } catch (fetchError: any) {
       const errorMessage: string = formatErrorMessages(fetchError.error);
       toast({
-        title: "Erro ao buscar esferas",
+        title: t("Erro ao buscar esferas"),
         description: errorMessage,
         variant: "destructive"
       });
-      setError("Erro ao buscar esferas");
+      setError(t("Erro ao buscar esferas"));
     } finally {
       setLoading(false);
     }
@@ -420,7 +422,7 @@ const DynamicSphereForm = ({
         } catch (childError: any) {
           const errorMessage: string = formatErrorMessages(childError.error);
           toast({
-            title: "Erro ao buscar itens filho",
+            title: t("Erro ao buscar itens filho"),
             description: errorMessage,
             variant: "destructive"
           });
@@ -503,7 +505,7 @@ const DynamicSphereForm = ({
     } catch (loadError: unknown) {
       const errorMessage: string = formatErrorMessages(loadError);
       toast({
-        title: "Erro ao buscar mais itens",
+        title: t("Erro ao buscar mais itens"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -585,11 +587,11 @@ const DynamicSphereForm = ({
   };
 
   if (loading) {
-    return <div className="dynamic-sphere-form__status">Carregando esferas...</div>;
+    return <div className="dynamic-sphere-form__status">{t("Carregando esferas...")}</div>;
   }
 
   if (error) {
-    return <div className="dynamic-sphere-form__status">Erro: {error}</div>;
+    return <div className="dynamic-sphere-form__status">{t("Erro")}: {error}</div>;
   }
 
   const lastActiveSelectIndex = findLastActiveSelectIndex();
@@ -606,11 +608,11 @@ const DynamicSphereForm = ({
           <div key={sphere.id} className="dynamic-sphere-form__field">
             <Label className={cn("dynamic-sphere-form__label", shouldShowError && "dynamic-sphere-form__label--error")}>
               <span className="dynamic-sphere-form__label-main">
-                {!simpleLabel && "Selecione um item para a esfera de nível "}
+                {!simpleLabel && t("Selecione um item para a esfera de nível ")}
                 {sphere.name}:
                 {shouldShowError && <span className="dynamic-sphere-form__required">*</span>}
               </span>
-              <span className="dynamic-sphere-form__label-total">({totalItems} itens encontrados)</span>
+              <span className="dynamic-sphere-form__label-total">({t("{{count}} itens encontrados", { count: totalItems })})</span>
             </Label>
 
             <DropdownMenu
@@ -631,7 +633,7 @@ const DynamicSphereForm = ({
                     !selectedValue && "dynamic-sphere-form__trigger-value--placeholder"
                   )}
                   >
-                    {selectedValue || "Selecionar..."}
+                    {selectedValue || t("Selecionar...")}
                   </span>
                   <ChevronDown className="dynamic-sphere-form__trigger-icon" />
                 </button>
@@ -648,7 +650,7 @@ const DynamicSphereForm = ({
                     <Search className="app-input-group__icon" />
                     <input
                       className="app-input dynamic-sphere-form__search-input"
-                      placeholder="Pesquisar..."
+                      placeholder={t("Pesquisar...")}
                       value={searchTerms.get(index) || ""}
                       onChange={(event) => handleSearch(index, event.target.value)}
                       onKeyDown={(event) => event.stopPropagation()}
@@ -680,7 +682,7 @@ const DynamicSphereForm = ({
                     ))
                   ) : (
                     <div className="dynamic-sphere-form__empty-state">
-                      {isSearching.get(index) ? "Buscando..." : "Nenhum item encontrado"}
+                      {isSearching.get(index) ? t("Buscando...") : t("Nenhum item encontrado")}
                     </div>
                   )}
                 </div>
@@ -695,17 +697,17 @@ const DynamicSphereForm = ({
                   <ChevronDown className="dynamic-sphere-form__scroll-action-icon" />
                   <span className="dynamic-sphere-form__scroll-action-text">
                     {isLoadingMore.get(index)
-                      ? "Carregando mais itens..."
+                      ? t("Carregando mais itens...")
                       : hasMoreItems
-                        ? "Passe o mouse para rolar e carregar mais"
-                        : "Fim da lista"}
+                        ? t("Passe o mouse para rolar e carregar mais")
+                        : t("Fim da lista")}
                   </span>
                 </button>
               </DropdownMenuContent>
             </DropdownMenu>
 
             {shouldShowError && (
-              <p className="dynamic-sphere-form__error-message">Este campo é obrigatório</p>
+              <p className="dynamic-sphere-form__error-message">{t("Este campo é obrigatório")}</p>
             )}
           </div>
         );

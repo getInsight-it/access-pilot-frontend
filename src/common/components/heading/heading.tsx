@@ -4,6 +4,7 @@ import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@common/external/ui/dropdown-menu.tsx";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { cn } from "@config/lib/utils.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./heading.scss";
 
 interface HeadingProps {
@@ -69,6 +70,8 @@ export const Heading: React.FC<HeadingProps> = ({
   code,
   className
 }) => {
+  const { t } = useI18n();
+
   return (
     <div className={cn("heading", className)}>
       <div className="heading__main">
@@ -97,9 +100,12 @@ export const Heading: React.FC<HeadingProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => { navigator.clipboard?.writeText(code!.toString() || ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                  onClick={() => {
+                    navigator.clipboard?.writeText(code!.toString() || "");
+                    toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") });
+                  }}>
                   <Copy size={16} />
-                  <span>Copiar código</span>
+                  <span>{t("Copiar código")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

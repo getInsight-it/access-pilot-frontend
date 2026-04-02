@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constants/animation.ts";
 import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 import {
   useRequestType,
   useSearchFilter,
@@ -18,6 +19,7 @@ import { RequestsTable } from "./partials/RequestsTable.tsx";
 import "./RequestList.scss";
 
 export default function RequestList() {
+  const { t } = useI18n();
   const requestType = useRequestType();
   const isInitialMount = useRef(true);
 
@@ -63,17 +65,17 @@ export default function RequestList() {
           <div className="request-list__header">
             <Heading
               className="request-list__heading"
-              title="Solicitações"
+              title={t("Solicitações")}
               badgeValue={totalRequests}
               badgeClassName="app-badge app-badge--header"
-              description="Gerenciar solicitações de acesso para sistemas."
+              description={t("Gerenciar solicitações de acesso para sistemas.")}
             />
             <div className="request-list__actions">
               <Link
                 to={PRIVATE_ROUTES.REQUEST_ACCESS}
                 className="ui-button ui-button--primary theme-button--primary request-list__primary-action"
               >
-                <CirclePlus /> Solicitar novo acesso
+                <CirclePlus /> {t("Solicitar novo acesso")}
               </Link>
             </div>
           </div>

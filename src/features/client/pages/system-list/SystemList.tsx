@@ -21,8 +21,10 @@ import { formatErrorMessages } from "@utils/error-utils.ts";
 import { ImportClientsDialog } from "./partials/ImportClientsDialog.tsx";
 import "./SystemList.scss";
 import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 
 export default function SystemList() {
+  const { t } = useI18n();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const {
     clients,
@@ -62,7 +64,7 @@ export default function SystemList() {
 
     return (
       <span className={cn("app-badge", badgeModifier)}>
-        <span>{statusLabel}</span>
+        <span>{t(statusLabel)}</span>
       </span>
     );
   };
@@ -97,8 +99,8 @@ export default function SystemList() {
   const handleExportClient = async (clientId?: number, clientKey?: string) => {
     if (!clientId) {
       toast({
-        title: "Erro ao exportar",
-        description: "ID do sistema não encontrado",
+        title: t("Erro ao exportar"),
+        description: t("ID do sistema não encontrado"),
         variant: "destructive"
       });
       return;
@@ -115,13 +117,13 @@ export default function SystemList() {
       link.remove();
       window.URL.revokeObjectURL(url);
       toast({
-        title: "Exportação concluída",
-        description: "A exportação foi baixada com sucesso."
+        title: t("Exportação concluída"),
+        description: t("A exportação foi baixada com sucesso.")
       });
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao exportar",
+        title: t("Erro ao exportar"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -131,8 +133,8 @@ export default function SystemList() {
   const handleExportAllClients = async () => {
     if (!totalSystems) {
       toast({
-        title: "Nada para exportar",
-        description: "Nenhum sistema encontrado para exportação.",
+        title: t("Nada para exportar"),
+        description: t("Nenhum sistema encontrado para exportação."),
         variant: "destructive"
       });
       return;
@@ -157,13 +159,13 @@ export default function SystemList() {
       window.URL.revokeObjectURL(url);
 
       toast({
-        title: "Exportação concluída",
-        description: `Exportados ${exports.length} sistemas.`
+        title: t("Exportação concluída"),
+        description: t("Exportados {{count}} sistemas.", { count: exports.length })
       });
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao exportar sistemas",
+        title: t("Erro ao exportar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -175,8 +177,8 @@ export default function SystemList() {
   const handleImportExports = async () => {
     if (!importFile) {
       toast({
-        title: "Arquivo não selecionado",
-        description: "Selecione um arquivo JSON para continuar.",
+        title: t("Arquivo não selecionado"),
+        description: t("Selecione um arquivo JSON para continuar."),
         variant: "destructive"
       });
       return;
@@ -193,8 +195,8 @@ export default function SystemList() {
         exportItems = exportItems.filter(exportItem => (exportItem?.client?.clientId ?? "").toString().trim().toLowerCase() === target);
         if (exportItems.length === 0) {
           toast({
-            title: "Cliente não encontrado no arquivo",
-            description: `Nenhuma exportação corresponde ao cliente ${importTargetClientId}.`,
+            title: t("Cliente não encontrado no arquivo"),
+            description: t("Nenhuma exportação corresponde ao cliente {{clientId}}.", { clientId: importTargetClientId }),
             variant: "destructive"
           });
           return;
@@ -213,17 +215,23 @@ export default function SystemList() {
         : `${summary.duration}ms`;
 
       toast({
-        title: "Importação concluída",
-        description: `Criados ${summary.created} • Atualizados ${summary.updated} • Ignorados ${summary.ignored} • Erros ${summary.errors} • Duração ${durationLabel}`
+        title: t("Importação concluída"),
+        description: t("Criados {{created}} • Atualizados {{updated}} • Ignorados {{ignored}} • Erros {{errors}} • Duração {{duration}}", {
+          created: summary.created,
+          updated: summary.updated,
+          ignored: summary.ignored,
+          errors: summary.errors,
+          duration: durationLabel
+        })
       });
       init();
       setImportOpen(false);
     } catch (error: unknown) {
       const errorMessage = error instanceof SyntaxError
-        ? "Arquivo JSON inválido."
+        ? t("Arquivo JSON inválido.")
         : formatErrorMessages(error);
       toast({
-        title: "Erro ao importar exportações",
+        title: t("Erro ao importar exportações"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -244,10 +252,10 @@ export default function SystemList() {
             <div className="system-list__header">
               <Heading
                 className="system-list__heading"
-                title="Sistemas"
+                title={t("Sistemas")}
                 badgeValue={totalSystems}
                 badgeClassName="app-badge app-badge--header"
-                description="Gerenciar sistemas cadastrados no ambiente."
+                description={t("Gerenciar sistemas cadastrados no ambiente.")}
               />
               <div className="system-list__actions">
                 <div className="system-list__actions-group">
@@ -256,7 +264,7 @@ export default function SystemList() {
                     variant="white"
                     onClick={openSyncAllModal}
                     disabled={syncAllLoading}
-                    title="Sincronizar todos os sistemas do IDP">
+                    title={t("Sincronizar todos os sistemas do IDP")}>
                     <RefreshCcw />
                   </Button>
                   <Button
@@ -264,14 +272,14 @@ export default function SystemList() {
                     variant="white"
                     onClick={handleExportAllClients}
                     disabled={exportAllLoading || isLoading}
-                    title="Exportar todos os sistemas filtrados">
+                    title={t("Exportar todos os sistemas filtrados")}>
                     {exportAllLoading ? <Loader2 className="animate-spin" /> : <Download />}
                   </Button>
                   <Button
                     className="system-list__action-button"
                     variant="white"
                     onClick={() => openImportModal()}
-                    title="Importar exportações de sistemas">
+                    title={t("Importar exportações de sistemas")}>
                     <Upload />
                   </Button>
                 </div>
@@ -279,7 +287,7 @@ export default function SystemList() {
                   to={PRIVATE_ROUTES.NEW_SYSTEM}
                   className={cn(buttonVariants({ variant: "default" }), "theme-button--primary", "system-list__primary-action")}
                   onClick={() => savePreviousRoute(PRIVATE_ROUTES.SYSTEMS)}>
-                  <CirclePlus /> Adicionar novo sistema
+                  <CirclePlus /> {t("Adicionar novo sistema")}
                 </Link>
               </div>
             </div>
@@ -294,7 +302,7 @@ export default function SystemList() {
                   <Search className="app-input-group__icon" />
                   <input
                     className="app-input"
-                    placeholder="Filtrar..."
+                    placeholder={t("Filtrar...")}
                     value={searchFilter}
                     onChange={(e) => handleSearchChange(e.target.value)}
                   />
@@ -306,51 +314,51 @@ export default function SystemList() {
                     <div className="table-card" key={`mobile-table-card-${index}`}>
                       <div className="table-card__header">
                         <div>
-                          <span>Ações</span>
+                          <span>{t("Ações")}</span>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <EllipsisVertical size={20} />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ""); toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") }); }}>
                                 <Copy size={16} />
-                                <span>Copiar Código</span>
+                                <span>{t("Copiar Código")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
                                 <Eye size={16} />
-                                <span>Detalhes</span>
+                                <span>{t("Detalhes")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
                                 <PencilLine size={16} />
-                                <span>Editar</span>
+                                <span>{t("Editar")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleExportClient(client.id, client.clientId); }}>
                                 <Download size={16} />
-                                <span>Exportar</span>
+                                <span>{t("Exportar")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { openImportModal(client.clientId); }}>
                                 <Upload size={16} />
-                                <span>Importar</span>
+                                <span>{t("Importar")}</span>
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem
                                   onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
                                   <ShieldUser size={16}/>
-                                  Gerenciar Papéis
+                                  {t("Gerenciar Papéis")}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem onClick={() => { syncClient(client) }}>
                                 <RefreshCcw size={16}/>
-                                Sincronizar
+                                {t("Sincronizar")}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
                                 <Power size={16}/>
-                                {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
+                                {client.status === ClientStatusEnum.PUBLISHED ? t("Despublicar") : t("Publicar")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -358,15 +366,15 @@ export default function SystemList() {
                       </div>
                       <div className="table-card__content">
                         <div className="table-card__content__row">
-                          <span className="table-card__label">Sistema</span>
+                          <span className="table-card__label">{t("Sistema")}</span>
                           <span className="table-card__value">{client.name}</span>
                         </div>
                         <div className="table-card__content__row">
-                          <span className="table-card__label">Descrição</span>
-                          <span className="table-card__value">{client.description || '-'}</span>
+                          <span className="table-card__label">{t("Descrição")}</span>
+                          <span className="table-card__value">{client.description || "-"}</span>
                         </div>
                         <div className="table-card__content__row">
-                          <span className="table-card__label">Status</span>
+                          <span className="table-card__label">{t("Status")}</span>
                           <span className="table-card__value">
                             {renderStatusBadge(client.status as any)}
                           </span>
@@ -389,7 +397,7 @@ export default function SystemList() {
                   <div>
                     <LaptopMinimal size={24} />
                   </div>
-                  <span>Nenhum sistema encontrado</span>
+                  <span>{t("Nenhum sistema encontrado")}</span>
                 </div>
               ) : null}
             </div>
@@ -401,7 +409,7 @@ export default function SystemList() {
                       <Search className="app-input-group__icon" />
                       <input
                         className="app-input"
-                        placeholder="Filtrar..."
+                        placeholder={t("Filtrar...")}
                         value={searchFilter}
                         onChange={(e) => handleSearchChange(e.target.value)}
                       />
@@ -412,16 +420,16 @@ export default function SystemList() {
                 <div className="app-table__header">
                   <div className="app-table__row">
                     <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--name">
-                      <span>Sistema</span>
+                      <span>{t("Sistema")}</span>
                     </div>
                     <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--description">
-                      <span>Descrição</span>
+                      <span>{t("Descrição")}</span>
                     </div>
                     <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--status">
-                      <span>Status</span>
+                      <span>{t("Status")}</span>
                     </div>
                     <div className="app-table__cell app-table__cell--icon system-list__table-cell system-list__table-cell--actions">
-                      <span>Ações</span>
+                      <span>{t("Ações")}</span>
                     </div>
                   </div>
                 </div>
@@ -434,7 +442,7 @@ export default function SystemList() {
                           <span>{client.name}</span>
                         </div>
                         <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--description">
-                          <span>{client.description || '-'}</span>
+                          <span>{client.description || "-"}</span>
                         </div>
                         <div className="app-table__cell app-table__cell--content system-list__table-cell system-list__table-cell--status">
                           {renderStatusBadge(client.status as any)}
@@ -448,45 +456,45 @@ export default function SystemList() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
+                                onClick={() => { navigator.clipboard?.writeText(client.id?.toString() ?? ""); toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") }); }}>
                                 <Copy size={16} />
-                                <span>Copiar Código</span>
+                                <span>{t("Copiar Código")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_DETAILS, client.clientId) }}>
                                 <Eye size={16} />
-                                <span>Detalhes</span>
+                                <span>{t("Detalhes")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.SYSTEMS_EDIT, client.clientId) }}>
                                 <PencilLine size={16} />
-                                <span>Editar</span>
+                                <span>{t("Editar")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { handleExportClient(client.id, client.clientId); }}>
                                 <Download size={16} />
-                                <span>Exportar</span>
+                                <span>{t("Exportar")}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => { openImportModal(client.clientId); }}>
                                 <Upload size={16} />
-                                <span>Importar</span>
+                                <span>{t("Importar")}</span>
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem
                                   onClick={() => { handleNavigateFromSystems(PRIVATE_ROUTES.ROLES, client.clientId) }}>
                                   <ShieldUser size={16}/>
-                                  Gerenciar Papéis
+                                  {t("Gerenciar Papéis")}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem onClick={() => { syncClient(client) }}>
                                 <RefreshCcw size={16}/>
-                                Sincronizar
+                                {t("Sincronizar")}
                               </DropdownMenuItem>
                               {client.managed && (
                                 <DropdownMenuItem onClick={() => { handlePublicationChange(client) }}>
                                   <Power size={16}/>
-                                  {client.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}
+                                  {client.status === ClientStatusEnum.PUBLISHED ? t("Despublicar") : t("Publicar")}
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -497,19 +505,23 @@ export default function SystemList() {
                   ) : !isLoading ? (
                     <div className="app-table__row">
                       <div className="app-table__cell system-list__table-empty-state">
-                        <div>
-                          <LaptopMinimal size={24} />
-                        </div>
-                        <span>Nenhum sistema encontrado</span>
+                      <div>
+                        <LaptopMinimal size={24} />
                       </div>
+                      <span>{t("Nenhum sistema encontrado")}</span>
                     </div>
-                  ) : null}
+                  </div>
+                ) : null}
                 </div>
 
                 <div className="app-table__footer">
                   <div className="system-list__table-footer">
                     <div className="system-list__table-footer-info">
-                      {startItem}-{endItem} de {totalSystems} itens
+                      {t("{{start}}-{{end}} de {{total}} itens", {
+                        start: startItem,
+                        end: endItem,
+                        total: totalSystems
+                      })}
                     </div>
                     <div className="system-list__table-footer-pagination">
                       <TablePagination
@@ -547,9 +559,9 @@ export default function SystemList() {
       <Dialog open={syncAllOpen} onOpenChange={setSyncAllOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Sincronizar sistemas</DialogTitle>
+            <DialogTitle>{t("Sincronizar sistemas")}</DialogTitle>
             <DialogDescription>
-              Esta ação busca todos os sistemas no Keycloak e atualiza o cadastro local.
+              {t("Esta ação busca todos os sistemas no Keycloak e atualiza o cadastro local.")}
             </DialogDescription>
           </DialogHeader>
 
@@ -557,10 +569,10 @@ export default function SystemList() {
             <div className="app-dialog__surface">
               <div className="app-dialog__surface-main">
                 <span className="app-dialog__surface-title">
-                  Sincronizar papéis também?
+                  {t("Sincronizar papéis também?")}
                 </span>
                 <span className="app-dialog__surface-description">
-                  Pode aumentar o tempo da operação.
+                  {t("Pode aumentar o tempo da operação.")}
                 </span>
               </div>
               <Toggle checked={syncRoles} onCheckedChange={setSyncRoles} disabled={syncAllLoading} />
@@ -569,11 +581,11 @@ export default function SystemList() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setSyncAllOpen(false)} disabled={syncAllLoading}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button onClick={handleSyncAll} disabled={syncAllLoading}>
               {syncAllLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <RefreshCw className="app-dialog__button-icon" />}
-              {syncAllLoading ? "Sincronizando..." : "Sincronizar"}
+              {syncAllLoading ? t("Sincronizando...") : t("Sincronizar")}
             </Button>
           </DialogFooter>
         </DialogContent>

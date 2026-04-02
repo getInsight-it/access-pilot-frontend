@@ -1,5 +1,6 @@
 import { ChevronRight, Globe } from "lucide-react";
 import { ItemHierarchyInterface } from "../../../../../level/common/types/item-hierarchy.model.ts";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 import "./request-sphere.scss";
 
 interface RequestSphereProps {
@@ -7,6 +8,7 @@ interface RequestSphereProps {
 }
 
 const RequestSphere = ({ itemHierarchy }: RequestSphereProps) => {
+  const { t } = useI18n();
   const hasHierarchy = Boolean(itemHierarchy && itemHierarchy.length > 0);
 
   return (
@@ -15,13 +17,13 @@ const RequestSphere = ({ itemHierarchy }: RequestSphereProps) => {
         <div className="request-sphere__icon-box">
           <Globe className="request-sphere__icon" />
         </div>
-        <h3 className="request-sphere__title">Hierarquia</h3>
+        <h3 className="request-sphere__title">{t("Hierarquia")}</h3>
       </div>
 
       <div className="request-sphere__content">
         {!hasHierarchy ? (
           <div className="request-sphere__empty-state">
-            Nenhuma hierarquia encontrada para esta solicitação
+            {t("Nenhuma hierarquia encontrada para esta solicitação")}
           </div>
         ) : (
           <div className="request-sphere__trail">

@@ -2,6 +2,7 @@ import { FileDown, Loader2 } from "lucide-react";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
 import { Toggle } from "../../../../../../common/components/toggle/Toggle.tsx";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 
 interface ExportLevelsDialogProps {
   open: boolean;
@@ -24,13 +25,14 @@ export const ExportLevelsDialog = ({
   onExportIncludeBuiltInChange,
   onExport
 }: ExportLevelsDialogProps) => {
+  const { t } = useI18n();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Exportar esferas</DialogTitle>
+          <DialogTitle>{t("Exportar esferas")}</DialogTitle>
           <DialogDescription>
-            Defina os dados que devem compor o arquivo de exportação.
+            {t("Defina os dados que devem compor o arquivo de exportação.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -38,10 +40,10 @@ export const ExportLevelsDialog = ({
           <div className="app-dialog__surface">
             <div className="app-dialog__surface-main">
               <span className="app-dialog__surface-title">
-                Incluir esferas Built-in?
+                {t("Incluir esferas Built-in?")}
               </span>
               <span className="app-dialog__surface-description">
-                Esferas Built-in são ignoradas na importação.
+                {t("Esferas Built-in são ignoradas na importação.")}
               </span>
             </div>
             <Toggle checked={exportIncludeBuiltIn} onCheckedChange={onExportIncludeBuiltInChange} disabled={exportLoading} />
@@ -50,10 +52,10 @@ export const ExportLevelsDialog = ({
           <div className="app-dialog__surface">
             <div className="app-dialog__surface-main">
               <span className="app-dialog__surface-title">
-                Incluir itens?
+                {t("Incluir itens?")}
               </span>
               <span className="app-dialog__surface-description">
-                Exporta os itens associados a cada esfera.
+                {t("Exporta os itens associados a cada esfera.")}
               </span>
             </div>
             <Toggle checked={exportIncludeItems} onCheckedChange={onExportIncludeItemsChange} disabled={exportLoading} />
@@ -62,11 +64,11 @@ export const ExportLevelsDialog = ({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={exportLoading}>
-            Cancelar
+            {t("Cancelar")}
           </Button>
           <Button onClick={onExport} disabled={exportLoading}>
             {exportLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileDown className="app-dialog__button-icon" />}
-            {exportLoading ? "Exportando..." : "Exportar"}
+            {exportLoading ? t("Exportando...") : t("Exportar")}
           </Button>
         </DialogFooter>
       </DialogContent>

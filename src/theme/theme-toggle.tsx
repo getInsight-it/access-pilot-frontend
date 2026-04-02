@@ -1,5 +1,6 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider.tsx";
+import { useI18n } from "../common/context/i18n/I18nContext.tsx";
 
 import { Button } from "../common/external/ui/button.tsx";
 import {
@@ -12,6 +13,7 @@ import "./theme-toggle.scss";
 
 export default function ThemeToggle() {
   const { changeTheme, theme } = useTheme();
+  const { t } = useI18n();
 
   const renderCurrentThemeIcon = () => {
     if (theme === "gov") {
@@ -31,7 +33,7 @@ export default function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="white" size="icon" className="theme-toggle__trigger" aria-label="Alterar tema">
+        <Button variant="white" size="icon" className="theme-toggle__trigger" aria-label={t("Alterar tema")}>
           {renderCurrentThemeIcon()}
         </Button>
       </DropdownMenuTrigger>
@@ -41,14 +43,14 @@ export default function ThemeToggle() {
           onClick={() => changeTheme("light")}
         >
           <Sun className="theme-toggle__menu-item-icon" />
-          <span>Light</span>
+          <span>{t("Light")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={`theme-toggle__menu-item${theme === "dark" ? " theme-toggle__menu-item--active" : ""}`}
           onClick={() => changeTheme("dark")}
         >
           <Moon className="theme-toggle__menu-item-icon" />
-          <span>Dark</span>
+          <span>{t("Dark")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className={`theme-toggle__menu-item${theme === "gov" ? " theme-toggle__menu-item--active" : ""}`}

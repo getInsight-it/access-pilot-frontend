@@ -45,13 +45,17 @@ export const inviteNavItems: NavItem[] = [
     title: "Convidar",
     href: "/invite",
     icon: "userplus",
-    label: "Convidar"
+    label: "Convidar",
+    protected: true,
+    roles: [UserRoleEnum.INVITE_SENDER]
   },
   {
     title: "Gerenciar convites",
     href: "/manage-invites",
     icon: "bookuser",
-    label: "Gerenciar convites"
+    label: "Gerenciar convites",
+    protected: true,
+    roles: [UserRoleEnum.INVITE_SENDER]
   }
 ];
 

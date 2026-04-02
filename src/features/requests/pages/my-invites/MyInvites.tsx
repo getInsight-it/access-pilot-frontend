@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { ContentLoader } from "@common/components/ContentLoader.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "@common/constants/animation.ts";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
@@ -18,6 +19,7 @@ import { InvitationListItemInterface } from "../../common/types/invitation.model
 import "./my-invites.scss";
 
 export default function MyInvites() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const isInitialMount = useRef(true);
   const {
@@ -67,10 +69,10 @@ export default function MyInvites() {
           <div className="my-invites-page__header">
             <Heading
               className="my-invites-page__heading"
-              title="Meus convites"
+              title={t("Meus convites")}
               badgeValue={totalInvitations}
               badgeClassName="app-badge app-badge--header"
-              description="Visualize os convites pendentes disponíveis para aceite."
+              description={t("Visualize os convites pendentes disponíveis para aceite.")}
             />
           </div>
         </HeaderContainer>
@@ -90,8 +92,8 @@ export default function MyInvites() {
               formatDate={formatDate}
               onSearchChange={handleSearchChange}
               onPageChange={handlePaginationChange}
-              actionLabel="Aceitar convite"
-              emptyStateLabel="Nenhum convite pendente encontrado"
+              actionLabel={t("Aceitar convite")}
+              emptyStateLabel={t("Nenhum convite pendente encontrado")}
               onAction={handleAcceptInvitation}
             />
           </div>

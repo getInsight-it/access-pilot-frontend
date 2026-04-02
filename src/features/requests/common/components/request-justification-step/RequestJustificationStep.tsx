@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FileUp, X } from "lucide-react";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { useToast } from "@common/external/ui/use-toast.ts";
 import { AttachmentConfigurationInterface } from "@features/client/common/model/configuration.model.ts";
 import { FileIcon } from "@common/components/FileIcon.tsx";
@@ -36,6 +37,7 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
   const [reason, setReason] = useState<string>(initialReason);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const { toast } = useToast();
+  const { t } = useI18n();
 
   useEffect(() => {
     setAttachments(initialAttachments);
@@ -91,8 +93,11 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
 
       if(file.size > maxSize) {
         toast({
-          title: "Erro",
-          description: `O arquivo ${file.name} é muito grande. Tamanho máximo permitido: ${(maxSize / (1024 * 1024)).toFixed(1)}MB`,
+          title: t("Erro"),
+          description: t("O arquivo {{name}} é muito grande. Tamanho máximo permitido: {{size}}", {
+            name: file.name,
+            size: `${(maxSize / (1024 * 1024)).toFixed(1)}MB`
+          }),
           variant: "destructive"
         });
         continue;
@@ -100,8 +105,11 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
 
       if(!validateFileExtension(file, item.allowedExtensions)) {
         toast({
-          title: "Erro",
-          description: `Tipo de arquivo não permitido para ${file.name}. Extensões aceitas: ${item.allowedExtensions.join(", ")}`,
+          title: t("Erro"),
+          description: t("Tipo de arquivo não permitido para {{name}}. Extensões aceitas: {{extensions}}", {
+            name: file.name,
+            extensions: item.allowedExtensions.join(", ")
+          }),
           variant: "destructive"
         });
         continue;
@@ -164,24 +172,24 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
     <div className="request-justification-step">
       <div className="request-justification-step__reason-section">
         <label className="request-justification-step__label" htmlFor="request-reason">
-          Motivo da solicitação <span className="request-justification-step__required">*</span>
+          {t("Motivo da solicitação")} <span className="request-justification-step__required">*</span>
         </label>
         <textarea
           id="request-reason"
           value={reason}
           onChange={handleReasonChange}
-          placeholder="Descreva o motivo da sua solicitação"
+          placeholder={t("Descreva o motivo da sua solicitação")}
           className={`app-textarea request-justification-step__textarea${hasError.reason ? " request-justification-step__textarea--error" : ""}${readOnlyReason ? " request-justification-step__textarea--locked" : ""}`}
           readOnly={readOnlyReason}
         />
         {hasError.reason && (
-          <p className="request-justification-step__error">Por favor, informe o motivo da solicitação.</p>
+          <p className="request-justification-step__error">{t("Por favor, informe o motivo da solicitação.")}</p>
         )}
       </div>
 
       {requiredAttachments.length > 0 && (
         <div className="request-justification-step__attachments-section">
-          <h4 className="request-justification-step__attachments-title">Anexos necessários</h4>
+          <h4 className="request-justification-step__attachments-title">{t("Anexos necessários")}</h4>
 
           <div className="request-justification-step__grid">
             {requiredAttachments.map((item) => {
@@ -213,7 +221,7 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
                   >
                     <FileUp className="request-justification-step__dropzone-icon" />
                     <p className="request-justification-step__dropzone-text">
-                      Clique para selecionar ou arraste o(s) arquivo(s)
+                      {t("Clique para selecionar ou arraste o(s) arquivo(s)")}
                     </p>
                     <p className="request-justification-step__dropzone-hint">({extensionsText})</p>
                   </label>
@@ -244,7 +252,7 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
                             type="button"
                             className="request-justification-step__remove-button"
                             onClick={() => removeFile(item.key, index)}
-                            aria-label="Remover arquivo"
+                            aria-label={t("Remover arquivo")}
                           >
                             <X className="request-justification-step__remove-icon" />
                           </button>
@@ -254,7 +262,7 @@ export const RequestJustificationStep: React.FC<RequestJustificationStepProps> =
                   )}
 
                   {isMissing && (
-                    <p className="request-justification-step__error">Este anexo é obrigatório.</p>
+                    <p className="request-justification-step__error">{t("Este anexo é obrigatório.")}</p>
                   )}
                 </div>
               );

@@ -15,9 +15,9 @@ import {
   startOfWeek,
   subMonths
 } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@common/external/ui/popover.tsx";
 import "./request-invite-expiration-step.scss";
 
@@ -27,7 +27,10 @@ interface RequestInviteExpirationStepProps {
   onChange: (value: string) => void;
 }
 
-const WEEKDAY_LABELS = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"];
+const WEEKDAY_LABELS: Record<"pt-BR" | "en-US", string[]> = {
+  "pt-BR": ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"],
+  "en-US": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+};
 const DEFAULT_EXPIRATION_HOUR = "23";
 const DEFAULT_EXPIRATION_MINUTE = "59";
 
@@ -74,14 +77,18 @@ const isCompleteTimeValue = (value: string, maxValue: number) => (
   value.length === 2 && isValidTimeValue(value, maxValue)
 );
 
-const formatValueForDisplay = (value: string) => {
+const formatValueForDisplay = (
+  value: string,
+  locale: typeof import("date-fns/locale").ptBR,
+  t: (key: string) => string
+) => {
   const date = getDateFromValue(value);
 
   if (!date) {
-    return "Selecione data e horário";
+    return t("Selecione data e horário");
   }
 
-  return format(date, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR });
+  return format(date, "dd MMMM yyyy HH:mm", { locale });
 };
 
 export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepProps> = ({
@@ -89,6 +96,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
   errorMessage,
   onChange
 }) => {
+  const { language, t, dateFnsLocale } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const selectedDate = getDateFromValue(value);
   const [timeFields, setTimeFields] = useState(() => getTimeFieldsFromValue(value));
@@ -167,16 +175,16 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
         </div>
 
         <div className="request-invite-expiration-step__intro-content">
-          <h4 className="request-invite-expiration-step__title">Validade do convite</h4>
+          <h4 className="request-invite-expiration-step__title">{t("Validade do convite")}</h4>
           <p className="request-invite-expiration-step__description">
-            Escolha a data e o horário limite até quando o convite poderá ser utilizado pelos destinatários.
+            {t("Escolha a data e o horário limite até quando o convite poderá ser utilizado pelos destinatários.")}
           </p>
         </div>
       </div>
 
       <div className="request-invite-expiration-step__field">
         <label className="request-invite-expiration-step__label" htmlFor="invite-expiration-trigger">
-          Data de expiração <span className="request-invite-expiration-step__required">*</span>
+          {t("Data de expiração")} <span className="request-invite-expiration-step__required">*</span>
         </label>
 
         <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -189,7 +197,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
               <span className="request-invite-expiration-step__trigger-content">
                 <CalendarDays className="request-invite-expiration-step__trigger-icon" />
                 <span className="request-invite-expiration-step__trigger-label">
-                  {formatValueForDisplay(value)}
+                  {formatValueForDisplay(value, dateFnsLocale, t)}
                 </span>
               </span>
             </button>
@@ -207,7 +215,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
                 </button>
 
                 <p className="request-invite-expiration-step__calendar-title">
-                  {format(visibleMonth, "MMMM 'de' yyyy", { locale: ptBR })}
+                  {format(visibleMonth, "MMMM yyyy", { locale: dateFnsLocale })}
                 </p>
 
                 <button
@@ -220,7 +228,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
               </div>
 
               <div className="request-invite-expiration-step__calendar-weekdays">
-                {WEEKDAY_LABELS.map((label) => (
+                {WEEKDAY_LABELS[language].map((label) => (
                   <span key={label} className="request-invite-expiration-step__calendar-weekday">{label}</span>
                 ))}
               </div>
@@ -262,13 +270,13 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
 
       <div className="request-invite-expiration-step__field">
         <label className="request-invite-expiration-step__label" htmlFor="invite-expiration-hour">
-          Horário de expiração <span className="request-invite-expiration-step__required">*</span>
+          {t("Horário de expiração")} <span className="request-invite-expiration-step__required">*</span>
         </label>
 
         <div className="request-invite-expiration-step__time-fields">
           <div className="request-invite-expiration-step__time-field">
             <label className="request-invite-expiration-step__time-label" htmlFor="invite-expiration-hour">
-              Hora
+              {t("Hora")}
             </label>
             <input
               id="invite-expiration-hour"
@@ -283,7 +291,7 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
 
           <div className="request-invite-expiration-step__time-field">
             <label className="request-invite-expiration-step__time-label" htmlFor="invite-expiration-minute">
-              Minuto
+              {t("Minuto")}
             </label>
             <input
               id="invite-expiration-minute"
@@ -299,9 +307,9 @@ export const RequestInviteExpirationStep: React.FC<RequestInviteExpirationStepPr
       </div>
 
       <div className="request-invite-expiration-step__summary">
-        <p className="request-invite-expiration-step__summary-label">Data e horário escolhidos</p>
+        <p className="request-invite-expiration-step__summary-label">{t("Data e horário escolhidos")}</p>
         <p className="request-invite-expiration-step__summary-value">
-          {value ? formatValueForDisplay(value) : "Nenhuma validade definida até agora."}
+          {value ? formatValueForDisplay(value, dateFnsLocale, t) : t("Nenhuma validade definida até agora.")}
         </p>
       </div>
     </div>
