@@ -181,6 +181,255 @@
     font-size: var(--system-form-counter-font-size);
   }
 
+  &__policy-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+    padding-top: var(--system-form-toggle-row-padding-top);
+    border-top: var(--system-form-toggle-row-border);
+  }
+
+  &__policy-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--title-font-weight);
+  }
+
+  &__policy-description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__policy-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--system-form-toggle-row-gap);
+  }
+
+  &__policy-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    padding: 16px;
+    background-color: var(--background);
+  }
+
+  &__policy-card--readonly {
+    background-color: color-mix(in srgb, var(--background) 92%, var(--description-color) 8%);
+  }
+
+  &__policy-card--lateral {
+    background-color: var(--background);
+  }
+
+  &__policy-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-step-text-gap);
+    flex-wrap: wrap;
+  }
+
+  &__policy-card-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__policy-card-heading {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    color: var(--title-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--title-font-weight);
+    line-height: 1.2;
+  }
+
+  &__policy-card-heading-status {
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__policy-card-caption {
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+    line-height: 1.25;
+  }
+
+  &__policy-card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+    color: var(--title-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--title-font-weight);
+  }
+
+  &__policy-card-status {
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  &__policy-card-status--strong {
+    color: var(--system-form-input-text-color);
+    font-size: var(--description-size);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &__policy-card-action {
+    align-self: flex-start;
+    margin-top: auto;
+    min-height: var(--pagination-control-height);
+    border: var(--system-form-control-border);
+  }
+
+  &__toggle-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+  }
+
+  &__toggle-value {
+    color: var(--system-form-input-text-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__toggle-description {
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__lateral-config {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__lateral-table {
+    width: 100%;
+    --app-table-row-min-height: 56px;
+  }
+
+  &__lateral-table-cell {
+    flex: 1 1 0;
+  }
+
+  &__lateral-table-cell--role {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__lateral-table-cell--action {
+    flex: 0 0 88px;
+    width: 88px;
+    min-width: 88px;
+    max-width: 88px;
+    justify-content: center;
+    text-align: center;
+    padding-inline: 8px;
+  }
+
+  &__lateral-table-row &__lateral-table-cell--role {
+    padding-block: 8px;
+  }
+
+  &__lateral-table-row &__lateral-table-cell--action {
+    padding-block: 8px;
+  }
+
+  &__lateral-role-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__lateral-role-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__lateral-action-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__lateral-checkbox {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    border: 1px solid color-mix(in srgb, var(--description-color) 45%, transparent);
+    accent-color: var(--color-primary-500);
+    cursor: pointer;
+    margin: 0;
+  }
+
+  &__lateral-checkbox:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &__lateral-item-title {
+    color: var(--title-color);
+    font-size: 12px;
+    font-weight: var(--title-font-weight);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__lateral-item-code {
+    color: var(--description-color);
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  &__toggle-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: auto;
+    padding: 2px 8px;
+    border-radius: var(--badge-radius);
+    border: var(--badge-border);
+    color: var(--badge-default-color);
+    font-size: var(--badge-font-size);
+    font-weight: var(--badge-font-weight);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  @media (min-width: 1280px) {
+    &__policy-grid {
+      grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.7fr) minmax(240px, 1fr);
+      align-items: stretch;
+    }
+  }
+
   &__actions {
     display: flex;
     align-items: center;

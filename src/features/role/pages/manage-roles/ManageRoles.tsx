@@ -2,7 +2,7 @@ import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx
 import { motion } from "framer-motion";
 import { CirclePlus, KeyRound, Server } from "lucide-react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
@@ -15,7 +15,9 @@ import "./ManageRoles.scss";
 
 export default function ManageRoles() {
   const { clientId } = useParams<{ clientId: string }>();
+  const [searchParams] = useSearchParams();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
+  const defaultTab = searchParams.get("tab") === "roles_hierarchy" ? "roles_hierarchy" : "roles";
 
   const {
     allRoles,
@@ -107,7 +109,7 @@ export default function ManageRoles() {
 
       <ScrollArea className="manage-roles__scroll-area" viewportClassName="manage-roles__scroll-viewport">
         <div className="max-w-content-container manage-roles__content">
-          <Tabs defaultValue="roles" className="manage-roles__tabs">
+          <Tabs defaultValue={defaultTab} className="manage-roles__tabs">
             <TabsList className="app-tabs">
               <TabsTrigger value="roles" asChild>
                 <button type="button" className="app-tabs__trigger">Papéis</button>

@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, Lock, Users } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
 import { IconPicker } from "@common/components/icon/IconPicker.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { Button } from "@common/external/ui/button.tsx";
 import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
@@ -19,7 +20,10 @@ const defaultValues: RoleFormData = {
   description: "",
   label: "",
   levelId: "",
-  icon: ""
+  icon: "",
+  autoApprovalEnabled: false,
+  lateralApprovalEnabled: false,
+  lateralTargets: []
 };
 
 export default function NewRole() {
@@ -35,6 +39,8 @@ export default function NewRole() {
     setDataLoading,
     loadingLevels,
     initialData,
+    roleDetails,
+    clientRoles,
     isEditing,
     clientId,
     loadData
@@ -47,7 +53,7 @@ export default function NewRole() {
   });
 
   const { onSubmit } = useRoleSubmit(client, initialData, isEditing, setLoading);
-  const { navigateToSystemDetails } = useRoleNavigation(clientId);
+  const { navigateToSystemDetails, navigateToRoleHierarchy } = useRoleNavigation(clientId);
 
   const pageTitle = isEditing ? "Editar papel" : "Novo papel";
   const pageDescription = isEditing
@@ -59,6 +65,74 @@ export default function NewRole() {
     : PRIVATE_ROUTES.SYSTEMS;
 
   const descriptionValue = methods.watch("description", "");
+  const autoApprovalEnabledValue = methods.watch("autoApprovalEnabled", false);
+  const lateralApprovalEnabledValue = methods.watch("lateralApprovalEnabled", false);
+  const lateralTargets = methods.watch("lateralTargets", []);
+  const parentRoleLabel = roleDetails?.roleParent?.label || roleDetails?.roleParent?.name || "";
+  const hasParentApproval = Boolean(parentRoleLabel);
+  const parentRoleId = roleDetails?.roleParent?.id;
+  const currentRoleLevelId = roleDetails?.level?.id ?? null;
+  const siblingRoles = parentRoleId
+    ? clientRoles.filter((role) => {
+      const siblingLevelId = role.level?.id ?? null;
+      return role.id !== roleDetails?.id
+        && role.roleParent?.id === parentRoleId
+        && siblingLevelId === currentRoleLevelId;
+    })
+    : [];
+
+  const getLateralTarget = (roleId: number) =>
+    lateralTargets.find((target) => Number(target.roleId) === Number(roleId));
+
+  const handleToggleLateralTarget = (roleId: number, enabled: boolean) => {
+    const currentTargets = methods.getValues("lateralTargets") || [];
+    if (enabled) {
+      if (currentTargets.some((target) => Number(target.roleId) === Number(roleId))) {
+        return;
+      }
+      methods.setValue("lateralTargets", [
+        ...currentTargets,
+        { roleId, canApprove: true, canReject: true, canRevoke: false }
+      ], { shouldDirty: true, shouldTouch: true });
+      return;
+    }
+
+    methods.setValue(
+      "lateralTargets",
+      currentTargets.filter((target) => Number(target.roleId) !== Number(roleId)),
+      { shouldDirty: true, shouldTouch: true }
+    );
+  };
+
+  const handleToggleLateralPermission = (
+    roleId: number,
+    permission: "canApprove" | "canReject" | "canRevoke",
+    enabled: boolean
+  ) => {
+    const currentTargets = methods.getValues("lateralTargets") || [];
+    const targetIndex = currentTargets.findIndex((target) => Number(target.roleId) === Number(roleId));
+
+    if (targetIndex < 0) {
+      if (!enabled) {
+        return;
+      }
+      methods.setValue("lateralTargets", [
+        ...currentTargets,
+        {
+          roleId,
+          canApprove: permission === "canApprove",
+          canReject: permission === "canReject",
+          canRevoke: permission === "canRevoke"
+        }
+      ], { shouldDirty: true, shouldTouch: true });
+      return;
+    }
+
+    const updatedTargets = currentTargets.map((target, index) => (
+      index === targetIndex ? { ...target, [permission]: enabled } : target
+    ));
+    methods.setValue("lateralTargets", updatedTargets, { shouldDirty: true, shouldTouch: true });
+  };
 
   useEffect(() => {
     const initializeData = async () => {
@@ -74,6 +148,17 @@ export default function NewRole() {
 
     void initializeData();
   }, [isAuthenticated, loadData, methods, setDataLoading]);
+
+  useEffect(() => {
+    if (!lateralTargets?.length) {
+      return;
+    }
+    const allowedRoleIds = new Set(siblingRoles.map((role) => Number(role.id)));
+    const validTargets = lateralTargets.filter((target) => allowedRoleIds.has(Number(target.roleId)));
+    if (validTargets.length !== lateralTargets.length) {
+      methods.setValue("lateralTargets", validTargets, { shouldDirty: true, shouldTouch: true });
+    }
+  }, [lateralTargets, siblingRoles, methods]);
 
   if (dataLoading || loadingLevels) {
     return (
@@ -228,6 +313,211 @@ export default function NewRole() {
                       />
                     )}
                   />
+                </div>
+
+                <div className="new-role__policy-section">
+                  <h3 className="new-role__policy-title">Políticas de aprovação</h3>
+                  <p className="new-role__policy-description">
+                    Configure regras de aprovação para este papel.
+                  </p>
+
+                  <div className="new-role__policy-grid">
+                    <div className="new-role__policy-card new-role__policy-card--readonly">
+                      <div className="new-role__policy-card-header">
+                        <span className="new-role__policy-card-title">
+                          <Lock size={16} />
+                          Aprovação por hierarquia
+                        </span>
+                      </div>
+                      <span className="new-role__policy-card-status">
+                        Aprovador padrão
+                      </span>
+                      <span className="new-role__policy-card-status new-role__policy-card-status--strong">
+                        {hasParentApproval
+                          ? parentRoleLabel
+                          : "Fallback administrativo"}
+                      </span>
+                      <span className="new-role__toggle-description">
+                        A hierarquia de papéis define quem aprova quando a autoaprovação estiver desativada.
+                      </span>
+                      <Button
+                        type="button"
+                        variant="white"
+                        className="new-role__policy-card-action"
+                        onClick={navigateToRoleHierarchy}
+                      >
+                        Gerenciar hierarquia
+                      </Button>
+                    </div>
+
+                    <Controller
+                      name="lateralApprovalEnabled"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <div className="new-role__policy-card new-role__policy-card--lateral">
+                          <div className="new-role__policy-card-header">
+                            <div className="new-role__policy-card-header-text">
+                              <h4 className="new-role__policy-card-heading">
+                                <Users size={14} />
+                                Aprovação lateral
+                                <span className="new-role__policy-card-heading-status">
+                                  {lateralApprovalEnabledValue ? "Ativada" : "Desativada"}
+                                </span>
+                              </h4>
+                              <span className="new-role__policy-card-caption">
+                                Papéis irmãos com permissão complementar de decisão
+                              </span>
+                            </div>
+                            <div className="new-role__toggle-control">
+                              <Toggle
+                                checked={Boolean(field.value)}
+                                onCheckedChange={field.onChange}
+                                disabled={loading}
+                                aria-label="Ativar aprovação lateral para este papel"
+                              />
+                            </div>
+                          </div>
+                          <span className="new-role__toggle-description">
+                            Política complementar. Não sobrescreve a aprovação por hierarquia.
+                          </span>
+
+                          {lateralApprovalEnabledValue && (
+                            <div className="new-role__lateral-config">
+                              {!hasParentApproval && (
+                                <span className="new-role__toggle-description">
+                                  Configure a hierarquia deste papel para definir as irmãs elegíveis para aprovação lateral.
+                                </span>
+                              )}
+
+                              {hasParentApproval && siblingRoles.length === 0 && (
+                                <span className="new-role__toggle-description">
+                                  Não há papéis irmãos da mesma esfera disponíveis para este papel.
+                                </span>
+                              )}
+
+                              {hasParentApproval && siblingRoles.length > 0 && (
+                                <div className="app-table app-table--no-filter app-table--no-footer new-role__lateral-table">
+                                  <div className="app-table__header">
+                                    <div className="app-table__row">
+                                      <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--role">
+                                        <span>Papel</span>
+                                      </div>
+                                      <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                        <span>Aprovar</span>
+                                      </div>
+                                      <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                        <span>Rejeitar</span>
+                                      </div>
+                                      <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                        <span>Revogar</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="app-table__body">
+                                    {siblingRoles.map((siblingRole) => {
+                                      const target = getLateralTarget(siblingRole.id);
+                                      const isSelected = Boolean(target);
+                                      return (
+                                        <div key={siblingRole.id} className="app-table__row new-role__lateral-table-row">
+                                          <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--role">
+                                            <div className="new-role__lateral-role-cell">
+                                              <Toggle
+                                                checked={isSelected}
+                                                onCheckedChange={(checked) => handleToggleLateralTarget(siblingRole.id, checked)}
+                                                disabled={loading}
+                                                aria-label={`Habilitar ${siblingRole.label || siblingRole.name} como aprovador lateral`}
+                                              />
+                                              <div className="new-role__lateral-role-text">
+                                                <span className="new-role__lateral-item-title">
+                                                  {siblingRole.label || siblingRole.name}
+                                                </span>
+                                                <span className="new-role__lateral-item-code">
+                                                  {siblingRole.name}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                            <div className="new-role__lateral-action-cell">
+                                              <input
+                                                type="checkbox"
+                                                className="new-role__lateral-checkbox"
+                                                checked={Boolean(target?.canApprove)}
+                                                onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canApprove", event.target.checked)}
+                                                disabled={loading || !isSelected}
+                                                aria-label={`Permitir aprovar para ${siblingRole.label || siblingRole.name}`}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                            <div className="new-role__lateral-action-cell">
+                                              <input
+                                                type="checkbox"
+                                                className="new-role__lateral-checkbox"
+                                                checked={Boolean(target?.canReject)}
+                                                onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canReject", event.target.checked)}
+                                                disabled={loading || !isSelected}
+                                                aria-label={`Permitir rejeitar para ${siblingRole.label || siblingRole.name}`}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                            <div className="new-role__lateral-action-cell">
+                                              <input
+                                                type="checkbox"
+                                                className="new-role__lateral-checkbox"
+                                                checked={Boolean(target?.canRevoke)}
+                                                onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canRevoke", event.target.checked)}
+                                                disabled={loading || !isSelected}
+                                                aria-label={`Permitir revogar para ${siblingRole.label || siblingRole.name}`}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    />
+
+                    <Controller
+                      name="autoApprovalEnabled"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <div className="new-role__policy-card">
+                          <div className="new-role__policy-card-header">
+                            <div className="new-role__policy-card-header-text">
+                              <h4 className="new-role__policy-card-heading">
+                                Autoaprovação
+                                <span className="new-role__policy-card-heading-status">
+                                  {autoApprovalEnabledValue ? "Ativada" : "Desativada"}
+                                </span>
+                              </h4>
+                            </div>
+                            <div className="new-role__toggle-control">
+                              <Toggle
+                                checked={Boolean(field.value)}
+                                onCheckedChange={field.onChange}
+                                disabled={loading}
+                                aria-label="Ativar autoaprovação para este papel"
+                              />
+                            </div>
+                          </div>
+                          <span className="new-role__toggle-description">
+                            Quando ativado, solicitações deste papel entram já aprovadas e essa política
+                            tem prioridade sobre a aprovação por hierarquia.
+                          </span>
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
