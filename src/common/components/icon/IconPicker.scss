@@ -1,28 +1,45 @@
 .icon-picker {
   display: flex;
   align-items: center;
-  gap: var(--system-form-field-gap);
+  gap: var(--attachment-configuration-icon-row-gap);
+
+  &__preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--attachment-configuration-icon-preview-size);
+    height: var(--attachment-configuration-icon-preview-size);
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-radius);
+    background-color: var(--attachment-configuration-icon-preview-background-color);
+    color: var(--color-primary-500);
+    flex: 0 0 auto;
+  }
+
+  &__preview-icon {
+    width: var(--attachment-configuration-icon-size);
+    height: var(--attachment-configuration-icon-size);
+  }
 
   &__trigger {
-    width: 100%;
-    min-height: calc(var(--input-height) + var(--dropdown-content-padding));
-    border: var(--system-form-control-border);
+    width: auto;
+    min-height: var(--pagination-control-height);
+    padding-inline: var(--attachment-configuration-action-button-padding-inline);
+    border: var(--attachment-configuration-border);
     border-radius: var(--system-form-control-radius);
     background-color: var(--background);
     color: var(--default-text-color);
-    padding-inline: var(--input-padding-inline);
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--dropdown-item-gap);
+    justify-content: center;
+    gap: var(--attachment-configuration-button-content-gap);
     cursor: pointer;
     transition: border-color var(--motion-layout-default), box-shadow var(--motion-layout-default);
+    box-sizing: border-box;
   }
 
   &__trigger--selected {
-    width: calc(var(--system-form-field-min-width) / 2);
-    min-height: calc(var(--input-height) + var(--dropdown-content-padding));
-    padding-block: var(--dropdown-content-padding);
+    width: fit-content;
   }
 
   &__trigger:disabled {
@@ -30,38 +47,9 @@
     cursor: default;
   }
 
-  &__trigger-main {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--dropdown-item-gap);
-    min-width: 0;
-  }
-
-  &__trigger-icon {
-    width: calc(var(--pagination-control-height) - var(--dropdown-content-padding));
-    height: calc(var(--pagination-control-height) - var(--dropdown-content-padding));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--system-form-control-radius);
-    background: var(--badge-header-background-color);
-    color: var(--color-primary-500);
-    flex: 0 0 auto;
-  }
-
-  &__trigger-icon-svg {
-    width: calc(var(--input-icon-size) + var(--dropdown-content-padding));
-    height: calc(var(--input-icon-size) + var(--dropdown-content-padding));
-  }
-
-  &__trigger-placeholder {
-    color: var(--input-placeholder-color);
-    font-size: var(--description-size);
-  }
-
   &__trigger-action {
-    color: var(--color-primary-500);
-    font-size: var(--description-size);
+    color: var(--default-text-color);
+    font-size: var(--default-button-font-size);
     font-weight: var(--title-font-weight);
     flex: 0 0 auto;
   }
@@ -193,8 +181,8 @@
 
   &__clear {
     flex: 0 0 auto;
-    width: calc(var(--input-height) + var(--dropdown-content-padding));
-    height: calc(var(--input-height) + var(--dropdown-content-padding));
+    width: var(--attachment-configuration-icon-preview-size);
+    height: var(--attachment-configuration-icon-preview-size);
     border: var(--system-form-control-border);
     border-radius: var(--system-form-control-radius);
     background-color: var(--background);

@@ -24,12 +24,19 @@ const hasRequiredRoles = (roles: string[] | undefined, authData: AuthContextType
 
   const userRoles: string[] = [];
 
-  const isAdmin: boolean = authData.roles?.clientRoles
+  const accessPilotClientRoles: string[] = authData.roles?.clientRoles
     ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloakSystemsEnum.ACCESS_PILOT_BACKEND)
-    ?.[KeycloakSystemsEnum.ACCESS_PILOT_BACKEND].includes(UserRoleEnum.ADMIN) ?? false;
+    ?.[KeycloakSystemsEnum.ACCESS_PILOT_BACKEND] ?? [];
 
-  if(isAdmin) userRoles.push(UserRoleEnum.ADMIN);
+  if(accessPilotClientRoles.includes(UserRoleEnum.ADMIN)) {
+    userRoles.push(UserRoleEnum.ADMIN);
+  }
+
   if(authData.isApprover) userRoles.push(UserRoleEnum.APPROVER);
+
+  if(accessPilotClientRoles.includes(UserRoleEnum.INVITE_SENDER)) {
+    userRoles.push(UserRoleEnum.INVITE_SENDER);
+  }
 
   return roles
     ? roles.some((role) => userRoles.includes(role))

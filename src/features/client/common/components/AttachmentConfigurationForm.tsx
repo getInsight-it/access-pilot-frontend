@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
-import { Download, Plus, Settings, Upload, X } from "lucide-react";
+import { Download, Plus, Upload, X } from "lucide-react";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
+import IconRenderer from "@common/components/icon/IconRenderer.tsx";
+import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
@@ -22,6 +24,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [icon, setIcon] = useState("");
   const [required, setRequired] = useState(false);
   const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
   const [formError, setFormError] = useState<{
@@ -60,6 +63,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       key: "",
       name,
       description,
+      icon,
       required,
       allowedExtensions: selectedExtensions,
       active: true
@@ -67,6 +71,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
     setName("");
     setDescription("");
+    setIcon("");
     setRequired(false);
     setSelectedExtensions([]);
   };
@@ -233,15 +238,12 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             <div className="attachment-configuration-form__field">
               <span className="attachment-configuration-form__label">Ícone</span>
               <div className="attachment-configuration-form__icon-row">
-                <span className="attachment-configuration-form__icon-preview">
-                  <Settings className="attachment-configuration-form__icon-preview-icon" />
-                </span>
-                <button
-                  type="button"
-                  className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
-                >
-                  Selecionar ícone
-                </button>
+                <IconPicker
+                  value={icon}
+                  onChange={setIcon}
+                  disabled={loading}
+                  triggerLabel="Selecionar ícone"
+                />
               </div>
             </div>
           </div>
@@ -354,7 +356,11 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               >
                 <div className="attachment-configuration-form__card-header">
                   <span className="attachment-configuration-form__card-icon-box">
-                    <Settings className="attachment-configuration-form__card-icon" />
+                    <IconRenderer
+                      iconName={config.icon}
+                      className="attachment-configuration-form__card-icon"
+                      showPlaceholder={true}
+                    />
                   </span>
                   <button
                     onClick={() => onDeleteConfiguration(config.name)}

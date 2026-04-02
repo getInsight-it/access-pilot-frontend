@@ -86,11 +86,25 @@ const appRoutes = [
           { index: true, element: <Navigate to={PRIVATE_ROUTES.DASHBOARD} replace /> },
           { path: PRIVATE_ROUTES.MY_ACCESS_REQUESTS, element: <RequestList /> },
           { path: PRIVATE_ROUTES.REQUEST_ACCESS, element: <RequestAccess /> },
-          { path: PRIVATE_ROUTES.MANAGE_INVITES, element: <ManageInvites /> },
+          {
+            path: PRIVATE_ROUTES.MANAGE_INVITES,
+            element: (
+              <RoleGuard roles={[UserRoleEnum.INVITE_SENDER]}>
+                <ManageInvites />
+              </RoleGuard>
+            )
+          },
           { path: PRIVATE_ROUTES.MY_INVITES, element: <MyInvites /> },
           { path: PRIVATE_ROUTES.MY_INVITE_REQUEST, element: <MyInviteRequest /> },
           { path: PRIVATE_ROUTES.MY_INVITE_REQUEST_WITH_ID, element: <MyInviteRequest /> },
-          { path: PRIVATE_ROUTES.INVITE, element: <Invite /> },
+          {
+            path: PRIVATE_ROUTES.INVITE,
+            element: (
+              <RoleGuard roles={[UserRoleEnum.INVITE_SENDER]}>
+                <Invite />
+              </RoleGuard>
+            )
+          },
           {
             path: PRIVATE_ROUTES.ACCESS_REQUESTS_WITH_ID,
             element: <RequestDetailPage />

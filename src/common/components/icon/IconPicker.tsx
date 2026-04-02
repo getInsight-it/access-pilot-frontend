@@ -1,5 +1,5 @@
 import { type MouseEvent, useEffect, useMemo, useState } from "react";
-import { icons, Search, X } from "lucide-react";
+import { icons, Search, Settings, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
 import { iconCategories } from "./constant/iconCategories.ts";
 import { cn } from "../../../config/lib/utils.ts";
@@ -13,9 +13,15 @@ interface IconPickerProps {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  triggerLabel?: string;
 }
 
-export function IconPicker({ value, onChange, disabled = false }: IconPickerProps) {
+export function IconPicker({
+  value,
+  onChange,
+  disabled = false,
+  triggerLabel = "Selecionar ícone"
+}: IconPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -50,6 +56,7 @@ export function IconPicker({ value, onChange, disabled = false }: IconPickerProp
   );
 
   const SelectedIconComponent = selectedIcon ? icons[selectedIcon] : null;
+  const TriggerIconComponent = SelectedIconComponent ?? Settings;
 
   const handleSelectIcon = (iconName: IconName) => {
     setSelectedIcon(iconName);
@@ -66,6 +73,10 @@ export function IconPicker({ value, onChange, disabled = false }: IconPickerProp
   return (
     <div className="icon-picker">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <span className="icon-picker__preview" aria-hidden="true">
+          <TriggerIconComponent className="icon-picker__preview-icon" />
+        </span>
+
         <PopoverTrigger asChild>
           <button
             id="icon-picker-trigger"
@@ -76,20 +87,7 @@ export function IconPicker({ value, onChange, disabled = false }: IconPickerProp
             )}
             disabled={disabled}
           >
-            <span className="icon-picker__trigger-main">
-              {SelectedIconComponent ? (
-                <>
-                  <span className="icon-picker__trigger-icon">
-                    <SelectedIconComponent className="icon-picker__trigger-icon-svg" />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="icon-picker__trigger-placeholder">Nenhum ícone selecionado</span>
-                </>
-              )}
-            </span>
-            <span className="icon-picker__trigger-action">Selecionar</span>
+            <span className="icon-picker__trigger-action">{triggerLabel}</span>
           </button>
         </PopoverTrigger>
 
