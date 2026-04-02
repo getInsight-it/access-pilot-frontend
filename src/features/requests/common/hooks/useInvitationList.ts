@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { toast } from "@common/external/ui/use-toast.ts";
 import { useDebounce } from "@common/hooks/use-debounce.ts";
 import { formatErrorMessages } from "@common/utils/error-utils.ts";
@@ -41,6 +42,7 @@ export const useInvitationSearchFilter = () => {
 };
 
 export const useInvitationListData = (mode: InvitationListMode) => {
+  const { t } = useI18n();
   const [invitations, setInvitations] = useState<InvitationListItemInterface[]>([]);
   const [totalInvitations, setTotalInvitations] = useState(0);
   const [currentPage, setCurrentPage] = useState(DEFAULT_PAGINATION.INITIAL_PAGE);
@@ -71,14 +73,14 @@ export const useInvitationListData = (mode: InvitationListMode) => {
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar convites",
+        title: t("Erro ao buscar convites"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [fetcher]);
+  }, [fetcher, t]);
 
   const handlePageChange = useCallback((page: number, filter?: string) => {
     void fetchInvitations({
@@ -112,15 +114,17 @@ export const useInvitationListData = (mode: InvitationListMode) => {
 };
 
 export const useInvitationFormatting = () => {
+  const { language } = useI18n();
+
   const formatDate = useCallback((date: string) => {
-    return new Date(date).toLocaleString("pt-BR", {
+    return new Date(date).toLocaleString(language, {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit"
     }).replace(",", " -");
-  }, []);
+  }, [language]);
 
   return { formatDate };
 };

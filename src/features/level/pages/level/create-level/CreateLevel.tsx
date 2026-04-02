@@ -8,6 +8,7 @@ import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { Button } from "../../../../../common/external/ui/button.tsx";
 import { RadioGroup, RadioGroupItem } from "../../../../../common/external/ui/radio-group.tsx";
 import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 import useAuthStore, { AuthState } from "../../../../../store/authStore.ts";
 import { useCreateLevelData, useCreateLevelOperations } from "./useCreateLevel.ts";
 import "./CreateLevel.scss";
@@ -21,6 +22,7 @@ interface FormErrors {
 }
 
 export default function CreateOrEditLevel() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const formData = useCreateLevelData();
@@ -28,10 +30,10 @@ export default function CreateOrEditLevel() {
   const { initializeForm } = formData;
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const pageTitle = formData.isEditing ? "Editar esfera" : "Nova esfera";
+  const pageTitle = formData.isEditing ? t("Editar esfera") : t("Nova esfera");
   const pageDescription = formData.isEditing
-    ? "Atualize os dados da esfera e salve as alteracoes."
-    : "Preencha os dados gerais para criar uma nova esfera.";
+    ? t("Atualize os dados da esfera e salve as alteracoes.")
+    : t("Preencha os dados gerais para criar uma nova esfera.");
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -126,12 +128,12 @@ export default function CreateOrEditLevel() {
                 <div className="create-level__row">
                   <div className="create-level__field">
                     <label className="create-level__label" htmlFor="name">
-                      Nome <span className="create-level__required">*</span>
+                      {t("Nome")} <span className="create-level__required">*</span>
                     </label>
                     <input
                       id="name"
                       value={formData.name}
-                      placeholder="Nome da esfera"
+                      placeholder={t("Nome da esfera")}
                       className={`app-input create-level__input${errors.name ? " create-level__input--error" : ""}`}
                       onChange={(event) => {
                         formData.setName(event.target.value);
@@ -141,17 +143,17 @@ export default function CreateOrEditLevel() {
                       }}
                       required
                     />
-                    {errors.name && <p className="create-level__error">{errors.name}</p>}
+                    {errors.name && <p className="create-level__error">{t(errors.name)}</p>}
                   </div>
 
                   <div className="create-level__field">
                     <label className="create-level__label" htmlFor="sigla">
-                      Sigla <span className="create-level__required">*</span>
+                      {t("Sigla")} <span className="create-level__required">*</span>
                     </label>
                     <input
                       id="sigla"
                       value={formData.sigla}
-                      placeholder="Sigla da esfera (ex: FED, EST)"
+                      placeholder={t("Sigla da esfera (ex: FED, EST)")}
                       className={`app-input create-level__input${errors.sigla ? " create-level__input--error" : ""}`}
                       onChange={(event) => {
                         formData.setSigla(event.target.value);
@@ -162,17 +164,17 @@ export default function CreateOrEditLevel() {
                       required
                     />
                     {errors.sigla ? (
-                      <p className="create-level__error">{errors.sigla}</p>
+                      <p className="create-level__error">{t(errors.sigla)}</p>
                     ) : (
                       <p className="create-level__hint">
-                        A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.
+                        {t("A sigla deve conter apenas letras e números, sem espaços ou caracteres especiais.")}
                       </p>
                     )}
                   </div>
 
                   <div className="create-level__field">
                     <label className="create-level__label" htmlFor="parentSphere">
-                      Esfera pai <span className="create-level__required">*</span>
+                      {t("Esfera pai")} <span className="create-level__required">*</span>
                     </label>
                     <div className="app-select-field">
                       <select
@@ -183,11 +185,11 @@ export default function CreateOrEditLevel() {
                           const value = event.target.value;
                           formData.setParentId(value);
                           const selectedSphere = formData.allSpheres.find((sphere) => sphere.id === value);
-                          formData.setSelectedSphereName(value === "0" ? "Nenhuma (esfera pai)" : selectedSphere?.name || "");
+                          formData.setSelectedSphereName(value === "0" ? t("Nenhuma (esfera pai)") : selectedSphere?.name || "");
                         }}
                         disabled={formData.isEditing && formData.hasItems}
                       >
-                        <option value="0">Nenhuma (esfera pai)</option>
+                        <option value="0">{t("Nenhuma (esfera pai)")}</option>
                         {formData.allSpheres
                           .filter((sphere) => sphere.name !== formData.name)
                           .map((sphere) => (
@@ -199,19 +201,19 @@ export default function CreateOrEditLevel() {
                       <ChevronDown className="app-select-field__icon" />
                     </div>
                     {formData.isEditing && formData.hasItems && (
-                      <p className="create-level__notice">A esfera pai não pode ser alterada porque esta esfera já possui itens.</p>
+                      <p className="create-level__notice">{t("A esfera pai não pode ser alterada porque esta esfera já possui itens.")}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="create-level__field">
                   <label className="create-level__label" htmlFor="description">
-                    Descrição <span className="create-level__required">*</span>
+                    {t("Descrição")} <span className="create-level__required">*</span>
                   </label>
                   <textarea
                     id="description"
                     value={formData.description}
-                    placeholder="Escreva uma descrição para a esfera"
+                    placeholder={t("Escreva uma descrição para a esfera")}
                     maxLength={200}
                     className={`app-textarea create-level__textarea${errors.description ? " create-level__textarea--error" : ""}`}
                     onChange={(event) => {
@@ -223,15 +225,15 @@ export default function CreateOrEditLevel() {
                     required
                   />
                   {errors.description ? (
-                    <p className="create-level__error">{errors.description}</p>
+                    <p className="create-level__error">{t(errors.description)}</p>
                   ) : (
-                    <p className="create-level__counter">{formData.description.length}/200 caracteres</p>
+                    <p className="create-level__counter">{formData.description.length}/200 {t("caracteres")}</p>
                   )}
                 </div>
 
                 <div className="create-level__field">
                   <label className="create-level__label">
-                    Tipo <span className="create-level__required">*</span>
+                    {t("Tipo")} <span className="create-level__required">*</span>
                   </label>
                   <RadioGroup
                     className="app-option-select create-level__type-group"
@@ -249,7 +251,7 @@ export default function CreateOrEditLevel() {
                       htmlFor="BUSINESS"
                     >
                       <RadioGroupItem className="app-option-select__control" value="BUSINESS" id="BUSINESS" disabled={formData.isEditing} />
-                      <span className="app-option-select__label">Negocial</span>
+                      <span className="app-option-select__label">{t("Negocial")}</span>
                     </label>
 
                     <label
@@ -257,11 +259,11 @@ export default function CreateOrEditLevel() {
                       htmlFor="EXTERNAL"
                     >
                       <RadioGroupItem className="app-option-select__control" value="EXTERNAL" id="EXTERNAL" disabled={formData.isEditing} />
-                      <span className="app-option-select__label">Externa</span>
+                      <span className="app-option-select__label">{t("Externa")}</span>
                     </label>
                   </RadioGroup>
                   {formData.isEditing && (
-                    <p className="create-level__notice">O tipo da esfera não pode ser alterado após a criação.</p>
+                    <p className="create-level__notice">{t("O tipo da esfera não pode ser alterado após a criação.")}</p>
                   )}
                 </div>
 
@@ -269,7 +271,7 @@ export default function CreateOrEditLevel() {
                   <div className="create-level__external-grid">
                     <div className="create-level__field">
                       <label className="create-level__label" htmlFor="endpoint">
-                        Endpoint <span className="create-level__required">*</span>
+                        {t("Endpoint")} <span className="create-level__required">*</span>
                       </label>
                       <input
                         id="endpoint"
@@ -284,10 +286,10 @@ export default function CreateOrEditLevel() {
                         }}
                         required
                       />
-                      {errors.endpoint && <p className="create-level__error">{errors.endpoint}</p>}
+                      {errors.endpoint && <p className="create-level__error">{t(errors.endpoint)}</p>}
                       <p className="create-level__hint">
-                        <span className="create-level__endpoint-link">Clique aqui</span>
-                        para mais informações sobre a criação do seu endpoint.
+                        <span className="create-level__endpoint-link">{t("Clique aqui")}</span>
+                        {t("para mais informações sobre a criação do seu endpoint.")}
                       </p>
                     </div>
 
@@ -298,7 +300,7 @@ export default function CreateOrEditLevel() {
                       <input
                         id="apiKey"
                         value={formData.apiKey}
-                        placeholder={formData.isEditing ? "Digite apenas para substituir a API Key existente" : "***************************"}
+                        placeholder={formData.isEditing ? t("Digite apenas para substituir a API Key existente") : "***************************"}
                         className={`app-input create-level__input${errors.apiKey ? " create-level__input--error" : ""}`}
                         onChange={(event) => {
                           formData.setApiKey(event.target.value);
@@ -308,7 +310,7 @@ export default function CreateOrEditLevel() {
                         }}
                         required={!formData.isEditing}
                       />
-                      {errors.apiKey && <p className="create-level__error">{errors.apiKey}</p>}
+                      {errors.apiKey && <p className="create-level__error">{t(errors.apiKey)}</p>}
                     </div>
                   </div>
                 )}
@@ -317,7 +319,7 @@ export default function CreateOrEditLevel() {
 
             <div className="create-level__actions">
               <Button type="submit" className="create-level__action-button">
-                {formData.isEditing ? "Atualizar esfera" : "Criar esfera"}
+                {formData.isEditing ? t("Atualizar esfera") : t("Criar esfera")}
               </Button>
             </div>
           </form>

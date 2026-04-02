@@ -2,6 +2,7 @@ import { ClientResponseInterface } from "../../../../client/common/model/client.
 import { ChevronDown, ChevronRight, Eye, LaptopMinimal, Plus, SquareArrowOutUpRight } from "lucide-react";
 import { MouseEvent, useMemo, useState } from "react";
 import { Button } from "../../../../../common/external/ui/button.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 import "./client-card.scss";
 
 interface ClientCardProps {
@@ -78,6 +79,7 @@ function mergeNodeListsById(nodes: NodeType[]): NodeType[] {
 }
 
 const TreeNode = ({ node, depth = 0 }: { node: NodeType; depth?: number }) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(true);
   const hasChildren = (node.items?.length ?? 0) > 0;
 
@@ -89,7 +91,7 @@ const TreeNode = ({ node, depth = 0 }: { node: NodeType; depth?: number }) => {
             type="button"
             className="client-card__tree-toggle"
             onClick={() => setOpen((previous) => !previous)}
-            aria-label={open ? "Recolher itens" : "Expandir itens"}
+            aria-label={open ? t("Recolher itens") : t("Expandir itens")}
           >
             {open ? <ChevronDown className="client-card__tree-toggle-icon" /> : <ChevronRight className="client-card__tree-toggle-icon" />}
           </button>
@@ -116,6 +118,7 @@ const TreeNode = ({ node, depth = 0 }: { node: NodeType; depth?: number }) => {
 };
 
 const RolesTree = ({ allowedItemsHierarchy }: { allowedItemsHierarchy: ItemTreeInterface[] }) => {
+  const { t } = useI18n();
   const nodes = allowedItemsHierarchy as unknown as NodeType[];
 
   const roleEntries = useMemo(() => {
@@ -127,7 +130,7 @@ const RolesTree = ({ allowedItemsHierarchy }: { allowedItemsHierarchy: ItemTreeI
 
       if (!byRole.has(roleId)) {
         byRole.set(roleId, {
-          role: role ?? { id: -1, name: "Sem papel" },
+          role: role ?? { id: -1, name: t("Sem papel") },
           roots: []
         });
       }
@@ -136,7 +139,7 @@ const RolesTree = ({ allowedItemsHierarchy }: { allowedItemsHierarchy: ItemTreeI
     });
 
     return Array.from(byRole.values()).sort((left, right) => left.role.name.localeCompare(right.role.name));
-  }, [nodes]);
+  }, [nodes, t]);
 
   const [activeRoleId, setActiveRoleId] = useState(roleEntries[0]?.role.id ?? -1);
 
@@ -178,6 +181,7 @@ const RolesTree = ({ allowedItemsHierarchy }: { allowedItemsHierarchy: ItemTreeI
 };
 
 export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps) => {
+  const { t } = useI18n();
   const [showHierarchy, setShowHierarchy] = useState(false);
   const hierarchyCount = client.allowedItemsHierarchy?.length || 0;
   const configurationCount = client.configurations?.length || 0;
@@ -204,7 +208,7 @@ export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps
             <div className="client-card__title-block">
               <span className="client-card__title">{client.name}</span>
               <span className={`client-card__state${hasAccess ? " client-card__state--attached" : " client-card__state--detached"}`}>
-                {hasAccess ? "Com acesso" : "Disponível"}
+                {hasAccess ? t("Com acesso") : t("Disponível")}
               </span>
             </div>
           </div>
@@ -218,7 +222,7 @@ export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps
               </Button>
               <Button variant="white" className="client-card__action-button" onClick={handleActionClick}>
                 <SquareArrowOutUpRight className="client-card__action-icon" />
-                <span>Ver detalhes</span>
+                <span>{t("Ver detalhes")}</span>
               </Button>
             </div>
           )}
@@ -226,7 +230,7 @@ export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps
           {hasAccess ? null : (
             <Button variant="default" className="theme-button--primary client-card__action-button client-card__action-button--primary" onClick={handleActionClick}>
               <Plus className="client-card__action-icon" />
-              <span>Solicitar acesso</span>
+              <span>{t("Solicitar acesso")}</span>
             </Button>
           )}
         </div>
@@ -234,18 +238,18 @@ export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps
 
       <div className="client-card__body">
         <p className="client-card__description">
-          {client.description || "Sem descrição disponível para este sistema."}
+          {client.description || t("Sem descrição disponível para este sistema.")}
         </p>
       </div>
 
       <div className="client-card__meta-grid">
         <div className="client-card__meta-item">
-          <span className="client-card__meta-label">Código</span>
+          <span className="client-card__meta-label">{t("Código")}</span>
           <span className="client-card__meta-value">{client.clientId || "-"}</span>
         </div>
 
         <div className="client-card__meta-item">
-          <span className="client-card__meta-label">{hasAccess ? "Permissões" : "Anexos exigidos"}</span>
+          <span className="client-card__meta-label">{hasAccess ? t("Permissões") : t("Anexos exigidos")}</span>
           <span className="client-card__meta-value">{hasAccess ? hierarchyCount : configurationCount}</span>
         </div>
       </div>

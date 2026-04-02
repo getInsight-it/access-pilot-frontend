@@ -9,6 +9,7 @@ import { ClientResponseInterface } from "../../../client/common/model/client.mod
 import { LevelInterface } from "../../../level/common/types/level.model.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 
 import * as z from "zod";
 
@@ -27,6 +28,7 @@ interface RoleFormDataWithId extends RoleFormData {
 }
 
 export const useNewRoleData = () => {
+  const { t } = useI18n();
   const params = useParams<{ clientId: string; id: string }>();
 
   const isEditing = !!params.id;
@@ -60,13 +62,13 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do papel",
+        title: t("Erro ao buscar dados do papel"),
         description: errorMessage,
         variant: "destructive"
       });
       return null;
     }
-  }, [roleId, clientId]);
+  }, [clientId, roleId, t]);
 
   const getClientData = useCallback(async () => {
     if(!clientId) return;
@@ -79,12 +81,12 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do sistema",
+        title: t("Erro ao buscar dados do sistema"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [clientId]);
+  }, [clientId, t]);
 
   const fetchLevels = useCallback(async () => {
     setLoadingLevels(true);
@@ -96,14 +98,14 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar esferas",
+        title: t("Erro ao carregar esferas"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoadingLevels(false);
     }
-  }, []);
+  }, [t]);
 
   const loadData = useCallback(async () => {
     setDataLoading(true);
@@ -142,6 +144,7 @@ export const useRoleSubmit = (
   isEditing: boolean,
   setLoading: (loading: boolean) => void
 ) => {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const onSubmit = useCallback(async (form: RoleFormData) => {
@@ -159,14 +162,14 @@ export const useRoleSubmit = (
       if(initialData?.id) {
         await roleService.updateRole(initialData.id, role);
         toast({
-          title: "Papel atualizado",
-          description: `O papel ${role.name} foi atualizado com sucesso.`
+          title: t("Papel atualizado"),
+          description: t("O papel {{name}} foi atualizado com sucesso.", { name: role.name })
         });
       } else {
         await roleService.createRole(role);
         toast({
-          title: "Papel criado",
-          description: `O papel ${role.name} foi criado com sucesso.`
+          title: t("Papel criado"),
+          description: t("O papel {{name}} foi criado com sucesso.", { name: role.name })
         });
       }
 
@@ -176,14 +179,14 @@ export const useRoleSubmit = (
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
+        title: isEditing ? t("Erro ao atualizar papel") : t("Erro ao criar papel"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [client, initialData, isEditing, setLoading, navigate]);
+  }, [client, initialData, isEditing, navigate, setLoading, t]);
 
   return { onSubmit };
 };
@@ -200,4 +203,3 @@ export const useRoleNavigation = (clientId?: string) => {
     navigateToSystemDetails
   };
 };
-

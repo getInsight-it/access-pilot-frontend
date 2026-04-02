@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { CirclePlus, KeyRound, Server } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { Button } from "../../../../common/external/ui/button.tsx";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { Separator } from "../../../../common/external/ui/separator.tsx";
@@ -14,6 +15,7 @@ import { useManageRolesData, useRoleNavigation } from "./useManageRoles.ts";
 import "./ManageRoles.scss";
 
 export default function ManageRoles() {
+  const { t } = useI18n();
   const { clientId } = useParams<{ clientId: string }>();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
 
@@ -59,7 +61,7 @@ export default function ManageRoles() {
           <div className="manage-roles__header">
             <Heading
               className="manage-roles__heading"
-              title="Gerenciar papéis"
+              title={t("Gerenciar papéis")}
               badgeValue={allRoles.length}
               badgeClassName="app-badge app-badge--header"
               customDescription={(
@@ -70,10 +72,10 @@ export default function ManageRoles() {
                     className="manage-roles__meta-card"
                   >
                     <KeyRound className="manage-roles__meta-icon" />
-                    <span className="manage-roles__meta-content">
-                      <span className="manage-roles__meta-label">Client-id</span>
-                      <span className="manage-roles__meta-value">{clientId}</span>
-                    </span>
+                      <span className="manage-roles__meta-content">
+                        <span className="manage-roles__meta-label">{t("Client Id")}</span>
+                        <span className="manage-roles__meta-value">{clientId}</span>
+                      </span>
                   </button>
                   {client?.name && (
                     <button
@@ -83,7 +85,7 @@ export default function ManageRoles() {
                     >
                       <Server className="manage-roles__meta-icon" />
                       <span className="manage-roles__meta-content">
-                        <span className="manage-roles__meta-label">Sistema</span>
+                        <span className="manage-roles__meta-label">{t("Sistema")}</span>
                         <span className="manage-roles__meta-value">{client.name}</span>
                       </span>
                     </button>
@@ -97,7 +99,7 @@ export default function ManageRoles() {
                 className="theme-button--primary manage-roles__primary-action"
                 onClick={navigateToNewRole}
               >
-                <CirclePlus /> Novo papel
+                <CirclePlus /> {t("Novo papel")}
               </Button>
             </div>
           </div>
@@ -110,10 +112,10 @@ export default function ManageRoles() {
           <Tabs defaultValue="roles" className="manage-roles__tabs">
             <TabsList className="app-tabs">
               <TabsTrigger value="roles" asChild>
-                <button type="button" className="app-tabs__trigger">Papéis</button>
+                <button type="button" className="app-tabs__trigger">{t("Papéis")}</button>
               </TabsTrigger>
               <TabsTrigger value="roles_hierarchy" asChild>
-                <button type="button" className="app-tabs__trigger">Hierarquia de papéis</button>
+                <button type="button" className="app-tabs__trigger">{t("Hierarquia de papéis")}</button>
               </TabsTrigger>
             </TabsList>
             <TabsContent value="roles" className="manage-roles__tabs-content">

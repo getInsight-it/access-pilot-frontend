@@ -10,6 +10,7 @@ import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { Button } from "@common/external/ui/button.tsx";
 import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
 import { formSchema, RoleFormData, useNewRoleData, useRoleNavigation, useRoleSubmit } from "./useNewRole.ts";
 import "./NewRole.scss";
@@ -23,6 +24,7 @@ const defaultValues: RoleFormData = {
 };
 
 export default function NewRole() {
+  const { t } = useI18n();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const navigate = useNavigate();
 
@@ -49,10 +51,10 @@ export default function NewRole() {
   const { onSubmit } = useRoleSubmit(client, initialData, isEditing, setLoading);
   const { navigateToSystemDetails } = useRoleNavigation(clientId);
 
-  const pageTitle = isEditing ? "Editar papel" : "Novo papel";
+  const pageTitle = isEditing ? t("Editar papel") : t("Novo papel");
   const pageDescription = isEditing
-    ? "Atualize os dados do papel e salve as alterações."
-    : "Preencha os dados para criar um novo papel para o sistema selecionado.";
+    ? t("Atualize os dados do papel e salve as alterações.")
+    : t("Preencha os dados para criar um novo papel para o sistema selecionado.");
 
   const rolesRoute = clientId
     ? PRIVATE_ROUTES.ROLES.replace(":clientId", clientId)
@@ -106,7 +108,7 @@ export default function NewRole() {
               </div>
               <p className="new-role__description">{pageDescription}</p>
               <p className="new-role__context">
-                Sistema:
+                {t("Sistema")}:
                 <button
                   type="button"
                   className="new-role__system-link"
@@ -128,7 +130,7 @@ export default function NewRole() {
                 <div className="new-role__row">
                   <div className="new-role__field">
                     <label className="new-role__label" htmlFor="name">
-                      Nome <span className="new-role__required">*</span>
+                      {t("Nome")} <span className="new-role__required">*</span>
                     </label>
                     <Controller
                       name="name"
@@ -136,7 +138,7 @@ export default function NewRole() {
                       render={({ field }) => (
                         <input
                           id="name"
-                          placeholder="Nome do papel"
+                          placeholder={t("Nome do papel")}
                           disabled={loading}
                           className={`app-input new-role__input${methods.formState.errors.name ? " new-role__input--error" : ""}`}
                           value={(field.value || "").toUpperCase()}
@@ -148,29 +150,29 @@ export default function NewRole() {
                       )}
                     />
                     {methods.formState.errors.name && (
-                      <p className="new-role__error">{methods.formState.errors.name.message?.toString()}</p>
+                      <p className="new-role__error">{t(methods.formState.errors.name.message?.toString() || "")}</p>
                     )}
                   </div>
 
                   <div className="new-role__field">
                     <label className="new-role__label" htmlFor="label">
-                      Label <span className="new-role__required">*</span>
+                      {t("Label")} <span className="new-role__required">*</span>
                     </label>
                     <input
                       id="label"
-                      placeholder="Label do papel"
+                      placeholder={t("Label do papel")}
                       disabled={loading}
                       className={`app-input new-role__input${methods.formState.errors.label ? " new-role__input--error" : ""}`}
                       {...methods.register("label")}
                     />
                     {methods.formState.errors.label && (
-                      <p className="new-role__error">{methods.formState.errors.label.message?.toString()}</p>
+                      <p className="new-role__error">{t(methods.formState.errors.label.message?.toString() || "")}</p>
                     )}
                   </div>
 
                   <div className="new-role__field">
                     <label className="new-role__label" htmlFor="levelId">
-                      Esfera
+                      {t("Esfera")}
                     </label>
                     <div className="app-select-field">
                       <select
@@ -179,7 +181,7 @@ export default function NewRole() {
                         className={`app-input app-select new-role__select${methods.formState.errors.levelId ? " new-role__select--error" : ""}`}
                         {...methods.register("levelId")}
                       >
-                        <option value="">Nenhuma esfera</option>
+                        <option value="">{t("Nenhuma esfera")}</option>
                         {levels.map((level) => (
                           <option key={level.id} value={level.id.toString()}>
                             {`${level.name} (${level.type})`}
@@ -189,33 +191,33 @@ export default function NewRole() {
                       <ChevronDown className="app-select-field__icon" />
                     </div>
                     {methods.formState.errors.levelId && (
-                      <p className="new-role__error">{methods.formState.errors.levelId.message?.toString()}</p>
+                      <p className="new-role__error">{t(methods.formState.errors.levelId.message?.toString() || "")}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="new-role__field">
                   <label className="new-role__label" htmlFor="description">
-                    Descrição <span className="new-role__required">*</span>
+                    {t("Descrição")} <span className="new-role__required">*</span>
                   </label>
                   <textarea
                     id="description"
-                    placeholder="Descrição do papel"
+                    placeholder={t("Descrição do papel")}
                     disabled={loading}
                     maxLength={200}
                     className={`app-textarea new-role__textarea${methods.formState.errors.description ? " new-role__textarea--error" : ""}`}
                     {...methods.register("description")}
                   />
                   {methods.formState.errors.description ? (
-                    <p className="new-role__error">{methods.formState.errors.description.message?.toString()}</p>
+                    <p className="new-role__error">{t(methods.formState.errors.description.message?.toString() || "")}</p>
                   ) : (
-                    <p className="new-role__counter">{descriptionValue.length}/200 caracteres</p>
+                    <p className="new-role__counter">{descriptionValue.length}/200 {t("caracteres")}</p>
                   )}
                 </div>
 
                 <div className="new-role__field new-role__field--icon">
                   <label className="new-role__label" htmlFor="icon-picker-trigger">
-                    Ícone <span className="new-role__optional">(opcional)</span>
+                    {t("Ícone")} <span className="new-role__optional">{t("(opcional)")}</span>
                   </label>
                   <Controller
                     name="icon"
@@ -234,7 +236,7 @@ export default function NewRole() {
 
             <div className="new-role__actions">
               <Button type="submit" className="new-role__action-button" disabled={loading}>
-                {loading ? (isEditing ? "Atualizando..." : "Criando...") : (isEditing ? "Atualizar papel" : "Adicionar papel")}
+                {loading ? (isEditing ? t("Atualizando...") : t("Criando...")) : (isEditing ? t("Atualizar papel") : t("Adicionar papel"))}
               </Button>
             </div>
           </form>

@@ -3,6 +3,7 @@ import { icons, Search, Settings, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
 import { iconCategories } from "./constant/iconCategories.ts";
 import { cn } from "../../../config/lib/utils.ts";
+import { useI18n } from "../../context/i18n/I18nContext.tsx";
 import "./IconPicker.scss";
 
 type IconName = keyof typeof icons;
@@ -20,8 +21,9 @@ export function IconPicker({
   value,
   onChange,
   disabled = false,
-  triggerLabel = "Selecionar ícone"
+  triggerLabel
 }: IconPickerProps) {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -55,6 +57,7 @@ export function IconPicker({
     [filteredIconNames, visibleIconCount]
   );
 
+  const resolvedTriggerLabel = triggerLabel || t("Selecionar ícone");
   const SelectedIconComponent = selectedIcon ? icons[selectedIcon] : null;
   const TriggerIconComponent = SelectedIconComponent ?? Settings;
 
@@ -87,7 +90,7 @@ export function IconPicker({
             )}
             disabled={disabled}
           >
-            <span className="icon-picker__trigger-action">{triggerLabel}</span>
+            <span className="icon-picker__trigger-action">{resolvedTriggerLabel}</span>
           </button>
         </PopoverTrigger>
 
@@ -99,7 +102,7 @@ export function IconPicker({
                 type="text"
                 className="app-input icon-picker__search-input"
                 value={searchTerm}
-                placeholder="Pesquisar por nome do ícone"
+                placeholder={t("Pesquisar por nome do ícone")}
                 onChange={(event) => setSearchTerm(event.target.value)}
               />
             </div>
@@ -115,7 +118,7 @@ export function IconPicker({
                 )}
                 onClick={() => setSelectedCategory("all")}
               >
-                Todos
+                {t("Todos")}
               </button>
 
               {iconCategories.map((category) => (
@@ -128,7 +131,7 @@ export function IconPicker({
                   )}
                   onClick={() => setSelectedCategory(category.id)}
                 >
-                  {category.label}
+                  {t(category.label)}
                 </button>
               ))}
             </div>
@@ -136,7 +139,7 @@ export function IconPicker({
 
           {filteredIconNames.length ? (
             <div className="icon-picker__section icon-picker__section--results">
-              <div className="icon-picker__grid" role="listbox" aria-label="Ícones disponíveis">
+              <div className="icon-picker__grid" role="listbox" aria-label={t("Ícones disponíveis")}>
                 {visibleIcons.map((iconName) => {
                   const IconComponent = icons[iconName];
                   const isActive = iconName === selectedIcon;
@@ -163,13 +166,13 @@ export function IconPicker({
                   className="icon-picker__load-more"
                   onClick={() => setVisibleIconCount((previous) => previous + ICON_BATCH_SIZE)}
                 >
-                  Mostrar mais ícones
+                  {t("Mostrar mais ícones")}
                 </button>
               )}
             </div>
           ) : (
             <div className="icon-picker__section icon-picker__section--results">
-              <div className="icon-picker__empty">Nenhum ícone encontrado para os filtros selecionados.</div>
+              <div className="icon-picker__empty">{t("Nenhum ícone encontrado para os filtros selecionados.")}</div>
             </div>
           )}
         </PopoverContent>
@@ -180,7 +183,7 @@ export function IconPicker({
           type="button"
           className="icon-picker__clear"
           onClick={handleClearSelection}
-          aria-label="Remover ícone selecionado"
+          aria-label={t("Remover ícone selecionado")}
         >
           <X className="icon-picker__clear-icon" />
         </button>

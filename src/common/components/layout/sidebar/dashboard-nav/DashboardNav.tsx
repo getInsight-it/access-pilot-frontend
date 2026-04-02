@@ -4,6 +4,7 @@ import { NavItem } from "../../../../types";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "../../../../hooks/useSidebar.tsx";
 import { RoleComponentGuard } from "../../../../context/auth/RoleGuard.tsx";
+import { useI18n } from "../../../../context/i18n/I18nContext.tsx";
 import { cn } from "../../../../../config/lib/utils.ts";
 import "./DashboardNav.scss";
 
@@ -18,6 +19,7 @@ export function DashboardNav({
   setOpen,
   isMobileNav = false
 }: DashboardNavProps) {
+  const { t } = useI18n();
   const location = useLocation();
   const path = location.pathname;
   const { isMinimized } = useSidebar();
@@ -55,12 +57,12 @@ export function DashboardNav({
             <Icon className="dashboard-nav__icon" />
             {(isMobileNav || !isCollapsedDesktop) && (
               <span className="dashboard-nav__label">
-                {item.title}
+                {t(item.title)}
               </span>
             )}
             {isCollapsedDesktop && (
               <span className="dashboard-nav__hover-label">
-                {item.title}
+                {t(item.title)}
               </span>
             )}
           </Link>

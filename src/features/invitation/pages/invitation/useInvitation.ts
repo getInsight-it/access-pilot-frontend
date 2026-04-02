@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { PUBLIC_ROUTES } from "@constants/routes.ts";
 import { STORAGE_KEYS } from "@constants/storage.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { useToast } from "@ui/use-toast.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { authService } from "@features/auth/common/AuthService.ts";
@@ -29,26 +30,33 @@ const getInvitationRedirectUri = (invitationUuid: string) => {
   return invitationUrl.toString();
 };
 
-const formatInvitationExpiry = (expiresAt?: string) => {
+const formatInvitationExpiry = (
+  expiresAt: string | undefined,
+  language: "pt-BR" | "en-US",
+  t: (key: string, values?: Record<string, string | number | null | undefined>) => string
+) => {
   if (!expiresAt) {
-    return "Considere somente mensagens recebidas pelos canais oficiais da sua organização.";
+    return t("Considere somente mensagens recebidas pelos canais oficiais da sua organização.");
   }
 
   const date = new Date(expiresAt);
 
   if (Number.isNaN(date.getTime())) {
-    return "Considere somente mensagens recebidas pelos canais oficiais da sua organização.";
+    return t("Considere somente mensagens recebidas pelos canais oficiais da sua organização.");
   }
 
-  return `Este convite expira em ${new Intl.DateTimeFormat("pt-BR", {
+  return t("Este convite expira em {{date}}. Se você não reconhece esta organização, pode ignorar este e-mail.", {
+    date: new Intl.DateTimeFormat(language, {
     dateStyle: "short",
     timeStyle: "short"
-  }).format(date)}. Se você não reconhece esta organização, pode ignorar este e-mail.`;
+    }).format(date)
+  });
 };
 
 export const useInvitation = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { language, t } = useI18n();
 
   const [invitation, setInvitation] = useState<InvitationDetailsInterface | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +68,7 @@ export const useInvitation = () => {
   const loadInvitation = useCallback(async () => {
     if (!invitationUuid) {
       setInvitation(null);
-      setErrorMessage("Convite inválido. O token não foi informado.");
+      setErrorMessage(t("Convite inválido. O token não foi informado."));
       setIsLoading(false);
       return;
     }
@@ -73,7 +81,7 @@ export const useInvitation = () => {
 
       if (!isValidInvitationStatus(response.status)) {
         setInvitation(response);
-        setErrorMessage("Este convite não está mais disponível.");
+        setErrorMessage(t("Este convite não está mais disponível."));
         return;
       }
 
@@ -84,7 +92,7 @@ export const useInvitation = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [invitationUuid]);
+  }, [invitationUuid, t]);
 
   useEffect(() => {
     void loadInvitation();
@@ -92,7 +100,7 @@ export const useInvitation = () => {
 
   const handleAcceptInvitation = useCallback(async () => {
     if (!invitationUuid) {
-      setErrorMessage("Convite inválido. O token não foi informado.");
+      setErrorMessage(t("Convite inválido. O token não foi informado."));
       return;
     }
 
@@ -102,7 +110,7 @@ export const useInvitation = () => {
       const authIntent = await invitationService.getInvitationAuthIntent(invitationUuid);
 
       if (!isValidInvitationStatus(authIntent.status)) {
-        setErrorMessage("Este convite não está mais disponível.");
+        setErrorMessage(t("Este convite não está mais disponível."));
         return;
       }
 
@@ -120,25 +128,25 @@ export const useInvitation = () => {
         return;
       }
 
-      throw new Error("Fluxo de autenticação do convite não suportado.");
+      throw new Error(t("Fluxo de autenticação do convite não suportado."));
     } catch (error: unknown) {
       const formattedError = formatErrorMessages(error);
       setErrorMessage(formattedError);
       toast({
-        title: "Erro ao aceitar convite",
+        title: t("Erro ao aceitar convite"),
         description: formattedError,
         variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
     }
-  }, [toast, invitationUuid]);
+  }, [toast, invitationUuid, t]);
 
   const clientLabel = invitation?.client.label || invitation?.client.name || "-";
   const roleLabel = invitation?.role.label || invitation?.role.name || "-";
   const footerMessage = useMemo(
-    () => formatInvitationExpiry(invitation?.expiresAt),
-    [invitation?.expiresAt]
+    () => formatInvitationExpiry(invitation?.expiresAt, language, t),
+    [invitation?.expiresAt, language, t]
   );
 
   return {

@@ -1,14 +1,8 @@
 import { cn } from "../../../config/lib/utils.ts";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useI18n } from "../../context/i18n/I18nContext.tsx";
 import "./step-loader.scss";
-
-const loadingStates = [
-  { text: "Carregando" },
-  { text: "Conexão estabelecida" },
-  { text: "A solicitação foi criada!" },
-  { text: "Sucesso" }
-];
 
 interface StepLoaderProps {
   onClose?: () => void;
@@ -155,6 +149,15 @@ export const MultiStepLoader = ({
 };
 
 export function StepLoader({ onClose, loading }: StepLoaderProps) {
+  const { t } = useI18n();
+
+  const loadingStates = [
+    { text: t("Carregando") },
+    { text: t("Conexão estabelecida") },
+    { text: t("A solicitação foi criada!") },
+    { text: t("Sucesso") }
+  ];
+
   return (
     <div className="step-loader">
       <MultiStepLoader

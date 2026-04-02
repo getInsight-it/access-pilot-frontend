@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { Download, Folder } from "lucide-react";
 import { FileIcon } from "./FileIcon.tsx";
 import { cn } from "../../config/lib/utils.ts";
+import { useI18n } from "../context/i18n/I18nContext.tsx";
 import "./AttachmentConfigurationPresentation.scss";
 
 export interface FileAttachment {
@@ -27,6 +28,7 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
   collapsible = false,
   itemsPerRow = 2
 }) => {
+  const { t } = useI18n();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
   if(!attachments || attachments.length === 0) {
@@ -36,8 +38,8 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
           <Folder className="attachment-configuration-presentation__empty-icon" />
         </div>
         <div className="attachment-configuration-presentation__empty-content">
-          <p className="attachment-configuration-presentation__empty-title">Anexos</p>
-          <span className="attachment-configuration-presentation__empty-text">Nenhum anexo fornecido.</span>
+          <p className="attachment-configuration-presentation__empty-title">{t("Anexos")}</p>
+          <span className="attachment-configuration-presentation__empty-text">{t("Nenhum anexo informado.")}</span>
         </div>
       </div>
     );
@@ -83,7 +85,7 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
                       type="button"
                       className="attachment-configuration-presentation__download-button"
                       onClick={() => onDownload(file)}
-                      title="Fazer download"
+                      title={t("Fazer download")}
                     >
                       <Download className="attachment-configuration-presentation__download-icon" />
                     </button>
@@ -100,8 +102,8 @@ export const AttachmentConfigurationPresentation: FC<AttachmentConfigurationPres
                   onClick={() => toggleExpanded(attachment.key)}
                 >
                   {isExpanded
-                    ? `Ver menos (${attachment.files.length - 3} arquivos ocultos)`
-                    : `Ver mais ${attachment.files.length - 3} arquivos`
+                    ? t("Ver menos ({{count}} arquivos ocultos)", { count: attachment.files.length - 3 })
+                    : t("Ver mais {{count}} arquivos", { count: attachment.files.length - 3 })
                   }
                 </button>
               </div>

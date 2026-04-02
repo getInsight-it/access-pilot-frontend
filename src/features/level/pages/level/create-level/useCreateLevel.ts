@@ -5,6 +5,7 @@ import { levelService } from "../../../common/api/level-service.ts";
 import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { PAGINATION } from "../../../../../common/constants/pagination.ts";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 export interface SphereItem {
   id: string;
@@ -27,6 +28,7 @@ export interface SphereItem {
 const API_KEY_MASK = "••••••••••••••••";
 
 export const useCreateLevelData = () => {
+  const { t } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -41,24 +43,44 @@ export const useCreateLevelData = () => {
   const [parentId, setParentId] = useState<string | null>("0");
   const [originalParentId, setOriginalParentId] = useState<string | null>("0");
   const [allSpheres, setAllSpheres] = useState<SphereItem[]>([]);
-  const [selectedSphereName, setSelectedSphereName] = useState<string>("Nenhuma (esfera pai)");
+  const [selectedSphereName, setSelectedSphereName] = useState<string>(t("Nenhuma (esfera pai)"));
   const [loading, setLoading] = useState(true);
   const [sigla, setSigla] = useState("");
   const [uuid, setUuid] = useState("");
   const [hasItems, setHasItems] = useState(false);
+
+  const checkIfSphereHasItems = useCallback(async (sphereId: string) => {
+    try {
+      const itemsData = await levelService.getLevelItems(sphereId, 1, 1);
+
+      if (itemsData && itemsData.items && itemsData.items.length > 0) {
+        setHasItems(true);
+      } else {
+        setHasItems(false);
+      }
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao verificar itens da esfera"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+      setHasItems(false);
+    }
+  }, [t]);
 
   const fetchSphereData = useCallback(async (id: string) => {
     try {
       const data = await levelService.getLevelById(id);
 
       if (!data) {
-        throw new Error("Falha ao buscar dados da esfera");
+        throw new Error(t("Falha ao buscar dados da esfera"));
       }
 
       if (data.type === "BUILT_IN") {
         toast({
-          title: "Error",
-          description: "Built-in spheres cannot be edited",
+          title: t("Erro"),
+          description: t("Esferas built-in não podem ser editadas"),
           variant: "destructive"
         });
         navigate(PRIVATE_ROUTES.LEVELS);
@@ -104,40 +126,20 @@ export const useCreateLevelData = () => {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao buscar dados da esfera.",
+        title: t("Erro ao buscar dados da esfera."),
         description: errorMessage,
         variant: "destructive"
       });
 
       navigate(PRIVATE_ROUTES.LEVELS);
     }
-  }, [navigate]);
-
-  const checkIfSphereHasItems = useCallback(async (sphereId: string) => {
-    try {
-      const itemsData = await levelService.getLevelItems(sphereId, 1, 1);
-
-      if (itemsData && itemsData.items && itemsData.items.length > 0) {
-        setHasItems(true);
-      } else {
-        setHasItems(false);
-      }
-    } catch (error: any) {
-      const errorMessage: string = formatErrorMessages(error);
-      toast({
-        title: "Erro ao verificar itens da esfera",
-        description: errorMessage,
-        variant: "destructive"
-      });
-      setHasItems(false);
-    }
-  }, []);
+  }, [checkIfSphereHasItems, navigate, t]);
 
   const fetchAllSpheres = useCallback(async () => {
     try {
       const data = await levelService.getLevels(1, PAGINATION.LARGE_PAGE_SIZE, "id", "ASC");
       if (!data) {
-        throw new Error("Falhou ao carregar as esferas");
+        throw new Error(t("Falhou ao carregar as esferas"));
       }
 
       const processedData = data.items.map((item) => ({
@@ -164,12 +166,12 @@ export const useCreateLevelData = () => {
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar esferas",
+        title: t("Erro ao carregar esferas"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const initializeForm = useCallback(async () => {
     const searchParams = new URLSearchParams(location.search);
@@ -191,9 +193,9 @@ export const useCreateLevelData = () => {
       const selectedSphere = allSpheres.find((s) => s.id === parentId);
       setSelectedSphereName(selectedSphere?.name || "");
     } else {
-      setSelectedSphereName("Nenhuma (esfera pai)");
+      setSelectedSphereName(t("Nenhuma (esfera pai)"));
     }
-  }, [allSpheres, parentId]);
+  }, [allSpheres, parentId, t]);
 
   return {
     isEditing,
@@ -226,6 +228,7 @@ export const useCreateLevelData = () => {
 };
 
 export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLevelData>) => {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const hasChanges = useCallback((): boolean => {
@@ -253,8 +256,8 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
           const currentSphere = formData.allSpheres.find((s) => s.id === formData.sphereId);
           if (currentSphere?.isBuiltIn) {
             toast({
-              title: "Erro",
-              description: "Esferas built-in não podem ser editadas",
+              title: t("Erro"),
+              description: t("Esferas built-in não podem ser editadas"),
               variant: "destructive"
             });
             return;
@@ -293,7 +296,7 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
         }
 
         if (!result) {
-          throw new Error(formData.isEditing ? "Falha ao atualizar esfera" : "Falha ao criar esfera");
+          throw new Error(t(formData.isEditing ? "Falha ao atualizar esfera" : "Falha ao criar esfera"));
         }
 
         if (formData.isEditing) {
@@ -301,8 +304,8 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
         }
 
         toast({
-          title: "Sucesso",
-          description: formData.isEditing ? "Esfera atualizada com sucesso!" : "Nova esfera criada com sucesso!"
+          title: t("Sucesso"),
+          description: formData.isEditing ? t("Esfera atualizada com sucesso!") : t("Nova esfera criada com sucesso!")
         });
 
         setTimeout(() => {
@@ -311,22 +314,21 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
       } catch (error: any) {
         const errorMessage: string = formatErrorMessages(error);
         toast({
-          title: formData.isEditing ? "Erro ao atualizar esfera" : "Erro ao criar esfera",
+          title: formData.isEditing ? t("Erro ao atualizar esfera") : t("Erro ao criar esfera"),
           description: errorMessage,
           variant: "destructive"
         });
       }
     } else {
       toast({
-        title: "Informação",
-        description: "Não há alterações para salvar."
+        title: t("Informação"),
+        description: t("Não há alterações para salvar.")
       });
     }
-  }, [formData, hasChanges, navigate]);
+  }, [formData, hasChanges, navigate, t]);
 
   return {
     hasChanges,
     handleSubmit
   };
 };
-

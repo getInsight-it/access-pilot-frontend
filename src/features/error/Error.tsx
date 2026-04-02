@@ -1,19 +1,21 @@
 import { useParams } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
+import { useI18n } from "../../common/context/i18n/I18nContext.tsx";
 
 const Error = () => {
   const { errorCode } = useParams<{ errorCode?: string }>();
+  const { t } = useI18n();
 
   const getErrorMessage = (code?: string): string => {
     switch (code) {
       case "404":
-        return "Página não encontrada";
+        return t("Página não encontrada");
       case "403":
-        return "Acesso negado";
+        return t("Acesso negado");
       case "500":
-        return "Erro interno do servidor";
+        return t("Erro interno do servidor");
       default:
-        return "Erro genérico";
+        return t("Erro genérico");
     }
   };
 

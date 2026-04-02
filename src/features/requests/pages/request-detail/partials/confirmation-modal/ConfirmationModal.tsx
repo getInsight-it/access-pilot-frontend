@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "../../../../../../common/external/ui/dialog.tsx";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 import "./confirmation-modal.scss";
 
 interface ConfirmationModalProps {
@@ -15,6 +16,7 @@ interface ConfirmationModalProps {
   onConfirm: () => void;
   title: string;
   action: string;
+  requiresReason: boolean;
   form: UseFormReturn<any>;
 }
 
@@ -24,12 +26,14 @@ export function ConfirmationModal({
   onConfirm,
   title,
   action,
+  requiresReason,
   form
 }: ConfirmationModalProps) {
+  const { t } = useI18n();
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    if(action === "aprovação") {
+    if(!requiresReason) {
       onConfirm();
       return;
     }
@@ -37,8 +41,14 @@ export function ConfirmationModal({
     form.handleSubmit(onConfirm)(event);
   };
 
-  const hasReasonField = action !== "aprovação";
+  const hasReasonField = requiresReason;
   const reasonError = form.formState.errors.finalReason?.message;
+
+  const reasonLabel = action === t("cancelamento")
+    ? t("Motivo do cancelamento")
+    : action === t("rejeição")
+      ? t("Motivo da rejeição")
+      : t("Motivo da revogação");
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -51,18 +61,18 @@ export function ConfirmationModal({
           {hasReasonField ? (
             <div className="confirmation-modal__field">
               <label className="confirmation-modal__label" htmlFor="request-status-final-reason">
-                Motivo {action === "cancelamento" ? "do cancelamento" : action === "rejeição" ? "da rejeição" : "da revogação"}
+                {reasonLabel}
               </label>
               <textarea
                 id="request-status-final-reason"
                 className="app-textarea confirmation-modal__textarea"
-                placeholder="Descreva o motivo aqui..."
+                placeholder={t("Descreva o motivo aqui...")}
                 {...form.register("finalReason")}
               />
-              {reasonError && <span className="confirmation-modal__error">{String(reasonError)}</span>}
+              {reasonError && <span className="confirmation-modal__error">{t(String(reasonError))}</span>}
             </div>
           ) : (
-            <p className="confirmation-modal__description">Deseja prosseguir com a aprovação desta solicitação?</p>
+            <p className="confirmation-modal__description">{t("Deseja prosseguir com a aprovação desta solicitação?")}</p>
           )}
 
           <DialogFooter className="confirmation-modal__footer">
@@ -71,13 +81,13 @@ export function ConfirmationModal({
               className="ui-button ui-button--white confirmation-modal__button"
               onClick={onClose}
             >
-              Cancelar
+              {t("Cancelar")}
             </button>
             <button
               type="submit"
               className="ui-button ui-button--primary theme-button--primary confirmation-modal__button confirmation-modal__button--confirm"
             >
-              Confirmar {action}
+              {t("Confirmar {{action}}", { action })}
             </button>
           </DialogFooter>
         </form>

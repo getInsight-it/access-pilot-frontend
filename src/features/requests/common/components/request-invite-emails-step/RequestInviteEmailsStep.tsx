@@ -1,5 +1,6 @@
 import React from "react";
 import { Mail, Plus, X } from "lucide-react";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./request-invite-emails-step.scss";
 
 interface RequestInviteEmailsStepProps {
@@ -19,6 +20,8 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
   onAddDraftEmails,
   onRemoveEmail
 }) => {
+  const { t } = useI18n();
+
   return (
     <div className="request-invite-emails-step">
       <div className="request-invite-emails-step__intro">
@@ -27,16 +30,16 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
         </div>
 
         <div className="request-invite-emails-step__intro-content">
-          <h4 className="request-invite-emails-step__title">Destinatários do convite</h4>
+          <h4 className="request-invite-emails-step__title">{t("Destinatários do convite")}</h4>
           <p className="request-invite-emails-step__description">
-            Adicione um ou mais e-mails. Você pode separar vários destinatários por vírgula, espaço ou quebra de linha. Cada endereço receberá um convite individual.
+            {t("Adicione um ou mais e-mails. Você pode separar vários destinatários por vírgula, espaço ou quebra de linha. Cada endereço receberá um convite individual.")}
           </p>
         </div>
       </div>
 
       <div className="request-invite-emails-step__field">
         <label className="request-invite-emails-step__label" htmlFor="invite-emails">
-          E-mails dos convidados <span className="request-invite-emails-step__required">*</span>
+          {t("E-mails dos convidados")} <span className="request-invite-emails-step__required">*</span>
         </label>
 
         <div className="request-invite-emails-step__composer">
@@ -60,7 +63,7 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
             onClick={onAddDraftEmails}
           >
             <Plus className="request-invite-emails-step__add-icon" />
-            <span>Adicionar</span>
+            <span>{t("Adicionar")}</span>
           </button>
         </div>
 
@@ -71,12 +74,12 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
 
       <div className="request-invite-emails-step__summary">
         <div className="request-invite-emails-step__summary-header">
-          <h4 className="request-invite-emails-step__summary-title">Lista de destinatários</h4>
+          <h4 className="request-invite-emails-step__summary-title">{t("Lista de destinatários")}</h4>
           <span className="app-badge request-invite-emails-step__badge">{emails.length}</span>
         </div>
 
         <p className="request-invite-emails-step__description">
-          Cada destinatário listado abaixo receberá um convite separado.
+          {t("Cada destinatário listado abaixo receberá um convite separado.")}
         </p>
 
         {emails.length > 0 ? (
@@ -93,7 +96,7 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
                   type="button"
                   className="request-invite-emails-step__chip-action"
                   onClick={() => onRemoveEmail(email)}
-                  aria-label={`Remover ${email}`}
+                  aria-label={t("Remover {{email}}", { email })}
                 >
                   <X className="request-invite-emails-step__chip-icon" />
                 </button>
@@ -103,7 +106,7 @@ export const RequestInviteEmailsStep: React.FC<RequestInviteEmailsStepProps> = (
         ) : (
           <div className="request-invite-emails-step__empty-state">
             <p className="request-invite-emails-step__empty-text">
-              Nenhum destinatário adicionado até agora.
+              {t("Nenhum destinatário adicionado até agora.")}
             </p>
           </div>
         )}

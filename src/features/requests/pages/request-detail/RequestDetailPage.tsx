@@ -26,6 +26,7 @@ import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../../common/constant
 import { ContentLoader } from "../../../../common/components/ContentLoader.tsx";
 import { STATUS } from "./constant/status.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 import "./RequestDetailPage.scss";
 
 type RequestStatusType = "CANCELED" | "REJECTED" | "REVOKED" | "APPROVED";
@@ -38,6 +39,7 @@ interface RequestStatusParams {
 }
 
 const useRequestData = (requestId: string | undefined, navigate: ReturnType<typeof useNavigate>) => {
+  const { t } = useI18n();
   const [request, setRequest] = useState<RequestInterface>();
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [itemHierarchy, setItemHierarchy] = useState<ItemHierarchyInterface[]>([]);
@@ -97,7 +99,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar detalhes da solicitação",
+        title: t("Erro ao buscar detalhes da solicitação"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -106,7 +108,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     } finally {
       setLoading(false);
     }
-  }, [requestId, generatePresentationAttachments, toast, navigate]);
+  }, [requestId, generatePresentationAttachments, toast, navigate, t]);
 
   const updateRequestStatus = useCallback(async (
     params: RequestStatusParams,
@@ -122,7 +124,7 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
 
       await requestService.updateRequest(Number(requestId), formData);
 
-      toast({ title: "Sucesso!", description: successMessage });
+      toast({ title: t("Sucesso!"), description: successMessage });
       await fetchRequestData();
     } catch (error: unknown) {
       const formattedErrorMessage: string = formatErrorMessages(error);
@@ -134,39 +136,39 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     } finally {
       setLoading(false);
     }
-  }, [requestId, fetchRequestData, toast]);
+  }, [requestId, fetchRequestData, toast, t]);
 
   const handleCancel = useCallback(async (finalReason: string): Promise<void> => {
     await updateRequestStatus(
       { status: "CANCELED", description: request?.description, finalReason },
-      "Solicitação cancelada com sucesso.",
-      "Erro ao cancelar solicitação."
+      t("Solicitação cancelada com sucesso."),
+      t("Erro ao cancelar solicitação.")
     );
-  }, [updateRequestStatus, request?.description]);
+  }, [updateRequestStatus, request?.description, t]);
 
   const handleReject = useCallback(async (description: string, finalReason: string): Promise<void> => {
     await updateRequestStatus(
       { status: "REJECTED", description, finalReason },
-      "Solicitação rejeitada com sucesso.",
-      "Erro ao rejeitar solicitação."
+      t("Solicitação rejeitada com sucesso."),
+      t("Erro ao rejeitar solicitação.")
     );
-  }, [updateRequestStatus]);
+  }, [updateRequestStatus, t]);
 
   const handleRevoke = useCallback(async (finalReason: string): Promise<void> => {
     await updateRequestStatus(
       { status: "REVOKED", description: request?.description, revocationReason: finalReason },
-      "Solicitação revogada com sucesso.",
-      "Erro ao revogar solicitação."
+      t("Solicitação revogada com sucesso."),
+      t("Erro ao revogar solicitação.")
     );
-  }, [updateRequestStatus, request?.description]);
+  }, [updateRequestStatus, request?.description, t]);
 
   const handleApprove = useCallback(async (description: string): Promise<void> => {
     await updateRequestStatus(
       { status: "APPROVED", description },
-      "Solicitação aprovada com sucesso.",
-      "Erro ao aprovar solicitação."
+      t("Solicitação aprovada com sucesso."),
+      t("Erro ao aprovar solicitação.")
     );
-  }, [updateRequestStatus]);
+  }, [updateRequestStatus, t]);
 
   const handleDownload = useCallback(async (file: any): Promise<void> => {
     try {
@@ -182,12 +184,12 @@ const useRequestData = (requestId: string | undefined, navigate: ReturnType<type
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao fazer download do arquivo",
+        title: t("Erro ao fazer download do arquivo"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [toast, t]);
 
   return {
     request,
@@ -214,6 +216,7 @@ const useRequestNavigation = () => {
 };
 
 const useRequestDerivedData = (request: RequestInterface | undefined) => {
+  const { language } = useI18n();
   const userInfo = useAuthStore((state) => state.user);
   const requestType = getPreviousRoute()?.data;
 
@@ -222,8 +225,14 @@ const useRequestDerivedData = (request: RequestInterface | undefined) => {
   }, [request?.status]);
 
   const formattedDate = useMemo(() => {
-    return request ? format(new Date(request.criacao), "dd/MM/yyyy") : "";
-  }, [request]);
+    return request
+      ? new Intl.DateTimeFormat(language, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).format(new Date(request.criacao))
+      : "";
+  }, [language, request]);
 
   const canCancel = useMemo(() => {
     return ["CREATED", "PENDING"].includes(request?.status || "") &&
@@ -239,6 +248,7 @@ const useRequestDerivedData = (request: RequestInterface | undefined) => {
 };
 
 export default function RequestDetailPage() {
+  const { t } = useI18n();
   const { id } = useParams();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -281,8 +291,8 @@ export default function RequestDetailPage() {
           <div className="request-detail-page__header">
             <Heading
               className="request-detail-page__heading"
-              title="Detalhes da solicitação"
-              description="Gerenciar solicitações de acesso para sistemas."
+              title={t("Detalhes da solicitação")}
+              description={t("Gerenciar solicitações de acesso para sistemas.")}
               returnButton={true}
               onReturnClick={handleReturnClick}
             />
@@ -326,10 +336,10 @@ export default function RequestDetailPage() {
             <section className="request-detail-page__section request-detail-page__attachments-section">
               <div className="request-detail-page__section-title-row">
                 <Paperclip className="request-detail-page__section-icon" />
-                <h3 className="request-detail-page__section-title">Anexos da solicitação</h3>
+                <h3 className="request-detail-page__section-title">{t("Anexos da solicitação")}</h3>
               </div>
               <p className="request-detail-page__section-description">
-                Anexos enviados para esta solicitação de acesso.
+                {t("Anexos enviados para esta solicitação de acesso.")}
               </p>
               <AttachmentConfigurationPresentation
                 className="request-detail-page__attachments"

@@ -18,6 +18,7 @@ import { clientService } from "@features/client/common/service/client-service.ts
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "@features/client/common/enum/client-status.enum.ts";
 import { roleService } from "@features/role/common/service/role-service.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./SystemDetail.scss";
 
 interface RoleTreeItem {
@@ -95,6 +96,7 @@ const flattenRoleTree = (
 };
 
 export const SystemDetail = () => {
+  const { t } = useI18n();
   const { clientId } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState<ClientResponseInterface>();
@@ -116,7 +118,7 @@ export const SystemDetail = () => {
       catchError((error: unknown) => {
         const errorMessage: string = formatErrorMessages(error);
         toast({
-          title: "Erro ao buscar dados do sistema",
+          title: t("Erro ao buscar dados do sistema"),
           description: errorMessage,
           variant: "destructive"
         });
@@ -139,7 +141,7 @@ export const SystemDetail = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar papéis",
+        title: t("Erro ao buscar papéis"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -182,7 +184,7 @@ export const SystemDetail = () => {
 
     return (
       <span className={cn("app-badge", badgeModifier, "system-detail__status-badge")}>
-        <span>{statusLabel}</span>
+        <span>{t(statusLabel)}</span>
       </span>
     );
   };
@@ -190,8 +192,8 @@ export const SystemDetail = () => {
   const handlePublicationChange = async () => {
     if (!data?.id) {
       toast({
-        title: "Erro",
-        description: "ID do sistema não encontrado",
+        title: t("Erro"),
+        description: t("ID do sistema não encontrado"),
         variant: "destructive"
       });
       return;
@@ -206,13 +208,13 @@ export const SystemDetail = () => {
       const updatedClient = await clientService.updateSystemPublication(data.id, newStatus);
       setData(updatedClient);
       toast({
-        title: "Sistema atualizado",
-        description: `O sistema foi ${toastMessage} com sucesso!`
+        title: t("Sistema atualizado"),
+        description: t("O sistema foi {{status}} com sucesso!", { status: t(toastMessage) })
       });
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: `Erro ao ${toastMessage} sistema`,
+        title: t("Erro ao {{status}} sistema", { status: t(toastMessage) }),
         description: errorMessage,
         variant: "destructive"
       });
@@ -223,8 +225,8 @@ export const SystemDetail = () => {
     const code = data?.id?.toString() || "";
     navigator.clipboard?.writeText(code);
     toast({
-      title: "Copiado",
-      description: "Código copiado para a área de transferência."
+      title: t("Copiado"),
+      description: t("Código copiado para a área de transferência.")
     });
   };
 
@@ -255,7 +257,7 @@ export const SystemDetail = () => {
 
   const renderAttachmentCard = (configuration: AttachmentConfigurationInterface) => {
     const extensions = configuration.allowedExtensions?.join(", ") || "-";
-    const optionalLabel = configuration.required ? "Obrigatório" : "Opcional";
+    const optionalLabel = configuration.required ? t("Obrigatório") : t("Opcional");
 
     return (
       <Popover
@@ -281,7 +283,7 @@ export const SystemDetail = () => {
           </div>
 
           <PopoverTrigger asChild>
-            <button type="button" className="system-detail__attachment-info-button" aria-label="Mais informações do anexo">
+            <button type="button" className="system-detail__attachment-info-button" aria-label={t("Mais informações do anexo")}>
               <Info />
             </button>
           </PopoverTrigger>
@@ -289,10 +291,10 @@ export const SystemDetail = () => {
 
         <PopoverContent className="system-detail__attachment-popover" align="end">
           <div className="system-detail__attachment-popover-content">
-            {renderFieldItem("Nome", configuration.name || "-")}
-            {renderFieldItem("Descrição", configuration.description || "-")}
-            {renderFieldItem("Obrigatório", configuration.required ? "Sim" : "Não")}
-            {renderFieldItem("Extensões permitidas", extensions)}
+            {renderFieldItem(t("Nome"), configuration.name || "-")}
+            {renderFieldItem(t("Descrição"), configuration.description || "-")}
+            {renderFieldItem(t("Obrigatório"), configuration.required ? t("Sim") : t("Não"))}
+            {renderFieldItem(t("Extensões permitidas"), extensions)}
           </div>
         </PopoverContent>
       </Popover>
@@ -317,12 +319,12 @@ export const SystemDetail = () => {
                 <ArrowLeft size={18} />
               </button>
 
-              <div className="system-detail__heading-content">
-                <div className="system-detail__title-row">
-                  <h2 className="system-detail__title">Detalhes do sistema</h2>
+                <div className="system-detail__heading-content">
+                  <div className="system-detail__title-row">
+                  <h2 className="system-detail__title">{t("Detalhes do sistema")}</h2>
+                  </div>
+                <p className="system-detail__description">{t("Sumário de informações do sistema cadastrado.")}</p>
                 </div>
-                <p className="system-detail__description">Sumário de informações do sistema cadastrado.</p>
-              </div>
             </div>
 
             <div className="system-detail__header-actions">
@@ -333,7 +335,7 @@ export const SystemDetail = () => {
                 disabled={!data?.managed}
               >
                 <Power size={16} />
-                <span>{data?.status === ClientStatusEnum.PUBLISHED ? "Despublicar" : "Publicar"}</span>
+                <span>{data?.status === ClientStatusEnum.PUBLISHED ? t("Despublicar") : t("Publicar")}</span>
               </button>
 
               <button
@@ -342,7 +344,7 @@ export const SystemDetail = () => {
                 onClick={handleCopyCode}
               >
                 <ClipboardCopy size={16} />
-                <span>Código</span>
+                <span>{t("Código")}</span>
               </button>
 
               <button
@@ -351,7 +353,7 @@ export const SystemDetail = () => {
                 onClick={handleNavigateToEdit}
               >
                 <PencilLine size={16} />
-                <span>Editar</span>
+                <span>{t("Editar")}</span>
               </button>
             </div>
           </div>
@@ -364,19 +366,19 @@ export const SystemDetail = () => {
             <section className="system-detail__section">
               <div className="system-detail__section-title-row">
                 <Info className="system-detail__section-icon" />
-                <h3 className="system-detail__section-title">Informacoes gerais</h3>
+                <h3 className="system-detail__section-title">{t("Informacoes gerais")}</h3>
               </div>
 
               <div className="system-detail__section-card">
                 <div className="system-detail__general-grid system-detail__general-grid--full-width">
-                  {renderFieldItem("Descrição", data.description || "-")}
+                  {renderFieldItem(t("Descrição"), data.description || "-")}
                 </div>
 
                 <div className="system-detail__general-grid">
-                  {renderFieldItem("Nome", data.name || "-")}
-                  {renderFieldItem("Código do sistema", data.clientId || "-")}
+                  {renderFieldItem(t("Nome"), data.name || "-")}
+                  {renderFieldItem(t("Código do sistema"), data.clientId || "-")}
                   {renderFieldItem(
-                    "URL",
+                    t("URL"),
                     data.baseUrl ? (
                       <a href={data.baseUrl} className="system-detail__link" target="_blank" rel="noopener noreferrer">
                         {data.baseUrl}
@@ -384,9 +386,9 @@ export const SystemDetail = () => {
                       </a>
                     ) : "-"
                   )}
-                  {renderFieldItem("Gerenciado", data.managed ? "Sim" : "Não")}
-                  {renderFieldItem("Status", renderStatusBadge(data.status))}
-                  {renderFieldItem("ID", data.id?.toString() || "-")}
+                  {renderFieldItem(t("Gerenciado"), data.managed ? t("Sim") : t("Não"))}
+                  {renderFieldItem(t("Status"), renderStatusBadge(data.status))}
+                  {renderFieldItem(t("ID"), data.id?.toString() || "-")}
                 </div>
               </div>
             </section>
@@ -394,7 +396,7 @@ export const SystemDetail = () => {
             <section className="system-detail__section">
               <div className="system-detail__section-title-row">
                 <FolderOpen className="system-detail__section-icon" />
-                <h3 className="system-detail__section-title">Anexos solicitados</h3>
+                <h3 className="system-detail__section-title">{t("Anexos solicitados")}</h3>
               </div>
 
               {data.configurations?.length > 0 ? (
@@ -403,7 +405,7 @@ export const SystemDetail = () => {
                 </div>
               ) : (
                 <div className="system-detail__section-card">
-                  <span className="system-detail__empty-state">Nenhum anexo cadastrado para este sistema.</span>
+                  <span className="system-detail__empty-state">{t("Nenhum anexo cadastrado para este sistema.")}</span>
                 </div>
               )}
             </section>
@@ -411,12 +413,12 @@ export const SystemDetail = () => {
             <section className="system-detail__section">
               <div className="system-detail__section-title-row">
                 <ShieldUser className="system-detail__section-icon" />
-                <h3 className="system-detail__section-title">Papeis do sistema</h3>
+                <h3 className="system-detail__section-title">{t("Papeis do sistema")}</h3>
                 {data.managed && (
                   <>
                     <span className="system-detail__section-meta-dot" aria-hidden="true">•</span>
                     <button type="button" className="system-detail__section-inline-link" onClick={navigateToClientRoles}>
-                      Gerenciar papéis do sistema
+                      {t("Gerenciar papéis do sistema")}
                     </button>
                   </>
                 )}
@@ -425,22 +427,22 @@ export const SystemDetail = () => {
               {!data.managed ? (
                 <div className="system-detail__section-card">
                   <span className="system-detail__empty-state">
-                    A configuração ainda não foi realizada pelo administrador.
+                    {t("A configuração ainda não foi realizada pelo administrador.")}
                   </span>
                 </div>
               ) : flatRoles.length === 0 ? (
                 <div className="system-detail__section-card">
-                  <span className="system-detail__empty-state">Nenhum papel cadastrado para este sistema.</span>
+                  <span className="system-detail__empty-state">{t("Nenhum papel cadastrado para este sistema.")}</span>
                 </div>
               ) : (
                 <div className="app-table app-table--no-filter app-table--no-footer system-detail__roles-table">
                   <div className="app-table__header">
                     <div className="app-table__row">
                       <div className="app-table__cell app-table__cell--content system-detail__roles-table-cell system-detail__roles-table-cell--role">
-                        <span>Papel</span>
+                        <span>{t("Papel")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--content system-detail__roles-table-cell system-detail__roles-table-cell--level">
-                        <span>Esfera</span>
+                        <span>{t("Esfera")}</span>
                       </div>
                     </div>
                   </div>

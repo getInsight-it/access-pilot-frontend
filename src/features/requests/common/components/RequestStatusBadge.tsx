@@ -1,8 +1,12 @@
 import { REQUEST_STATUS_ENUM, REQUEST_STATUS_PRESENTATION_NAME_ENUM } from "../types/request.enum.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./RequestStatusBadge.scss";
 
 export const RequestStatusBadge = (status: string) => {
-  const presentationName = REQUEST_STATUS_PRESENTATION_NAME_ENUM[status as keyof typeof REQUEST_STATUS_PRESENTATION_NAME_ENUM] || "Desconhecido";
+  const { t } = useI18n();
+  const presentationName = t(
+    REQUEST_STATUS_PRESENTATION_NAME_ENUM[status as keyof typeof REQUEST_STATUS_PRESENTATION_NAME_ENUM] || "Desconhecido"
+  );
 
   let modifier = "unknown";
 

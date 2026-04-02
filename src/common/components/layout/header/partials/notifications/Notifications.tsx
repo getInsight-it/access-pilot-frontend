@@ -8,6 +8,7 @@ import { notificationService } from "@common/service/notification-service";
 import { NotificationModel } from "@common/types/notification/notification.model";
 import { formatErrorMessages } from "@common/utils/error-utils";
 import { savePreviousRoute } from "@common/utils/NavigationStateManager";
+import { useI18n } from "@common/context/i18n/I18nContext";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@common/external/ui/popover";
 import "./notifications.scss";
@@ -21,6 +22,7 @@ export default function Notifications() {
   const [hasMoreItems, setHasMoreItems] = useState(true);
   const authData = useAuth();
   const pageSize = 80;
+  const { t } = useI18n();
 
   const loadNotifications = useCallback(async () => {
     if(!authData || !authData.user) {
@@ -46,12 +48,12 @@ export default function Notifications() {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao buscar notificações.",
+        title: t("Erro ao buscar notificações."),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [authData, notifications, page, pageSize]);
+  }, [authData, notifications, page, pageSize, t]);
 
   useEffect(() => {
     if(isOpen && authData && hasMoreItems) {
@@ -92,7 +94,7 @@ export default function Notifications() {
     <div className="notifications">
       <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
-          <Button variant="white" size="icon" className="notifications__trigger" aria-label="Notificações">
+          <Button variant="white" size="icon" className="notifications__trigger" aria-label={t("Notificações")}>
             <Bell className="notifications__trigger-icon" />
             {unreadCount > 0 && (
               <span className="notifications__badge">{unreadCount}</span>
@@ -101,13 +103,13 @@ export default function Notifications() {
         </PopoverTrigger>
         <PopoverContent align="end" className="notifications__panel">
           <header className="notifications__header">
-            <h4 className="notifications__title">Notificações</h4>
-            <p className="notifications__subtitle">{unreadCount} não lidas</p>
+            <h4 className="notifications__title">{t("Notificações")}</h4>
+            <p className="notifications__subtitle">{t("{{count}} não lidas", { count: unreadCount })}</p>
           </header>
           <div className="notifications__divider" />
           <div className="notifications__list">
             {notifications.length === 0 && (
-              <p className="notifications__empty">Sem notificações no momento.</p>
+              <p className="notifications__empty">{t("Sem notificações no momento.")}</p>
             )}
             {notifications.map((notification) => (
               <article className="notifications__item" key={notification.id}>
@@ -122,7 +124,7 @@ export default function Notifications() {
                     type="button"
                     className="notifications__item-open"
                     onClick={() => handleOpenNotification(notification)}
-                    aria-label="Abrir notificação"
+                    aria-label={t("Abrir notificação")}
                   >
                     <SquareArrowOutUpRight className="notifications__item-open-icon" />
                   </button>

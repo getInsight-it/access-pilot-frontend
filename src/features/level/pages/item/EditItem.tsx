@@ -15,6 +15,7 @@ import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { goToPreviousRoute } from "@common/utils/NavigationStateManager.ts";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
 import { CreateLevelItemData } from "@features/level/common/types/level-item.model.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./EditItem.scss";
 
 interface FormData {
@@ -25,6 +26,7 @@ interface FormData {
 }
 
 export const EditItem: React.FC = () => {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState<LevelInterface | null>(null);
@@ -47,8 +49,8 @@ export const EditItem: React.FC = () => {
       const levelResponse = await levelService.getLevelById(id);
       if(levelResponse && (levelResponse.type === "BUILT_IN" || levelResponse.type === "EXTERNAL")) {
         toast({
-          title: "Ação não permitida",
-          description: "Não é possível gerenciar itens de esferas do tipo Negocial ou Externa.",
+          title: t("Ação não permitida"),
+          description: t("Não é possível gerenciar itens de esferas do tipo Negocial ou Externa."),
           variant: "destructive"
         });
         goToPreviousRoute(navigate);
@@ -59,7 +61,7 @@ export const EditItem: React.FC = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar informações da esfera",
+        title: t("Erro ao buscar informações da esfera"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -81,7 +83,7 @@ export const EditItem: React.FC = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar dados do item",
+        title: t("Erro ao carregar dados do item"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -101,12 +103,12 @@ export const EditItem: React.FC = () => {
 
       await levelService.updateLevelItem(levelId!, itemId!, payload);
 
-      toast({ title: "Sucesso", description: "Item atualizado com sucesso!" });
+      toast({ title: t("Sucesso"), description: t("Item atualizado com sucesso!") });
       navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(":id", levelId!));
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao atualizar item",
+        title: t("Erro ao atualizar item"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -135,8 +137,8 @@ export const EditItem: React.FC = () => {
     );
   }
 
-  const pageTitle = "Editar item";
-  const pageDescription = "Atualize os dados para editar o item da esfera selecionada.";
+  const pageTitle = t("Editar item");
+  const pageDescription = t("Atualize os dados para editar o item da esfera selecionada.");
 
   return (
     <motion.div
@@ -161,7 +163,7 @@ export const EditItem: React.FC = () => {
               </div>
               <p className="edit-item__description">{pageDescription}</p>
               <p className="edit-item__context">
-                Esfera: <span className="edit-item__context-value">{level?.name}</span>
+                {t("Esfera")}: <span className="edit-item__context-value">{level?.name}</span>
               </p>
             </div>
           </div>
@@ -176,27 +178,27 @@ export const EditItem: React.FC = () => {
                 <div className="edit-item__row">
                   <div className="edit-item__field">
                     <label className="edit-item__label" htmlFor="name">
-                      Nome <span className="edit-item__required">*</span>
+                      {t("Nome")} <span className="edit-item__required">*</span>
                     </label>
                     <input
                         id="name"
-                        placeholder="Escreva o nome do item"
+                        placeholder={t("Escreva o nome do item")}
                         className={`app-input edit-item__input${errors.name ? " edit-item__input--error" : ""}`}
                         {...register("name", {
                           required: "Nome é obrigatório",
                           minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" }
                         })}
                       />
-                    {errors.name && <p className="edit-item__error">{errors.name.message}</p>}
+                    {errors.name && <p className="edit-item__error">{t(errors.name.message?.toString() || "")}</p>}
                   </div>
 
                   <div className="edit-item__field">
                     <label className="edit-item__label" htmlFor="externalCode">
-                      Código <span className="edit-item__required">*</span>
+                      {t("Código")} <span className="edit-item__required">*</span>
                     </label>
                     <input
                         id="externalCode"
-                        placeholder="Escreva o código do item"
+                        placeholder={t("Escreva o código do item")}
                         className={`app-input edit-item__input${errors.externalCode ? " edit-item__input--error" : ""}`}
                         {...register("externalCode", {
                           required: "O código é obrigatório",
@@ -205,20 +207,20 @@ export const EditItem: React.FC = () => {
                         })}
                       />
                     {errors.externalCode ? (
-                      <p className="edit-item__error">{errors.externalCode.message}</p>
+                      <p className="edit-item__error">{t(errors.externalCode.message?.toString() || "")}</p>
                     ) : (
-                      <p className="edit-item__hint">Use apenas letras, números, hífen e sublinhado.</p>
+                      <p className="edit-item__hint">{t("Use apenas letras, números, hífen e sublinhado.")}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="edit-item__field">
                   <label className="edit-item__label" htmlFor="description">
-                    Descrição <span className="edit-item__required">*</span>
+                    {t("Descrição")} <span className="edit-item__required">*</span>
                   </label>
                   <textarea
                       id="description"
-                      placeholder="Escreva uma descrição para o item"
+                      placeholder={t("Escreva uma descrição para o item")}
                       maxLength={200}
                       className={`app-textarea edit-item__textarea${errors.description ? " edit-item__textarea--error" : ""}`}
                       {...register("description", {
@@ -227,16 +229,16 @@ export const EditItem: React.FC = () => {
                       })}
                     />
                   {errors.description ? (
-                    <p className="edit-item__error">{errors.description.message}</p>
+                    <p className="edit-item__error">{t(errors.description.message?.toString() || "")}</p>
                   ) : (
-                    <p className="edit-item__counter">{descriptionValue.length}/200 caracteres</p>
+                    <p className="edit-item__counter">{descriptionValue.length}/200 {t("caracteres")}</p>
                   )}
                 </div>
 
                 {level?.parent && (
                   <div className="edit-item__field">
                     <label className="edit-item__label" htmlFor="parentId">
-                      Selecione o item pai <span className="edit-item__required">*</span>
+                      {t("Selecione o item pai")} <span className="edit-item__required">*</span>
                     </label>
                     <Controller
                       name="parentId"
@@ -262,7 +264,7 @@ export const EditItem: React.FC = () => {
                         </div>
                       )}
                     />
-                    {errors.parentId && <p className="edit-item__error">{errors.parentId.message}</p>}
+                    {errors.parentId && <p className="edit-item__error">{t(errors.parentId.message?.toString() || "")}</p>}
                   </div>
                 )}
               </div>
@@ -277,10 +279,10 @@ export const EditItem: React.FC = () => {
                 {submitting ? (
                   <>
                     <Loader2 className="edit-item__spinner" />
-                    Atualizando...
+                    {t("Atualizando...")}
                   </>
                 ) : (
-                  "Atualizar item"
+                  t("Atualizar item")
                 )}
               </Button>
             </div>

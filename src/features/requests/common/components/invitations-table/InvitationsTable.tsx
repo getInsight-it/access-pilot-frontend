@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Ban, CheckCheck, Mail, Search } from "lucide-react";
 
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { TablePagination } from "@components/table-pagination/TablePagination.tsx";
 import { Button } from "@ui/button.tsx";
 import { InvitationListItemInterface } from "../../types/invitation.model.ts";
@@ -35,14 +36,15 @@ export function InvitationsTable({
   emptyStateLabel,
   onAction
 }: InvitationsTableProps) {
+  const { t } = useI18n();
   const startItem = totalInvitations > 0 ? (currentPage - 1) * 10 + 1 : 0;
   const endItem = totalInvitations > 0 ? Math.min(currentPage * 10, totalInvitations) : 0;
 
   const emptyIcon = useMemo(() => {
-    return actionLabel === "Aceitar convite" ? <Mail size={24} /> : <Ban size={24} />;
-  }, [actionLabel]);
+    return actionLabel === t("Aceitar convite") ? <Mail size={24} /> : <Ban size={24} />;
+  }, [actionLabel, t]);
 
-  const actionIcon = actionLabel === "Aceitar convite"
+  const actionIcon = actionLabel === t("Aceitar convite")
     ? <CheckCheck size={16} />
     : <Ban size={16} />;
 
@@ -66,21 +68,21 @@ export function InvitationsTable({
                       <span>{actionLabel}</span>
                     </Button>
                   </div>
-                  <div className="invitations-table__card-content">
-                    <div className="invitations-table__card-row">
-                      <span className="invitations-table__card-label">Sistema</span>
+                    <div className="invitations-table__card-content">
+                      <div className="invitations-table__card-row">
+                      <span className="invitations-table__card-label">{t("Sistema")}</span>
                       <span className="invitations-table__card-value">{invitation.clientLabel}</span>
                     </div>
                     <div className="invitations-table__card-row">
-                      <span className="invitations-table__card-label">Client ID</span>
+                      <span className="invitations-table__card-label">{t("Client Id")}</span>
                       <span className="invitations-table__card-value">{invitation.clientId}</span>
                     </div>
                     <div className="invitations-table__card-row">
-                      <span className="invitations-table__card-label">Papel</span>
+                      <span className="invitations-table__card-label">{t("Papel")}</span>
                       <span className="invitations-table__card-value">{invitation.roleLabel}</span>
                     </div>
                     <div className="invitations-table__card-row">
-                      <span className="invitations-table__card-label">Expiração</span>
+                      <span className="invitations-table__card-label">{t("Expiração")}</span>
                       <span className="invitations-table__card-value">{formatDate(invitation.expiresAt)}</span>
                     </div>
                   </div>
@@ -113,7 +115,7 @@ export function InvitationsTable({
                 <Search className="app-input-group__icon" />
                 <input
                   className="app-input"
-                  placeholder="Buscar convite..."
+                  placeholder={t("Buscar convite...")}
                   value={searchFilter}
                   onChange={(event) => onSearchChange(event.target.value)}
                 />
@@ -124,19 +126,19 @@ export function InvitationsTable({
           <div className="app-table__header">
             <div className="app-table__row">
               <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--client">
-                <span>Sistema</span>
+                <span>{t("Sistema")}</span>
               </div>
               <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--client-id">
-                <span>Client ID</span>
+                <span>{t("Client Id")}</span>
               </div>
               <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--role">
-                <span>Papel</span>
+                <span>{t("Papel")}</span>
               </div>
               <div className="app-table__cell app-table__cell--content invitations-table__table-cell invitations-table__table-cell--expiration-date">
-                <span>Expiração</span>
+                <span>{t("Expiração")}</span>
               </div>
               <div className="app-table__cell invitations-table__table-cell invitations-table__table-cell--actions">
-                <span>Ações</span>
+                <span>{t("Ações")}</span>
               </div>
             </div>
           </div>
@@ -183,7 +185,11 @@ export function InvitationsTable({
           <div className="app-table__footer">
             <div className="invitations-table__footer">
               <div className="invitations-table__footer-info">
-                {startItem}-{endItem} de {totalInvitations} itens
+                {t("{{start}}-{{end}} de {{total}} itens", {
+                  start: startItem,
+                  end: endItem,
+                  total: totalInvitations
+                })}
               </div>
               <div className="invitations-table__footer-pagination">
                 <TablePagination

@@ -5,6 +5,7 @@ import { levelService } from "../../../common/api/level-service.ts";
 import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
 import { PAGINATION } from "../../../../../common/constants/pagination.ts";
 import { useDebounce } from "../../../../../common/hooks/use-debounce.ts";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 export interface Sphere {
   id: string;
@@ -28,6 +29,7 @@ export interface Item {
 }
 
 export const useLevelItemsData = () => {
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
 
   const [sphere, setSphere] = useState<Sphere | null>(null);
@@ -62,14 +64,14 @@ export const useLevelItemsData = () => {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao buscar dados da esfera.",
+        title: t("Erro ao buscar dados da esfera."),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   const fetchItems = useCallback(async () => {
     if (!id) return;
@@ -106,7 +108,7 @@ export const useLevelItemsData = () => {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao buscar itens.",
+        title: t("Erro ao buscar itens."),
         description: errorMessage,
         variant: "destructive"
       });
@@ -115,7 +117,7 @@ export const useLevelItemsData = () => {
         setLoading(false);
       }
     }
-  }, [id, currentPage, pageSize, debouncedSearchTerm]);
+  }, [currentPage, debouncedSearchTerm, id, pageSize, t]);
 
   useEffect(() => {
     if (id) {
@@ -164,6 +166,7 @@ export const useLevelItemsData = () => {
 };
 
 export const useLevelItemsOperations = (itemsData: ReturnType<typeof useLevelItemsData>) => {
+  const { t } = useI18n();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
 
@@ -190,14 +193,14 @@ export const useLevelItemsOperations = (itemsData: ReturnType<typeof useLevelIte
       }
 
       toast({
-        title: "Sucesso",
-        description: "Item excluído com sucesso!"
+        title: t("Sucesso"),
+        description: t("Item excluído com sucesso!")
       });
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao excluir item",
+        title: t("Erro ao excluir item"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -205,7 +208,7 @@ export const useLevelItemsOperations = (itemsData: ReturnType<typeof useLevelIte
       setDeleteModalOpen(false);
       setItemToDelete(null);
     }
-  }, [itemToDelete, itemsData]);
+  }, [itemToDelete, itemsData, t]);
 
   const handlePageChange = useCallback((page: number) => {
     itemsData.setCurrentPage(page);
@@ -217,9 +220,9 @@ export const useLevelItemsOperations = (itemsData: ReturnType<typeof useLevelIte
   }, [itemsData]);
 
   const renderParentItem = useCallback((item: Item): string => {
-    if (!item.parent) return "Nenhum";
+    if (!item.parent) return t("Nenhum");
     return item.parent.name || `Item ${item.parent.id}`;
-  }, []);
+  }, [t]);
 
   return {
     deleteModalOpen,
@@ -232,4 +235,3 @@ export const useLevelItemsOperations = (itemsData: ReturnType<typeof useLevelIte
     renderParentItem
   };
 };
-

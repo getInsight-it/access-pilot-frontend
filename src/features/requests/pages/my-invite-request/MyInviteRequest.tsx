@@ -7,6 +7,7 @@ import { STORAGE_KEYS } from "@common/constants/storage.ts";
 import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { CalendarDays, Clock3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { RequestJustificationStep } from "../../common/components/request-justification-step/RequestJustificationStep.tsx";
 import { RequestReviewStep } from "../../common/components/request-review-step/RequestReviewStep.tsx";
 import { RequestRoleStep } from "../../common/components/request-role-step/RequestRoleStep.tsx";
@@ -19,7 +20,7 @@ import { requestService } from "../../common/api/request-service.ts";
 import { useMyInviteRequest } from "./useMyInviteRequest.ts";
 import "./my-invite-request.scss";
 
-const getInviteExpirationDetails = (expiresAt?: string) => {
+const getInviteExpirationDetails = (language: string, expiresAt?: string) => {
   if (!expiresAt) {
     return null;
   }
@@ -31,12 +32,12 @@ const getInviteExpirationDetails = (expiresAt?: string) => {
   }
 
   return {
-    date: new Intl.DateTimeFormat("pt-BR", {
+    date: new Intl.DateTimeFormat(language, {
       day: "2-digit",
       month: "long",
       year: "numeric"
     }).format(expirationDate),
-    time: new Intl.DateTimeFormat("pt-BR", {
+    time: new Intl.DateTimeFormat(language, {
       hour: "2-digit",
       minute: "2-digit"
     }).format(expirationDate)
@@ -44,6 +45,7 @@ const getInviteExpirationDetails = (expiresAt?: string) => {
 };
 
 export default function MyInviteRequest() {
+  const { t, language } = useI18n();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(4);
@@ -54,32 +56,32 @@ export default function MyInviteRequest() {
     isLoading,
     errorMessage
   } = useMyInviteRequest();
-  const expirationDetails = getInviteExpirationDetails(invitePreview?.expiresAt);
+  const expirationDetails = getInviteExpirationDetails(language, invitePreview?.expiresAt);
 
   const steps: RequestStepItem[] = [
     {
       id: 1,
       number: 1,
-      title: "Sistema",
-      description: "Para qual sistema você precisa de acesso"
+      title: t("Sistema"),
+      description: t("Para qual sistema você precisa de acesso")
     },
     {
       id: 2,
       number: 2,
-      title: "Papel",
-      description: "Qual seria seu papel?"
+      title: t("Papel"),
+      description: t("Qual seria seu papel?")
     },
     {
       id: 3,
       number: 3,
-      title: "Justificativa",
-      description: "Por que você precisa desse acesso"
+      title: t("Justificativa"),
+      description: t("Por que você precisa desse acesso")
     },
     {
       id: 4,
       number: 4,
-      title: "Revisão",
-      description: "Confira os detalhes antes de enviar."
+      title: t("Revisão"),
+      description: t("Confira os detalhes antes de enviar.")
     }
   ];
 
@@ -129,17 +131,17 @@ export default function MyInviteRequest() {
   ];
 
   const panelTitles = [
-    "Confira o sistema previamente definido para este convite:",
-    "Confira o papel definido para este convite:",
-    "Confira a justificativa vinculada ao convite:",
-    "Revise as informações antes de aceitar:"
+    t("Confira o sistema previamente definido para este convite:"),
+    t("Confira o papel definido para este convite:"),
+    t("Confira a justificativa vinculada ao convite:"),
+    t("Revise as informações antes de aceitar:")
   ];
 
   const handleSubmit = async () => {
     if (!invitePreview?.invitationUuid) {
       toast({
-        title: "Token do convite não encontrado",
-        description: "Não foi possível identificar o token do convite para concluir o aceite.",
+        title: t("Token do convite não encontrado"),
+        description: t("Não foi possível identificar o token do convite para concluir o aceite."),
         variant: "destructive"
       });
       return;
@@ -154,8 +156,8 @@ export default function MyInviteRequest() {
     if (missingRequiredAttachments.length > 0) {
       setCurrentStep(3);
       toast({
-        title: "Anexos obrigatórios pendentes",
-        description: "Inclua todos os anexos exigidos antes de aceitar o convite.",
+        title: t("Anexos obrigatórios pendentes"),
+        description: t("Inclua todos os anexos exigidos antes de aceitar o convite."),
         variant: "destructive"
       });
       return;
@@ -184,13 +186,13 @@ export default function MyInviteRequest() {
       sessionStorage.removeItem(STORAGE_KEYS.INVITATION_UUID);
 
       toast({
-        title: "Convite aceito com sucesso!",
-        description: "A solicitação de acesso foi enviada para processamento."
+        title: t("Convite aceito com sucesso!"),
+        description: t("A solicitação de acesso foi enviada para processamento.")
       });
       navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
     } catch (error: unknown) {
       toast({
-        title: "Erro ao aceitar convite",
+        title: t("Erro ao aceitar convite"),
         description: formatErrorMessages(error),
         variant: "destructive"
       });
@@ -232,9 +234,9 @@ export default function MyInviteRequest() {
         <ScrollArea className="my-invite-request__scroll-area" viewportClassName="my-invite-request__scroll-viewport">
           <div className="my-invite-request__content">
             <div className="my-invite-request__status-card my-invite-request__status-card--error" role="alert">
-              <h1 className="my-invite-request__status-title">Convite indisponível</h1>
+              <h1 className="my-invite-request__status-title">{t("Convite indisponível")}</h1>
               <p className="my-invite-request__status-description">
-                {errorMessage || "Não foi possível carregar os dados do convite."}
+                {errorMessage || t("Não foi possível carregar os dados do convite.")}
               </p>
             </div>
           </div>
@@ -254,11 +256,11 @@ export default function MyInviteRequest() {
             </p>
 
             {expirationDetails && (
-              <div className="my-invite-request__meta" aria-label="Validade do convite">
+              <div className="my-invite-request__meta" aria-label={t("Validade do convite")}>
                 <article className="my-invite-request__meta-card">
                   <CalendarDays className="my-invite-request__meta-icon" />
                   <div className="my-invite-request__meta-content">
-                    <span className="my-invite-request__meta-label">Data de expiração</span>
+                    <span className="my-invite-request__meta-label">{t("Data de expiração")}</span>
                     <span className="my-invite-request__meta-value">{expirationDetails.date}</span>
                   </div>
                 </article>
@@ -266,7 +268,7 @@ export default function MyInviteRequest() {
                 <article className="my-invite-request__meta-card">
                   <Clock3 className="my-invite-request__meta-icon" />
                   <div className="my-invite-request__meta-content">
-                    <span className="my-invite-request__meta-label">Horário limite</span>
+                    <span className="my-invite-request__meta-label">{t("Horário limite")}</span>
                     <span className="my-invite-request__meta-value">{expirationDetails.time}</span>
                   </div>
                 </article>
@@ -282,7 +284,7 @@ export default function MyInviteRequest() {
               onBack={handleBack}
               onNext={handleNext}
               backButtonDisabled={currentStep === 1}
-              nextButtonLabel={currentStep < steps.length ? "Próximo" : "Aceitar"}
+              nextButtonLabel={currentStep < steps.length ? t("Próximo") : t("Aceitar")}
               showNextIcon={currentStep < steps.length}
             >
               {stepContent[currentStep - 1]}

@@ -8,6 +8,7 @@ import {
   DialogTitle
 } from "../../../../../common/external/ui/dialog.tsx";
 import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 interface ConfirmRequestDialogProps {
   isOpen: boolean;
@@ -28,26 +29,28 @@ export const ConfirmRequestDialog = ({
   attachments,
   onConfirm
 }: ConfirmRequestDialogProps) => {
+  const { t } = useI18n();
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmar envio</DialogTitle>
+          <DialogTitle>{t("Confirmar envio")}</DialogTitle>
           <DialogDescription>
-            Você tem certeza que deseja enviar esta solicitação?
+            {t("Você tem certeza que deseja enviar esta solicitação?")}
           </DialogDescription>
         </DialogHeader>
         <div>
-          <h4>Resumo da solicitação:</h4>
+          <h4>{t("Resumo da solicitação:")}</h4>
           <ul>
-            <li><strong>Sistema:</strong> {clientId}</li>
+            <li><strong>{t("Sistema")}:</strong> {clientId}</li>
             <li>
-              <strong>Papel:</strong> {roleLabel}
+              <strong>{t("Papel")}:</strong> {roleLabel}
             </li>
-            <li><strong>Motivo:</strong> {reason}</li>
+            <li><strong>{t("Motivo")}:</strong> {reason}</li>
             {attachments.length > 0 && (
               <li>
-                <strong>Anexos:</strong>
+                <strong>{t("Anexos")}:</strong>
                 <ul>
                   {attachments.map((file, index) => (
                     <li key={index}>- {file.fileName}</li>
@@ -59,9 +62,9 @@ export const ConfirmRequestDialog = ({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
+            {t("Cancelar")}
           </Button>
-          <Button onClick={onConfirm}>Confirmar</Button>
+          <Button onClick={onConfirm}>{t("Confirmar")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

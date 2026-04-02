@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@common/external/ui/button.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./request-step-layout.scss";
 
 interface RequestStepLayoutProps {
@@ -24,10 +25,12 @@ export const RequestStepLayout: React.FC<RequestStepLayoutProps> = ({
   nextButtonLabel,
   showNextIcon = false
 }) => {
+  const { t } = useI18n();
+
   return (
     <div className="request-step-layout">
       <header className="request-step-layout__header">
-        <h3 className="request-step-layout__title">{title}</h3>
+        <h3 className="request-step-layout__title">{t(title)}</h3>
       </header>
 
       <div className="request-step-layout__content">
@@ -42,7 +45,7 @@ export const RequestStepLayout: React.FC<RequestStepLayoutProps> = ({
           onClick={onBack}
           disabled={backButtonDisabled}
         >
-          Voltar
+          {t("Voltar")}
         </Button>
 
         <Button
@@ -52,7 +55,7 @@ export const RequestStepLayout: React.FC<RequestStepLayoutProps> = ({
           disabled={nextButtonDisabled}
         >
           <span className="request-step-layout__action-content">
-            <span>{nextButtonLabel}</span>
+            <span>{t(nextButtonLabel)}</span>
             {showNextIcon && <ArrowRight className="request-step-layout__action-icon" />}
           </span>
         </Button>

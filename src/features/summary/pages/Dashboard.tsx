@@ -40,6 +40,7 @@ import useAuthStore, { UserInfo } from "../../../store/authStore.ts";
 import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
 import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
 import { SectionLoader } from "../../../common/components/loading/section-loader/SectionLoader.tsx";
+import { useI18n } from "../../../common/context/i18n/I18nContext.tsx";
 import "./Dashboard.scss";
 
 const REQUEST_PAGINATION = {
@@ -51,6 +52,7 @@ const REQUEST_PAGINATION = {
 };
 
 const useDashboardData = () => {
+  const { t } = useI18n();
   const [requests, setRequests] = useState<RequestInterface[]>([]);
   const [summary, setSummary] = useState<SummaryModel | null>(null);
   const [attachedClients, setAttachedClients] = useState<ClientResponseInterface[]>([]);
@@ -70,12 +72,12 @@ const useDashboardData = () => {
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar solicitações",
+        title: t("Erro ao carregar solicitações"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const fetchClients = useCallback(async (
     attached: boolean,
@@ -87,12 +89,12 @@ const useDashboardData = () => {
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar sistemas",
+        title: t("Erro ao buscar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const fetchSummary = useCallback(async (): Promise<void> => {
     try {
@@ -101,12 +103,12 @@ const useDashboardData = () => {
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar sumário",
+        title: t("Erro ao buscar sumário"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const loadAllData = useCallback(async (): Promise<void> => {
     setLoading(true);
@@ -120,14 +122,14 @@ const useDashboardData = () => {
     } catch (error: unknown) {
       const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar dados do dashboard",
+        title: t("Erro ao carregar dados do dashboard"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [fetchClients, fetchSummary, fetchRequests]);
+  }, [fetchClients, fetchSummary, fetchRequests, t]);
 
   return {
     requests,
@@ -168,7 +170,10 @@ const useNavigation = () => {
   };
 };
 
-const getUserDisplayName = (user: UserInfo | null | undefined): string => {
+const getUserDisplayName = (
+  user: UserInfo | null | undefined,
+  t: (key: string, values?: Record<string, string | number>) => string
+): string => {
   if (user?.firstName && user?.lastName) {
     return `${user.firstName} ${user.lastName}`;
   }
@@ -181,12 +186,13 @@ const getUserDisplayName = (user: UserInfo | null | undefined): string => {
     return user.username;
   }
 
-  return "Usuário";
+  return t("Usuário");
 };
 
 const LoadingState = () => {
+  const { t } = useI18n();
   const user = useAuthStore((state) => state.user);
-  const displayName = getUserDisplayName(user);
+  const displayName = getUserDisplayName(user, t);
 
   return (
     <motion.div className="dashboard-page dashboard-page--loading-state" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
@@ -194,8 +200,8 @@ const LoadingState = () => {
         <HeaderContainer className="dashboard-page__header-container">
           <Heading
             className="dashboard-page__heading"
-            title={`Olá, ${displayName}`}
-            description="Carregando o panorama geral do ambiente."
+            title={t("Olá, {{name}}", { name: displayName })}
+            description={t("Carregando o panorama geral do ambiente.")}
           />
         </HeaderContainer>
       </div>
@@ -208,8 +214,9 @@ const LoadingState = () => {
 };
 
 export default function Dashboard() {
+  const { t } = useI18n();
   const user = useAuthStore((state) => state.user);
-  const displayName = getUserDisplayName(user);
+  const displayName = getUserDisplayName(user, t);
 
   const {
     requests,
@@ -232,54 +239,54 @@ export default function Dashboard() {
 
   const summaryCards = useMemo((): SummaryCardData[] => [
     {
-      title: "Solicitações aprovadas",
-      description: "Demandas concluídas e liberadas para uso no ambiente.",
+      title: t("Solicitações aprovadas"),
+      description: t("Demandas concluídas e liberadas para uso no ambiente."),
       value: summary?.totalApprovedRequests || 0,
       icon: Users,
       tone: "success"
     },
     {
-      title: "Solicitações pendentes",
-      description: "Itens aguardando análise ou ação do fluxo de aprovação.",
+      title: t("Solicitações pendentes"),
+      description: t("Itens aguardando análise ou ação do fluxo de aprovação."),
       value: summary?.totalPendingRequests || 0,
       icon: FileText,
       tone: "warning"
     },
     {
-      title: "Sistemas monitorados",
-      description: "Sistemas disponíveis no ambiente para consulta e solicitação.",
+      title: t("Sistemas monitorados"),
+      description: t("Sistemas disponíveis no ambiente para consulta e solicitação."),
       value: summary?.totalClients || 0,
       icon: TrendingUp,
       tone: "primary"
     }
-  ], [summary]);
+  ], [summary, t]);
 
   const statusCards = useMemo((): StatusCardData[] => [
     {
-      label: "usuários com acesso aprovado",
+      label: t("usuários com acesso aprovado"),
       value: summary?.totalApprovedUsers || 0,
       icon: CheckCircle,
       tone: "success"
     },
     {
-      label: "papéis cadastrados",
+      label: t("papéis cadastrados"),
       value: summary?.totalRoles || 0,
       icon: Clock,
       tone: "primary"
     },
     {
-      label: "sistemas monitorados",
+      label: t("sistemas monitorados"),
       value: summary?.totalClients || 0,
       icon: AlertCircle,
       tone: "violet"
     },
     {
-      label: "usuários com solicitações pendentes",
+      label: t("usuários com solicitações pendentes"),
       value: summary?.totalPendingUsers || 0,
       icon: XCircle,
       tone: "danger"
     }
-  ], [summary]);
+  ], [summary, t]);
 
   if (loading) {
     return <LoadingState />;
@@ -288,14 +295,14 @@ export default function Dashboard() {
   const renderRequestActions = (requestId: number) => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" className="dashboard-page__table-actions-button" aria-label="Abrir ações da solicitação">
+        <button type="button" className="dashboard-page__table-actions-button" aria-label={t("Abrir ações da solicitação")}>
           <EllipsisVertical size={18} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleNavigateToRequestDetails(requestId)}>
           <ReceiptText size={16} />
-          <span>Detalhes</span>
+          <span>{t("Detalhes")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -307,8 +314,8 @@ export default function Dashboard() {
         <HeaderContainer className="dashboard-page__header-container">
           <Heading
             className="dashboard-page__heading"
-            title={`Olá, ${displayName}`}
-            description="Acompanhe solicitações, acessos e sistemas disponíveis em um único lugar."
+            title={t("Olá, {{name}}", { name: displayName })}
+            description={t("Acompanhe solicitações, acessos e sistemas disponíveis em um único lugar.")}
           />
         </HeaderContainer>
       </div>
@@ -362,9 +369,9 @@ export default function Dashboard() {
             <section className="dashboard-page__section-card">
               <div className="dashboard-page__section-header">
                 <div className="dashboard-page__section-heading">
-                  <h3 className="dashboard-page__section-title">Últimas solicitações</h3>
+                  <h3 className="dashboard-page__section-title">{t("Últimas solicitações")}</h3>
                   <p className="dashboard-page__section-description">
-                    Solicitações recentes atribuídas ao seu fluxo de aprovação.
+                    {t("Solicitações recentes atribuídas ao seu fluxo de aprovação.")}
                   </p>
                 </div>
                 <span className="app-badge app-badge--header">{requests.length}</span>
@@ -375,27 +382,27 @@ export default function Dashboard() {
                   requests.map((request) => (
                     <article className="dashboard-page__request-card" key={request.id}>
                       <div className="dashboard-page__request-card-header">
-                        <span className="dashboard-page__request-card-title">Ações</span>
+                        <span className="dashboard-page__request-card-title">{t("Ações")}</span>
                         {renderRequestActions(request.id)}
                       </div>
                       <div className="dashboard-page__request-card-content">
                         <div className="dashboard-page__request-card-row">
-                          <span className="dashboard-page__request-card-label">Sistema</span>
+                          <span className="dashboard-page__request-card-label">{t("Sistema")}</span>
                           <span className="dashboard-page__request-card-value">{request.role?.client?.name || "-"}</span>
                         </div>
                         <div className="dashboard-page__request-card-row">
-                          <span className="dashboard-page__request-card-label">Papel</span>
+                          <span className="dashboard-page__request-card-label">{t("Papel")}</span>
                           <span className="dashboard-page__request-card-value">{request.role?.name || "-"}</span>
                         </div>
                         <div className="dashboard-page__request-card-row">
-                          <span className="dashboard-page__request-card-label">Status</span>
+                          <span className="dashboard-page__request-card-label">{t("Status")}</span>
                           <span className="dashboard-page__request-card-badge">{RequestStatusBadge(request.status)}</span>
                         </div>
                       </div>
                     </article>
                   ))
                 ) : (
-                  <EmptyState message="Nenhuma solicitação encontrada" />
+                  <EmptyState message={t("Nenhuma solicitação encontrada")} />
                 )}
               </div>
 
@@ -404,16 +411,16 @@ export default function Dashboard() {
                   <div className="app-table__header">
                     <div className="app-table__row">
                       <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--system">
-                        <span>Sistema</span>
+                        <span>{t("Sistema")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--role">
-                        <span>Papel</span>
+                        <span>{t("Papel")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--status">
-                        <span>Status</span>
+                        <span>{t("Status")}</span>
                       </div>
                       <div className="app-table__cell app-table__cell--icon dashboard-page__table-cell dashboard-page__table-cell--actions">
-                        <span>Ações</span>
+                        <span>{t("Ações")}</span>
                       </div>
                     </div>
                   </div>
@@ -439,7 +446,7 @@ export default function Dashboard() {
                     ) : (
                       <div className="app-table__row">
                         <div className="app-table__cell dashboard-page__table-empty-state">
-                          <EmptyState message="Nenhuma solicitação encontrada" />
+                          <EmptyState message={t("Nenhuma solicitação encontrada")} />
                         </div>
                       </div>
                     )}
@@ -453,9 +460,9 @@ export default function Dashboard() {
             <section className="dashboard-page__section-card">
               <div className="dashboard-page__section-header">
                 <div className="dashboard-page__section-heading">
-                  <h3 className="dashboard-page__section-title">Sistemas que você tem acesso</h3>
+                  <h3 className="dashboard-page__section-title">{t("Sistemas que você tem acesso")}</h3>
                   <p className="dashboard-page__section-description">
-                    Consulte detalhes, permissões e informações dos sistemas já liberados para seu perfil.
+                    {t("Consulte detalhes, permissões e informações dos sistemas já liberados para seu perfil.")}
                   </p>
                 </div>
                 <span className="app-badge app-badge--header">{attachedClients.length}</span>
@@ -473,16 +480,16 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="Nenhum sistema com acesso encontrado" />
+                <EmptyState message={t("Nenhum sistema com acesso encontrado")} />
               )}
             </section>
 
             <section className="dashboard-page__section-card">
               <div className="dashboard-page__section-header">
                 <div className="dashboard-page__section-heading">
-                  <h3 className="dashboard-page__section-title">Sistemas para solicitar acesso</h3>
+                  <h3 className="dashboard-page__section-title">{t("Sistemas para solicitar acesso")}</h3>
                   <p className="dashboard-page__section-description">
-                    Descubra os sistemas disponíveis e inicie uma solicitação com os dados mais relevantes.
+                    {t("Descubra os sistemas disponíveis e inicie uma solicitação com os dados mais relevantes.")}
                   </p>
                 </div>
                 <span className="app-badge app-badge--header">{detachedClients.length}</span>
@@ -500,7 +507,7 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="Nenhum sistema disponível para solicitação" />
+                <EmptyState message={t("Nenhum sistema disponível para solicitação")} />
               )}
             </section>
           </div>

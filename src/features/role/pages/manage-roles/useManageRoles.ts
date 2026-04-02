@@ -9,8 +9,10 @@ import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { savePreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
 import { PAGINATION } from "../../../../common/constants/pagination.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 
 export const useManageRolesData = (clientId?: string) => {
+  const { t } = useI18n();
   const [allRoles, setAllRoles] = useState<RoleResponseInterface[]>([]);
   const [paginatedRoles, setPaginatedRoles] = useState<RoleResponseInterface[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,12 +44,12 @@ export const useManageRolesData = (clientId?: string) => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do sistema",
+        title: t("Erro ao buscar dados do sistema"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [clientId]);
+  }, [clientId, t]);
 
   const getData = useCallback(async () => {
     if (!clientId) {
@@ -69,14 +71,14 @@ export const useManageRolesData = (clientId?: string) => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar papéis",
+        title: t("Erro ao buscar papéis"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [clientId, pageSize, currentPage, updatePaginatedRoles, systemName, getClientData]);
+  }, [clientId, currentPage, getClientData, pageSize, systemName, t, updatePaginatedRoles]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -130,4 +132,3 @@ export const useRoleNavigation = (clientId?: string) => {
     navigateToSystemDetails
   };
 };
-

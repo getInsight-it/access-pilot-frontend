@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Check, LaptopMinimal, Search } from "lucide-react";
 import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./request-system-step.scss";
 
 interface RequestSystemStepProps {
@@ -19,6 +20,7 @@ export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
   readOnly = false
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useI18n();
 
   const filteredClients = useMemo(() => {
     if (readOnly) {
@@ -41,7 +43,7 @@ export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
             <Search className="app-input-group__icon" />
             <input
               className="app-input request-system-step__search-input"
-              placeholder="Filtrar sistemas"
+              placeholder={t("Filtrar sistemas")}
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
             />
@@ -71,7 +73,7 @@ export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
 
                 <div className="request-system-step__card-text">
                   <p className="request-system-step__name">{client.name || client.clientId}</p>
-                  <p className="request-system-step__description">{client.description || "Sem descrição disponível."}</p>
+                  <p className="request-system-step__description">{client.description || t("Sem descrição disponível.")}</p>
                 </div>
               </div>
 
@@ -86,7 +88,7 @@ export const RequestSystemStep: React.FC<RequestSystemStepProps> = ({
       </div>
 
       {filteredClients.length === 0 && (
-        <p className="request-system-step__empty-state">Nenhum sistema encontrado para este filtro.</p>
+        <p className="request-system-step__empty-state">{t("Nenhum sistema encontrado para este filtro.")}</p>
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import { levelService } from "@features/level/common/api/level-service.ts";
 import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
 import { roleService } from "@features/role/common/service/role-service.ts";
 import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { invitationService } from "../../common/api/invitation-service.ts";
 
 type InviteRequestSource = "token" | "id";
@@ -28,7 +29,10 @@ interface InviteRequestPreview {
   source: InviteRequestSource;
 }
 
+type TranslationFunction = (key: string, values?: Record<string, string | number>) => string;
+
 const createInviteClient = (
+  t: TranslationFunction,
   clientId: string,
   clientLabel: string,
   description?: string
@@ -39,12 +43,13 @@ const createInviteClient = (
   clientUUID: clientId,
   managed: true,
   name: clientLabel,
-  description: description || "Os dados deste sistema foram vinculados diretamente ao convite.",
+  description: description || t("Os dados deste sistema foram vinculados diretamente ao convite."),
   configurations: [],
   allowedItemsHierarchy: []
 });
 
 const createInviteRole = (
+  t: TranslationFunction,
   roleId: number,
   roleLabel: string,
   clientLabel: string,
@@ -57,7 +62,7 @@ const createInviteRole = (
   name: roleLabel,
   label: roleLabel,
   icon: "shield",
-  description: description || "O papel foi preenchido automaticamente a partir do convite.",
+  description: description || t("O papel foi preenchido automaticamente a partir do convite."),
   clientName: clientLabel,
   level: {
     id: levelId || 0,
@@ -70,15 +75,20 @@ const createInviteRole = (
   levelId
 });
 
-const formatSphereLabel = (levelName?: string, codeItem?: string) => {
+const formatSphereLabel = (
+  t: TranslationFunction,
+  levelName?: string,
+  codeItem?: string
+) => {
   if (levelName && codeItem) {
     return `${levelName}: ${codeItem}`;
   }
 
-  return levelName || codeItem || "Nenhuma esfera vinculada ao convite.";
+  return levelName || codeItem || t("Nenhuma esfera vinculada ao convite.");
 };
 
 const formatSphereSummary = (
+  t: TranslationFunction,
   sphereHierarchy: ItemHierarchyInterface[],
   fallbackLevelName?: string,
   fallbackCodeItem?: string
@@ -87,10 +97,11 @@ const formatSphereSummary = (
     return sphereHierarchy.map((item) => item.name).join(" / ");
   }
 
-  return formatSphereLabel(fallbackLevelName, fallbackCodeItem);
+  return formatSphereLabel(t, fallbackLevelName, fallbackCodeItem);
 };
 
 const resolveInviteEntities = async (
+  t: TranslationFunction,
   clientId: string,
   clientLabel: string,
   roleId: number,
@@ -99,8 +110,9 @@ const resolveInviteEntities = async (
   fallbackLevelId?: number,
   fallbackLevelName?: string
 ) => {
-  const fallbackClient = createInviteClient(clientId, clientLabel, description);
+  const fallbackClient = createInviteClient(t, clientId, clientLabel, description);
   const fallbackRole = createInviteRole(
+    t,
     roleId,
     roleLabel,
     clientLabel,
@@ -136,6 +148,7 @@ const resolveSphereHierarchy = async (
 };
 
 export const useMyInviteRequest = () => {
+  const { t } = useI18n();
   const { id } = useParams<{ id?: string }>();
   const [invitePreview, setInvitePreview] = useState<InviteRequestPreview | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -150,6 +163,7 @@ export const useMyInviteRequest = () => {
         const invitation = await invitationService.getInvitationById(id);
         const invitationUuid = sessionStorage.getItem(STORAGE_KEYS.INVITATION_UUID) || undefined;
         const { client, role } = await resolveInviteEntities(
+          t,
           invitation.clientId,
           invitation.clientLabel,
           invitation.roleId,
@@ -161,14 +175,14 @@ export const useMyInviteRequest = () => {
         setInvitePreview({
           client,
           role,
-          reason: invitation.description || "Solicitação vinculada automaticamente ao convite.",
+          reason: invitation.description || t("Solicitação vinculada automaticamente ao convite."),
           codeItem: invitation.codeItem,
-          sphereLabel: formatSphereSummary(sphereHierarchy, role.level?.name, invitation.codeItem),
+          sphereLabel: formatSphereSummary(t, sphereHierarchy, role.level?.name, invitation.codeItem),
           sphereHierarchy,
           invitationUuid,
           expiresAt: invitation.expiresAt,
-          title: "Solicitação de convite",
-          description: "Os dados abaixo foram carregados a partir do convite selecionado em Meus convites.",
+          title: t("Solicitação de convite"),
+          description: t("Os dados abaixo foram carregados a partir do convite selecionado em Meus convites."),
           protocolCode: invitation.protocolCode,
           source: "id"
         });
@@ -179,13 +193,14 @@ export const useMyInviteRequest = () => {
 
       if (!invitationUuid) {
         setInvitePreview(null);
-        setErrorMessage("Nenhum convite foi encontrado na sua sessão atual.");
+        setErrorMessage(t("Nenhum convite foi encontrado na sua sessão atual."));
         return;
       }
 
       const invitationContext = await invitationService.getInvitationRequestContext(invitationUuid);
       sessionStorage.setItem(STORAGE_KEYS.INVITATION_UUID, invitationContext.invitationUuid);
       const { client, role } = await resolveInviteEntities(
+        t,
         invitationContext.clientId,
         invitationContext.clientLabel,
         invitationContext.roleId,
@@ -202,9 +217,10 @@ export const useMyInviteRequest = () => {
       setInvitePreview({
         client,
         role,
-        reason: invitationContext.description || "Solicitação vinculada automaticamente ao convite.",
+        reason: invitationContext.description || t("Solicitação vinculada automaticamente ao convite."),
         codeItem: invitationContext.codeItem,
         sphereLabel: formatSphereSummary(
+          t,
           sphereHierarchy,
           invitationContext.levelName,
           invitationContext.codeItem
@@ -212,8 +228,8 @@ export const useMyInviteRequest = () => {
         sphereHierarchy,
         invitationUuid: invitationContext.invitationUuid,
         expiresAt: invitationContext.expiresAt,
-        title: "Solicitação de convite",
-        description: "Os dados abaixo foram carregados a partir do token salvo na sua sessão.",
+        title: t("Solicitação de convite"),
+        description: t("Os dados abaixo foram carregados a partir do token salvo na sua sessão."),
         source: "token"
       });
     } catch (error: unknown) {
@@ -222,7 +238,7 @@ export const useMyInviteRequest = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   useEffect(() => {
     void loadInviteRequest();

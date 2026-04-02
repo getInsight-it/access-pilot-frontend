@@ -22,6 +22,7 @@ import { ConfirmationModal } from "../confirmation-modal/ConfirmationModal.tsx";
 import { getPreviousRoute } from "../../../../../../common/utils/NavigationStateManager.ts";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../../common/external/ui/tooltip.tsx";
 import TruncatedText from "../../../../../../common/components/TruncatedText.tsx";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 import "./request-status.scss";
 
 interface RequestStatusContainerProps {
@@ -82,21 +83,21 @@ const getProgressModifier = (progress: number) => {
   return "request-status__progress-fill--0";
 };
 
-const getModalTitle = (action: RequestAction) => {
+const getModalTitle = (action: RequestAction, t: (key: string, values?: Record<string, string | number>) => string) => {
   switch(action) {
-    case "CANCELED": return "Cancelar Solicitação";
-    case "REJECTED": return "Rejeitar Solicitação";
-    case "REVOKED": return "Revogar Solicitação";
-    default: return "Aprovar Solicitação";
+    case "CANCELED": return t("Cancelar Solicitação");
+    case "REJECTED": return t("Rejeitar Solicitação");
+    case "REVOKED": return t("Revogar Solicitação");
+    default: return t("Aprovar Solicitação");
   }
 };
 
-const getModalActionLabel = (action: RequestAction) => {
+const getModalActionLabel = (action: RequestAction, t: (key: string, values?: Record<string, string | number>) => string) => {
   switch(action) {
-    case "CANCELED": return "cancelamento";
-    case "REJECTED": return "rejeição";
-    case "REVOKED": return "revogação";
-    default: return "aprovação";
+    case "CANCELED": return t("cancelamento");
+    case "REJECTED": return t("rejeição");
+    case "REVOKED": return t("revogação");
+    default: return t("aprovação");
   }
 };
 
@@ -116,6 +117,7 @@ const RequestStatus = ({
   requestingUserName,
   requestDescription
 }: RequestStatusContainerProps) => {
+  const { t } = useI18n();
   const [progress, setProgress] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<RequestAction>("CANCELED");
@@ -129,6 +131,13 @@ const RequestStatus = ({
   const config = status && statusConfig[status] ? statusConfig[status] : defaultConfig;
   const Icon = config.icon;
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      finalReason: ""
+    }
+  });
+
   useEffect(() => {
     setProgress(0);
     const timer = setTimeout(() => {
@@ -138,13 +147,6 @@ const RequestStatus = ({
   }, [status, config.progress]);
 
   const isFinished = ["APPROVED", "REJECTED"].includes(status);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      finalReason: ""
-    }
-  });
 
   const openActionModal = (action: RequestAction) => {
     form.reset({ finalReason: "" });
@@ -182,9 +184,9 @@ const RequestStatus = ({
               <Icon className="request-status__status-icon" />
             </div>
             <div className="request-status__status-title-row">
-              <p className="request-status__status-label">Status da Solicitação</p>
+              <p className="request-status__status-label">{t("Status da Solicitação")}</p>
               <span className={`request-status__status-chip request-status__status-chip--${config.tone}`}>
-                {statusItem?.title || "Desconhecido"}
+                {t(statusItem?.title || "Desconhecido")}
               </span>
             </div>
           </div>
@@ -203,7 +205,7 @@ const RequestStatus = ({
                     className="ui-button ui-button--white request-status__action-button"
                     onClick={() => openActionModal("REVOKED")}
                   >
-                    Revogar
+                    {t("Revogar")}
                   </button>
                 )}
 
@@ -213,7 +215,7 @@ const RequestStatus = ({
                     className="ui-button ui-button--white request-status__action-button"
                     onClick={() => openActionModal("CANCELED")}
                   >
-                    Cancelar
+                    {t("Cancelar")}
                   </button>
                 )}
 
@@ -224,14 +226,14 @@ const RequestStatus = ({
                       className="ui-button ui-button--white request-status__action-button"
                       onClick={() => openActionModal("REJECTED")}
                     >
-                      Rejeitar
+                      {t("Rejeitar")}
                     </button>
                     <button
                       type="button"
                       className="ui-button ui-button--primary theme-button--primary request-status__action-button request-status__action-button--primary"
                       onClick={() => openActionModal("APPROVED")}
                     >
-                      Aprovar
+                      {t("Aprovar")}
                     </button>
                   </>
                 )}
@@ -241,7 +243,7 @@ const RequestStatus = ({
         </div>
 
         <div className="request-status__progress-section">
-          <span className="request-status__progress-label">Progresso: {progress}%</span>
+          <span className="request-status__progress-label">{t("Progresso: {{progress}}%", { progress })}</span>
           <div className="request-status__progress-track">
             <div
               className={`request-status__progress-fill request-status__progress-fill--${config.tone} ${getProgressModifier(progress)}`}
@@ -251,25 +253,25 @@ const RequestStatus = ({
 
         {status === "REJECTED" && finalReason && (
           <div className="request-status__feedback request-status__feedback--danger">
-            <strong>Motivo:</strong> {finalReason}
+            <strong>{t("Motivo:")}</strong> {finalReason}
           </div>
         )}
 
         {status === "APPROVED" && (
           <div className="request-status__feedback request-status__feedback--success">
-            Solicitação aprovada com sucesso.
+            {t("Solicitação aprovada com sucesso.")}
           </div>
         )}
 
         {status === "REVOKED" && revocationReason && (
           <div className="request-status__feedback request-status__feedback--neutral">
-            <strong>Motivo:</strong> {revocationReason}
+            <strong>{t("Motivo:")}</strong> {revocationReason}
           </div>
         )}
 
         {status === "CANCELED" && finalReason && (
           <div className="request-status__feedback request-status__feedback--neutral">
-            <strong>Motivo:</strong> {finalReason}
+            <strong>{t("Motivo:")}</strong> {finalReason}
           </div>
         )}
 
@@ -281,7 +283,7 @@ const RequestStatus = ({
             <FileText className="request-status__info-icon" />
           </div>
           <div className="request-status__info-content">
-            <p className="request-status__info-label">Protocolo</p>
+            <p className="request-status__info-label">{t("Protocolo")}</p>
             <div className="request-status__info-value-row">
               <span className="request-status__info-value">{protocolCode}</span>
               <CopyButton text={protocolCode} />
@@ -294,7 +296,7 @@ const RequestStatus = ({
             <Calendar className="request-status__info-icon" />
           </div>
           <div className="request-status__info-content">
-            <p className="request-status__info-label">Data de envio</p>
+            <p className="request-status__info-label">{t("Data de envio")}</p>
             <span className="request-status__info-value">{formattedDate}</span>
           </div>
         </div>
@@ -305,7 +307,7 @@ const RequestStatus = ({
               <User className="request-status__info-icon" />
             </div>
             <div className="request-status__info-content">
-              <p className="request-status__info-label">Papel solicitado</p>
+              <p className="request-status__info-label">{t("Papel solicitado")}</p>
               <span className="request-status__tag">{roleName}</span>
             </div>
           </div>
@@ -317,7 +319,7 @@ const RequestStatus = ({
               <User className="request-status__info-icon" />
             </div>
             <div className="request-status__info-content">
-              <p className="request-status__info-label">Solicitante</p>
+              <p className="request-status__info-label">{t("Solicitante")}</p>
               <span className="request-status__info-value">{requestingUserName}</span>
             </div>
           </div>
@@ -330,7 +332,7 @@ const RequestStatus = ({
             <MessageSquare className="request-status__info-icon" />
           </div>
           <div className="request-status__info-content">
-            <p className="request-status__info-label">Descrição da solicitação</p>
+            <p className="request-status__info-label">{t("Descrição da solicitação")}</p>
             <TruncatedText
               className="request-status__description"
               text={requestDescription}
@@ -345,8 +347,9 @@ const RequestStatus = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={modalAction === "APPROVED" ? () => onSubmit({ finalReason: "" }) : form.handleSubmit(onSubmit)}
-        title={getModalTitle(modalAction)}
-        action={getModalActionLabel(modalAction)}
+        title={getModalTitle(modalAction, t)}
+        action={getModalActionLabel(modalAction, t)}
+        requiresReason={modalAction !== "APPROVED"}
         form={form}
       />
     </div>
@@ -354,6 +357,7 @@ const RequestStatus = ({
 };
 
 const CopyButton = ({ text }: { text: string }) => {
+  const { t } = useI18n();
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -383,7 +387,7 @@ const CopyButton = ({ text }: { text: string }) => {
           </button>
         </TooltipTrigger>
         <TooltipContent>
-          <span>{isCopied ? "Copiado!" : "Copiar protocolo"}</span>
+          <span>{isCopied ? t("Copiado!") : t("Copiar protocolo")}</span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

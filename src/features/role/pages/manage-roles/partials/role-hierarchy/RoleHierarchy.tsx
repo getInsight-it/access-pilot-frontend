@@ -22,6 +22,7 @@ import { roleService } from "../../../../common/service/role-service.ts";
 import { RoleResponseInterface } from "../../../../common/types/role.model.ts";
 import { formatErrorMessages } from "../../../../../../common/utils/error-utils.ts";
 import { ArboristNode, RoleHierarchyProps, RoleUpdatePayload } from "../../../../common/types/role-hierarchy.model.ts";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 import "./role-hierarchy.scss";
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -181,6 +182,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
 }
 
 function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
+  const { t } = useI18n();
   const [treeData, setTreeData] = useState<ArboristNode[]>([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -269,8 +271,8 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
   const handleSave = () => {
     if (!data?.[0]?.client?.id) {
       toast({
-        title: "Erro",
-        description: "Dados inválidos para atualização",
+        title: t("Erro"),
+        description: t("Dados inválidos para atualização"),
         variant: "destructive"
       });
       return;
@@ -283,15 +285,15 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
     from(roleService.update(rolePayload as unknown as RoleResponseInterface[])).pipe(
       tap(() => {
         toast({
-          title: "Papéis atualizados",
-          description: "Os papéis foram atualizados com sucesso"
+          title: t("Papéis atualizados"),
+          description: t("Os papéis foram atualizados com sucesso")
         });
         onSuccess?.();
       }),
       catchError((error: unknown) => {
         const errorMessage: string = formatErrorMessages(error);
         toast({
-          title: "Erro ao atualizar papéis",
+          title: t("Erro ao atualizar papéis"),
           description: errorMessage,
           variant: "destructive"
         });
@@ -306,8 +308,8 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
       <div className="role-hierarchy">
         <div className="role-hierarchy__panel role-hierarchy__panel--editor">
           <div className="role-hierarchy__panel-header">
-            <h3 className="role-hierarchy__panel-title">Organização de papéis</h3>
-            <p className="role-hierarchy__panel-description">Arraste os nós para redefinir a estrutura hierárquica.</p>
+            <h3 className="role-hierarchy__panel-title">{t("Organização de papéis")}</h3>
+            <p className="role-hierarchy__panel-description">{t("Arraste os nós para redefinir a estrutura hierárquica.")}</p>
           </div>
 
           <div className="role-hierarchy__tree-surface" ref={treeContainerRef}>
@@ -327,7 +329,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
 
           <div className="role-hierarchy__panel-footer">
             <Button onClick={handleSave} className="theme-button--primary role-hierarchy__save-button">
-              Salvar hierarquia
+              {t("Salvar hierarquia")}
             </Button>
           </div>
         </div>
@@ -336,7 +338,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
 
         <div className="role-hierarchy__panel role-hierarchy__panel--preview">
           <div className="role-hierarchy__panel-header">
-            <h3 className="role-hierarchy__panel-title">Visualização</h3>
+            <h3 className="role-hierarchy__panel-title">{t("Visualização")}</h3>
           </div>
 
           <div className="role-hierarchy__flow-surface">

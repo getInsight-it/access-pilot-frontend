@@ -12,12 +12,14 @@ import { useSystemFormData, useFormNavigation, useAttachmentConfigs } from "./us
 import { useNavigate } from "react-router-dom";
 import { ClientStatusEnum } from "@features/client/common/enum/client-status.enum.ts";
 import { AttachmentConfigurationForm } from "@features/client/common/components/AttachmentConfigurationForm.tsx";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import "./SystemForm.scss";
 
 const STEP_ITEMS = ["Detalhes do sistema", "Configuração de anexos"];
 const DESCRIPTION_MAX_LENGTH = 150;
 
 export default function SystemForm() {
+  const { t } = useI18n();
   const {
     methods,
     activeIndex,
@@ -35,11 +37,11 @@ export default function SystemForm() {
   const descriptionValue = methods.watch("description") || "";
   const descriptionCount = descriptionValue.length;
   const pageTitle = initialLoading
-    ? "Carregando sistema..."
-    : isEditing ? "Editar sistema" : "Novo sistema";
+    ? t("Carregando sistema...")
+    : isEditing ? t("Editar sistema") : t("Novo sistema");
   const pageDescription = initialLoading
-    ? "Aguarde enquanto os dados do sistema são carregados."
-    : "Preencha os dados gerais e avance para configurar os anexos.";
+    ? t("Aguarde enquanto os dados do sistema são carregados.")
+    : t("Preencha os dados gerais e avance para configurar os anexos.");
 
   const renderStepHeader = () => (
     <div className="system-form__card-header">
@@ -52,7 +54,7 @@ export default function SystemForm() {
               key={item}
             >
               <span className="system-form__step-number">{index + 1}</span>
-              <span className="system-form__step-label">{item}</span>
+              <span className="system-form__step-label">{t(item)}</span>
             </div>
           );
         })}
@@ -103,7 +105,7 @@ export default function SystemForm() {
                 className="ui-button ui-button--white system-form__action-button system-form__action-button--white"
                 disabled
               >
-                <span>Voltar</span>
+                <span>{t("Voltar")}</span>
               </button>
               <button
                 type="button"
@@ -112,7 +114,7 @@ export default function SystemForm() {
               >
                 <span className="system-form__footer-action-content">
                   <Loader2 size={16} />
-                  <span>Carregando...</span>
+                  <span>{t("Carregando...")}</span>
                 </span>
               </button>
             </div>
@@ -182,20 +184,20 @@ export default function SystemForm() {
                           render={({ field }) => (
                             <FormItem className="system-form__field">
                               <label className="system-form__label" htmlFor="name">
-                                Nome <span className="system-form__required">*</span>
+                                {t("Nome")} <span className="system-form__required">*</span>
                               </label>
                               <FormControl>
                                 <input
                                   id="name"
                                   type="text"
                                   disabled={loading}
-                                  placeholder="Nome do sistema"
+                                  placeholder={t("Nome do sistema")}
                                   {...field}
                                   className={`app-input system-form__input${methods.formState.errors.name ? " system-form__input--error" : ""}`}
                                 />
                               </FormControl>
                               {methods.formState.errors.name && (
-                                <p className="system-form__error">{methods.formState.errors.name?.message?.toString()}</p>
+                                <p className="system-form__error">{t(methods.formState.errors.name?.message?.toString() || "")}</p>
                               )}
                             </FormItem>
                           )}
@@ -207,20 +209,20 @@ export default function SystemForm() {
                           render={({ field }) => (
                             <FormItem className="system-form__field">
                               <label className="system-form__label" htmlFor="clientId">
-                                Client Id <span className="system-form__required">*</span>
+                                {t("Client Id")} <span className="system-form__required">*</span>
                               </label>
                               <FormControl>
                                 <input
                                   id="clientId"
                                   type="text"
                                   disabled={loading}
-                                  placeholder="ClientId do IDP"
+                                  placeholder={t("ClientId do IDP")}
                                   {...field}
                                   className={`app-input system-form__input${methods.formState.errors.clientId ? " system-form__input--error" : ""}`}
                                 />
                               </FormControl>
                               {methods.formState.errors.clientId && (
-                                <p className="system-form__error">{methods.formState.errors.clientId?.message?.toString()}</p>
+                                <p className="system-form__error">{t(methods.formState.errors.clientId?.message?.toString() || "")}</p>
                               )}
                             </FormItem>
                           )}
@@ -233,20 +235,20 @@ export default function SystemForm() {
                         render={({ field }) => (
                           <FormItem className="system-form__field">
                             <label className="system-form__label" htmlFor="description">
-                              Descrição <span className="system-form__required">*</span>
+                              {t("Descrição")} <span className="system-form__required">*</span>
                             </label>
                             <FormControl>
                               <textarea
                                 id="description"
                                 disabled={loading}
-                                placeholder="Descrição do sistema"
+                                placeholder={t("Descrição do sistema")}
                                 maxLength={DESCRIPTION_MAX_LENGTH}
                                 {...field}
                                 className={`app-textarea system-form__textarea${methods.formState.errors.description ? " system-form__textarea--error" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.description && (
-                              <p className="system-form__error">{methods.formState.errors.description?.message?.toString()}</p>
+                              <p className="system-form__error">{t(methods.formState.errors.description?.message?.toString() || "")}</p>
                             )}
                             <p className="system-form__counter">{descriptionCount}/{DESCRIPTION_MAX_LENGTH}</p>
                           </FormItem>
@@ -259,20 +261,20 @@ export default function SystemForm() {
                         render={({ field }) => (
                           <FormItem className="system-form__field">
                             <label className="system-form__label" htmlFor="baseUrl">
-                              Url <span className="system-form__required">*</span>
+                              {t("Url")} <span className="system-form__required">*</span>
                             </label>
                             <FormControl>
                               <input
                                 id="baseUrl"
                                 type="text"
                                 disabled={loading}
-                                placeholder="Url do sistema"
+                                placeholder={t("Url do sistema")}
                                 {...field}
                                 className={`app-input system-form__input${methods.formState.errors.baseUrl ? " system-form__input--error" : ""}`}
                               />
                             </FormControl>
                             {methods.formState.errors.baseUrl && (
-                              <p className="system-form__error">{methods.formState.errors.baseUrl?.message?.toString()}</p>
+                              <p className="system-form__error">{t(methods.formState.errors.baseUrl?.message?.toString() || "")}</p>
                             )}
                           </FormItem>
                         )}
@@ -295,13 +297,13 @@ export default function SystemForm() {
                                   />
                                 </FormControl>
                                 <span className="system-form__toggle-value">
-                                  {field.value === ClientStatusEnum.PUBLISHED ? "Publicado" : "Não publicado"}
+                                  {field.value === ClientStatusEnum.PUBLISHED ? t("Publicado") : t("Não publicado")}
                                 </span>
                               </div>
 
-                              <span className="system-form__toggle-description">Ative para indicar o status publicado.</span>
+                              <span className="system-form__toggle-description">{t("Ative para indicar o status publicado.")}</span>
                               {methods.formState.errors.status && (
-                                <p className="system-form__error">{methods.formState.errors.status?.message?.toString()}</p>
+                                <p className="system-form__error">{t(methods.formState.errors.status?.message?.toString() || "")}</p>
                               )}
                             </FormItem>
                           )}
@@ -316,12 +318,12 @@ export default function SystemForm() {
                                 <FormControl>
                                   <Toggle checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
                                 </FormControl>
-                                <span className="system-form__toggle-value">{field.value ? "Gerenciado" : "Não gerenciado"}</span>
+                                <span className="system-form__toggle-value">{field.value ? t("Gerenciado") : t("Não gerenciado")}</span>
                               </div>
 
-                              <span className="system-form__toggle-description">Ative para indicar que o sistema é gerenciado.</span>
+                              <span className="system-form__toggle-description">{t("Ative para indicar que o sistema é gerenciado.")}</span>
                               {methods.formState.errors.managed && (
-                                <p className="system-form__error">{methods.formState.errors.managed?.message?.toString()}</p>
+                                <p className="system-form__error">{t(methods.formState.errors.managed?.message?.toString() || "")}</p>
                               )}
                             </FormItem>
                           )}
@@ -340,7 +342,7 @@ export default function SystemForm() {
               disabled={activeIndex === 0}
               onClick={handleBack}
             >
-              <span>Voltar</span>
+              <span>{t("Voltar")}</span>
             </button>
 
             {activeIndex === 0 && (
@@ -351,7 +353,7 @@ export default function SystemForm() {
               >
                 <span className="system-form__footer-action-content">
                   <ArrowRight className="system-form__continue-icon" />
-                  <span>Continuar</span>
+                  <span>{t("Continuar")}</span>
                 </span>
               </button>
             )}
@@ -365,7 +367,7 @@ export default function SystemForm() {
               >
                 <span className="system-form__footer-action-content">
                   {loading ? <Loader2 size={16} /> : <Save size={16} />}
-                  <span>{loading ? "Salvando..." : "Salvar"}</span>
+                  <span>{loading ? t("Salvando...") : t("Salvar")}</span>
                 </span>
               </button>
             )}

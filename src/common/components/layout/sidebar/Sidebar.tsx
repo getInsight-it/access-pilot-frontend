@@ -9,6 +9,7 @@ import {
   supportNavItems
 } from "./constant/sidebar.constant.ts";
 import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
+import { useI18n } from "../../../context/i18n/I18nContext.tsx";
 import "./Sidebar.scss";
 
 type SidebarProps = {
@@ -17,6 +18,7 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const { t } = useI18n();
 
   return (
     <nav
@@ -32,19 +34,19 @@ export default function Sidebar({ className }: SidebarProps) {
           </div>
           {requestNavItems.length > 0 && (
             <div className="dashboard-sidebar__group">
-              <p className="dashboard-sidebar__section-title">Solicitações</p>
+              <p className="dashboard-sidebar__section-title">{t("Solicitações")}</p>
               <DashboardNav items={requestNavItems} />
             </div>
           )}
           {inviteNavItems.length > 0 && (
             <div className="dashboard-sidebar__group">
-              <p className="dashboard-sidebar__section-title">Convites</p>
+              <p className="dashboard-sidebar__section-title">{t("Convites")}</p>
               <DashboardNav items={inviteNavItems} />
             </div>
           )}
           {administrationNavItems.length > 0 && (
             <div className="dashboard-sidebar__group">
-              <p className="dashboard-sidebar__section-title">Administração</p>
+              <p className="dashboard-sidebar__section-title">{t("Administração")}</p>
               <DashboardNav items={administrationNavItems} />
             </div>
           )}
@@ -61,7 +63,7 @@ export default function Sidebar({ className }: SidebarProps) {
           type="button"
           className="dashboard-sidebar__toggle-button"
           onClick={toggle}
-          aria-label={isMinimized ? "Expandir menu" : "Recolher menu"}>
+          aria-label={isMinimized ? t("Expandir menu") : t("Recolher menu")}>
           <ChevronLeft
             className={cn(
               "dashboard-sidebar__toggle-icon",
@@ -70,7 +72,7 @@ export default function Sidebar({ className }: SidebarProps) {
           />
           {!isMinimized && (
             <span className="dashboard-sidebar__toggle-label">
-              Recolher menu
+              {t("Recolher menu")}
             </span>
           )}
         </button>

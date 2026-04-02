@@ -5,6 +5,7 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 
 import { StepLoader } from "@common/components/loading/StepLoader.tsx";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 import { useToast } from "@common/external/ui/use-toast.ts";
 import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { clientService } from "@features/client/common/service/client-service.ts";
@@ -56,6 +57,7 @@ const EMAIL_VALIDATION_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function Invite() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
   const { toast } = useToast();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [currentStep, setCurrentStep] = useState(1);
@@ -99,12 +101,12 @@ export default function Invite() {
       setClients(fetchedClients);
     } catch (error: unknown) {
       toast({
-        title: "Erro ao carregar sistemas",
+        title: t("Erro ao carregar sistemas"),
         description: formatErrorMessages(error),
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
@@ -112,12 +114,12 @@ export default function Invite() {
       setRoles(fetchedRoles);
     } catch (error: unknown) {
       toast({
-        title: "Erro ao carregar papéis",
+        title: t("Erro ao carregar papéis"),
         description: formatErrorMessages(error),
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
 
   const handleSelectRole = useCallback(async (role: RoleResponseInterface) => {
     setFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
@@ -131,12 +133,12 @@ export default function Invite() {
       )));
     } catch (error: unknown) {
       toast({
-        title: "Erro ao carregar detalhes do papel",
+        title: t("Erro ao carregar detalhes do papel"),
         description: formatErrorMessages(error),
         variant: "destructive"
       });
     }
-  }, [setFormFieldValue, toast]);
+  }, [setFormFieldValue, t, toast]);
 
   const handleSelectedSystem = useCallback((client: ClientResponseInterface, autoAdvance: boolean = false) => {
     setFormFieldValue({ field: "clientId", value: client.clientId, error: null });
@@ -194,7 +196,7 @@ export default function Invite() {
       setFormFieldValue({
         field: "emails",
         value: currentEmails,
-        error: "Informe apenas e-mails válidos para continuar."
+        error: t("Informe apenas e-mails válidos para continuar.")
       });
 
       return {
@@ -217,13 +219,13 @@ export default function Invite() {
     let isValid = true;
 
     if (currentStep === 1 && !customForm["clientId"].value) {
-      setFormFieldValue({ field: "clientId", value: customForm["clientId"].value, error: "Selecione um sistema." });
+      setFormFieldValue({ field: "clientId", value: customForm["clientId"].value, error: t("Selecione um sistema.") });
       isValid = false;
     }
 
     if (currentStep === 2) {
       if (!customForm["roleId"].value) {
-        setFormFieldValue({ field: "roleId", value: customForm["roleId"].value, error: "Selecione um papel." });
+        setFormFieldValue({ field: "roleId", value: customForm["roleId"].value, error: t("Selecione um papel.") });
         isValid = false;
       }
 
@@ -232,7 +234,7 @@ export default function Invite() {
         setFormFieldValue({
           field: "codeItem",
           value: customForm["codeItem"].value,
-          error: "Preencha a hierarquia de esferas."
+          error: t("Preencha a hierarquia de esferas.")
         });
         isValid = false;
       }
@@ -242,7 +244,7 @@ export default function Invite() {
       setFormFieldValue({
         field: "reason",
         value: customForm["reason"].value,
-        error: "Preencha o motivo da solicitação."
+        error: t("Preencha o motivo da solicitação.")
       });
       isValid = false;
     }
@@ -255,8 +257,8 @@ export default function Invite() {
           field: "emails",
           value: nextEmails,
           error: hasValidDraft
-            ? "Adicione pelo menos um e-mail para enviar o convite."
-            : "Informe apenas e-mails válidos para continuar."
+            ? t("Adicione pelo menos um e-mail para enviar o convite.")
+            : t("Informe apenas e-mails válidos para continuar.")
         });
         isValid = false;
       }
@@ -266,7 +268,7 @@ export default function Invite() {
       setFormFieldValue({
         field: "expiresAt",
         value: customForm["expiresAt"].value,
-        error: "Selecione a data de expiração do convite."
+        error: t("Selecione a data de expiração do convite.")
       });
       isValid = false;
     }
@@ -277,8 +279,8 @@ export default function Invite() {
     }
 
     toast({
-      title: "Campos obrigatórios",
-      description: "Por favor, preencha todos os campos obrigatórios antes de prosseguir.",
+      title: t("Campos obrigatórios"),
+      description: t("Por favor, preencha todos os campos obrigatórios antes de prosseguir."),
       variant: "destructive"
     });
   };
@@ -287,9 +289,9 @@ export default function Invite() {
     {
       id: 1,
       number: 1,
-      title: "Sistema",
-      description: "Para qual sistema você está enviando o convite",
-      panelTitle: "Escolha o sistema vinculado a este convite:",
+      title: t("Sistema"),
+      description: t("Para qual sistema você está enviando o convite"),
+      panelTitle: t("Escolha o sistema vinculado a este convite:"),
       content: (
         <RequestSystemStep
           clients={clients}
@@ -302,9 +304,9 @@ export default function Invite() {
     {
       id: 2,
       number: 2,
-      title: "Papel",
-      description: "Defina o papel que será concedido",
-      panelTitle: "Escolha o papel que será enviado no convite:",
+      title: t("Papel"),
+      description: t("Defina o papel que será concedido"),
+      panelTitle: t("Escolha o papel que será enviado no convite:"),
       content: (
         <RequestRoleStep
           roles={roles}
@@ -323,7 +325,7 @@ export default function Invite() {
             setFormFieldValue({
               field: "codeItem",
               value: "",
-              error: "Preencha a hierarquia de esferas."
+              error: t("Preencha a hierarquia de esferas.")
             });
             setFormFieldValue({ field: "externalCode", value: "", error: null });
           }}
@@ -336,9 +338,9 @@ export default function Invite() {
     {
       id: 3,
       number: 3,
-      title: "Justificativa",
-      description: "Explique o motivo do convite",
-      panelTitle: "Descreva a justificativa deste convite:",
+      title: t("Justificativa"),
+      description: t("Explique o motivo do convite"),
+      panelTitle: t("Descreva a justificativa deste convite:"),
       content: (
         <RequestJustificationStep
           onReasonChange={(reason: string) => {
@@ -354,9 +356,9 @@ export default function Invite() {
     {
       id: 4,
       number: 4,
-      title: "E-mails",
-      description: "Informe os destinatários do convite",
-      panelTitle: "Adicione os e-mails que receberão este convite:",
+      title: t("E-mails"),
+      description: t("Informe os destinatários do convite"),
+      panelTitle: t("Adicione os e-mails que receberão este convite:"),
       content: (
         <RequestInviteEmailsStep
           emails={customForm["emails"].value}
@@ -381,9 +383,9 @@ export default function Invite() {
     {
       id: 5,
       number: 5,
-      title: "Validade",
-      description: "Defina até quando o convite ficará disponível",
-      panelTitle: "Escolha a data de expiração do convite:",
+      title: t("Validade"),
+      description: t("Defina até quando o convite ficará disponível"),
+      panelTitle: t("Escolha a data de expiração do convite:"),
       content: (
         <RequestInviteExpirationStep
           value={customForm["expiresAt"].value}
@@ -397,9 +399,9 @@ export default function Invite() {
     {
       id: 6,
       number: 6,
-      title: "Revisão",
-      description: "Confira os dados do convite antes de enviar",
-      panelTitle: "Revise as informações antes de enviar:",
+      title: t("Revisão"),
+      description: t("Confira os dados do convite antes de enviar"),
+      panelTitle: t("Revise as informações antes de enviar:"),
       content: (
         <RequestReviewStep
           selectedClient={customForm["clientId"].value}
@@ -427,14 +429,14 @@ export default function Invite() {
       });
 
       toast({
-        title: "Convite enviado com sucesso!",
-        description: "Os destinatários informados já podem receber o convite."
+        title: t("Convite enviado com sucesso!"),
+        description: t("Os destinatários informados já podem receber o convite.")
       });
 
       navigate(PRIVATE_ROUTES.MANAGE_INVITES);
     } catch (error: unknown) {
       toast({
-        title: "Erro ao enviar convite",
+        title: t("Erro ao enviar convite"),
         description: formatErrorMessages(error),
         variant: "destructive"
       });
@@ -479,14 +481,14 @@ export default function Invite() {
             />
 
             <div className="invite-page__step-content">
-              <RequestStepLayout
-                title={steps[currentStep - 1].panelTitle}
-                onBack={handleBack}
-                onNext={currentStep < steps.length ? validationV2 : handleSubmitForm}
-                backButtonDisabled={currentStep === 1}
-                nextButtonLabel={currentStep < steps.length ? "Próximo" : "Enviar convite"}
-                showNextIcon={currentStep < steps.length}
-              >
+                <RequestStepLayout
+                  title={steps[currentStep - 1].panelTitle}
+                  onBack={handleBack}
+                  onNext={currentStep < steps.length ? validationV2 : handleSubmitForm}
+                  backButtonDisabled={currentStep === 1}
+                  nextButtonLabel={currentStep < steps.length ? t("Próximo") : t("Enviar convite")}
+                  showNextIcon={currentStep < steps.length}
+                >
                 {steps[currentStep - 1].content}
               </RequestStepLayout>
             </div>
