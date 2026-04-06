@@ -10,9 +10,9 @@ const ErrorLayout = () => {
 
   return (
     <>
-      <div className="pointer-events-none absolute w-full h-full top-0 left-0 z-10 ">
-        <div className="pt-16 pl-10 space-y-6">
-          <h2 className="text-2xl z-50">
+      <div>
+        <div>
+          <h2>
             Algo deu errado.
           </h2>
           <Button

@@ -10,7 +10,7 @@ type IconRendererProps = {
 const IconRenderer: React.FC<IconRendererProps> = ({ iconName, className, showPlaceholder = false }) => {
   if (!iconName || iconName.trim() === "") {
     if (showPlaceholder) {
-      return <User className={className || "w-6 h-6 text-gray-400"} />;
+      return <User className={className} />;
     }
     return null;
   }
@@ -19,7 +19,7 @@ const IconRenderer: React.FC<IconRendererProps> = ({ iconName, className, showPl
 
   if (!Icon) {
     if (showPlaceholder) {
-      return <User className={className || "w-6 h-6 text-gray-400"} />;
+      return <User className={className} />;
     }
     return null;
   }

@@ -1,0 +1,190 @@
+.app-dialog {
+  position: fixed;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  z-index: var(--dialog-z-index);
+  width: var(--dialog-width);
+  max-width: var(--dialog-max-width);
+  transform: translate(-50%, -50%);
+  display: grid;
+  gap: var(--dialog-gap);
+  border: var(--dialog-border);
+  background-color: var(--dialog-background-color);
+  padding: var(--dialog-padding);
+  box-shadow: var(--dialog-shadow);
+  border-radius: var(--dialog-radius);
+  box-sizing: border-box;
+
+  &[data-state="open"] {
+    animation: dialog-content-in var(--motion-layout-default);
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-content-out var(--motion-layout-default);
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--dialog-overlay-z-index);
+    background-color: var(--dialog-overlay-background-color);
+
+    &[data-state="open"] {
+      animation: dialog-overlay-in var(--motion-layout-default);
+    }
+
+    &[data-state="closed"] {
+      animation: dialog-overlay-out var(--motion-layout-default);
+    }
+  }
+
+  &__close {
+    position: absolute;
+    inset-inline-end: var(--dialog-close-offset-inline);
+    inset-block-start: var(--dialog-close-offset-block);
+    width: var(--dialog-close-size);
+    height: var(--dialog-close-size);
+    border: var(--dialog-close-border);
+    border-radius: var(--dialog-close-radius);
+    background-color: var(--dialog-close-background-color);
+    color: var(--dialog-close-icon-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--dialog-close-hover-background-color);
+    }
+  }
+
+  &__close-icon,
+  &__button-icon {
+    width: var(--dialog-close-icon-size);
+    height: var(--dialog-close-icon-size);
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--dialog-header-gap);
+    text-align: left;
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--dialog-title-color);
+    font-size: var(--dialog-title-font-size);
+    font-weight: var(--dialog-title-font-weight);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--dialog-description-color);
+    font-size: var(--dialog-description-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dialog-body-gap);
+  }
+
+  &__surface {
+    border: var(--dialog-surface-border);
+    border-radius: var(--dialog-surface-radius);
+    background-color: var(--dialog-surface-background-color);
+    padding: var(--dialog-surface-padding);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dialog-surface-gap);
+  }
+
+  &__surface .ui-toggle {
+    flex-shrink: 0;
+  }
+
+  &__surface-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dialog-surface-main-gap);
+  }
+
+  &__surface-title {
+    color: var(--dialog-surface-title-color);
+    font-size: var(--dialog-surface-title-font-size);
+    font-weight: var(--dialog-surface-title-font-weight);
+  }
+
+  &__surface-description {
+    color: var(--dialog-surface-description-color);
+    font-size: var(--dialog-surface-description-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__text {
+    margin: 0;
+    color: var(--default-text-color);
+    font-size: var(--dialog-description-font-size);
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--dialog-footer-gap);
+    padding-top: var(--dialog-footer-padding-top);
+  }
+
+  &__footer .ui-button {
+    min-height: var(--dialog-action-height);
+    padding-inline: var(--dialog-action-padding-inline);
+    border-radius: var(--dialog-action-radius);
+    gap: var(--dialog-action-content-gap);
+  }
+
+  &__footer .ui-button--white {
+    border: var(--dialog-action-border);
+  }
+
+  &__hidden-input {
+    display: none;
+  }
+}
+
+@keyframes dialog-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-content-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+}

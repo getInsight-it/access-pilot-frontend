@@ -1,0 +1,60 @@
+.my-invites-page {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header-container {
+    display: flex;
+    align-items: center;
+    padding-inline: var(--request-access-page-padding-inline);
+    padding-top: var(--request-access-page-padding-top);
+    padding-bottom: var(--request-access-page-padding-bottom);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--request-access-step-panel-footer-gap);
+    width: 100%;
+  }
+
+  &__heading {
+    flex: 1 1 auto;
+  }
+
+  &__scroll-area {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__scroll-viewport {
+    padding-inline: var(--request-access-page-padding-inline);
+    box-sizing: border-box;
+  }
+
+  &__content {
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__header-container {
+      padding-inline: var(--pagination-control-padding-inline);
+    }
+
+    &__scroll-viewport {
+      padding-inline: var(--pagination-control-padding-inline);
+    }
+
+    &__content {
+      padding-bottom: var(--request-access-page-padding-bottom);
+    }
+  }
+}

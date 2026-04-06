@@ -1,13 +1,8 @@
 import { cn } from "../../../config/lib/utils.ts";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
-const loadingStates = [
-  { text: "Carregando" },
-  { text: "Conexão estabelecida" },
-  { text: "A solicitação foi criada!" },
-  { text: "Sucesso" }
-];
+import { useI18n } from "../../context/i18n/I18nContext.tsx";
+import "./step-loader.scss";
 
 interface StepLoaderProps {
   onClose?: () => void;
@@ -22,7 +17,7 @@ const CheckIcon = ({ className }: { className?: string }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={cn("w-6 h-6 ", className)}
+      className={cn(className)}
     >
       <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
     </svg>
@@ -35,7 +30,7 @@ const CheckFilled = ({ className }: { className?: string }) => {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className={cn("w-6 h-6 ", className)}
+      className={cn(className)}
     >
       <path
         fillRule="evenodd"
@@ -58,39 +53,35 @@ const LoaderCore = ({
   value?: number;
 }) => {
   return (
-    <div className="flex relative justify-start max-w-xl mx-auto flex-col mt-40">
+    <div className="step-loader__list">
       {loadingStates.map((loadingState, index) => {
         const distance = Math.abs(index - value);
         const opacity = Math.max(1 - distance * 0.2, 0);
+        const isCompleted = index < value;
+        const isActive = index === value;
 
         return (
           <motion.div
             key={index}
-            className={cn("text-left flex gap-2 mb-4")}
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
+            className={cn(
+              "step-loader__item",
+              isCompleted && "step-loader__item--completed",
+              isActive && "step-loader__item--active",
+              index > value && "step-loader__item--upcoming"
+            )}
           >
-            <div>
+            <div className="step-loader__icon-wrapper">
               {index > value && (
-                <CheckIcon className="text-primary" />
+                <CheckIcon className="step-loader__icon" />
               )}
               {index <= value && (
-                <CheckFilled
-                  className={cn(
-                    "text-primary",
-                    value === index &&
-                    "text-black dark:text-lime-600 opacity-100"
-                  )}
-                />
+                <CheckFilled className="step-loader__icon" />
               )}
             </div>
-            <span
-              className={cn(
-                "text-primary",
-                value === index && "text-black dark:text-lime-600 opacity-100"
-              )}
-            >
+            <span className="step-loader__text">
               {loadingState.text}
             </span>
           </motion.div>
@@ -143,15 +134,14 @@ export const MultiStepLoader = ({
     <AnimatePresence mode="wait">
       {loading && (
         <motion.div
+          className="step-loader__overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="w-full h-full fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl">
-          <div className="h-96 relative">
+        >
+          <div className="step-loader__card">
             <LoaderCore value={currentState} loadingStates={loadingStates} />
           </div>
-
-          <div className="bg-gradient-to-t inset-x-0 z-20 bottom-0 bg-[var(--steploader-bg)] h-full absolute [mask-image:radial-gradient(900px_at_center,transparent_30%,white)]" />
         </motion.div>
       )}
     </AnimatePresence>
@@ -159,8 +149,17 @@ export const MultiStepLoader = ({
 };
 
 export function StepLoader({ onClose, loading }: StepLoaderProps) {
+  const { t } = useI18n();
+
+  const loadingStates = [
+    { text: t("Carregando") },
+    { text: t("Conexão estabelecida") },
+    { text: t("A solicitação foi criada!") },
+    { text: t("Sucesso") }
+  ];
+
   return (
-    <div className="flex items-center justify-center">
+    <div className="step-loader">
       <MultiStepLoader
         loadingStates={loadingStates}
         loading={loading}

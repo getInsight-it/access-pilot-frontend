@@ -1,6 +1,6 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { httpClient } from "../../../../config/http/http.ts";
-import { RoleResponseInterface } from "../types/role.model.ts";
+import { RoleResponseInterface, RoleUpsertInterface } from "../types/role.model.ts";
 
 export const ROLE_API = {
   ROLES: "/v1/roles",
@@ -66,7 +66,7 @@ export class RoleService {
     }
   }
 
-  async createRole(roleData: RoleResponseInterface): Promise<RoleResponseInterface> {
+  async createRole(roleData: RoleUpsertInterface): Promise<RoleResponseInterface> {
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.post(ROLE_API.ROLES, roleData);
 
     if(response instanceof HttpRequestError) {
@@ -76,7 +76,7 @@ export class RoleService {
     return response.data as RoleResponseInterface;
   }
 
-  async updateRole(id?: number, roleData?: RoleResponseInterface): Promise<RoleResponseInterface> {
+  async updateRole(id?: number, roleData?: RoleUpsertInterface): Promise<RoleResponseInterface> {
     if(!id || !roleData) {
       throw new Error("Role ID and data are required");
     }

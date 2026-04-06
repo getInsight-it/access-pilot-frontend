@@ -1,0 +1,72 @@
+.confirmation-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-detail-content-gap);
+  padding: var(--request-detail-modal-padding);
+  border: var(--request-detail-card-border);
+  border-radius: var(--request-detail-card-radius);
+  background-color: var(--background);
+
+  &__header {
+    text-align: left;
+  }
+
+  &__title {
+    color: var(--title-color);
+    font-size: var(--request-detail-modal-title-font-size);
+    font-weight: var(--request-detail-title-font-weight);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-content-gap);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--request-detail-info-value-font-size);
+    font-weight: var(--request-detail-title-font-weight);
+  }
+
+  &__textarea {
+    min-height: var(--request-detail-modal-textarea-min-height);
+    resize: vertical;
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__error {
+    color: var(--request-status-tone-danger-text-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__button {
+    min-height: var(--pagination-control-height);
+    padding-inline: var(--request-detail-action-button-padding-inline);
+    border: var(--request-detail-card-border);
+    border-radius: var(--request-detail-control-radius);
+  }
+
+  &__button--confirm {
+    border: 0;
+  }
+}

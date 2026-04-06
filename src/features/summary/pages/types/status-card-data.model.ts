@@ -1,12 +1,11 @@
 import { Users } from "lucide-react";
 
+export type SummaryCardTone = "success" | "warning" | "primary";
+
 export interface SummaryCardData {
   title: string;
+  description: string;
   value: number;
   icon: typeof Users;
-  bgColor: string;
-  iconBg: string;
-  iconColor: string;
-  textColor: string;
-  valueColor: string;
+  tone: SummaryCardTone;
 }

@@ -1,22 +1,25 @@
-import { Logo } from "../../../common/components/Logo.tsx";
 import { Button } from "../../../common/external/ui/button.tsx";
 import { authService } from "../common/AuthService.ts";
 import LoginBandCanvas from "../../../common/components/LoginBandCanvas.tsx";
 import { useState } from "react";
 import { useToast } from "../../../common/external/ui/use-toast.ts";
+import ThemedLogo from "../../../common/components/layout/header/partials/themed-logo/ThemedLogo.tsx";
+import { useI18n } from "../../../common/context/i18n/I18nContext.tsx";
+import "./Login.scss";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const signIn = async () => {
     try {
       setIsLoading(true);
       await authService.signIn();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Authentication failed. Please try again.';
+      const errorMessage = error instanceof Error ? error.message : t("Authentication failed. Please try again.");
       toast({
-        title: "Authentication Error",
+        title: t("Authentication Error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -26,32 +29,31 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="relative h-dvh md:h-screen flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
-      style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
+    <div className="login-page">
+      <section className="login-page__visual">
+        <div className="login-page__visual-canvas">
+          <LoginBandCanvas />
+        </div>
+      </section>
 
-      <div className="w-full lg:w-[50vw] flex justify-between items-center absolute top-0 right-0 p-6 lg:p-10">
-        &nbsp;
-        <Logo />
-      </div>
-      <div className="relative hidden h-full flex-col bg-background text-white lg:flex">
-        <div className="absolute inset-0" />
-        <LoginBandCanvas />
-      </div>
-      <div className="flex h-full items-center p-4 lg:p-8 bg-secondary">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col text-left ">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Acesse sua conta
-            </h1>
+      <section className="login-page__panel">
+        <div className="login-page__panel-content">
+          <div className="login-page__brand">
+            <ThemedLogo />
           </div>
-          <Button type="button" onClick={signIn} disabled={isLoading}>
-            {isLoading ? "Entrando..." : "Entrar"}
+          <div className="login-page__heading">
+            <h1 className="login-page__title">
+              {t("Acesse sua conta")}
+            </h1>
+            <p className="login-page__description">
+              {t("Entre com sua conta para continuar no AccessPilot.")}
+            </p>
+          </div>
+          <Button type="button" className="login-page__action" onClick={signIn} disabled={isLoading}>
+            {isLoading ? t("Entrando...") : t("Entrar")}
           </Button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
-
-

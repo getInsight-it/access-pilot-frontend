@@ -1,8 +1,9 @@
 import { Button } from "../../../../../common/external/ui/button.tsx";
 import { FlipWords } from "../../../../../common/external/ui/flip-words.tsx";
 import { Link } from "react-router-dom";
-import { FileAttachment } from "./AttachmentStep.tsx";
+import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 interface SuccessFeedbackProps {
   words: string[];
@@ -21,25 +22,27 @@ export const SuccessFeedback = ({
   attachments,
   onRequestNew
 }: SuccessFeedbackProps) => {
+  const { t } = useI18n();
+
   return (
     <>
-      <div className="md:grid grid-cols-1 lg:max-w-xl">
-        <div className="bg-primary flex px-6 py-6">
-          <div className="text-2xl font-normal text-primary-foreground">
-            Solicitação criada
+      <div>
+        <div>
+          <div>
+            {t("Solicitação criada")}
             <FlipWords words={words} />
           </div>
         </div>
-        <div className="bg-green-500 p-1"></div>
+        <div></div>
 
-        <div className="grid grid-cols-2 gap-5 mt-6 px-1">
-          <div className="font-bold space-y-3">
-            <p>Sistema:</p>
-            <p>Papel solicitado:</p>
-            <p>Motivo:</p>
-            {attachments.length > 0 && <p>Anexos:</p>}
+        <div>
+          <div>
+            <p>{t("Sistema")}:</p>
+            <p>{t("Papel solicitado")}:</p>
+            <p>{t("Motivo")}:</p>
+            {attachments.length > 0 && <p>{t("Anexos")}:</p>}
           </div>
-          <div className="space-y-3">
+          <div>
             <p>{selectedClient}</p>
             <p>{selectedRole}</p>
             <p>{description}</p>
@@ -53,12 +56,11 @@ export const SuccessFeedback = ({
       </div>
 
       <Link
-        className="bg-[var(--dashboard-nav-bg)] text-primary rounded-full text-sm font-medium transition-colors hover:bg-[var(--button-hover)] hover:text-[var(--button-hover-text)] h-10 px-4 py-2.5 mt-4"
         to={PRIVATE_ROUTES.MY_ACCESS_REQUESTS}>
-        Listar solicitações
+        {t("Listar solicitações")}
       </Link>
-      <Button className="ml-4 mt-4" onClick={onRequestNew}>
-        Solicitar novo acesso
+      <Button onClick={onRequestNew}>
+        {t("Solicitar novo acesso")}
       </Button>
     </>
   );

@@ -1,9 +1,16 @@
-import { useState } from "react";
 import { cn } from "../../../../config/lib/utils.ts";
 import { ChevronLeft } from "lucide-react";
 import { useSidebar } from "../../../hooks/useSidebar.tsx";
-import { navItems, supportNavItems } from "./constant/sidebar.constant.ts";
-import { DashboardNav } from "./partials/DashboardNav.tsx";
+import {
+  administrationNavItems,
+  inviteNavItems,
+  primaryNavItems,
+  requestNavItems,
+  supportNavItems
+} from "./constant/sidebar.constant.ts";
+import { DashboardNav } from "./dashboard-nav/DashboardNav.tsx";
+import { useI18n } from "../../../context/i18n/I18nContext.tsx";
+import "./Sidebar.scss";
 
 type SidebarProps = {
   className?: string;
@@ -11,43 +18,65 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
-  const [status, setStatus] = useState(false);
-
-  const handleToggle = () => {
-    setStatus(true);
-    toggle();
-    setTimeout(() => setStatus(false), 500);
-  };
+  const { t } = useI18n();
 
   return (
     <nav
       className={cn(
-        `relative hidden flex-none border-r z-10 none pt-6 pb-6 flex flex-col justify-between`,
-        status && "duration-300",
-        !isMinimized ? "w-[296px]" : "!w-[72px]",
+        "dashboard-sidebar",
+        isMinimized && "dashboard-sidebar--collapsed",
         className
       )}>
-      <ChevronLeft
-        className={cn(
-          "absolute -right-3 bottom-20 cursor-pointer rounded-full border border-gray-100 bg-background text-3xl text-foreground",
-          isMinimized && "rotate-180"
-        )}
-        onClick={handleToggle}
-      />
-
-      <div className={cn(
-        "transition-all duration-700 ease-in-out",
-        !isMinimized ? "mx-6" : "mx-auto"
-      )}>
-        <DashboardNav items={navItems} />
+      <div className="dashboard-sidebar__content">
+        <div className="dashboard-sidebar__nav-items">
+          <div className="dashboard-sidebar__group">
+            <DashboardNav items={primaryNavItems} />
+          </div>
+          {requestNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <p className="dashboard-sidebar__section-title">{t("Solicitações")}</p>
+              <DashboardNav items={requestNavItems} />
+            </div>
+          )}
+          {inviteNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <p className="dashboard-sidebar__section-title">{t("Convites")}</p>
+              <DashboardNav items={inviteNavItems} />
+            </div>
+          )}
+          {administrationNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <p className="dashboard-sidebar__section-title">{t("Administração")}</p>
+              <DashboardNav items={administrationNavItems} />
+            </div>
+          )}
+          {supportNavItems.length > 0 && (
+            <div className="dashboard-sidebar__group">
+              <DashboardNav items={supportNavItems} />
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className={cn(
-        "transition-all duration-700 ease-in-out",
-        !isMinimized ? "mx-4" : "mx-auto"
-      )}>
-        <DashboardNav items={supportNavItems}></DashboardNav>
-      </div>
+      <footer className="dashboard-sidebar__footer">
+        <button
+          type="button"
+          className="dashboard-sidebar__toggle-button"
+          onClick={toggle}
+          aria-label={isMinimized ? t("Expandir menu") : t("Recolher menu")}>
+          <ChevronLeft
+            className={cn(
+              "dashboard-sidebar__toggle-icon",
+              isMinimized && "dashboard-sidebar__toggle-icon--collapsed"
+            )}
+          />
+          {!isMinimized && (
+            <span className="dashboard-sidebar__toggle-label">
+              {t("Recolher menu")}
+            </span>
+          )}
+        </button>
+      </footer>
     </nav>
   );
 }

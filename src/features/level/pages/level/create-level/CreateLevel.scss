@@ -1,0 +1,195 @@
+.create-level {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__loader {
+    padding: var(--system-form-page-padding-top);
+  }
+
+  &__header-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-header-container-gap);
+    padding-inline: var(--system-form-page-padding-inline);
+    padding-top: var(--system-form-header-padding-top);
+    padding-bottom: var(--system-form-header-padding-bottom);
+    border-bottom: var(--system-form-header-container-border);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--system-form-header-gap);
+    width: 100%;
+  }
+
+  &__header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--system-form-header-main-gap);
+  }
+
+  &__back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--pagination-control-height);
+    height: var(--pagination-control-height);
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background-color: var(--background);
+    color: var(--default-text-color);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  &__heading-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-heading-content-gap);
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--system-form-title-gap);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--title-size);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__scroll-area {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__scroll-viewport {
+    padding-inline: var(--system-form-page-padding-inline);
+    padding-top: var(--system-form-page-padding-top);
+    padding-bottom: var(--system-form-page-padding-bottom);
+    box-sizing: border-box;
+  }
+
+  &__content-wrapper {
+    width: 100%;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-actions-padding-top);
+  }
+
+  &__card {
+    width: 100%;
+    border: var(--system-form-card-border);
+    border-radius: var(--system-form-card-radius);
+    background-color: var(--background);
+    box-shadow: var(--system-form-card-shadow);
+    overflow: hidden;
+  }
+
+  &__card-content {
+    padding: var(--system-form-content-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-form-row-gap);
+  }
+
+  &__row,
+  &__external-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--system-form-field-min-width), 1fr));
+    gap: var(--system-form-form-column-gap);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__required {
+    color: var(--system-form-required-color);
+  }
+
+  &__select {
+    justify-content: space-between;
+  }
+
+  &__textarea {
+    min-height: var(--system-form-textarea-min-height);
+    resize: none;
+    padding-block: var(--system-form-textarea-padding-block);
+  }
+
+  &__input--error,
+  &__textarea--error,
+  &__select--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__type-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--system-form-required-color);
+    font-size: var(--system-form-error-font-size);
+  }
+
+  &__hint,
+  &__notice {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__endpoint-link {
+    color: var(--color-primary-500);
+    font-weight: var(--title-font-weight);
+    margin-inline-end: var(--system-form-step-text-gap);
+  }
+
+  &__counter {
+    margin: 0;
+    margin-inline-start: auto;
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__action-button {
+    min-height: var(--pagination-control-height);
+    padding-inline: var(--system-form-action-button-padding-inline);
+    border-radius: var(--system-form-control-radius);
+  }
+}

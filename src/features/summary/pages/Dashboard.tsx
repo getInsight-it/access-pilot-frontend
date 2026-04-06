@@ -1,8 +1,6 @@
 import { ScrollArea } from "../../../common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
-import { Separator } from "../../../common/external/ui/separator.tsx";
-import { HeaderContainer, Heading } from "../../../common/components/heading.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../common/external/ui/table.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,16 +30,18 @@ import { RequestInterface } from "../../requests/common/types/request.model.ts";
 import { requestService } from "../../requests/common/api/request-service.ts";
 import { clientService } from "../../client/common/service/client-service.ts";
 import { ClientResponseInterface } from "../../client/common/model/client.model.ts";
-import HighlightLoader from "../../../common/components/loading/HighLightLoader.tsx";
-import { ClientCard } from "./partials/ClientCard.tsx";
+import { ClientCard } from "./partials/client-card/ClientCard.tsx";
 import { MOTION_DIV_DEFAULT_ANIMATION_CONFIG } from "../../../common/constants/animation.ts";
 import { SummaryCardData } from "./types/status-card-data.model.ts";
 import { StatusCardData } from "./types/summary-card-data.model.ts";
-import { EmptyState } from "./partials/EmptyState.tsx";
+import { EmptyState } from "./partials/empty-state/EmptyState.tsx";
 import { formatErrorMessages } from "../../../common/utils/error-utils.ts";
 import useAuthStore, { UserInfo } from "../../../store/authStore.ts";
 import { RoleComponentGuard } from "../../../common/context/auth/RoleGuard.tsx";
 import { UserRoleEnum } from "../../../common/types/user/user.model.ts";
+import { SectionLoader } from "../../../common/components/loading/section-loader/SectionLoader.tsx";
+import { useI18n } from "../../../common/context/i18n/I18nContext.tsx";
+import "./Dashboard.scss";
 
 const REQUEST_PAGINATION = {
   PAGE: 1,
@@ -52,6 +52,7 @@ const REQUEST_PAGINATION = {
 };
 
 const useDashboardData = () => {
+  const { t } = useI18n();
   const [requests, setRequests] = useState<RequestInterface[]>([]);
   const [summary, setSummary] = useState<SummaryModel | null>(null);
   const [attachedClients, setAttachedClients] = useState<ClientResponseInterface[]>([]);
@@ -69,14 +70,14 @@ const useDashboardData = () => {
       );
       setRequests(pageResponse?.items || []);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar solicitações",
+        title: t("Erro ao carregar solicitações"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const fetchClients = useCallback(async (
     attached: boolean,
@@ -86,28 +87,28 @@ const useDashboardData = () => {
       const clients = await clientService.getClientsAssociates(attached);
       setter(clients || []);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar sistemas",
+        title: t("Erro ao buscar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const fetchSummary = useCallback(async (): Promise<void> => {
     try {
       const summaryData = await summaryService.getSummary();
       setSummary(summaryData);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar sumário",
+        title: t("Erro ao buscar sumário"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
 
   const loadAllData = useCallback(async (): Promise<void> => {
     setLoading(true);
@@ -119,16 +120,16 @@ const useDashboardData = () => {
         fetchRequests()
       ]);
     } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
+      const errorMessage = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar dados do dashboard",
+        title: t("Erro ao carregar dados do dashboard"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [fetchClients, fetchSummary, fetchRequests]);
+  }, [fetchClients, fetchSummary, fetchRequests, t]);
 
   return {
     requests,
@@ -146,9 +147,10 @@ const useNavigation = () => {
   const handleRequestAccess = useCallback((client?: ClientResponseInterface): void => {
     if (client) {
       navigate(PRIVATE_ROUTES.REQUEST_ACCESS, { state: client });
-    } else {
-      navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
+      return;
     }
+
+    navigate(PRIVATE_ROUTES.REQUEST_ACCESS);
   }, [navigate]);
 
   const handleSeeClientDetails = useCallback((clientId: string): void => {
@@ -168,51 +170,53 @@ const useNavigation = () => {
   };
 };
 
-/**
- * Gets the display name for a user
- *
- * @param user - User information object
- * @returns Formatted user display name or fallback text
- */
-const getUserDisplayName = (user: UserInfo | null | undefined): string => {
+const getUserDisplayName = (
+  user: UserInfo | null | undefined,
+  t: (key: string, values?: Record<string, string | number>) => string
+): string => {
   if (user?.firstName && user?.lastName) {
     return `${user.firstName} ${user.lastName}`;
   }
+
   if (user?.firstName) {
     return user.firstName;
   }
+
   if (user?.username) {
     return user.username;
   }
-  return "Usuário";
+
+  return t("Usuário");
 };
 
 const LoadingState = () => {
+  const { t } = useI18n();
   const user = useAuthStore((state) => state.user);
-  const displayName = getUserDisplayName(user);
+  const displayName = getUserDisplayName(user, t);
 
   return (
-    <motion.div
-      className="flex flex-col h-full"
-      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
-      <div className="flex-none">
-        <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
-            <Heading title={`Olá, ${displayName}`} />
-          </div>
+    <motion.div className="dashboard-page dashboard-page--loading-state" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+      <div>
+        <HeaderContainer className="dashboard-page__header-container">
+          <Heading
+            className="dashboard-page__heading"
+            title={t("Olá, {{name}}", { name: displayName })}
+            description={t("Carregando o panorama geral do ambiente.")}
+          />
         </HeaderContainer>
-        <Separator />
       </div>
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <HighlightLoader />
+
+      <div className="dashboard-page__loading">
+        <SectionLoader />
       </div>
     </motion.div>
   );
 };
 
 export default function Dashboard() {
+  const { t } = useI18n();
   const user = useAuthStore((state) => state.user);
-  const displayName = getUserDisplayName(user);
+  const displayName = getUserDisplayName(user, t);
 
   const {
     requests,
@@ -235,266 +239,277 @@ export default function Dashboard() {
 
   const summaryCards = useMemo((): SummaryCardData[] => [
     {
-      title: "Solicitações aprovadas",
+      title: t("Solicitações aprovadas"),
+      description: t("Demandas concluídas e liberadas para uso no ambiente."),
       value: summary?.totalApprovedRequests || 0,
       icon: Users,
-      bgColor: "bg-success-25",
-      iconBg: "bg-success-100",
-      iconColor: "text-success-700",
-      textColor: "text-success-900",
-      valueColor: "text-success-700"
+      tone: "success"
     },
     {
-      title: "Solicitações pendentes",
+      title: t("Solicitações pendentes"),
+      description: t("Itens aguardando análise ou ação do fluxo de aprovação."),
       value: summary?.totalPendingRequests || 0,
       icon: FileText,
-      bgColor: "bg-warning-50",
-      iconBg: "bg-warning-100",
-      iconColor: "text-warning-700",
-      textColor: "text-warning-900",
-      valueColor: "text-warning-700"
+      tone: "warning"
     },
     {
-      title: "Total de sistemas",
+      title: t("Sistemas monitorados"),
+      description: t("Sistemas disponíveis no ambiente para consulta e solicitação."),
       value: summary?.totalClients || 0,
       icon: TrendingUp,
-      bgColor: "bg-indigo-25",
-      iconBg: "bg-indigo-100",
-      iconColor: "text-indigo-700",
-      textColor: "text-indigo-900",
-      valueColor: "text-indigo-700"
+      tone: "primary"
     }
-  ], [summary]);
+  ], [summary, t]);
 
   const statusCards = useMemo((): StatusCardData[] => [
     {
-      label: `${summary?.totalApprovedUsers || 0} usuários com acesso aprovado`,
+      label: t("usuários com acesso aprovado"),
+      value: summary?.totalApprovedUsers || 0,
       icon: CheckCircle,
-      bgColor: "bg-success-50",
-      borderColor: "border-success-200",
-      iconColor: "text-success-500",
-      textColor: "text-success-700"
+      tone: "success"
     },
     {
-      label: `${summary?.totalRoles || 0} papéis`,
+      label: t("papéis cadastrados"),
+      value: summary?.totalRoles || 0,
       icon: Clock,
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      iconColor: "text-blue-500",
-      textColor: "text-blue-700"
+      tone: "primary"
     },
     {
-      label: `${summary?.totalClients || 0} sistemas`,
+      label: t("sistemas monitorados"),
+      value: summary?.totalClients || 0,
       icon: AlertCircle,
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      iconColor: "text-purple-500",
-      textColor: "text-purple-700"
+      tone: "violet"
     },
     {
-      label: `${summary?.totalPendingUsers || 0} usuários com solicitações pendentes`,
+      label: t("usuários com solicitações pendentes"),
+      value: summary?.totalPendingUsers || 0,
       icon: XCircle,
-      bgColor: "bg-error-50",
-      borderColor: "border-error-200",
-      iconColor: "text-red-500",
-      textColor: "text-error-700"
+      tone: "danger"
     }
-  ], [summary]);
+  ], [summary, t]);
 
   if (loading) {
     return <LoadingState />;
   }
 
-  return (
-    <motion.div
-      className="flex flex-col h-full"
-      {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+  const renderRequestActions = (requestId: number) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button type="button" className="dashboard-page__table-actions-button" aria-label={t("Abrir ações da solicitação")}>
+          <EllipsisVertical size={18} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleNavigateToRequestDetails(requestId)}>
+          <ReceiptText size={16} />
+          <span>{t("Detalhes")}</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
-      <div className="flex-none">
-        <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
-            <Heading title={`Olá, ${displayName}`} />
-          </div>
+  return (
+    <motion.div className="dashboard-page" {...MOTION_DIV_DEFAULT_ANIMATION_CONFIG}>
+      <div>
+        <HeaderContainer className="dashboard-page__header-container">
+          <Heading
+            className="dashboard-page__heading"
+            title={t("Olá, {{name}}", { name: displayName })}
+            description={t("Acompanhe solicitações, acessos e sistemas disponíveis em um único lugar.")}
+          />
         </HeaderContainer>
-        <Separator />
       </div>
 
-      <ScrollArea className="flex-grow border-r pt-6" viewportClassName="px-4 md:px-7">
-        <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
-            {summaryCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.title}
-                  className={`${card.bgColor} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 md:flex-1`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`${card.iconBg} rounded-full min-w-10 min-h-10 flex items-center justify-center`}>
-                      <Icon size={20} className={card.iconColor} />
-                    </div>
-                    <span className={`${card.textColor} text-sm sm:text-base font-normal`}>
-                      {card.title}
-                    </span>
-                  </div>
-                  <span className={`${card.valueColor} text-xl font-bold break-all ml-auto sm:ml-0`}>
-                    {card.value}
-                  </span>
+      <ScrollArea className="dashboard-page__scroll-area" viewportClassName="dashboard-page__scroll-viewport">
+        <div className="max-w-content-container dashboard-page__content">
+          <RoleComponentGuard roles={[UserRoleEnum.ADMIN]}>
+            <section className="dashboard-page__section">
+              <div className="dashboard-page__metrics-grid">
+                {summaryCards.map((card) => {
+                  const Icon = card.icon;
+                  const toneClass = `dashboard-page__metric-card--${card.tone}`;
+
+                  return (
+                    <article key={card.title} className={`dashboard-page__metric-card ${toneClass}`}>
+                      <div className="dashboard-page__metric-main">
+                        <div className="dashboard-page__metric-icon-box">
+                          <Icon className="dashboard-page__metric-icon" />
+                        </div>
+                        <div className="dashboard-page__metric-copy">
+                          <p className="dashboard-page__metric-title">{card.title}</p>
+                          <p className="dashboard-page__metric-description">{card.description}</p>
+                        </div>
+                      </div>
+                      <p className="dashboard-page__metric-value">{card.value}</p>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className="dashboard-page__status-grid">
+                {statusCards.map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <article key={card.label} className={`dashboard-page__status-card dashboard-page__status-card--${card.tone}`}>
+                      <div className="dashboard-page__status-icon-box">
+                        <Icon className="dashboard-page__status-icon" />
+                      </div>
+                      <div className="dashboard-page__status-copy">
+                        <p className="dashboard-page__status-value">{card.value}</p>
+                        <p className="dashboard-page__status-label">{card.label}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          </RoleComponentGuard>
+
+          <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">{t("Últimas solicitações")}</h3>
+                  <p className="dashboard-page__section-description">
+                    {t("Solicitações recentes atribuídas ao seu fluxo de aprovação.")}
+                  </p>
                 </div>
-              );
-            })}
-          </div>
+                <span className="app-badge app-badge--header">{requests.length}</span>
+              </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:flex-row md:flex-wrap md:gap-6 mb-6">
-            {statusCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.label}
-                  className={`flex items-center flex-1 justify-center gap-2 p-3 rounded border ${card.borderColor} ${card.bgColor}`}>
-                  <Icon size={12} className={card.iconColor} />
-                  <span className={`text-xs sm:text-sm font-medium ${card.textColor} break-all text-center`}>
-                    {card.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </RoleComponentGuard>
-
-        <RoleComponentGuard roles={[UserRoleEnum.APPROVER]}>
-          <h3 className="text-lg font-semibold mb-4">Últimas solicitações</h3>
-
-          <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-            {requests.length > 0 ? (
-              requests.map((request, index) => (
-                <div className="table-card" key={`dashboard-table-card-${index}`}>
-                  <div className="table-card__header">
-                    <span className="mr-2">Ações</span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <EllipsisVertical size={20} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          className="flex flex-row gap-2"
-                          onClick={() => handleNavigateToRequestDetails(request.id)}>
-                          <ReceiptText size={16} />
-                          <span>Detalhes</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="table-card__content">
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Sistema:</span>
-                      <span className="table-card__value">{request.role?.client?.name}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Papel:</span>
-                      <span className="table-card__value">{request.role?.name}</span>
-                    </div>
-                    <div className="table-card__content__row">
-                      <span className="table-card__label">Status:</span>
-                      {RequestStatusBadge(request.status)}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <EmptyState message="Nenhuma solicitação encontrada" />
-            )}
-          </div>
-
-          <div className="hidden lg:flex">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead width="calc(33.3% - 33px)">Sistema</TableHead>
-                  <TableHead width="calc(33.3% - 33px)">Papel</TableHead>
-                  <TableHead width="calc(33.4% - 34px)">Status</TableHead>
-                  <TableHead width="100px" className="flex items-center justify-center">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+              <div className="dashboard-page__request-cards">
                 {requests.length > 0 ? (
                   requests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.client?.name}</TableCell>
-                      <TableCell width="calc(33.3% - 33px)">{request.role?.name}</TableCell>
-                      <TableCell width="calc(33.4% - 34px)">{RequestStatusBadge(request.status)}</TableCell>
-                      <TableCell width="100px" className="flex items-center justify-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <EllipsisVertical size={20} className="cursor-pointer mx-auto" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="flex flex-row gap-2"
-                              onClick={() => handleNavigateToRequestDetails(request.id)}>
-                              <ReceiptText size={16} />
-                              <span>Detalhes</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                    <article className="dashboard-page__request-card" key={request.id}>
+                      <div className="dashboard-page__request-card-header">
+                        <span className="dashboard-page__request-card-title">{t("Ações")}</span>
+                        {renderRequestActions(request.id)}
+                      </div>
+                      <div className="dashboard-page__request-card-content">
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">{t("Sistema")}</span>
+                          <span className="dashboard-page__request-card-value">{request.role?.client?.name || "-"}</span>
+                        </div>
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">{t("Papel")}</span>
+                          <span className="dashboard-page__request-card-value">{request.role?.name || "-"}</span>
+                        </div>
+                        <div className="dashboard-page__request-card-row">
+                          <span className="dashboard-page__request-card-label">{t("Status")}</span>
+                          <span className="dashboard-page__request-card-badge">{RequestStatusBadge(request.status)}</span>
+                        </div>
+                      </div>
+                    </article>
                   ))
                 ) : (
-                  <TableRow>
-                    <TableCell {...{ colSpan: 4 }} className="py-6">
-                      <div className="flex justify-center w-full">
-                        <EmptyState message="Nenhuma solicitação encontrada" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <EmptyState message={t("Nenhuma solicitação encontrada")} />
                 )}
-              </TableBody>
-            </Table>
-          </div>
-        </RoleComponentGuard>
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-col w-full">
-            <div className="pt-4 pb-0">
-              <h3 className="text-lg font-semibold mb-4">Sistemas que você tem acesso</h3>
-            </div>
-            {attachedClients.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {attachedClients.map((client) => (
-                  <ClientCard
-                    key={client.clientId}
-                    client={client}
-                    hasAccess={true}
-                    onActionClick={() => handleSeeClientDetails(client.clientId)}
-                  />
-                ))}
               </div>
-            ) : (
-              <div className="flex justify-center w-full">
-                <EmptyState message="Nenhum sistema com acesso encontrado" />
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div className="flex flex-col pb-6">
-          <div className="pt-4 pb-0">
-            <h3 className="text-lg font-semibold mb-4">Sistemas para solicitar acesso</h3>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
-            {detachedClients.length > 0 ? (
-              detachedClients.map((client) => (
-                <ClientCard
-                  key={client.clientId}
-                  client={client}
-                  hasAccess={false}
-                  onActionClick={() => handleRequestAccess(client)}
-                />
-              ))
-            ) : (
-              <div className="col-span-full">
-                <EmptyState message="Nenhum sistema disponível para solicitação" />
+              <div className="dashboard-page__requests-table">
+                <div className="app-table app-table--icon app-table--no-filter app-table--no-footer dashboard-page__table">
+                  <div className="app-table__header">
+                    <div className="app-table__row">
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--system">
+                        <span>{t("Sistema")}</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--role">
+                        <span>{t("Papel")}</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--status">
+                        <span>{t("Status")}</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--icon dashboard-page__table-cell dashboard-page__table-cell--actions">
+                        <span>{t("Ações")}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="app-table__body">
+                    {requests.length > 0 ? (
+                      requests.map((request) => (
+                        <div key={request.id} className="app-table__row">
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--system">
+                            <span>{request.role?.client?.name || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--role">
+                            <span>{request.role?.name || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content dashboard-page__table-cell dashboard-page__table-cell--status">
+                            {RequestStatusBadge(request.status)}
+                          </div>
+                          <div className="app-table__cell app-table__cell--icon dashboard-page__table-cell dashboard-page__table-cell--actions">
+                            {renderRequestActions(request.id)}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="app-table__row">
+                        <div className="app-table__cell dashboard-page__table-empty-state">
+                          <EmptyState message={t("Nenhuma solicitação encontrada")} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
+            </section>
+          </RoleComponentGuard>
+
+          <div className="dashboard-page__systems-grid">
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">{t("Sistemas que você tem acesso")}</h3>
+                  <p className="dashboard-page__section-description">
+                    {t("Consulte detalhes, permissões e informações dos sistemas já liberados para seu perfil.")}
+                  </p>
+                </div>
+                <span className="app-badge app-badge--header">{attachedClients.length}</span>
+              </div>
+
+              {attachedClients.length > 0 ? (
+                <div className="dashboard-page__client-grid">
+                  {attachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={true}
+                      onActionClick={() => handleSeeClientDetails(client.clientId)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message={t("Nenhum sistema com acesso encontrado")} />
+              )}
+            </section>
+
+            <section className="dashboard-page__section-card">
+              <div className="dashboard-page__section-header">
+                <div className="dashboard-page__section-heading">
+                  <h3 className="dashboard-page__section-title">{t("Sistemas para solicitar acesso")}</h3>
+                  <p className="dashboard-page__section-description">
+                    {t("Descubra os sistemas disponíveis e inicie uma solicitação com os dados mais relevantes.")}
+                  </p>
+                </div>
+                <span className="app-badge app-badge--header">{detachedClients.length}</span>
+              </div>
+
+              {detachedClients.length > 0 ? (
+                <div className="dashboard-page__client-grid">
+                  {detachedClients.map((client) => (
+                    <ClientCard
+                      key={client.clientId}
+                      client={client}
+                      hasAccess={false}
+                      onActionClick={() => handleRequestAccess(client)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState message={t("Nenhum sistema disponível para solicitação")} />
+              )}
+            </section>
           </div>
         </div>
       </ScrollArea>

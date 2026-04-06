@@ -3,6 +3,7 @@ import type { ChangeEvent } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../../../../../common/external/ui/dialog.tsx";
+import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
 
 interface ImportLevelsDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ export const ImportLevelsDialog = ({
   onImportFileChange,
   onImport
 }: ImportLevelsDialogProps) => {
+  const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const triggerFileSelect = () => {
@@ -39,42 +41,42 @@ export const ImportLevelsDialog = ({
         ref={fileInputRef}
         type="file"
         accept="application/json"
-        className="hidden"
+        className="app-dialog__hidden-input"
         onChange={handleFileChange}
       />
 
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[520px]">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Importar esferas</DialogTitle>
+            <DialogTitle>{t("Importar esferas")}</DialogTitle>
             <DialogDescription>
-              Importar esferas a partir de um arquivo JSON. Esferas Built-in serão ignoradas.
+              {t("Importar esferas a partir de um arquivo JSON. Esferas Built-in serão ignoradas.")}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4 rounded-md border border-gray-200 dark:border-gray-700 p-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Arquivo JSON
+          <div className="app-dialog__body">
+            <div className="app-dialog__surface">
+              <div className="app-dialog__surface-main">
+                <span className="app-dialog__surface-title">
+                  {t("Arquivo JSON")}
                 </span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  {importFile ? importFile.name : "Nenhum arquivo selecionado"}
+                <span className="app-dialog__surface-description">
+                  {importFile ? importFile.name : t("Nenhum arquivo selecionado")}
                 </span>
               </div>
               <Button variant="outline" onClick={triggerFileSelect} disabled={importLoading}>
-                Selecionar arquivo
+                {t("Selecionar arquivo")}
               </Button>
             </div>
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={importLoading}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button onClick={onImport} disabled={importLoading}>
-              {importLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileUp className="mr-2 h-4 w-4" />}
-              {importLoading ? "Importando..." : "Importar"}
+              {importLoading ? <Loader2 className="app-dialog__button-icon animate-spin" /> : <FileUp className="app-dialog__button-icon" />}
+              {importLoading ? t("Importando...") : t("Importar")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,186 +1,205 @@
-
+import { TablePagination } from "@components/table-pagination/TablePagination.tsx";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
+import { toast } from "@common/external/ui/use-toast.ts";
+import { PRIVATE_ROUTES } from "@constants/routes.ts";
+import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
+import { motion } from "framer-motion";
+import { ArrowLeft, CirclePlus, Copy, EllipsisVertical, PencilLine, Plus, Search, Trash2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../../../../../common/external/ui/button.tsx";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "../../../../../common/external/ui/table.tsx";
-import { Breadcrumbs } from "../../../../../common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "../../../../../common/components/heading.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../../common/external/ui/dialog.tsx";
-import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
-import { Copy, Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
-import { Input } from "../../../../../common/external/ui/input.tsx";
-import { motion } from "framer-motion";
-import HighlightLoader from "../../../../../common/components/loading/HighLightLoader.tsx";
-import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
-import { savePreviousRoute } from "../../../../../common/utils/NavigationStateManager.ts";
-import { PaginationWrapper } from "../../../../../common/components/PaginationWrapper.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "../../../../../common/external/ui/dropdown-menu.tsx";
-import { useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
-import { toast } from "@common/external/ui/use-toast.ts";
-
+import { ScrollArea } from "../../../../../common/external/ui/scroll-area.tsx";
+import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
+import { type Item, useLevelItemsData, useLevelItemsOperations } from "./useLevelItems.ts";
+import "./LevelItems.scss";
 
 export default function LevelItems() {
+  const { t } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
 
   const itemsData = useLevelItemsData();
   const operations = useLevelItemsOperations(itemsData);
 
-  const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
-    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', itemsData.id || '') }
-  ];
+  const isBuiltIn = itemsData.sphere?.type === "BUILT_IN";
+  const isExternal = itemsData.sphere?.type === "EXTERNAL";
+  const showExtendedColumns = !isBuiltIn;
+  const showActions = !isExternal;
+
+  const tableModeClass = isBuiltIn
+    ? "level-items__table--built-in"
+    : isExternal
+      ? "level-items__table--external"
+      : "level-items__table--default";
+
+  const startItem = itemsData.totalItems > 0 ? (itemsData.currentPage - 1) * itemsData.pageSize + 1 : 0;
+  const endItem = itemsData.totalItems > 0 ? Math.min(itemsData.currentPage * itemsData.pageSize, itemsData.totalItems) : 0;
+
+  const handleNavigateToCreate = () => {
+    savePreviousRoute(location.pathname + location.search);
+    navigate(PRIVATE_ROUTES.CREATE_ITEM.replace(":id", itemsData.id || ""));
+  };
+
+  const handleNavigateToEdit = (itemId: number) => {
+    savePreviousRoute(location.pathname + location.search);
+    navigate(
+      PRIVATE_ROUTES.EDIT_ITEM
+        .replace(":id", itemsData.id || "")
+        .replace(":itemId", itemId.toString())
+    );
+  };
+
+  const renderActionsMenu = (item: Item) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="white" className="level-items__row-actions-button">
+          <EllipsisVertical size={20} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={() => {
+            navigator.clipboard?.writeText(item.externalCode ?? "");
+            toast({ title: t("Copiado"), description: t("Código copiado para a área de transferência.") });
+          }}
+        >
+          <Copy size={16} />
+          <span>{t("Copiar código")}</span>
+        </DropdownMenuItem>
+        {!isBuiltIn && (
+          <>
+            <DropdownMenuItem onClick={() => handleNavigateToEdit(item.id)}>
+              <PencilLine size={16} />
+              <span>{t("Editar")}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => operations.handleDelete(item)}>
+              <Trash2 size={16} />
+              <span>{t("Excluir")}</span>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   if (itemsData.loading && !itemsData.sphere) {
     return (
-      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
-        <HighlightLoader />
+      <div className="level-items__loader">
+        <SectionLoader />
       </div>
     );
   }
 
   return (
     <motion.div
-      className="flex flex-col h-full"
+      className="level-items"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
     >
-      <div className="flex-none">
-        <HeaderContainer>
-          <Breadcrumbs items={breadcrumbItems} />
+      <div>
+        <HeaderContainer className="level-items__header-container">
+          <div className="level-items__header">
+            <div className="level-items__heading-main">
+              <button
+                type="button"
+                className="level-items__back-button"
+                onClick={() => {
+                  navigate(PRIVATE_ROUTES.LEVELS);
+                }}
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <Heading
+                className="level-items__heading"
+                title={t("Itens da esfera")}
+                badgeValue={itemsData.totalItems}
+                badgeClassName="app-badge app-badge--header"
+                customDescription={(
+                  <span className="level-items__heading-description">
+                    {t("Esfera")}: <span className="level-items__heading-description-value">{itemsData.sphere?.name}</span>
+                  </span>
+                )}
+              />
+            </div>
 
-          <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
-            <Heading
-              title={"Itens da esfera"}
-              badgeValue={itemsData.totalItems}
-              returnButton={true}
-              onReturnClick={() => { navigate(PRIVATE_ROUTES.LEVELS);}}
-              customDescription={
-                <span className="text-md">
-                  Esfera: <span className="text-primary-600 cursor-pointer">{itemsData.sphere?.name}</span>
-                </span>
-              }
-            />
-            <div className="flex space-x-4 items-center">
-              {itemsData.sphere?.type !== "BUILT_IN" && itemsData.sphere?.type !== "EXTERNAL" && (
-                <>
-                  <Button
-                    className="cursor-pointer"
-                    asChild
-                    onClick={() => {
-                      savePreviousRoute(location.pathname + location.search);
-                      navigate(PRIVATE_ROUTES.CREATE_ITEM.replace(':id', itemsData.id || ''));
-                    }}>
-                    <div>
-                      <Plus className="mr-2 h-4 w-4" />
-                      <span className="hidden sm:inline">Adicionar novo item</span>
-                      <span className="sm:hidden">Adicionar</span>
-                    </div>
-                  </Button>
-                </>
+            <div className="level-items__actions">
+              {!isBuiltIn && !isExternal && (
+                <button
+                  type="button"
+                  className="ui-button ui-button--primary theme-button--primary level-items__primary-action"
+                  onClick={handleNavigateToCreate}
+                >
+                  <CirclePlus /> {t("Adicionar novo item")}
+                </button>
               )}
             </div>
           </div>
         </HeaderContainer>
       </div>
 
-      <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-7">
-        <div className="py-6 max-w-content-container m-auto">
-          <div className="flex flex-col gap-4 lg:hidden w-full sm:w-auto">
-            <div className="w-96 max-w-full">
-              <Input
-                variant="dark"
-                placeholder="Pesquisar itens..."
-                value={itemsData.searchTerm}
-                onChange={operations.handleSearchChange}
-                className="h-10 w-full border-0 bg-transparent focus:ring-0 focus:border-primary-300 placeholder:text-gray-400"
-              />
+      <ScrollArea className="level-items__scroll-area" viewportClassName="level-items__scroll-viewport">
+        <div className="max-w-content-container level-items__content">
+          <div className="level-items__mobile">
+            <div className="level-items__mobile-filter">
+              <div className="app-input-group app-input-group--icon-left level-items__mobile-filter-input">
+                  <Search className="app-input-group__icon" />
+                  <input
+                    className="app-input"
+                    placeholder={t("Pesquisar itens...")}
+                    value={itemsData.searchTerm}
+                    onChange={operations.handleSearchChange}
+                  />
+              </div>
             </div>
+
             {itemsData.filteredItems.length > 0 ? (
               <>
-                {itemsData.filteredItems.map((item, index) => (
-                  <div className="table-card" key={`mobile-table-card-${index}`}>
-                    {itemsData.sphere?.type !== 'EXTERNAL' && (
-                      <div className="table-card__header">
-                        <div className="flex items-center justify-between">
-                          <span className="mr-2">Ações</span>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <EllipsisVertical size={20} className="cursor-pointer" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem 
-                                className="flex flex-row gap-2" 
-                                onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
-                                <Copy size={16} />
-                                <span>Copiar Código</span>
-                              </DropdownMenuItem>
-                              {itemsData.sphere?.type !== "BUILT_IN" && (
-                                <>
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      savePreviousRoute(location.pathname + location.search);
-                                      navigate(
-                                        PRIVATE_ROUTES.EDIT_ITEM
-                                          .replace(":id", itemsData.id!)
-                                          .replace(":itemId", item.id.toString())
-                                      );
-                                    }}
-                                    className="flex flex-row gap-2">
-                                    <Edit size={16} />
-                                    <span>Editar</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() => operations.handleDelete(item)}
-                                    className="flex flex-row gap-2">
-                                    <Trash size={16} />
-                                    <span>Excluir</span>
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                <div className="level-items__cards">
+                  {itemsData.filteredItems.map((item) => (
+                    <div className="level-items__card" key={item.id}>
+                      {showActions && (
+                        <div className="level-items__card-header">
+                          <span>{t("Ações")}</span>
+                          {renderActionsMenu(item)}
                         </div>
-                      </div>
-                    )}
-                    <div className="table-card__content">
-                      <div className="table-card__content__row">
-                        <span className="table-card__label">Nome</span>
-                        <span className="table-card__value">{item.name}</span>
-                      </div>
-                      {itemsData.sphere?.type !== "BUILT_IN" && (
-                        <>
-                          <div className="table-card__content__row">
-                            <span className="table-card__label">Descrição</span>
-                            <span className="table-card__value">{item.description || '-'}</span>
-                          </div>
-                          <div className="table-card__content__row">
-                            <span className="table-card__label">Código</span>
-                            <span className="table-card__value">{item.externalCode || '-'}</span>
-                          </div>
-                          <div className="table-card__content__row">
-                            <span className="table-card__label">Item da esfera pai</span>
-                            <span className="table-card__value">{operations.renderParentItem(item)}</span>
-                          </div>
-                        </>
                       )}
+                      <div className="level-items__card-content">
+                        <div className="level-items__card-row">
+                          <span className="level-items__card-label">{t("Nome")}</span>
+                          <span className="level-items__card-value">{item.name}</span>
+                        </div>
+                        {showExtendedColumns && (
+                          <>
+                            <div className="level-items__card-row">
+                              <span className="level-items__card-label">{t("Descrição")}</span>
+                              <span className="level-items__card-value">{item.description || "-"}</span>
+                            </div>
+                            <div className="level-items__card-row">
+                              <span className="level-items__card-label">{t("Código")}</span>
+                              <span className="level-items__card-value">{item.externalCode || "-"}</span>
+                            </div>
+                            <div className="level-items__card-row">
+                              <span className="level-items__card-label">{t("Item da esfera pai")}</span>
+                              <span className="level-items__card-value">{operations.renderParentItem(item)}</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-                <div className="p-4">
-                  <PaginationWrapper
+                  ))}
+                </div>
+
+                <div className="level-items__mobile-pagination">
+                  <TablePagination
+                    className="level-items__pagination"
+                    align="end"
                     currentPage={itemsData.currentPage}
                     totalPages={itemsData.totalPages}
                     onPageChange={operations.handlePageChange}
@@ -188,116 +207,117 @@ export default function LevelItems() {
                 </div>
               </>
             ) : !itemsData.loading ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                  <Plus size={24} className="text-gray-400" />
+              <div className="level-items__empty-state">
+                <div>
+                  <Plus size={24} />
                 </div>
-                <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
+                <span>{t("Nenhum item encontrado para esta esfera.")}</span>
               </div>
             ) : null}
           </div>
 
-          {/* Desktop View */}
-          <div className="hidden lg:flex flex-col gap-4">
-            <div className="w-96 max-w-full">
-              <Input
-                placeholder="Pesquisar itens..."
-                className="h-10 w-full"
-                value={itemsData.searchTerm}
-                onChange={operations.handleSearchChange}
-              />
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow className="uppercase">
-                  <TableHead width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "calc(100% - 100px)"}>Nome</TableHead>
-                  {itemsData.sphere?.type !== "BUILT_IN" && (
+          <div className="level-items__desktop">
+            <div className={`app-table ${showActions ? "app-table--icon" : ""} ${tableModeClass} level-items__table`}>
+              <div className="app-table__filter">
+                <div className="level-items__table-filter-content">
+                  <div className="app-input-group app-input-group--icon-left level-items__table-filter-input">
+                    <Search className="app-input-group__icon" />
+                    <input
+                      className="app-input"
+                      placeholder={t("Pesquisar itens...")}
+                      value={itemsData.searchTerm}
+                      onChange={operations.handleSearchChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="app-table__header">
+                <div className="app-table__row">
+                  <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--name">
+                    <span>{t("Nome")}</span>
+                  </div>
+                  {showExtendedColumns && (
                     <>
-                      <TableHead width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Descrição</TableHead>
-                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Código</TableHead>
-                      <TableHead className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>Item da esfera pai</TableHead>
+                      <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--description">
+                        <span>{t("Descrição")}</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--code">
+                        <span>{t("Código")}</span>
+                      </div>
+                      <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--parent-item">
+                        <span>{t("Item da esfera pai")}</span>
+                      </div>
                     </>
                   )}
-                  {itemsData.sphere?.type !== 'EXTERNAL' && <TableHead width="100px" className="flex align-center justify-center">Ações</TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                  {showActions && (
+                    <div className="app-table__cell app-table__cell--icon level-items__table-cell level-items__table-cell--actions">
+                      <span>{t("Ações")}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="app-table__body">
                 {itemsData.filteredItems.length > 0 ? (
                   itemsData.filteredItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell width={itemsData.sphere?.type !== "BUILT_IN" ? "calc(25% - 25px)" : "calc(100% - 100px)"} wordBreak="break-word">{item.name}</TableCell>
-                      {itemsData.sphere?.type !== "BUILT_IN" && (
+                    <div key={item.id} className="app-table__row">
+                      <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--name">
+                        <span>{item.name}</span>
+                      </div>
+                      {showExtendedColumns && (
                         <>
-                          <TableCell width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.description}</TableCell>
-                          <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{item.externalCode ?? '-'}</TableCell>
-                          <TableCell className="justify-center" width={itemsData.sphere?.type !== 'EXTERNAL' ? "calc(25% - 25px)" : "25%"}>{operations.renderParentItem(item)}</TableCell>
+                          <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--description">
+                            <span>{item.description || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--code">
+                            <span>{item.externalCode || "-"}</span>
+                          </div>
+                          <div className="app-table__cell app-table__cell--content level-items__table-cell level-items__table-cell--parent-item">
+                            <span>{operations.renderParentItem(item)}</span>
+                          </div>
                         </>
                       )}
-                      {itemsData.sphere?.type !== 'EXTERNAL' && (
-                        <TableCell width="100px" className="flex align-center justify-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <EllipsisVertical size={20} className="cursor-pointer" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem 
-                                className="flex flex-row gap-2" 
-                                onClick={() => { navigator.clipboard?.writeText(item.externalCode ?? ''); toast({ title: "Copiado", description: "Código copiado para a área de transferência." }); }}>
-                                <Copy size={16} />
-                                <span>Copiar código</span>
-                              </DropdownMenuItem>
-                              {itemsData.sphere?.type !== "BUILT_IN" && (
-                                <>
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      savePreviousRoute(location.pathname + location.search);
-                                      navigate(
-                                        PRIVATE_ROUTES.EDIT_ITEM
-                                          .replace(":id", itemsData.id!)
-                                          .replace(":itemId", item.id.toString())
-                                      );
-                                    }}
-                                    className="flex flex-row gap-2">
-                                    <Edit size={16} />
-                                    <span>Editar</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() => operations.handleDelete(item)}
-                                    className="flex flex-row gap-2">
-                                    <Trash size={16} />
-                                    <span>Excluir</span>
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                      {showActions && (
+                        <div className="app-table__cell app-table__cell--icon level-items__table-cell level-items__table-cell--actions">
+                          {renderActionsMenu(item)}
+                        </div>
                       )}
-                    </TableRow>
+                    </div>
                   ))
                 ) : !itemsData.loading ? (
-                  <TableRow>
-                    <TableCell { ...{colSpan: itemsData.sphere?.type !== "BUILT_IN" ? 5 : 1} } className="py-12">
-                      <div className="flex flex-col items-center justify-center text-center w-full">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                          <Plus size={24} className="text-gray-400" />
-                        </div>
-                        <span className="text-sm text-gray-500">Nenhum item encontrado para esta esfera.</span>
+                  <div className="app-table__row">
+                    <div className="app-table__cell level-items__empty-state">
+                      <div>
+                        <Plus size={24} />
                       </div>
-                    </TableCell>
-                  </TableRow>
+                      <span>{t("Nenhum item encontrado para esta esfera.")}</span>
+                    </div>
+                  </div>
                 ) : null}
-              </TableBody>
-              <TableFooter>
-                <div className="p-4">
-                  <PaginationWrapper
-                    currentPage={itemsData.currentPage}
-                    totalPages={itemsData.totalPages}
-                    onPageChange={operations.handlePageChange}
-                  />
+              </div>
+
+              <div className="app-table__footer">
+                <div className="level-items__table-footer">
+                  <div className="level-items__table-footer-info">
+                    {t("{{start}}-{{end}} de {{total}} itens", {
+                      start: startItem,
+                      end: endItem,
+                      total: itemsData.totalItems
+                    })}
+                  </div>
+                  <div className="level-items__table-footer-pagination">
+                    <TablePagination
+                      className="level-items__pagination"
+                      align="end"
+                      currentPage={itemsData.currentPage}
+                      totalPages={itemsData.totalPages}
+                      onPageChange={operations.handlePageChange}
+                    />
+                  </div>
                 </div>
-              </TableFooter>
-            </Table>
+              </div>
+            </div>
           </div>
         </div>
       </ScrollArea>
@@ -305,18 +325,18 @@ export default function LevelItems() {
       <Dialog open={operations.deleteModalOpen} onOpenChange={operations.setDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Você tem certeza?</DialogTitle>
+            <DialogTitle>{t("Você tem certeza?")}</DialogTitle>
           </DialogHeader>
-          <p>
-            Esta ação não pode ser desfeita. Isso irá permanentemente excluir o item
+          <p className="app-dialog__text">
+            {t("Esta ação não pode ser desfeita. Isso irá permanentemente excluir o item")}
             {operations.itemToDelete && <strong> {operations.itemToDelete.name}</strong>}.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => operations.setDeleteModalOpen(false)}>
-              Cancelar
+              {t("Cancelar")}
             </Button>
             <Button variant="destructive" onClick={operations.confirmDelete}>
-              Excluir
+              {t("Excluir")}
             </Button>
           </DialogFooter>
         </DialogContent>

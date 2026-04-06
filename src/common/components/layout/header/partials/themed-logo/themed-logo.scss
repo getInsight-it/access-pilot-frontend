@@ -1,0 +1,29 @@
+.themed-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--header-logo-gap);
+
+  &__icon-box {
+    width: var(--header-logo-icon-box-size);
+    height: var(--header-logo-icon-box-size);
+    border-radius: var(--header-logo-icon-box-radius);
+    background-color: var(--header-logo-icon-box-background-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__icon {
+    width: var(--header-logo-icon-size);
+    height: var(--header-logo-icon-size);
+    object-fit: contain;
+  }
+
+  &__title {
+    color: var(--header-logo-title-color);
+    font-size: var(--header-logo-title-font-size);
+    font-weight: var(--header-logo-title-font-weight);
+    letter-spacing: var(--header-logo-title-letter-spacing);
+  }
+}

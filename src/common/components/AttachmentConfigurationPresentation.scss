@@ -1,0 +1,152 @@
+.attachment-configuration-presentation {
+  display: grid;
+  gap: var(--request-detail-content-gap);
+
+  &--direction-column {
+    grid-template-columns: repeat(var(--attachment-configuration-list-max-columns), minmax(0, 1fr));
+  }
+
+  &--direction-row {
+    grid-template-columns: repeat(var(--request-detail-attachments-grid-columns), minmax(0, 1fr));
+  }
+
+  &--empty {
+    display: flex;
+    align-items: center;
+    gap: var(--request-detail-content-gap);
+    padding: var(--request-detail-card-padding);
+    border: var(--request-detail-card-border);
+    border-radius: var(--request-detail-card-radius);
+    background-color: var(--background);
+  }
+
+  &__empty-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-detail-info-icon-box-size);
+    height: var(--request-detail-info-icon-box-size);
+    border-radius: var(--request-detail-info-icon-box-radius);
+    background-color: var(--request-status-tone-neutral-surface-color);
+    color: var(--request-status-tone-neutral-text-color);
+    flex: 0 0 auto;
+  }
+
+  &__empty-icon {
+    width: var(--request-detail-info-icon-size);
+    height: var(--request-detail-info-icon-size);
+  }
+
+  &__empty-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-empty-state-gap);
+  }
+
+  &__empty-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-detail-info-value-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__empty-text {
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-card-content-gap);
+    padding: var(--request-detail-card-padding);
+    border: var(--request-detail-card-border);
+    border-radius: var(--request-detail-card-radius);
+    background-color: var(--background);
+  }
+
+  &__group-title {
+    margin: 0;
+    color: var(--request-detail-info-label-color);
+    font-size: var(--request-detail-info-label-font-size);
+    font-weight: var(--default-text-font-weight);
+    text-transform: uppercase;
+  }
+
+  &__files {
+    display: flex;
+    flex-direction: column;
+    gap: var(--request-detail-file-row-gap);
+  }
+
+  &__file-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--request-detail-card-content-gap);
+    padding: var(--request-detail-file-row-padding);
+    border: var(--request-detail-card-border);
+    border-radius: var(--request-detail-control-radius);
+    background-color: var(--request-detail-file-row-background-color);
+  }
+
+  &__file-main {
+    display: flex;
+    align-items: center;
+    gap: var(--request-detail-file-icon-gap);
+    min-width: 0;
+  }
+
+  &__file-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-detail-file-icon-box-size);
+    height: var(--request-detail-file-icon-box-size);
+    border-radius: var(--request-detail-control-radius);
+    background-color: var(--request-status-tone-danger-surface-color);
+    flex: 0 0 auto;
+  }
+
+  &__file-name {
+    color: var(--default-text-color);
+    font-size: var(--request-detail-info-value-font-size);
+    font-weight: var(--default-text-font-weight);
+    word-break: break-word;
+  }
+
+  &__download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-detail-copy-button-size);
+    height: var(--request-detail-copy-button-size);
+    border: 0;
+    border-radius: var(--request-detail-control-radius);
+    background: transparent;
+    color: var(--request-detail-info-label-color);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  &__download-icon {
+    width: var(--request-detail-copy-icon-size);
+    height: var(--request-detail-copy-icon-size);
+  }
+
+  &__toggle-row {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  &__toggle-button {
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-600);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    cursor: pointer;
+    padding: 0;
+  }
+}

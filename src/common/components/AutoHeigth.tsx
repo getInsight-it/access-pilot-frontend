@@ -26,12 +26,11 @@ export function AutoHeight({
 
   return (
     <motion.div
-      className="box-border border rounded-xl bg-secondary"
       style={{ boxSizing: "border-box", overflow: "hidden", height }}
       animate={{ height }}
       transition={{ duration: transitionDuration, ease: "easeInOut" }}>
       <div ref={containerRef}>
-        <Card className="border-none bg-secondary">{children}</Card>
+        <Card>{children}</Card>
       </div>
     </motion.div>
   );

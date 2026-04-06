@@ -1,0 +1,80 @@
+.login-page {
+  width: 100%;
+  height: calc(var(--mobile-vh, 1vh) * 100);
+  display: grid;
+  grid-template-columns: var(--login-layout-columns);
+  background-color: var(--background);
+
+  &__visual {
+    position: relative;
+    overflow: hidden;
+    border-inline-end: var(--login-visual-border);
+    background-color: var(--login-visual-background-color);
+  }
+
+  &__visual-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--login-panel-padding-inline);
+    padding-block: var(--login-panel-padding-block);
+  }
+
+  &__panel-content {
+    width: 100%;
+    max-width: var(--login-panel-max-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--login-panel-content-gap);
+  }
+
+  &__brand {
+    display: inline-flex;
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--login-heading-gap);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--login-title-font-size);
+    font-weight: var(--login-title-font-weight);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__action {
+    min-height: var(--login-action-height);
+    padding-inline: var(--login-action-padding-inline);
+    border-radius: var(--login-action-radius);
+    align-self: flex-start;
+  }
+
+  @media (max-width: var(--login-breakpoint-stack)) {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--login-visual-mobile-height) 1fr;
+
+    &__visual {
+      border-inline-end: 0;
+      border-block-end: var(--login-visual-border);
+    }
+
+    &__action {
+      align-self: stretch;
+    }
+  }
+}

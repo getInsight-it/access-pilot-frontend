@@ -1,7 +1,5 @@
-import HighlightLoader from "./loading/HighLightLoader.tsx";
+import { SectionLoader } from "./loading/section-loader/SectionLoader.tsx";
 
 export const ContentLoader = () => (
-  <div className="flex items-center justify-center min-h-[60vh]">
-    <HighlightLoader />
-  </div>
+  <SectionLoader />
 );

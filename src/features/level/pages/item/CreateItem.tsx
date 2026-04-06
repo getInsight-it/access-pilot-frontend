@@ -1,26 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { Breadcrumbs } from "@common/components/breadcrumbs.tsx";
-import { HeaderContainer, Heading } from "@common/components/heading.tsx";
+import { HeaderContainer } from "@common/components/heading/heading.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
-import { Separator } from "@common/external/ui/separator.tsx";
 import { motion } from "framer-motion";
 import { toast } from "@common/external/ui/use-toast.ts";
-import { Label } from "@common/external/ui/label.tsx";
-import { Input } from "@common/external/ui/input.tsx";
 import { Button } from "@common/external/ui/button.tsx";
-import { Textarea } from "@common/external/ui/textarea.tsx";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "../../../../common/external/ui/tooltip.tsx";
-import { AlertCircle, Loader2 } from "lucide-react";
-import HighlightLoader from "@common/components/loading/HighLightLoader.tsx";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
 import { levelService } from "@features/level/common/api/level-service.ts";
 import { LevelInterface } from "@features/level/common/types/level.model.ts";
-import { LevelItemInterface } from "@features/level/common/types/level-item.model.ts";
 import DynamicSphereForm from "@features/level/common/components/DynamicSphereForm.tsx";
-import { goToPreviousRoute } from "@common/utils/NavigationStateManager.ts";
 import { formatErrorMessages } from "@common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import "./CreateItem.scss";
 
 interface FormData {
   name: string;
@@ -29,27 +23,26 @@ interface FormData {
   parentId?: string;
 }
 
-interface PageablePresentationLevelItemInterface {
-  items: LevelItemInterface[];
-  total: number;
-  hasMorePages: boolean;
-  page: number;
-}
-
 export const CreateItem: React.FC = () => {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState<LevelInterface | null>(null);
-  const [pageableAvailableParentItens, setPageableAvailableParentItens] = useState<PageablePresentationLevelItemInterface>({
-    items: [],
-    total: 0,
-    hasMorePages: true,
-    page: 1
-  });
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    clearErrors,
+    formState: { errors }
+  } = useForm<FormData>();
   const { id: levelId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const descriptionValue = watch("description", "");
+
+  const pageTitle = t("Novo item");
+  const pageDescription = t("Preencha os dados para criar um novo item para a esfera selecionada.");
 
   const retrieveLevel = async (id: string) => {
     try {
@@ -58,40 +51,7 @@ export const CreateItem: React.FC = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar informações da esfera",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const retriveAvailableParentItemOptions = async (
-    parentId: string,
-    incremental?: boolean
-  ) => {
-    const { page, hasMorePages } = pageableAvailableParentItens;
-    if (!parentId || !hasMorePages) return;
-    try {
-      const availableItems = await levelService.getLevelItems(parentId, page, 30, "id", "ASC");
-      if (incremental) {
-        setPageableAvailableParentItens((prev) => ({
-          ...prev,
-          page: prev.page + 1,
-          items: [...prev.items, ...availableItems.items],
-          hasMorePages: prev.items.length + availableItems.items.length < availableItems.total
-        }));
-      } else {
-        setPageableAvailableParentItens({
-          items: availableItems.items,
-          total: availableItems.total,
-          hasMorePages: availableItems.items.length < availableItems.total,
-          page: 2
-        });
-      }
-    } catch (error: unknown) {
-      const errorMessage: string = formatErrorMessages(error);
-      toast({
-        title: "Erro ao buscar opções de itens pais",
+        title: t("Erro ao buscar informações da esfera"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -108,12 +68,12 @@ export const CreateItem: React.FC = () => {
         parentId: data.parentId ? Number(data.parentId) : undefined
       });
 
-      toast({ title: "Sucesso", description: "Item adicionado com sucesso!" });
-      navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!));
+      toast({ title: t("Sucesso"), description: t("Item adicionado com sucesso!") });
+      navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(":id", levelId!));
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao adicionar item",
+        title: t("Erro ao adicionar item"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -130,155 +90,124 @@ export const CreateItem: React.FC = () => {
       }
     };
 
-    initPage();
+    void initPage();
   }, [levelId]);
-
-  useEffect(() => {
-    if (level && level.parent) {
-      retriveAvailableParentItemOptions(level.parent.id.toString());
-    }
-  }, [level]);
 
   if (loading) {
     return (
-      <div className="space-y-4 p-4 pt-6 md:p-8 w-full h-full grid items-center justify-center">
-        <HighlightLoader />
+      <div className="create-item__loader">
+        <SectionLoader />
       </div>
     );
   }
 
-  const breadcrumbItems = [
-    { title: "Gerenciar esferas", link: PRIVATE_ROUTES.LEVELS },
-    { title: "Itens", link: PRIVATE_ROUTES.LEVEL_ITEMS.replace(':id', levelId!) },
-    { title: "Criar item", link: "" }
-  ];
-
   return (
-    <ScrollArea className="h-full">
-      <motion.div
-        className="flex flex-col h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+    <motion.div
+      className="create-item"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <HeaderContainer className="create-item__header-container">
+        <div className="create-item__header">
+          <div className="create-item__header-main">
+            <button
+              type="button"
+              className="create-item__back-button"
+              onClick={() => navigate(PRIVATE_ROUTES.LEVEL_ITEMS.replace(":id", levelId!))}
+            >
+              <ArrowLeft size={18} />
+            </button>
 
-        <div className="flex-none">
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div className="pl-1 flex items-start justify-between">
-              <Heading
-                title={`Criar item`}
-                returnButton={true}
-                onReturnClick={() => goToPreviousRoute(navigate)}
-                customDescription={
-                  <span className="text-md">
-                    Esfera: <span className="text-primary-600">{level?.name}</span>
-                  </span>
-                }
-              />
+            <div className="create-item__heading-content">
+              <div className="create-item__title-row">
+                <h2 className="create-item__title">{pageTitle}</h2>
+              </div>
+              <p className="create-item__description">{pageDescription}</p>
+              <p className="create-item__context">
+                {t("Esfera")}: <span className="create-item__context-value">{level?.name}</span>
+              </p>
             </div>
-          </HeaderContainer>
-
-          <Separator />
+          </div>
         </div>
+      </HeaderContainer>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="px-6 py-6 max-w-content-container m-auto">
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-content-container m-auto">
-              <div className="space-y-4 pb-10">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">Nome <span className="text-primary-600">*</span></Label>
-                    <div className="relative">
-                      <Input
-                        id="name"
-                        placeholder="Escreva o nome do item"
-                        className={`mt-2 ${errors.name ? "border-red-500" : ""}`}
-                        {...register("name", {
-                          required: "Nome é obrigatório",
-                          minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" },
-                        })}
-                      />
-                      {errors.name && (
-                        <>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-1/3 transform -translate-y-1/2" />
-                              </TooltipTrigger>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <p className="text-red-500 text-xs mt-2">{errors.name.message}</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="externalCode">Código <span className="text-primary-600">*</span></Label>
-                    <div className="relative">
-                      <Input
-                        id="externalCode"
-                        placeholder="Escreva o código do item"
-                        className={`mt-2 ${errors.externalCode ? "border-red-500" : ""}`}
-                        {...register("externalCode", {
-                          required: "O Código é obrigatório",
-                          minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" },
-                          pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
-                        })}
-                      />
-                      {errors.externalCode && (
-                        <>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
-                              </TooltipTrigger>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <p className="text-red-500 text-xs mt-2">{errors.externalCode.message}</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">Descrição <span className="text-primary-600">*</span></Label>
-                  <div className="relative">
-                    <Textarea
-                      id="description"
-                      placeholder="Escreva uma descrição para o item"
-                      className={`mt-2 ${errors.description ? "border-red-500" : ""}`}
-                      {...register("description", {
-                        required: "Descrição é obrigatória",
-                        minLength: { value: 3, message: "A descrição deve conter no mínimo 3 caracteres" }
+      <ScrollArea className="create-item__scroll-area" viewportClassName="create-item__scroll-viewport">
+        <div className="create-item__content-wrapper">
+          <form className="create-item__form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="create-item__card">
+              <div className="create-item__card-content">
+                <div className="create-item__row">
+                  <div className="create-item__field">
+                    <label className="create-item__label" htmlFor="name">
+                      {t("Nome")} <span className="create-item__required">*</span>
+                    </label>
+                    <input
+                      id="name"
+                      placeholder={t("Escreva o nome do item")}
+                      className={`app-input create-item__input${errors.name ? " create-item__input--error" : ""}`}
+                      {...register("name", {
+                        required: "Nome é obrigatório",
+                        minLength: { value: 3, message: "O nome deve conter no mínimo 3 caracteres" },
                       })}
                     />
-                    {errors.description && (
-                      <>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <AlertCircle className="h-5 w-5 text-red-500 absolute right-3 top-3" />
-                            </TooltipTrigger>
-                          </Tooltip>
-                        </TooltipProvider>
-                        <p className="text-red-500 text-xs mt-2">{errors.description.message}</p>
-                      </>
+                    {errors.name && <p className="create-item__error">{t(errors.name.message?.toString() || "")}</p>}
+                  </div>
+
+                  <div className="create-item__field">
+                    <label className="create-item__label" htmlFor="externalCode">
+                      {t("Código")} <span className="create-item__required">*</span>
+                    </label>
+                    <input
+                      id="externalCode"
+                      placeholder={t("Escreva o código do item")}
+                      className={`app-input create-item__input${errors.externalCode ? " create-item__input--error" : ""}`}
+                      {...register("externalCode", {
+                        required: "O Código é obrigatório",
+                        minLength: { value: 3, message: "O código externo deve conter no mínimo 3 caracteres" },
+                        pattern: { value: /^[a-zA-Z0-9-_]+$/, message: "O código não deve conter espaços em branco" }
+                      })}
+                    />
+                    {errors.externalCode ? (
+                      <p className="create-item__error">{t(errors.externalCode.message?.toString() || "")}</p>
+                    ) : (
+                      <p className="create-item__hint">{t("Use apenas letras, números, hífen e sublinhado.")}</p>
                     )}
                   </div>
                 </div>
 
+                <div className="create-item__field">
+                  <label className="create-item__label" htmlFor="description">
+                    {t("Descrição")} <span className="create-item__required">*</span>
+                  </label>
+                  <textarea
+                    id="description"
+                    placeholder={t("Escreva uma descrição para o item")}
+                    maxLength={200}
+                    className={`app-textarea create-item__textarea${errors.description ? " create-item__textarea--error" : ""}`}
+                    {...register("description", {
+                      required: "Descrição é obrigatória",
+                      minLength: { value: 3, message: "A descrição deve conter no mínimo 3 caracteres" }
+                    })}
+                  />
+                  {errors.description ? (
+                    <p className="create-item__error">{t(errors.description.message?.toString() || "")}</p>
+                  ) : (
+                    <p className="create-item__counter">{descriptionValue.length}/200 {t("caracteres")}</p>
+                  )}
+                </div>
+
                 {level?.parent && (
-                  <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="parentId">Selecione o item pai:</Label>
+                  <div className="create-item__field">
+                    <label className="create-item__label" htmlFor="parentId">
+                      {t("Selecione o item pai")} <span className="create-item__required">*</span>
+                    </label>
                     <Controller
                       name="parentId"
                       control={control}
                       defaultValue=""
                       rules={{ required: "Item pai é obrigatório" }}
                       render={({ field }) => (
-                        <div className="relative mt-2">
+                        <div className="create-item__sphere-wrapper">
                           <DynamicSphereForm
                             initialId={level.parent!.id}
                             simpleLabel={true}
@@ -287,43 +216,39 @@ export const CreateItem: React.FC = () => {
                             }}
                             onHierarchyComplete={(itemId) => {
                               field.onChange(itemId.toString());
+                              clearErrors("parentId");
                             }}
                             hasError={!!errors.parentId}
-                            onErrorClear={() => {
-                              if (errors.parentId) {
-                                Object.assign(errors, { parentId: undefined });
-                                control.unregister("parentId");
-                                control.register("parentId");
-                              }
-                            }}
+                            onErrorClear={() => clearErrors("parentId")}
                           />
                         </div>
                       )}
                     />
+                    {errors.parentId && <p className="create-item__error">{t(errors.parentId.message?.toString() || "")}</p>}
                   </div>
                 )}
               </div>
-            </form>
-          </div>
-        </ScrollArea>
+            </div>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end dark:bg- border-t">
-          <Button
-            type="submit"
-            onClick={handleSubmit(onSubmit)}
-            disabled={submitting}
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Criando...
-              </>
-            ) : (
-              "Criar Item"
-            )}
-          </Button>
-        </footer>
-      </motion.div>
-    </ScrollArea>
+            <div className="create-item__actions">
+              <Button
+                type="submit"
+                className="create-item__action-button"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="create-item__spinner" />
+                    {t("Criando...")}
+                  </>
+                ) : (
+                  t("Criar item")
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 };

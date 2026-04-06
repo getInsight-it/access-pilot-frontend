@@ -1,4 +1,6 @@
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider.tsx";
+import { useI18n } from "../common/context/i18n/I18nContext.tsx";
 
 import { Button } from "../common/external/ui/button.tsx";
 import {
@@ -7,27 +9,58 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "../common/external/ui/dropdown-menu.tsx";
-import { Sun } from "lucide-react";
+import "./theme-toggle.scss";
 
 export default function ThemeToggle() {
-  const { changeTheme } = useTheme();
+  const { changeTheme, theme } = useTheme();
+  const { t } = useI18n();
+
+  const renderCurrentThemeIcon = () => {
+    if (theme === "gov") {
+      return (
+        <img
+          className="theme-toggle__trigger-logo"
+          src="/govbr/logo.svg"
+          alt="GOV.BR"
+        />
+      );
+    }
+
+    const CurrentIcon = theme === "dark" ? Moon : Sun;
+    return <CurrentIcon className="theme-toggle__trigger-icon" />;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="h-8 w-8 sm:h-10 sm:w-10">
-          <Sun className="h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-0 scale-100 transition-all text-default" />
-          <span className="sr-only">Toggle theme</span>
+        <Button variant="white" size="icon" className="theme-toggle__trigger" aria-label={t("Alterar tema")}>
+          {renderCurrentThemeIcon()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => changeTheme("light")}>
-          Light
+      <DropdownMenuContent align="end" className="theme-toggle__menu">
+        <DropdownMenuItem
+          className={`theme-toggle__menu-item${theme === "light" ? " theme-toggle__menu-item--active" : ""}`}
+          onClick={() => changeTheme("light")}
+        >
+          <Sun className="theme-toggle__menu-item-icon" />
+          <span>{t("Light")}</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("dark")}>
-          Dark
+        <DropdownMenuItem
+          className={`theme-toggle__menu-item${theme === "dark" ? " theme-toggle__menu-item--active" : ""}`}
+          onClick={() => changeTheme("dark")}
+        >
+          <Moon className="theme-toggle__menu-item-icon" />
+          <span>{t("Dark")}</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeTheme("govbr")}>
-          GovBr
+        <DropdownMenuItem
+          className={`theme-toggle__menu-item${theme === "gov" ? " theme-toggle__menu-item--active" : ""}`}
+          onClick={() => changeTheme("gov")}
+        >
+          <img
+            className="theme-toggle__menu-item-logo"
+            src="/govbr/logo.svg"
+            alt="GOV.BR"
+          />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

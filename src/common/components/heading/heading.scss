@@ -1,0 +1,35 @@
+.heading {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--typography-heading-lg-font-size);
+    line-height: var(--typography-heading-lg-line-height);
+    font-weight: var(--typography-heading-lg-font-weight);
+    letter-spacing: var(--typography-heading-lg-letter-spacing);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--typography-body-lg-font-size);
+    line-height: var(--typography-body-lg-line-height);
+    font-weight: var(--typography-body-lg-font-weight);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+  }
+}

@@ -1,34 +1,36 @@
 import { useParams } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
+import { useI18n } from "../../common/context/i18n/I18nContext.tsx";
 
 const Error = () => {
   const { errorCode } = useParams<{ errorCode?: string }>();
+  const { t } = useI18n();
 
   const getErrorMessage = (code?: string): string => {
     switch (code) {
       case "404":
-        return "Página não encontrada";
+        return t("Página não encontrada");
       case "403":
-        return "Acesso negado";
+        return t("Acesso negado");
       case "500":
-        return "Erro interno do servidor";
+        return t("Erro interno do servidor");
       default:
-        return "Erro genérico";
+        return t("Erro genérico");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="flex justify-center">
+    <div>
+      <div>
+        <div>
           <AlertCircle className="w-24 h-24 text-destructive" />
         </div>
 
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">
+        <div>
+          <h1>
             {errorCode || "Error"}
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p>
             {getErrorMessage(errorCode)}
           </p>
         </div>

@@ -1,0 +1,238 @@
+import React from "react";
+import { format, parseISO } from "date-fns";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import { CalendarDays, ChevronRight, ClipboardList, FileText, Globe, LaptopMinimal, Mail, ShieldUser } from "lucide-react";
+import { FileIcon } from "@common/components/FileIcon.tsx";
+import { ItemHierarchyInterface } from "@features/level/common/types/item-hierarchy.model.ts";
+import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { FileAttachment } from "../../types/access-request.model.ts";
+import "./request-review-step.scss";
+
+interface RequestReviewStepProps {
+  selectedClient: string | null;
+  selectedRole: string | null;
+  reason: string;
+  roles: RoleResponseInterface[];
+  attachments: FileAttachment[];
+  emails?: string[];
+  expiresAt?: string;
+  sphereLabel?: string;
+  sphereHierarchy?: ItemHierarchyInterface[];
+}
+
+export const RequestReviewStep: React.FC<RequestReviewStepProps> = ({
+  selectedClient,
+  selectedRole,
+  reason,
+  roles,
+  attachments,
+  emails = [],
+  expiresAt,
+  sphereLabel,
+  sphereHierarchy = []
+}) => {
+  const { t, dateFnsLocale } = useI18n();
+  const parsedExpiration = expiresAt
+    ? parseISO(expiresAt.includes("T") ? expiresAt : `${expiresAt}T00:00:00`)
+    : null;
+  const selectedRoleName = roles.find((role) => role.id.toString() === selectedRole)?.label || t("Não selecionado");
+  const reasonValue = reason || t("Não informado");
+  const showEmailSection = emails.length > 0;
+  const showExpiration = Boolean(parsedExpiration && !Number.isNaN(parsedExpiration.getTime()));
+  const attachmentGroupCount = attachments.length;
+  const totalAttachedFiles = attachments.reduce((total, attachment) => total + attachment.files.length, 0);
+  const showSphereSection = Boolean(sphereLabel || sphereHierarchy.length > 0);
+  const totalReviewedItems = 3 + Number(showSphereSection) + Number(showEmailSection) + Number(showExpiration);
+  const uniqueEmailDomains = Array.from(new Set(emails.map((email) => email.split("@")[1]).filter(Boolean)));
+  const formattedExpiration = showExpiration
+    ? format(parsedExpiration, "dd MMMM yyyy HH:mm", { locale: dateFnsLocale })
+    : t("Não informado");
+  const expirationMetric = showExpiration
+    ? format(parsedExpiration, "dd/MM HH:mm")
+    : "";
+  const sphereSummaryValue = sphereHierarchy.length > 0
+    ? sphereHierarchy[sphereHierarchy.length - 1].name
+    : sphereLabel || t("Não informado");
+
+  return (
+    <div className="request-review-step">
+      <div className="request-review-step__highlight">
+        <div className="request-review-step__highlight-content">
+          <p className="request-review-step__highlight-eyebrow">{t("Conferência final")}</p>
+          <h4 className="request-review-step__highlight-title">{t("Revise os dados antes de enviar sua solicitação")}</h4>
+          <p className="request-review-step__highlight-description">
+            {t("Depois do envio, a aprovação seguirá o fluxo do sistema selecionado.")}
+          </p>
+        </div>
+        <div className="request-review-step__highlight-metrics">
+          <article className="request-review-step__metric">
+            <p className="request-review-step__metric-label">{t("Itens revisados")}</p>
+            <p className="request-review-step__metric-value">{totalReviewedItems}</p>
+          </article>
+          {showEmailSection ? (
+            <>
+              <article className="request-review-step__metric">
+                <p className="request-review-step__metric-label">{t("Destinatários")}</p>
+                <p className="request-review-step__metric-value">{emails.length}</p>
+              </article>
+              <article className="request-review-step__metric">
+                <p className="request-review-step__metric-label">{showExpiration ? t("Validade") : t("Domínios")}</p>
+                <p className="request-review-step__metric-value">{showExpiration ? expirationMetric : uniqueEmailDomains.length}</p>
+              </article>
+            </>
+          ) : (
+            <>
+              <article className="request-review-step__metric">
+                <p className="request-review-step__metric-label">{t("Tipos de anexo")}</p>
+                <p className="request-review-step__metric-value">{attachmentGroupCount}</p>
+              </article>
+              <article className="request-review-step__metric">
+                <p className="request-review-step__metric-label">{t("Arquivos anexados")}</p>
+                <p className="request-review-step__metric-value">{totalAttachedFiles}</p>
+              </article>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="request-review-step__summary">
+        <h4 className="request-review-step__section-title">{t("Resumo da solicitação")}</h4>
+
+        <div className="request-review-step__summary-grid">
+          <article className="request-review-step__summary-card">
+            <div className="request-review-step__summary-icon-box">
+              <LaptopMinimal className="request-review-step__summary-icon" />
+            </div>
+            <div className="request-review-step__summary-content">
+              <p className="request-review-step__summary-label">{t("Sistema")}</p>
+              <p className="request-review-step__summary-value">{selectedClient || t("Não selecionado")}</p>
+            </div>
+          </article>
+
+          <article className="request-review-step__summary-card">
+            <div className="request-review-step__summary-icon-box">
+              <ShieldUser className="request-review-step__summary-icon" />
+            </div>
+            <div className="request-review-step__summary-content">
+              <p className="request-review-step__summary-label">{t("Papel")}</p>
+              <p className="request-review-step__summary-value">{selectedRoleName}</p>
+            </div>
+          </article>
+
+          {showSphereSection && (
+            <article className="request-review-step__summary-card request-review-step__summary-card--full">
+              <div className="request-review-step__summary-icon-box">
+                <Globe className="request-review-step__summary-icon" />
+              </div>
+              <div className="request-review-step__summary-content">
+                <p className="request-review-step__summary-label">{t("Esfera")}</p>
+                <p className="request-review-step__summary-value">{sphereSummaryValue}</p>
+                {sphereHierarchy.length > 0 && (
+                  <div className="request-review-step__hierarchy-trail" aria-label={t("Hierarquia preenchida")}>
+                    {sphereHierarchy.map((item, index) => (
+                      <div key={`${item.level?.id || item.id}-${item.id}-${index}`} className="request-review-step__hierarchy-item">
+                        <span className="request-review-step__hierarchy-label">{item.name}</span>
+                        {index < sphereHierarchy.length - 1 && (
+                          <ChevronRight className="request-review-step__hierarchy-separator" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          )}
+
+          <article className="request-review-step__summary-card request-review-step__summary-card--full">
+            <div className="request-review-step__summary-icon-box">
+              <ClipboardList className="request-review-step__summary-icon" />
+            </div>
+            <div className="request-review-step__summary-content">
+              <p className="request-review-step__summary-label">{t("Justificativa")}</p>
+              <p className="request-review-step__summary-value">{reasonValue}</p>
+            </div>
+          </article>
+
+          {showEmailSection && (
+            <article className="request-review-step__summary-card request-review-step__summary-card--full">
+              <div className="request-review-step__summary-icon-box">
+                <Mail className="request-review-step__summary-icon" />
+              </div>
+              <div className="request-review-step__summary-content">
+                <p className="request-review-step__summary-label">{t("Destinatários")}</p>
+                <div className="request-review-step__email-list">
+                  {emails.map((email) => (
+                    <div key={email} className="request-review-step__email-chip">
+                      <div className="request-review-step__email-chip-main">
+                        <div className="request-review-step__email-chip-icon-box">
+                          <Mail className="request-review-step__email-chip-icon" />
+                        </div>
+                        <span className="request-review-step__email-chip-label">{email}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </article>
+          )}
+
+          {showExpiration && (
+            <article className="request-review-step__summary-card">
+              <div className="request-review-step__summary-icon-box">
+                <CalendarDays className="request-review-step__summary-icon" />
+              </div>
+              <div className="request-review-step__summary-content">
+                <p className="request-review-step__summary-label">{t("Data de expiração")}</p>
+                <p className="request-review-step__summary-value">{formattedExpiration}</p>
+              </div>
+            </article>
+          )}
+        </div>
+      </div>
+
+      {!showEmailSection && (
+        <div className="request-review-step__attachments">
+          <h4 className="request-review-step__section-title">{t("Anexos")}</h4>
+
+          {attachments.length > 0 ? (
+            <div className="request-review-step__attachments-grid">
+              {attachments.map((attachment) => (
+                <article key={attachment.key} className="request-review-step__attachment-card">
+                  <div className="request-review-step__attachment-header">
+                    <div className="request-review-step__attachment-icon-box">
+                      <FileText className="request-review-step__attachment-icon" />
+                    </div>
+                    <div className="request-review-step__attachment-heading">
+                      <p className="request-review-step__attachment-title">{attachment.fileName}</p>
+                      <p className="request-review-step__attachment-meta">
+                        {t("{{count}} arquivo(s)", { count: attachment.files.length })}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="request-review-step__file-list">
+                    {attachment.files.map((file, index) => (
+                      <div key={`${attachment.key}-${index}`} className="request-review-step__file-item">
+                        <div className="request-review-step__file-main">
+                          <FileIcon fileName={file.name} />
+                          <p className="request-review-step__file-name">{file.name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="request-review-step__empty-state">
+              <div className="request-review-step__empty-icon-box">
+                <FileText className="request-review-step__empty-icon" />
+              </div>
+              <p className="request-review-step__empty-text">{t("Nenhum anexo informado.")}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};

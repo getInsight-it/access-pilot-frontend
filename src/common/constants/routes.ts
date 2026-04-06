@@ -2,12 +2,21 @@ export const AUTH_ROUTES = {
   LOGIN: '/login'
 };
 
+export const PUBLIC_ROUTES = {
+  INVITATION: '/invitation'
+};
+
 export const PRIVATE_ROUTES = {
   DASHBOARD: '/dashboard/general-info',
   MY_ACCESS_REQUESTS: '/my-access-requests',
   ACCESS_REQUESTS: '/access-requests',
   ACCESS_REQUESTS_WITH_ID: '/access-requests/:id',
   REQUEST_ACCESS: '/request-access',
+  MANAGE_INVITES: '/manage-invites',
+  MY_INVITES: '/my-invites',
+  MY_INVITE_REQUEST: '/my-invites/request',
+  MY_INVITE_REQUEST_WITH_ID: '/my-invites/:id/request',
+  INVITE: '/invite',
   ERROR: '/error',
   SYSTEMS: '/systems',
   SYSTEMS_EDIT: '/systems/:clientId/edit',

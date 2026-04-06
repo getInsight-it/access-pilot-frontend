@@ -1,0 +1,34 @@
+.app-tabs {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: 48px;
+  padding: 8px;
+  border: 1px solid var(--table-border-color);
+  border-radius: 8px;
+  background-color: var(--content-background-color);
+  box-sizing: border-box;
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--table-header-text-color);
+    font-weight: var(--default-text-font-weight);
+    cursor: pointer;
+  }
+
+  &__trigger[data-state="active"] {
+    background-color: var(--color-primary-700);
+    color: var(--inverse-default-text-color);
+  }
+
+  &__trigger[data-state="inactive"] {
+    background: transparent;
+    color: var(--table-header-text-color);
+  }
+}
