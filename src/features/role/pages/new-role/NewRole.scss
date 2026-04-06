@@ -259,6 +259,29 @@
     font-weight: var(--default-text-font-weight);
   }
 
+  &__policy-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--description-color);
+    cursor: help;
+  }
+
+  &__policy-help:hover {
+    color: var(--title-color);
+  }
+
+  &__policy-help-tooltip {
+    max-width: 320px;
+    line-height: 1.4;
+    white-space: normal;
+  }
+
   &__policy-card-caption {
     color: var(--description-color);
     font-size: var(--system-form-counter-font-size);

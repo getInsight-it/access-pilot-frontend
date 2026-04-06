@@ -5,8 +5,8 @@ import { roleService } from "../../common/service/role-service.ts";
 import { clientService } from "../../../client/common/service/client-service.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
 import {
-  RoleApprovalPolicyRequestInterface,
-  RoleApprovalPolicyTargetRequestInterface,
+  ApprovalPolicyRequestInterface,
+  ApprovalPolicyRoleRequestInterface,
   RoleResponseInterface,
   RoleUpsertInterface
 } from "../../common/types/role.model.ts";
@@ -84,7 +84,7 @@ export const useNewRoleData = () => {
         icon: role.icon || "",
         autoApprovalEnabled: Boolean(autoApprovalPolicy?.enabled),
         lateralApprovalEnabled: Boolean(lateralApprovalPolicy?.enabled),
-        lateralTargets: (lateralApprovalPolicy?.targetRoles || []).map(target => ({
+        lateralTargets: (lateralApprovalPolicy?.roles || []).map(target => ({
           roleId: Number(target.roleId),
           canApprove: Boolean(target.canApprove),
           canReject: Boolean(target.canReject),
@@ -205,23 +205,23 @@ export const useRoleSubmit = (
     const levelId = form.levelId === undefined || form.levelId === "empty" || form.levelId === ""
       ? undefined
       : Number(form.levelId);
-    const lateralTargets: RoleApprovalPolicyTargetRequestInterface[] = (form.lateralTargets || []).map(target => ({
+    const lateralTargets: ApprovalPolicyRoleRequestInterface[] = (form.lateralTargets || []).map(target => ({
       roleId: Number(target.roleId),
       canApprove: Boolean(target.canApprove),
       canReject: Boolean(target.canReject),
       canRevoke: Boolean(target.canRevoke)
     }));
     const hasLateralTargets = lateralTargets.length > 0;
-    const approvalPolicies: RoleApprovalPolicyRequestInterface[] = [
+    const approvalPolicies: ApprovalPolicyRequestInterface[] = [
       {
         type: AUTO_APPROVAL_POLICY,
         enabled: Boolean(form.autoApprovalEnabled),
-        targetRoles: []
+        roles: []
       },
       {
         type: LATERAL_APPROVAL_POLICY,
         enabled: Boolean(form.lateralApprovalEnabled) && hasLateralTargets,
-        targetRoles: lateralTargets
+        roles: lateralTargets
       }
     ];
 

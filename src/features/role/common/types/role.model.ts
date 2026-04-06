@@ -1,31 +1,31 @@
 import { LevelInterface } from "../../../level/common/types/level.model.ts";
 import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 
-export type RoleApprovalPolicyType = "AUTO_APPROVAL" | "LATERAL_APPROVAL";
+export type ApprovalPolicyType = "AUTO_APPROVAL" | "LATERAL_APPROVAL";
 
-export interface RoleApprovalPolicyTargetRequestInterface {
+export interface ApprovalPolicyRoleRequestInterface {
   roleId: number;
   canApprove: boolean;
   canReject: boolean;
   canRevoke: boolean;
 }
 
-export interface RoleApprovalPolicyTargetResponseInterface extends RoleApprovalPolicyTargetRequestInterface {
+export interface ApprovalPolicyRoleResponseInterface extends ApprovalPolicyRoleRequestInterface {
   roleName?: string;
   roleLabel?: string;
 }
 
-export interface RoleApprovalPolicyRequestInterface {
-  type: RoleApprovalPolicyType;
+export interface ApprovalPolicyRequestInterface {
+  type: ApprovalPolicyType;
   enabled: boolean;
-  targetRoles: RoleApprovalPolicyTargetRequestInterface[];
+  roles: ApprovalPolicyRoleRequestInterface[];
 }
 
-export interface RoleApprovalPolicyResponseInterface {
+export interface ApprovalPolicyResponseInterface {
   id?: number;
-  type: RoleApprovalPolicyType;
+  type: ApprovalPolicyType;
   enabled: boolean;
-  targetRoles: RoleApprovalPolicyTargetResponseInterface[];
+  roles: ApprovalPolicyRoleResponseInterface[];
 }
 
 export interface Role {
@@ -51,7 +51,7 @@ export interface RoleResponseInterface {
   client?: ClientResponseInterface;
   level: LevelInterface;
   levelId?: number;
-  approvalPolicies?: RoleApprovalPolicyResponseInterface[];
+  approvalPolicies?: ApprovalPolicyResponseInterface[];
 }
 
 export interface RoleUpsertInterface {
@@ -64,5 +64,5 @@ export interface RoleUpsertInterface {
   roleParent?: RoleResponseInterface;
   client?: ClientResponseInterface;
   levelId?: number;
-  approvalPolicies: RoleApprovalPolicyRequestInterface[];
+  approvalPolicies: ApprovalPolicyRequestInterface[];
 }

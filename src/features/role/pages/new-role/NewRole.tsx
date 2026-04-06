@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronDown, Lock, Users } from "lucide-react";
+import { ArrowLeft, ChevronDown, HelpCircle, Lock, Users } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
@@ -9,6 +9,7 @@ import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { Button } from "@common/external/ui/button.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@common/external/ui/tooltip.tsx";
 import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
 import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
 import { useI18n } from "@common/context/i18n/I18nContext.tsx";
@@ -74,6 +75,7 @@ export default function NewRole() {
   const hasParentApproval = Boolean(parentRoleLabel);
   const parentRoleId = roleDetails?.roleParent?.id;
   const currentRoleLevelId = roleDetails?.level?.id ?? null;
+  const currentRoleDisplayName = roleDetails?.label || roleDetails?.name || t("este papel");
   const siblingRoles = parentRoleId
     ? clientRoles.filter((role) => {
       const siblingLevelId = role.level?.id ?? null;
@@ -82,6 +84,14 @@ export default function NewRole() {
         && siblingLevelId === currentRoleLevelId;
     })
     : [];
+
+  const exampleSiblingRoleName = siblingRoles[0]?.label || siblingRoles[0]?.name || null;
+  const lateralHelpText = exampleSiblingRoleName
+    ? t("Exemplo: se você estiver editando o papel {{currentRole}} e marcar {{siblingRole}}, {{siblingRole}} poderá atuar em solicitações de {{currentRole}}. O inverso não acontece automaticamente.", {
+      currentRole: currentRoleDisplayName,
+      siblingRole: exampleSiblingRoleName
+    })
+    : t("Os papéis selecionados poderão atuar em solicitações deste papel. O inverso não acontece automaticamente.");
 
   const getLateralTarget = (roleId: number) =>
     lateralTargets.find((target) => Number(target.roleId) === Number(roleId));
@@ -361,13 +371,29 @@ export default function NewRole() {
                             <div className="new-role__policy-card-header-text">
                               <h4 className="new-role__policy-card-heading">
                                 <Users size={14} />
-                                Aprovação lateral
+                                {t("Aprovação lateral")}
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <button
+                                        type="button"
+                                        className="new-role__policy-help"
+                                        aria-label={t("Entender como funciona a aprovação lateral")}
+                                      >
+                                        <HelpCircle size={14} />
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="new-role__policy-help-tooltip" side="top">
+                                      {lateralHelpText}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                                 <span className="new-role__policy-card-heading-status">
-                                  {lateralApprovalEnabledValue ? "Ativada" : "Desativada"}
+                                  {lateralApprovalEnabledValue ? t("Ativada") : t("Desativada")}
                                 </span>
                               </h4>
                               <span className="new-role__policy-card-caption">
-                                Papéis irmãos com permissão complementar de decisão
+                                {t("Defina quais papéis irmãos podem visualizar e decidir solicitações deste papel.")}
                               </span>
                             </div>
                             <div className="new-role__toggle-control">
@@ -375,25 +401,25 @@ export default function NewRole() {
                                 checked={Boolean(field.value)}
                                 onCheckedChange={field.onChange}
                                 disabled={loading}
-                                aria-label="Ativar aprovação lateral para este papel"
+                                aria-label={t("Ativar aprovação lateral para este papel")}
                               />
                             </div>
                           </div>
                           <span className="new-role__toggle-description">
-                            Política complementar. Não sobrescreve a aprovação por hierarquia.
+                            {t("Os papéis selecionados podem atuar sobre solicitações deste papel. Isso não substitui a aprovação por hierarquia.")}
                           </span>
 
                           {lateralApprovalEnabledValue && (
                             <div className="new-role__lateral-config">
                               {!hasParentApproval && (
                                 <span className="new-role__toggle-description">
-                                  Configure a hierarquia deste papel para definir as irmãs elegíveis para aprovação lateral.
+                                  {t("Este papel precisa ter um papel pai para listar papéis irmãos elegíveis.")}
                                 </span>
                               )}
 
                               {hasParentApproval && siblingRoles.length === 0 && (
                                 <span className="new-role__toggle-description">
-                                  Não há papéis irmãos da mesma esfera disponíveis para este papel.
+                                  {t("Não há papéis irmãos da mesma esfera que possam atuar sobre este papel.")}
                                 </span>
                               )}
 
@@ -402,16 +428,16 @@ export default function NewRole() {
                                   <div className="app-table__header">
                                     <div className="app-table__row">
                                       <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--role">
-                                        <span>Papel</span>
+                                        <span>{t("Papel")}</span>
                                       </div>
                                       <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
-                                        <span>Aprovar</span>
+                                        <span>{t("Aprovar")}</span>
                                       </div>
                                       <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
-                                        <span>Rejeitar</span>
+                                        <span>{t("Rejeitar")}</span>
                                       </div>
                                       <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
-                                        <span>Revogar</span>
+                                        <span>{t("Revogar")}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -428,7 +454,7 @@ export default function NewRole() {
                                                 checked={isSelected}
                                                 onCheckedChange={(checked) => handleToggleLateralTarget(siblingRole.id, checked)}
                                                 disabled={loading}
-                                                aria-label={`Habilitar ${siblingRole.label || siblingRole.name} como aprovador lateral`}
+                                                aria-label={t("Permitir que {{role}} atue em solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
                                               />
                                               <div className="new-role__lateral-role-text">
                                                 <span className="new-role__lateral-item-title">
@@ -449,7 +475,7 @@ export default function NewRole() {
                                                 checked={Boolean(target?.canApprove)}
                                                 onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canApprove", event.target.checked)}
                                                 disabled={loading || !isSelected}
-                                                aria-label={`Permitir aprovar para ${siblingRole.label || siblingRole.name}`}
+                                                aria-label={t("Permitir que {{role}} aprove solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
                                               />
                                             </div>
                                           </div>
@@ -461,7 +487,7 @@ export default function NewRole() {
                                                 checked={Boolean(target?.canReject)}
                                                 onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canReject", event.target.checked)}
                                                 disabled={loading || !isSelected}
-                                                aria-label={`Permitir rejeitar para ${siblingRole.label || siblingRole.name}`}
+                                                aria-label={t("Permitir que {{role}} rejeite solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
                                               />
                                             </div>
                                           </div>
@@ -473,7 +499,7 @@ export default function NewRole() {
                                                 checked={Boolean(target?.canRevoke)}
                                                 onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canRevoke", event.target.checked)}
                                                 disabled={loading || !isSelected}
-                                                aria-label={`Permitir revogar para ${siblingRole.label || siblingRole.name}`}
+                                                aria-label={t("Permitir que {{role}} revogue solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
                                               />
                                             </div>
                                           </div>
