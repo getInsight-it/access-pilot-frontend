@@ -244,7 +244,7 @@ export const ClientCard = ({ client, hasAccess, onActionClick }: ClientCardProps
 
       <div className="client-card__meta-grid">
         <div className="client-card__meta-item">
-          <span className="client-card__meta-label">{t("Código")}</span>
+          <span className="client-card__meta-label">{t("Client Id")}</span>
           <span className="client-card__meta-value">{client.clientId || "-"}</span>
         </div>
 

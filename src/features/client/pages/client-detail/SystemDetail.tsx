@@ -376,7 +376,7 @@ export const SystemDetail = () => {
 
                 <div className="system-detail__general-grid">
                   {renderFieldItem(t("Nome"), data.name || "-")}
-                  {renderFieldItem(t("Código do sistema"), data.clientId || "-")}
+                  {renderFieldItem(t("Client Id"), data.clientId || "-")}
                   {renderFieldItem(
                     t("URL"),
                     data.baseUrl ? (
@@ -388,7 +388,6 @@ export const SystemDetail = () => {
                   )}
                   {renderFieldItem(t("Gerenciado"), data.managed ? t("Sim") : t("Não"))}
                   {renderFieldItem(t("Status"), renderStatusBadge(data.status))}
-                  {renderFieldItem(t("ID"), data.id?.toString() || "-")}
                 </div>
               </div>
             </section>

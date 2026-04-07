@@ -13,7 +13,7 @@ import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 interface ConfirmRequestDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  clientId: string,
+  clientName: string,
   roleLabel: string,
   reason: string,
   attachments: FileAttachment[];
@@ -23,7 +23,7 @@ interface ConfirmRequestDialogProps {
 export const ConfirmRequestDialog = ({
   isOpen,
   onOpenChange,
-  clientId,
+  clientName,
   roleLabel,
   reason,
   attachments,
@@ -43,7 +43,7 @@ export const ConfirmRequestDialog = ({
         <div>
           <h4>{t("Resumo da solicitação:")}</h4>
           <ul>
-            <li><strong>{t("Sistema")}:</strong> {clientId}</li>
+            <li><strong>{t("Sistema")}:</strong> {clientName}</li>
             <li>
               <strong>{t("Papel")}:</strong> {roleLabel}
             </li>
