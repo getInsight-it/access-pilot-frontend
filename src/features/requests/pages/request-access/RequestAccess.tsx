@@ -374,6 +374,8 @@ export default function RequestAccess() {
     }
   };
 
+  const selectedClient = clients.find((client) => client.clientId === customForm["clientId"].value) || null;
+
   return (
     <motion.div
       className="request-access"
@@ -435,7 +437,7 @@ export default function RequestAccess() {
             isOpen={isConfirmModalOpen}
             onOpenChange={setIsConfirmModalOpen}
             reason={customForm["reason"].value}
-            clientId={customForm["clientId"].value}
+            clientName={selectedClient?.name || customForm["clientId"].value}
             roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
             attachments={customForm["attachments"].value}
             onConfirm={handleSubmitForm}
