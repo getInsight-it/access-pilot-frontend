@@ -5,9 +5,16 @@ import "./high-light-loader.scss";
 interface HighlightLoaderProps {
   message?: string;
   size?: "sm" | "md" | "lg";
+  logoSrc?: string;
+  logoAlt?: string;
 }
 
-export default function HighlightLoader({ message, size = "md" }: HighlightLoaderProps) {
+export default function HighlightLoader({
+  message,
+  size = "md",
+  logoSrc = "/img/accesspilot-logo.svg",
+  logoAlt = "AccessPilot logo"
+}: HighlightLoaderProps) {
   return (
     <div className={cn("highlight-loader", `highlight-loader--${size}`)}>
       <div className="highlight-loader__track">
@@ -29,7 +36,7 @@ export default function HighlightLoader({ message, size = "md" }: HighlightLoade
           animate={{ opacity: [0.84, 1, 0.84], scale: [0.98, 1.0, 0.98], y: ["0%", "-5%", "0%"] }}
           transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
         >
-          <img className="highlight-loader__logo-image" src="/img/accesspilot-logo.svg" alt="AccessPilot logo" />
+          <img className="highlight-loader__logo-image" src={logoSrc} alt={logoAlt} />
         </motion.div>
       </div>
 

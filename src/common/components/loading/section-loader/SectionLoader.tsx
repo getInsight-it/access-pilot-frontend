@@ -1,5 +1,5 @@
 import { cn } from "../../../../config/lib/utils.ts";
-import HighlightLoader from "../HighLightLoader.tsx";
+import HelmetPulseLoader from "../helmet-pulse-loader/HelmetPulseLoader.tsx";
 import "./section-loader.scss";
 
 interface SectionLoaderProps {
@@ -23,7 +23,9 @@ export function SectionLoader({
         className
       )}
     >
-      <HighlightLoader size={size} message={message} />
+      <HelmetPulseLoader size={size} />
+
+      {message && <p className="section-loader__message">{message}</p>}
     </div>
   );
 }

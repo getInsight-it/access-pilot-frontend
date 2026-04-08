@@ -4,7 +4,7 @@ import { ScrollArea } from "@ui/scroll-area.tsx";
 
 import { motion } from "framer-motion";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
-import { ArrowLeft, ArrowRight, Loader2, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Lock, Save } from "lucide-react";
 import { SectionLoader } from "@components/loading/section-loader/SectionLoader.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
@@ -213,14 +213,21 @@ export default function SystemForm() {
                                 {t("Client Id")} <span className="system-form__required">*</span>
                               </label>
                               <FormControl>
-                                <input
-                                  id="clientId"
-                                  type="text"
-                                  disabled={loading}
-                                  placeholder={t("ClientId do IDP")}
-                                  {...field}
-                                  className={`app-input system-form__input${methods.formState.errors.clientId ? " system-form__input--error" : ""}`}
-                                />
+                                <div className={`system-form__input-wrap${isEditing ? " system-form__input-wrap--readonly" : ""}`}>
+                                  <input
+                                    id="clientId"
+                                    type="text"
+                                    disabled={loading}
+                                    readOnly={isEditing}
+                                    aria-readonly={isEditing}
+                                    placeholder={t("ClientId do IDP")}
+                                    {...field}
+                                    className={`app-input system-form__input${methods.formState.errors.clientId ? " system-form__input--error" : ""}${isEditing ? " system-form__input--readonly" : ""}`}
+                                  />
+                                  {isEditing && (
+                                    <Lock className="system-form__input-lock" aria-hidden="true" />
+                                  )}
+                                </div>
                               </FormControl>
                               {methods.formState.errors.clientId && (
                                 <p className="system-form__error">{t(methods.formState.errors.clientId?.message?.toString() || "")}</p>

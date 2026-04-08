@@ -36,7 +36,6 @@ export const RequestStatusBadge = (status: string) => {
 
   return (
     <span className={`request-status-badge request-status-badge--${modifier}`}>
-      <span className="request-status-badge__dot" />
       <span>{presentationName}</span>
     </span>
   );

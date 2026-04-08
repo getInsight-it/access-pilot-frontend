@@ -263,29 +263,31 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               )}
             </div>
 
-            <div className="attachment-configuration-form__field">
-              <span className="attachment-configuration-form__label">{t("Ícone")}</span>
-              <div className="attachment-configuration-form__icon-row">
-                <IconPicker
-                  value={icon}
-                  color={color}
-                  onChange={setIcon}
-                  disabled={loading}
-                  triggerLabel={t("Selecionar ícone")}
-                />
+            <div className="attachment-configuration-form__picker-row">
+              <div className="attachment-configuration-form__field">
+                <span className="attachment-configuration-form__label">{t("Ícone")}</span>
+                <div className="attachment-configuration-form__icon-row">
+                  <IconPicker
+                    value={icon}
+                    color={color}
+                    onChange={setIcon}
+                    disabled={loading}
+                    triggerLabel={t("Selecionar ícone")}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="attachment-configuration-form__field">
-              <span className="attachment-configuration-form__label">{t("Cor")}</span>
-              <div className="attachment-configuration-form__icon-row">
-                <ColorPicker
-                  value={color}
-                  options={availableColors}
-                  onChange={setColor}
-                  disabled={loading}
-                  triggerLabel={t("Selecionar cor")}
-                />
+              <div className="attachment-configuration-form__field">
+                <span className="attachment-configuration-form__label">{t("Cor")}</span>
+                <div className="attachment-configuration-form__icon-row">
+                  <ColorPicker
+                    value={color}
+                    options={availableColors}
+                    onChange={setColor}
+                    disabled={loading}
+                    triggerLabel={t("Selecionar cor")}
+                  />
+                </div>
               </div>
             </div>
           </div>

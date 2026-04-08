@@ -28,6 +28,7 @@ import LevelItems from "./features/level/pages/item/level-items/LevelItems.tsx";
 import CreateOrEditLevel from "./features/level/pages/level/create-level/CreateLevel.tsx";
 import RequestDetailPage from "./features/requests/pages/request-detail/RequestDetailPage.tsx";
 import Invitation from "./features/invitation/pages/invitation/Invitation.tsx";
+import LoaderPreview from "./features/dev/pages/loader-preview/LoaderPreview.tsx";
 
 import useAuthStore from "./store/authStore.ts";
 import HeaderLayout from "./layouts/HeaderLayout.tsx";
@@ -56,7 +57,8 @@ const publicRoutes = [
   {
     element: <AuthLayout />,
     children: [
-      { path: PUBLIC_ROUTES.INVITATION, element: <Invitation /> }
+      { path: PUBLIC_ROUTES.INVITATION, element: <Invitation /> },
+      { path: PUBLIC_ROUTES.LOADER_PREVIEW, element: <LoaderPreview /> }
     ]
   }
 ];

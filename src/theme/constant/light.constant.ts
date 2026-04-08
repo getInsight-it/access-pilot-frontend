@@ -96,6 +96,17 @@ export const LIGHT_THEME: Theme = {
     "highlight-loader-message-font-weight": "600",
     "highlight-loader-message-color": "var(--description-color)",
 
+    // helmet-loader
+    "helmet-loader-gap": "12px",
+    "helmet-loader-size-sm": "48px",
+    "helmet-loader-size-md": "72px",
+    "helmet-loader-size-lg": "96px",
+    "helmet-loader-pulse-duration": "2200ms",
+    "helmet-loader-scale-min": "0.93",
+    "helmet-loader-scale-max": "1.04",
+    "helmet-loader-image-opacity": "0.98",
+    "helmet-loader-image-drop-shadow": "0 8px 18px rgba(15, 23, 42, 0.12)",
+
     // layout
     "main-content-default-max-width": "1260px",
     "title-color": "#111827",
@@ -161,12 +172,12 @@ export const LIGHT_THEME: Theme = {
     "badge-icon-size": "10px",
     "badge-icon-gap": "6px",
     // badge - systems list feature
-    "badge-status-published-text-color": "#01bc78",
-    "badge-status-published-background-color": "rgba(16, 185, 129, 0.1)",
-    "badge-status-published-border-color": "rgba(16, 185, 129, 0.3)",
-    "badge-status-unpublished-text-color": "#fcb600",
-    "badge-status-unpublished-background-color": "rgba(245, 158, 11, 0.1)",
-    "badge-status-unpublished-border-color": "rgba(245, 158, 11, 0.2)",
+    "badge-status-published-text-color": "var(--request-status-tone-success-text-color)",
+    "badge-status-published-background-color": "var(--request-status-tone-success-surface-color)",
+    "badge-status-published-border-color": "var(--request-status-tone-success-surface-color)",
+    "badge-status-unpublished-text-color": "var(--request-status-tone-warning-text-color)",
+    "badge-status-unpublished-background-color": "var(--request-status-tone-warning-surface-color)",
+    "badge-status-unpublished-border-color": "var(--request-status-tone-warning-surface-color)",
     // badge - common
     "badge-header-text-color": "#1d4ed8",
     "badge-header-background-color": "rgba(59, 130, 246, 0.2)",
