@@ -1,4 +1,4 @@
-import { type MouseEvent, useEffect, useMemo, useState } from "react";
+import { CSSProperties, type MouseEvent, useEffect, useMemo, useState } from "react";
 import { icons, Search, Settings, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../external/ui/popover.tsx";
 import { iconCategories } from "./constant/iconCategories.ts";
@@ -12,6 +12,7 @@ const ICON_BATCH_SIZE = 96;
 
 interface IconPickerProps {
   value?: string;
+  color?: string | null;
   onChange?: (value: string) => void;
   disabled?: boolean;
   triggerLabel?: string;
@@ -19,6 +20,7 @@ interface IconPickerProps {
 
 export function IconPicker({
   value,
+  color,
   onChange,
   disabled = false,
   triggerLabel
@@ -60,6 +62,15 @@ export function IconPicker({
   const resolvedTriggerLabel = triggerLabel || t("Selecionar ícone");
   const SelectedIconComponent = selectedIcon ? icons[selectedIcon] : null;
   const TriggerIconComponent = SelectedIconComponent ?? Settings;
+  const previewStyle = useMemo(() => {
+    if (!color) {
+      return undefined;
+    }
+
+    return {
+      "--icon-picker-preview-color": color
+    } as CSSProperties;
+  }, [color]);
 
   const handleSelectIcon = (iconName: IconName) => {
     setSelectedIcon(iconName);
@@ -76,7 +87,7 @@ export function IconPicker({
   return (
     <div className="icon-picker">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <span className="icon-picker__preview" aria-hidden="true">
+        <span className="icon-picker__preview" aria-hidden="true" style={previewStyle}>
           <TriggerIconComponent className="icon-picker__preview-icon" />
         </span>
 

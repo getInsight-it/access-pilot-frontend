@@ -1,11 +1,13 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { httpClient } from "../../../../config/http/http.ts";
+import { ColorUsage } from "../../../../common/types/color-usage.model.ts";
 import { RoleResponseInterface, RoleUpsertInterface } from "../types/role.model.ts";
 
 export const ROLE_API = {
   ROLES: "/v1/roles",
   SYNCHRONOUS: "/v1/roles/synchronous",
-  PAGINATED: "/v1/roles/paginated"
+  PAGINATED: "/v1/roles/paginated",
+  COLORS: "/v1/roles/colors"
 };
 
 export class RoleService {
@@ -88,6 +90,23 @@ export class RoleService {
     }
 
     return response.data as RoleResponseInterface;
+  }
+
+  async getRoleColors(clientId: string): Promise<ColorUsage[]> {
+    if (!clientId) {
+      throw new Error("Client ID is required");
+    }
+
+    const queryParams = new URLSearchParams({ clientId });
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      `${ROLE_API.COLORS}?${queryParams.toString()}`
+    );
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ColorUsage[];
   }
 }
 

@@ -307,6 +307,11 @@ export interface ThemeAttributes {
   "system-detail-role-indent-size"?: string,
   "system-detail-role-expand-size"?: string,
   "system-detail-role-icon-box-size"?: string,
+  "role-hierarchy-flow-node-min-width"?: string,
+  "role-hierarchy-flow-node-max-width"?: string,
+  "role-hierarchy-flow-node-min-height"?: string,
+  "role-hierarchy-flow-node-padding-inline"?: string,
+  "role-hierarchy-flow-node-padding-block"?: string,
 
   // request-detail
   "request-detail-page-padding-inline"?: string,

@@ -15,6 +15,7 @@ export type ClientExportRole = {
   label?: string;
   description?: string;
   icon?: string;
+  color?: string | null;
   parentName?: string;
   levelName?: string;
   levelType?: string;

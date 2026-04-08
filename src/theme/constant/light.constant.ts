@@ -286,6 +286,11 @@ export const LIGHT_THEME: Theme = {
     "system-detail-role-indent-size": "20px",
     "system-detail-role-expand-size": "24px",
     "system-detail-role-icon-box-size": "24px",
+    "role-hierarchy-flow-node-min-width": "160px",
+    "role-hierarchy-flow-node-max-width": "280px",
+    "role-hierarchy-flow-node-min-height": "56px",
+    "role-hierarchy-flow-node-padding-inline": "16px",
+    "role-hierarchy-flow-node-padding-block": "12px",
 
     // request-detail
     "request-detail-page-padding-inline": "28px",

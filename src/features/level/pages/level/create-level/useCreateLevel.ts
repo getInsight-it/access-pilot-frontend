@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "../../../../../common/external/ui/use-toast.ts";
+import { ColorUsage } from "../../../../../common/types/color-usage.model.ts";
 import { levelService } from "../../../common/api/level-service.ts";
 import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { PAGINATION } from "../../../../../common/constants/pagination.ts";
 import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
+import { getBuiltInSphereColor } from "../../../common/constants/level-constants.ts";
 
 export interface SphereItem {
   id: string;
@@ -22,6 +24,7 @@ export interface SphereItem {
   externalUrl?: string;
   uuid?: string;
   icon?: string;
+  color?: string | null;
   sigla?: string;
 }
 
@@ -48,6 +51,8 @@ export const useCreateLevelData = () => {
   const [sigla, setSigla] = useState("");
   const [uuid, setUuid] = useState("");
   const [hasItems, setHasItems] = useState(false);
+  const [color, setColor] = useState("");
+  const [levelColors, setLevelColors] = useState<ColorUsage[]>([]);
 
   const checkIfSphereHasItems = useCallback(async (sphereId: string) => {
     try {
@@ -102,6 +107,7 @@ export const useCreateLevelData = () => {
       setParentId(newParentId);
       setOriginalParentId(newParentId);
       setUuid(data.uuid || "");
+      setColor(data.color || getBuiltInSphereColor(data.name) || "");
 
       if (data.type === "EXTERNAL") {
         setEndpoint(data.externalUrl || "");
@@ -158,7 +164,8 @@ export const useCreateLevelData = () => {
         apiKey: item.apiKey,
         uuid: item.uuid.toString(),
         icon: item.icon,
-        sigla: item.sigla
+        sigla: item.sigla,
+        color: item.color || getBuiltInSphereColor(item.name) || ""
       }));
 
       setAllSpheres(processedData);
@@ -173,11 +180,25 @@ export const useCreateLevelData = () => {
     }
   }, [t]);
 
+  const fetchLevelColors = useCallback(async () => {
+    try {
+      const colors = await levelService.getLevelColors();
+      setLevelColors(colors);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar cores das esferas"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [t]);
+
   const initializeForm = useCallback(async () => {
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get("id");
 
-    await fetchAllSpheres();
+    await Promise.all([fetchAllSpheres(), fetchLevelColors()]);
 
     if (id) {
       setIsEditing(true);
@@ -186,7 +207,7 @@ export const useCreateLevelData = () => {
     } else {
       setLoading(false);
     }
-  }, [location.search, fetchAllSpheres, fetchSphereData]);
+  }, [location.search, fetchAllSpheres, fetchLevelColors, fetchSphereData]);
 
   useEffect(() => {
     if (parentId && parentId !== "0") {
@@ -223,6 +244,9 @@ export const useCreateLevelData = () => {
     setSigla,
     uuid,
     hasItems,
+    color,
+    setColor,
+    levelColors,
     initializeForm
   };
 };
@@ -242,6 +266,7 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
       formData.sigla !== currentSphere.sigla ||
       formData.description !== currentSphere.description ||
       formData.type !== currentSphere.type ||
+      formData.color !== (currentSphere.color || "") ||
       formData.parentId !== (currentSphere.parent ? currentSphere.parent.id.toString() : "0") ||
       (formData.type === "EXTERNAL" && (formData.endpoint !== currentSphere.externalUrl || apiKeyChanged))
     );
@@ -277,7 +302,8 @@ export const useCreateLevelOperations = (formData: ReturnType<typeof useCreateLe
             description: formData.description,
             type: formData.type,
             externalUrl: formData.endpoint,
-            uuid: formData.uuid
+            uuid: formData.uuid,
+            color: formData.color || null
           };
 
           if (formData.parentId && formData.parentId !== "0") {

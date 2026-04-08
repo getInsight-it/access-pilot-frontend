@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { catchError, from, tap } from "rxjs";
 import { motion } from "framer-motion";
@@ -12,6 +12,7 @@ import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import IconRenderer from "@common/components/icon/IconRenderer.tsx";
 import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
 import { AttachmentConfigurationInterface } from "@features/client/common/model/configuration.model.ts";
 import { clientService } from "@features/client/common/service/client-service.ts";
@@ -25,6 +26,8 @@ interface RoleTreeItem {
   id: string;
   name: string;
   levelName?: string;
+  icon?: string;
+  color?: string | null;
   children: RoleTreeItem[];
 }
 
@@ -37,6 +40,8 @@ const buildRoleTree = (roles: RoleResponseInterface[]): RoleTreeItem[] => {
       id: roleId,
       name: role.name,
       levelName: role.level?.name || role.level?.sigla || "",
+      icon: role.icon,
+      color: role.color,
       children: []
     });
   });
@@ -258,6 +263,9 @@ export const SystemDetail = () => {
   const renderAttachmentCard = (configuration: AttachmentConfigurationInterface) => {
     const extensions = configuration.allowedExtensions?.join(", ") || "-";
     const optionalLabel = configuration.required ? t("Obrigatório") : t("Opcional");
+    const attachmentIconBoxStyle = configuration.color
+      ? ({ "--system-detail-attachment-icon-color": configuration.color } as CSSProperties)
+      : undefined;
 
     return (
       <Popover
@@ -269,8 +277,16 @@ export const SystemDetail = () => {
       >
         <div className="system-detail__attachment-card">
           <div className="system-detail__attachment-main">
-            <div className="system-detail__attachment-icon-box">
-              <FileText className="system-detail__attachment-icon" />
+            <div className="system-detail__attachment-icon-box" style={attachmentIconBoxStyle}>
+              {configuration.icon ? (
+                <IconRenderer
+                  iconName={configuration.icon}
+                  className="system-detail__attachment-icon"
+                  color={configuration.color}
+                />
+              ) : (
+                <FileText className="system-detail__attachment-icon" />
+              )}
             </div>
             <div className="system-detail__attachment-content">
               <span className="system-detail__attachment-name">{configuration.name}</span>
@@ -463,8 +479,19 @@ export const SystemDetail = () => {
                               <span className="system-detail__role-expand-placeholder" />
                             )}
 
-                            <span className="system-detail__role-icon-box">
-                              <UserRound size={14} />
+                            <span
+                              className="system-detail__role-icon-box"
+                              style={role.color ? ({ "--system-detail-role-icon-color": role.color } as CSSProperties) : undefined}
+                            >
+                              {role.icon ? (
+                                <IconRenderer
+                                  iconName={role.icon}
+                                  className="system-detail__role-icon"
+                                  color={role.color}
+                                />
+                              ) : (
+                                <UserRound className="system-detail__role-icon" size={14} />
+                              )}
                             </span>
 
                             <span className="system-detail__role-name">{role.name}</span>

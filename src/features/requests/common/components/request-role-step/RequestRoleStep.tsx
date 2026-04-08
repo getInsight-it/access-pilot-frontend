@@ -178,7 +178,12 @@ export const RequestRoleStep: React.FC<RequestRoleStepProps> = ({
               >
                 <div className="request-role-step__card-main">
                   <div className="request-role-step__icon-box">
-                    <IconRenderer iconName={role.icon} className="request-role-step__icon" showPlaceholder={true} />
+                    <IconRenderer
+                      iconName={role.icon}
+                      className="request-role-step__icon"
+                      showPlaceholder={true}
+                      color={role.color}
+                    />
                   </div>
 
                   <div className="request-role-step__card-text">

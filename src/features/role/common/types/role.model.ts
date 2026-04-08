@@ -43,6 +43,7 @@ export interface RoleResponseInterface {
   name: string;
   label: string;
   icon: string;
+  color?: string | null;
   description: string;
   idRoleParent?: number;
   idClient?: number;
@@ -60,6 +61,7 @@ export interface RoleUpsertInterface {
   name: string;
   label: string;
   icon?: string;
+  color?: string | null;
   description: string;
   roleParent?: RoleResponseInterface;
   client?: ClientResponseInterface;

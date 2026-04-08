@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronDown, HelpCircle, Lock, Users } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import { ColorPicker } from "@common/components/color-picker/ColorPicker.tsx";
 import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
@@ -23,6 +24,7 @@ const defaultValues: RoleFormData = {
   label: "",
   levelId: "",
   icon: "",
+  color: "",
   autoApprovalEnabled: false,
   lateralApprovalEnabled: false,
   lateralTargets: []
@@ -44,6 +46,7 @@ export default function NewRole() {
     initialData,
     roleDetails,
     clientRoles,
+    roleColors,
     isEditing,
     clientId,
     loadData
@@ -68,6 +71,7 @@ export default function NewRole() {
     : PRIVATE_ROUTES.SYSTEMS;
 
   const descriptionValue = methods.watch("description", "");
+  const selectedRoleColor = methods.watch("color", "");
   const autoApprovalEnabledValue = methods.watch("autoApprovalEnabled", false);
   const lateralApprovalEnabledValue = methods.watch("lateralApprovalEnabled", false);
   const lateralTargets = methods.watch("lateralTargets", []);
@@ -320,6 +324,25 @@ export default function NewRole() {
                     render={({ field }) => (
                       <IconPicker
                         value={field.value}
+                        color={selectedRoleColor}
+                        onChange={field.onChange}
+                        disabled={loading}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="new-role__field new-role__field--icon">
+                  <label className="new-role__label" htmlFor="color-picker-trigger">
+                    {t("Cor")} <span className="new-role__optional">{t("(opcional)")}</span>
+                  </label>
+                  <Controller
+                    name="color"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <ColorPicker
+                        value={field.value}
+                        options={roleColors}
                         onChange={field.onChange}
                         disabled={loading}
                       />
