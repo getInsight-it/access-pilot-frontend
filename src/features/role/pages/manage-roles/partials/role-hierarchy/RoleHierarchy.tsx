@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { Tree, NodeRendererProps } from "react-arborist";
 import {
   ReactFlow,
   Background,
   BackgroundVariant,
   Controls,
+  Handle,
+  Position,
   useNodesState,
   useEdgesState,
   Node,
-  Edge
+  Edge,
+  NodeProps as FlowNodeProps
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
@@ -16,6 +19,7 @@ import { catchError, finalize, from, tap } from "rxjs";
 import { toast } from "../../../../../../common/external/ui/use-toast.ts";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Badge } from "../../../../../../common/external/ui/badge.tsx";
+import IconRenderer from "../../../../../../common/components/icon/IconRenderer.tsx";
 import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
 import { StepLoader } from "../../../../../../common/components/loading/StepLoader.tsx";
 import { roleService } from "../../../../common/service/role-service.ts";
@@ -28,11 +32,21 @@ import "./role-hierarchy.scss";
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const NODE_WIDTH = 160;
-const NODE_HEIGHT = 40;
 const TREE_FALLBACK_HEIGHT = 420;
 const TREE_FALLBACK_ROW_HEIGHT = 38;
 const TREE_FALLBACK_INDENT = 20;
+const FLOW_NODE_FALLBACK_MIN_WIDTH = 160;
+const FLOW_NODE_FALLBACK_MAX_WIDTH = 280;
+const FLOW_NODE_FALLBACK_MIN_HEIGHT = 56;
+const FLOW_NODE_FALLBACK_PADDING_INLINE = 16;
+const FLOW_NODE_FALLBACK_PADDING_BLOCK = 12;
+const FLOW_NODE_MAX_LINES = 2;
+
+type RoleFlowNodeData = {
+  label: string;
+};
+
+type RoleFlowNode = Node<RoleFlowNodeData, "role-node">;
 
 function getThemeSizeToken(token: string, fallback: number): number {
   if (typeof window === "undefined") return fallback;
@@ -40,6 +54,90 @@ function getThemeSizeToken(token: string, fallback: number): number {
   const parsed = Number.parseFloat(rawValue);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
+
+function getThemeStringToken(token: string, fallback: string): string {
+  if (typeof window === "undefined") return fallback;
+  const rawValue = window.getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  return rawValue || fallback;
+}
+
+function getThemeLineHeightToken(token: string, fontSize: number, fallbackMultiplier: number): number {
+  if (typeof window === "undefined") return fontSize * fallbackMultiplier;
+  const rawValue = window.getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  const parsed = Number.parseFloat(rawValue);
+
+  if (!Number.isFinite(parsed)) {
+    return fontSize * fallbackMultiplier;
+  }
+
+  if (rawValue.endsWith("px") || parsed > 4) {
+    return parsed;
+  }
+
+  return fontSize * parsed;
+}
+
+function measureTextWidth(label: string, fontSize: number, fontWeight: string, fontFamily: string): number {
+  if (typeof document === "undefined") {
+    return label.length * fontSize * 0.56;
+  }
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return label.length * fontSize * 0.56;
+  }
+
+  context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  return context.measureText(label).width;
+}
+
+function getFlowNodeSize(label: string): { width: number; height: number } {
+  const minWidth = getThemeSizeToken("--role-hierarchy-flow-node-min-width", FLOW_NODE_FALLBACK_MIN_WIDTH);
+  const maxWidth = Math.max(minWidth, getThemeSizeToken("--role-hierarchy-flow-node-max-width", FLOW_NODE_FALLBACK_MAX_WIDTH));
+  const minHeight = getThemeSizeToken("--role-hierarchy-flow-node-min-height", FLOW_NODE_FALLBACK_MIN_HEIGHT);
+  const paddingInline = getThemeSizeToken("--role-hierarchy-flow-node-padding-inline", FLOW_NODE_FALLBACK_PADDING_INLINE);
+  const paddingBlock = getThemeSizeToken("--role-hierarchy-flow-node-padding-block", FLOW_NODE_FALLBACK_PADDING_BLOCK);
+  const fontSize = getThemeSizeToken("--typography-body-md-font-size", 14);
+  const fontWeight = getThemeStringToken("--typography-body-md-font-weight", "400");
+  const fontFamily = getThemeStringToken("--font-family", "sans-serif");
+  const lineHeight = getThemeLineHeightToken("--typography-body-md-line-height", fontSize, 1.45);
+  const measuredTextWidth = measureTextWidth(label, fontSize, fontWeight, fontFamily);
+  const width = Math.min(maxWidth, Math.max(minWidth, measuredTextWidth + paddingInline * 2));
+  const availableTextWidth = Math.max(width - paddingInline * 2, fontSize);
+  const lineCount = Math.min(FLOW_NODE_MAX_LINES, Math.max(1, Math.ceil(measuredTextWidth / availableTextWidth)));
+  const height = Math.max(minHeight, Math.ceil(lineCount * lineHeight + paddingBlock * 2));
+
+  return {
+    width: Math.ceil(width),
+    height: Math.ceil(height)
+  };
+}
+
+function RoleHierarchyFlowNode({ data }: Readonly<FlowNodeProps<RoleFlowNode>>) {
+  return (
+    <div className="role-hierarchy__flow-node" title={data.label}>
+      <Handle
+        type="target"
+        position={Position.Top}
+        className="role-hierarchy__flow-handle role-hierarchy__flow-handle--target"
+        isConnectable={false}
+      />
+      <span className="role-hierarchy__flow-node-label">{data.label}</span>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="role-hierarchy__flow-handle role-hierarchy__flow-handle--source"
+        isConnectable={false}
+      />
+    </div>
+  );
+}
+
+const roleHierarchyNodeTypes = {
+  "role-node": RoleHierarchyFlowNode
+};
 
 function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
   const nodeMap = new Map<number, ArboristNode>();
@@ -49,6 +147,8 @@ function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
       id: role.id.toString(),
       name: role.name,
       levelName: role.level?.name || role.level?.sigla || "",
+      icon: role.icon,
+      color: role.color,
       children: []
     });
   });
@@ -80,20 +180,29 @@ function arboristTreeToPayload(nodes: ArboristNode[], clientId: number, parentId
   return result;
 }
 
-function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: Node[]; edges: Edge[] } {
+function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: RoleFlowNode[]; edges: Edge[] } {
   dagreGraph.nodes().forEach(n => dagreGraph.removeNode(n));
   dagreGraph.setGraph({ rankdir: "TB" });
 
-  const flowNodes: Node[] = [];
+  const flowNodes: RoleFlowNode[] = [];
   const flowEdges: Edge[] = [];
 
   function flatten(nodeList: ArboristNode[], parentId?: string) {
     for (const node of nodeList) {
-      dagreGraph.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
+      const nodeSize = getFlowNodeSize(node.name);
+      dagreGraph.setNode(node.id, { width: nodeSize.width, height: nodeSize.height });
       flowNodes.push({
         id: node.id,
+        type: "role-node",
+        className: "role-hierarchy__flow-node-wrapper",
         data: { label: node.name },
-        position: { x: 0, y: 0 }
+        position: { x: 0, y: 0 },
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
+        style: {
+          width: nodeSize.width,
+          height: nodeSize.height
+        }
       });
       if (parentId) {
         dagreGraph.setEdge(parentId, node.id);
@@ -115,8 +224,8 @@ function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: Node[]; edg
   flowNodes.forEach(node => {
     const dagreNode = dagreGraph.node(node.id);
     node.position = {
-      x: dagreNode.x - NODE_WIDTH / 2,
-      y: dagreNode.y - NODE_HEIGHT / 2
+      x: dagreNode.x - dagreNode.width / 2,
+      y: dagreNode.y - dagreNode.height / 2
     };
   });
 
@@ -127,6 +236,12 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
   const hasChildren = Boolean(node.data.children?.length);
   const indent = getThemeSizeToken("--system-detail-role-indent-size", TREE_FALLBACK_INDENT);
   const iconBoxHalf = getThemeSizeToken("--system-detail-role-icon-box-size", 24) / 2;
+  const nodeStyle = node.data.color
+    ? {
+        ...style,
+        "--role-hierarchy-node-icon-color": node.data.color
+      } as CSSProperties
+    : style;
 
   const nodeClassName = [
     "role-hierarchy__node",
@@ -137,7 +252,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
 
   return (
     <div
-      style={style}
+      style={nodeStyle}
       ref={dragHandle}
       className={nodeClassName}
     >
@@ -164,7 +279,13 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
         <span className="role-hierarchy__node-toggle-placeholder" />
       )}
 
-      {hasChildren
+      {node.data.icon ? (
+        <IconRenderer
+          iconName={node.data.icon}
+          className="role-hierarchy__node-icon role-hierarchy__node-icon--role"
+          color={node.data.color}
+        />
+      ) : hasChildren
         ? <Users className="role-hierarchy__node-icon role-hierarchy__node-icon--group" />
         : <User className="role-hierarchy__node-icon role-hierarchy__node-icon--single" />}
 
@@ -184,7 +305,7 @@ function NodeRenderer({ node, style, dragHandle }: NodeRendererProps<ArboristNod
 function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
   const { t } = useI18n();
   const [treeData, setTreeData] = useState<ArboristNode[]>([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<RoleFlowNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [loading, setLoading] = useState(false);
   const treeContainerRef = useRef<HTMLDivElement>(null);
@@ -346,6 +467,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
             className="role-hierarchy__flow"
             nodes={nodes}
             edges={edges}
+            nodeTypes={roleHierarchyNodeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             fitView
@@ -353,7 +475,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
             nodesConnectable={false}
             proOptions={{ hideAttribution: true }}
           >
-            <Background variant={BackgroundVariant.Dots} />
+            <Background variant={BackgroundVariant.Dots} color="var(--table-border-color)" />
             <Controls />
           </ReactFlow>
           </div>

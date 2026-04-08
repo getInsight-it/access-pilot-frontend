@@ -1,5 +1,6 @@
 import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { httpClient } from "../../../../config/http/http.ts";
+import { ColorUsage } from "../../../../common/types/color-usage.model.ts";
 import { PAGINATION } from "../../../../common/constants/pagination.ts";
 import { LevelSubItemResponseInterface } from "../types/level-subitem.model.ts";
 import {
@@ -20,6 +21,7 @@ import { LevelExport, LevelImportRequest, LevelImportSummary } from "../types/le
 
 const LEVEL_API = {
   LEVELS: "/v1/levels",
+  LEVELS_COLORS: "/v1/levels/colors",
   LEVELS_EXPORT: "/v1/levels/export",
   LEVELS_IMPORT: "/v1/levels/import"
 };
@@ -196,7 +198,8 @@ export class LevelService {
       name: levelData.name,
       sigla: levelData.sigla,
       type: levelData.type || "BUSINESS",
-      description: levelData.description || ""
+      description: levelData.description || "",
+      color: levelData.color || null
     };
 
     if (levelData.parentId) {
@@ -232,7 +235,8 @@ export class LevelService {
       name: levelData.name,
       sigla: levelData.sigla,
       type: levelData.type || "BUSINESS",
-      description: levelData.description || ""
+      description: levelData.description || "",
+      color: levelData.color || null
     };
 
     if (levelData.parentId) {
@@ -274,6 +278,16 @@ export class LevelService {
     return response.data as LevelInterface;
   }
 
+  async getLevelColors(): Promise<ColorUsage[]> {
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(LEVEL_API.LEVELS_COLORS);
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ColorUsage[];
+  }
+
   async updateParent(levelId: string, parentId: string | null): Promise<LevelInterface | null> {
     const currentLevel = await this.getLevelById(levelId);
     if (!currentLevel) {
@@ -285,7 +299,8 @@ export class LevelService {
       name: currentLevel.name,
       sigla: currentLevel.sigla || "",
       type: currentLevel.type,
-      description: currentLevel.description || ""
+      description: currentLevel.description || "",
+      color: currentLevel.color || null
     };
 
     if (parentId && parentId !== "0") {

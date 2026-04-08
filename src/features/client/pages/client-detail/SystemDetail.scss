@@ -237,7 +237,7 @@
     height: var(--system-detail-attachment-icon-box-size);
     border-radius: var(--system-detail-attachment-icon-box-radius);
     background-color: var(--system-detail-attachment-icon-background-color);
-    color: var(--color-primary-600);
+    color: var(--system-detail-attachment-icon-color, var(--color-primary-600));
     flex: 0 0 auto;
   }
 
@@ -387,8 +387,13 @@
     height: var(--system-detail-role-icon-box-size);
     border: var(--system-detail-control-border-width) solid var(--table-border-color);
     border-radius: var(--system-detail-control-radius);
-    color: var(--description-color);
+    color: var(--system-detail-role-icon-color, var(--description-color));
     flex: 0 0 auto;
+  }
+
+  &__role-icon {
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
   }
 
   &__role-name {

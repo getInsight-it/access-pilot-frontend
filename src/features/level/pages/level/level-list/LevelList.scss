@@ -174,7 +174,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    color: var(--description-color);
+    color: var(--level-list-sphere-color, var(--description-color));
     border: var(--border-layout-default);
     border-radius: 6px;
     flex: 0 0 24px;

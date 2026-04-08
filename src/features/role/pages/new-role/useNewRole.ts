@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { ColorUsage } from "../../../../common/types/color-usage.model.ts";
 import { roleService } from "../../common/service/role-service.ts";
 import { clientService } from "../../../client/common/service/client-service.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
@@ -24,6 +25,7 @@ export const formSchema = z.object({
   label: z.string().min(3, { message: "A label do sistema deve conter no mínimo 3 caracteres" }),
   levelId: z.string().optional(),
   icon: z.string().optional(),
+  color: z.string().optional(),
   autoApprovalEnabled: z.boolean().default(false),
   lateralApprovalEnabled: z.boolean().default(false),
   lateralTargets: z.array(
@@ -64,6 +66,7 @@ export const useNewRoleData = () => {
   const [initialData, setInitialData] = useState<RoleFormDataWithId | null>(null);
   const [roleDetails, setRoleDetails] = useState<RoleResponseInterface | null>(null);
   const [clientRoles, setClientRoles] = useState<RoleResponseInterface[]>([]);
+  const [roleColors, setRoleColors] = useState<ColorUsage[]>([]);
 
   const getRoleToEdit = useCallback(async () => {
     if(!roleId || !clientId) return;
@@ -82,6 +85,7 @@ export const useNewRoleData = () => {
         description: role.description || "",
         levelId: role.level?.id ? role.level.id.toString() : "",
         icon: role.icon || "",
+        color: role.color || "",
         autoApprovalEnabled: Boolean(autoApprovalPolicy?.enabled),
         lateralApprovalEnabled: Boolean(lateralApprovalPolicy?.enabled),
         lateralTargets: (lateralApprovalPolicy?.roles || []).map(target => ({
@@ -117,6 +121,22 @@ export const useNewRoleData = () => {
       const errorMessage: string = formatErrorMessages(error);
       toast({
         title: t("Erro ao buscar dados do sistema"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [clientId, t]);
+
+  const fetchRoleColors = useCallback(async () => {
+    if (!clientId) return;
+
+    try {
+      const colors = await roleService.getRoleColors(clientId);
+      setRoleColors(colors);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar cores dos papéis"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -161,18 +181,19 @@ export const useNewRoleData = () => {
   const loadData = useCallback(async () => {
     setDataLoading(true);
     if(isEditing && roleId) {
-      const [, , , roleData] = await Promise.all([
+      const [, , , , roleData] = await Promise.all([
         getClientData(),
         fetchLevels(),
         getClientRoles(),
+        fetchRoleColors(),
         getRoleToEdit()
       ]);
       return roleData;
     } else {
-      await Promise.all([getClientData(), fetchLevels(), getClientRoles()]);
+      await Promise.all([getClientData(), fetchLevels(), getClientRoles(), fetchRoleColors()]);
       return null;
     }
-  }, [isEditing, roleId, getClientData, fetchLevels, getClientRoles, getRoleToEdit]);
+  }, [isEditing, roleId, getClientData, fetchLevels, getClientRoles, fetchRoleColors, getRoleToEdit]);
 
   return {
     client,
@@ -185,6 +206,7 @@ export const useNewRoleData = () => {
     initialData,
     roleDetails,
     clientRoles,
+    roleColors,
     isEditing,
     roleId,
     clientId,
@@ -230,6 +252,7 @@ export const useRoleSubmit = (
       label: form.label,
       description: form.description,
       icon: form.icon,
+      color: form.color || null,
       levelId,
       approvalPolicies
     };

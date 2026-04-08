@@ -4,6 +4,8 @@ export interface ArboristNode {
   id: string;
   name: string;
   levelName: string;
+  icon?: string;
+  color?: string | null;
   children?: ArboristNode[];
 }
 

@@ -18,7 +18,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../../../../../common/external/ui/badge.tsx";
 import { Button } from "../../../../../common/external/ui/button.tsx";
@@ -269,7 +269,13 @@ export const LevelList = () => {
   );
 
   const renderSphereContent = (item: any) => (
-    <div className="level-list__sphere" style={{ paddingInlineStart: `${(item.level || 0) * 20}px` }}>
+    <div
+      className="level-list__sphere"
+      style={{
+        paddingInlineStart: `${(item.level || 0) * 20}px`,
+        ...(item.color ? { ["--level-list-sphere-color" as string]: item.color } : {})
+      } as CSSProperties}
+    >
       {item.children && item.children.length > 0 ? (
         <button
           type="button"

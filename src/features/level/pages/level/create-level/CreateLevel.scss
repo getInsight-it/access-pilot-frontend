@@ -133,6 +133,11 @@
     color: var(--system-form-required-color);
   }
 
+  &__optional {
+    color: var(--description-color);
+    font-weight: var(--default-text-font-weight);
+  }
+
   &__select {
     justify-content: space-between;
   }

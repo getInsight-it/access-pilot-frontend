@@ -6,6 +6,7 @@ import { formatErrorMessages } from "../../../../../common/utils/error-utils.ts"
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { PAGINATION } from "../../../../../common/constants/pagination.ts";
 import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
+import { getBuiltInSphereColor } from "../../../common/constants/level-constants.ts";
 
 export interface SphereItem {
   id: string;
@@ -22,6 +23,7 @@ export interface SphereItem {
   uuid?: string;
   externalUrl?: string;
   level?: number;
+  color?: string | null;
 }
 
 export const BUILT_IN_SPHERES = ["FEDERAL", "ESTADUAL", "MUNICIPAL"];
@@ -121,7 +123,8 @@ export const useLevelListData = () => {
         isBuiltIn: item.type === "BUILT_IN",
         sigla: item.sigla,
         uuid: item.uuid,
-        externalUrl: item.externalUrl
+        externalUrl: item.externalUrl,
+        color: item.color || getBuiltInSphereColor(item.name)
       }));
 
       const spheresWithBuiltInFlag = spheresData.map((sphere) => ({

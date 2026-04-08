@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Plus, Upload, X } from "lucide-react";
+import { ColorPicker } from "@common/components/color-picker/ColorPicker.tsx";
 import { Toggle } from "@common/components/toggle/Toggle.tsx";
 import IconRenderer from "@common/components/icon/IconRenderer.tsx";
 import { IconPicker } from "@common/components/icon/IconPicker.tsx";
@@ -10,15 +11,18 @@ import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { toast } from "@ui/use-toast.ts";
 import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import { ColorUsage } from "@common/types/color-usage.model.ts";
 import "./AttachmentConfigurationForm.scss";
 
 export interface AttachmentConfigSectionProps {
+  currentClientId?: string;
   configurations: AttachmentConfigurationInterface[];
   onAddConfiguration: (config: AttachmentConfigurationInterface) => void;
   onDeleteConfiguration: (name: string) => void;
 }
 
 export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps> = ({
+  currentClientId,
   configurations,
   onAddConfiguration,
   onDeleteConfiguration
@@ -27,8 +31,10 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
+  const [color, setColor] = useState("");
   const [required, setRequired] = useState(false);
   const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
+  const [availableColors, setAvailableColors] = useState<ColorUsage[]>([]);
   const [formError, setFormError] = useState<{
     name?: string;
     description?: string;
@@ -42,6 +48,29 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const activeConfigurations = configurations.filter(config => config.active !== false);
+
+  const fetchAvailableColors = useCallback(async () => {
+    if (!currentClientId?.trim()) {
+      setAvailableColors([]);
+      return;
+    }
+
+    try {
+      const colors = await clientService.getAttachmentConfigurationColors(currentClientId.trim());
+      setAvailableColors(colors);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar cores das configurações de anexo"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [currentClientId, t]);
+
+  useEffect(() => {
+    void fetchAvailableColors();
+  }, [fetchAvailableColors]);
 
   const handleAddConfig = () => {
     const errors: {
@@ -66,6 +95,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       name,
       description,
       icon,
+      color,
       required,
       allowedExtensions: selectedExtensions,
       active: true
@@ -74,6 +104,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     setName("");
     setDescription("");
     setIcon("");
+    setColor("");
     setRequired(false);
     setSelectedExtensions([]);
   };
@@ -242,9 +273,23 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
               <div className="attachment-configuration-form__icon-row">
                 <IconPicker
                   value={icon}
+                  color={color}
                   onChange={setIcon}
                   disabled={loading}
                   triggerLabel={t("Selecionar ícone")}
+                />
+              </div>
+            </div>
+
+            <div className="attachment-configuration-form__field">
+              <span className="attachment-configuration-form__label">{t("Cor")}</span>
+              <div className="attachment-configuration-form__icon-row">
+                <ColorPicker
+                  value={color}
+                  options={availableColors}
+                  onChange={setColor}
+                  disabled={loading}
+                  triggerLabel={t("Selecionar cor")}
                 />
               </div>
             </div>
@@ -361,6 +406,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
                     <IconRenderer
                       iconName={config.icon}
                       className="attachment-configuration-form__card-icon"
+                      color={config.color}
                       showPlaceholder={true}
                     />
                   </span>

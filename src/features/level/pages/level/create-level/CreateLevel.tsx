@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import { ColorPicker } from "@common/components/color-picker/ColorPicker.tsx";
 import { SectionLoader } from "../../../../../common/components/loading/section-loader/SectionLoader.tsx";
 import { PRIVATE_ROUTES } from "../../../../../common/constants/routes.ts";
 import { Button } from "../../../../../common/external/ui/button.tsx";
@@ -265,6 +266,17 @@ export default function CreateOrEditLevel() {
                   {formData.isEditing && (
                     <p className="create-level__notice">{t("O tipo da esfera não pode ser alterado após a criação.")}</p>
                   )}
+                </div>
+
+                <div className="create-level__field">
+                  <label className="create-level__label" htmlFor="color-picker-trigger">
+                    {t("Cor")} <span className="create-level__optional">{t("(opcional)")}</span>
+                  </label>
+                  <ColorPicker
+                    value={formData.color}
+                    options={formData.levelColors}
+                    onChange={formData.setColor}
+                  />
                 </div>
 
                 {formData.type === "EXTERNAL" && (

@@ -147,8 +147,9 @@
   }
 
   &__node-icon--group,
-  &__node-icon--single {
-    color: var(--description-color);
+  &__node-icon--single,
+  &__node-icon--role {
+    color: var(--role-hierarchy-node-icon-color, var(--description-color));
   }
 
   &__node-name {
@@ -195,6 +196,89 @@
   &__flow {
     width: 100%;
     height: 100%;
+  }
+
+  &__flow-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding-block: var(--role-hierarchy-flow-node-padding-block);
+    padding-inline: var(--role-hierarchy-flow-node-padding-inline);
+    border: var(--system-form-control-border);
+    border-radius: var(--system-detail-control-radius);
+    background-color: var(--dropdown-background-color);
+    color: var(--default-text-color);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  &__flow-node-label {
+    display: -webkit-box;
+    max-width: 100%;
+    color: var(--default-text-color);
+    font-size: var(--table-row-text-size);
+    font-weight: var(--typography-body-md-font-weight);
+    line-height: var(--typography-body-md-line-height);
+    text-align: center;
+    white-space: normal;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__flow-handle {
+    width: var(--badge-icon-size);
+    height: var(--badge-icon-size);
+    border: var(--system-form-control-border);
+    border-radius: var(--badge-radius);
+    background-color: var(--content-background-color);
+    pointer-events: none;
+  }
+
+  &__flow-handle--target {
+    top: 0;
+  }
+
+  &__flow-handle--source {
+    bottom: 0;
+  }
+
+  &__flow .role-hierarchy__flow-node-wrapper {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  &__flow .react-flow__edge-path {
+    stroke: var(--table-border-color);
+  }
+
+  &__flow .react-flow__controls {
+    border: var(--system-form-control-border);
+    border-radius: var(--system-detail-control-radius);
+    background-color: var(--dropdown-background-color);
+    box-shadow: none;
+    overflow: hidden;
+  }
+
+  &__flow .react-flow__controls-button {
+    border-bottom: var(--system-form-control-border);
+    background-color: var(--dropdown-background-color);
+    color: var(--default-text-color);
+  }
+
+  &__flow .react-flow__controls-button:last-child {
+    border-bottom: 0;
+  }
+
+  &__flow .react-flow__controls-button:hover {
+    background-color: var(--dropdown-item-hover-background-color);
   }
 
   @media (max-width: 1024px) {

@@ -2,6 +2,7 @@ import { HttpClient, HttpRequestError, HttpRequestResponse } from "@getinsight.i
 import axios, { AxiosResponse } from "axios";
 
 import { httpClient } from "@config/http/http.ts";
+import { ColorUsage } from "@common/types/color-usage.model.ts";
 import { ClientResponseInterface, ClientSyncSummaryInterface } from "../model/client.model.ts";
 import { ClientStatusEnum, ClientStatusTranslationEnum } from "../enum/client-status.enum";
 import { PaginatedResponse } from "@common/types/util/paginated-response.ts";
@@ -20,7 +21,8 @@ export const CLIENT_API = {
   SYNCHRONOUS_ALL: "/v1/clients/synchronous/all",
   CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview",
   CLIENT_CONFIGURATION_EXPORT_PREVIEW: "/v1/clients/attachments-configurations-export-preview",
-  CLIENT_EXPORT_IMPORT: "/v1/clients/import"
+  CLIENT_EXPORT_IMPORT: "/v1/clients/import",
+  CLIENT_CONFIGURATION_COLORS: "/v1/clients"
 };
 
 const normalizeString = (value: string) =>
@@ -253,6 +255,22 @@ export class ClientService {
     }
 
     return response.data as ClientImportSummary;
+  }
+
+  async getAttachmentConfigurationColors(clientId: string): Promise<ColorUsage[]> {
+    if (!clientId) {
+      throw new Error("Client ID is required");
+    }
+
+    const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
+      `${CLIENT_API.CLIENT_CONFIGURATION_COLORS}/${clientId}/attachments-configurations/colors`
+    );
+
+    if (response instanceof HttpRequestError) {
+      throw response;
+    }
+
+    return response.data as ColorUsage[];
   }
 }
 

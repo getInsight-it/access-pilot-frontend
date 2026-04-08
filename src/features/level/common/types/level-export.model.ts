@@ -17,6 +17,7 @@ export interface LevelExport {
   parentName?: string;
   externalUrl?: string;
   icon?: string;
+  color?: string | null;
   apiKey?: string;
   uuid?: string;
   items?: LevelItemExport[];
