@@ -138,6 +138,8 @@ const DARK_ATTRIBUTE_OVERRIDES: Theme["attributes"] = {
   "sidebar-item-hover-color": "#1e293b",
   "sidebar-tooltip-background-color": "#0f172a",
   "sidebar-tooltip-text-color": "#f8fafc",
+  "role-hierarchy-flow-node-surface-color": "#ffffff",
+  "role-hierarchy-flow-node-text-color": "#111827",
   "step-loader-card-background-color": "#111827",
   "highlight-loader-track-background-color": "#1e293b",
   "highlight-loader-track-glow": "inset 0 0 0 1px rgba(255, 255, 255, 0.1)",

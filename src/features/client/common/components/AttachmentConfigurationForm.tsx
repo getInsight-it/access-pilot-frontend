@@ -50,13 +50,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   const activeConfigurations = configurations.filter(config => config.active !== false);
 
   const fetchAvailableColors = useCallback(async () => {
-    if (!currentClientId?.trim()) {
-      setAvailableColors([]);
-      return;
-    }
-
     try {
-      const colors = await clientService.getAttachmentConfigurationColors(currentClientId.trim());
+      const colors = await clientService.getAttachmentConfigurationColors(currentClientId);
       setAvailableColors(colors);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);

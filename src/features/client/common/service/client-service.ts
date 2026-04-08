@@ -22,7 +22,7 @@ export const CLIENT_API = {
   CLIENT_CONFIGURATION_PREVIEW: "/v1/clients/attachments-configurations-import-preview",
   CLIENT_CONFIGURATION_EXPORT_PREVIEW: "/v1/clients/attachments-configurations-export-preview",
   CLIENT_EXPORT_IMPORT: "/v1/clients/import",
-  CLIENT_CONFIGURATION_COLORS: "/v1/clients"
+  CLIENT_CONFIGURATION_COLORS: "/v1/clients/attachments-configurations/colors"
 };
 
 const normalizeString = (value: string) =>
@@ -257,13 +257,17 @@ export class ClientService {
     return response.data as ClientImportSummary;
   }
 
-  async getAttachmentConfigurationColors(clientId: string): Promise<ColorUsage[]> {
-    if (!clientId) {
-      throw new Error("Client ID is required");
+  async getAttachmentConfigurationColors(clientId?: string): Promise<ColorUsage[]> {
+    const queryParams = new URLSearchParams();
+
+    if (clientId?.trim()) {
+      queryParams.set("clientId", clientId.trim());
     }
 
     const response: HttpRequestResponse | HttpRequestError = await this.httpClient.get(
-      `${CLIENT_API.CLIENT_CONFIGURATION_COLORS}/${clientId}/attachments-configurations/colors`
+      queryParams.toString()
+        ? `${CLIENT_API.CLIENT_CONFIGURATION_COLORS}?${queryParams.toString()}`
+        : CLIENT_API.CLIENT_CONFIGURATION_COLORS
     );
 
     if (response instanceof HttpRequestError) {
