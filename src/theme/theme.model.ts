@@ -119,6 +119,17 @@ export interface ThemeAttributes {
   "highlight-loader-message-font-weight"?: string,
   "highlight-loader-message-color"?: string,
 
+  // helmet-loader
+  "helmet-loader-gap"?: string,
+  "helmet-loader-size-sm"?: string,
+  "helmet-loader-size-md"?: string,
+  "helmet-loader-size-lg"?: string,
+  "helmet-loader-pulse-duration"?: string,
+  "helmet-loader-scale-min"?: string,
+  "helmet-loader-scale-max"?: string,
+  "helmet-loader-image-opacity"?: string,
+  "helmet-loader-image-drop-shadow"?: string,
+
   // layout
   "main-content-default-max-width"?: string,
   "title-color"?: string,

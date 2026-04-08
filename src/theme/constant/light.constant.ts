@@ -96,6 +96,17 @@ export const LIGHT_THEME: Theme = {
     "highlight-loader-message-font-weight": "600",
     "highlight-loader-message-color": "var(--description-color)",
 
+    // helmet-loader
+    "helmet-loader-gap": "12px",
+    "helmet-loader-size-sm": "48px",
+    "helmet-loader-size-md": "72px",
+    "helmet-loader-size-lg": "96px",
+    "helmet-loader-pulse-duration": "2200ms",
+    "helmet-loader-scale-min": "0.93",
+    "helmet-loader-scale-max": "1.04",
+    "helmet-loader-image-opacity": "0.98",
+    "helmet-loader-image-drop-shadow": "0 8px 18px rgba(15, 23, 42, 0.12)",
+
     // layout
     "main-content-default-max-width": "1260px",
     "title-color": "#111827",

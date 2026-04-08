@@ -8,7 +8,7 @@ import { ThemeProvider } from "./theme/theme-provider.tsx";
 import { registerHttpAuthorization } from "./config/http/http.ts";
 import { motion } from "framer-motion";
 import "./App.scss";
-import HighlightLoader from "./common/components/loading/HighLightLoader.tsx";
+import HelmetPulseLoader from "./common/components/loading/helmet-pulse-loader/HelmetPulseLoader.tsx";
 import { authService } from "./features/auth/common/AuthService.ts";
 import { userService } from "./common/service/user-service.ts";
 import { initMobileViewportFix } from "./common/utils/mobileViewportFix.ts";
@@ -21,6 +21,7 @@ function App() {
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const isLoaderPreviewRoute = window.location.pathname === PUBLIC_ROUTES.LOADER_PREVIEW;
 
   const getUserInfo = async () => {
     const fetchedUserData = await userService.getUser();
@@ -95,9 +96,15 @@ function App() {
   };
 
   useEffect(() => {
-    init();
     initMobileViewportFix();
-  }, []);
+
+    if(isLoaderPreviewRoute) {
+      setIsInitialized(true);
+      return;
+    }
+
+    init();
+  }, [isLoaderPreviewRoute]);
 
   return (
     <ThemeProvider>
@@ -107,7 +114,7 @@ function App() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}>
-          <HighlightLoader size="lg" />
+          <HelmetPulseLoader size="lg" />
         </motion.div>
       ) : (
         <AppRouter />

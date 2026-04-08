@@ -1,0 +1,47 @@
+.app-popover {
+  z-index: var(--dropdown-z-index);
+  width: var(--dropdown-min-width);
+  max-width: min(320px, calc(100vw - 20px));
+  padding: var(--request-access-justification-card-padding);
+  border: 1px solid var(--dropdown-border-color);
+  border-radius: var(--dropdown-radius);
+  background-color: var(--dropdown-background-color);
+  color: var(--default-text-color);
+  box-shadow: var(--dropdown-shadow);
+  outline: none;
+  overflow: hidden;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    opacity var(--motion-layout-default),
+    transform var(--motion-layout-default);
+
+  &[data-state="open"] {
+    opacity: 1;
+  }
+
+  &[data-state="closed"] {
+    opacity: 0;
+  }
+
+  &[data-side="top"] {
+    transform-origin: bottom center;
+  }
+
+  &[data-side="right"] {
+    transform-origin: left center;
+  }
+
+  &[data-side="bottom"] {
+    transform-origin: top center;
+  }
+
+  &[data-side="left"] {
+    transform-origin: right center;
+  }
+
+  p {
+    margin: 0;
+    color: inherit;
+  }
+}

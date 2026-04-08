@@ -31,10 +31,24 @@
     width: 100%;
   }
 
+  &__picker-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--attachment-configuration-top-row-gap);
+    width: 100%;
+  }
+
   &__field {
     display: flex;
     flex-direction: column;
     gap: var(--attachment-configuration-field-gap);
+  }
+
+  &__picker-row &__field {
+    flex: 0 1 var(--attachment-configuration-top-column-min-width);
+    min-width: min(var(--attachment-configuration-top-column-min-width), 100%);
+    max-width: var(--attachment-configuration-top-column-min-width);
   }
 
   &__label {

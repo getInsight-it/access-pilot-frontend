@@ -314,40 +314,42 @@ export default function NewRole() {
                   )}
                 </div>
 
-                <div className="new-role__field new-role__field--icon">
-                  <label className="new-role__label" htmlFor="icon-picker-trigger">
-                    {t("Ícone")} <span className="new-role__optional">{t("(opcional)")}</span>
-                  </label>
-                  <Controller
-                    name="icon"
-                    control={methods.control}
-                    render={({ field }) => (
-                      <IconPicker
-                        value={field.value}
-                        color={selectedRoleColor}
-                        onChange={field.onChange}
-                        disabled={loading}
-                      />
-                    )}
-                  />
-                </div>
+                <div className="new-role__picker-row">
+                  <div className="new-role__field new-role__field--icon">
+                    <label className="new-role__label" htmlFor="icon-picker-trigger">
+                      {t("Ícone")} <span className="new-role__optional">{t("(opcional)")}</span>
+                    </label>
+                    <Controller
+                      name="icon"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <IconPicker
+                          value={field.value}
+                          color={selectedRoleColor}
+                          onChange={field.onChange}
+                          disabled={loading}
+                        />
+                      )}
+                    />
+                  </div>
 
-                <div className="new-role__field new-role__field--icon">
-                  <label className="new-role__label" htmlFor="color-picker-trigger">
-                    {t("Cor")} <span className="new-role__optional">{t("(opcional)")}</span>
-                  </label>
-                  <Controller
-                    name="color"
-                    control={methods.control}
-                    render={({ field }) => (
-                      <ColorPicker
-                        value={field.value}
-                        options={roleColors}
-                        onChange={field.onChange}
-                        disabled={loading}
-                      />
-                    )}
-                  />
+                  <div className="new-role__field new-role__field--icon">
+                    <label className="new-role__label" htmlFor="color-picker-trigger">
+                      {t("Cor")} <span className="new-role__optional">{t("(opcional)")}</span>
+                    </label>
+                    <Controller
+                      name="color"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <ColorPicker
+                          value={field.value}
+                          options={roleColors}
+                          onChange={field.onChange}
+                          disabled={loading}
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
 
                 <div className="new-role__policy-section">
@@ -393,26 +395,32 @@ export default function NewRole() {
                           <div className="new-role__policy-card-header">
                             <div className="new-role__policy-card-header-text">
                               <h4 className="new-role__policy-card-heading">
-                                <Users size={14} />
-                                {t("Aprovação lateral")}
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <button
-                                        type="button"
-                                        className="new-role__policy-help"
-                                        aria-label={t("Entender como funciona a aprovação lateral")}
-                                      >
-                                        <HelpCircle size={14} />
-                                      </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent className="new-role__policy-help-tooltip" side="top">
-                                      {lateralHelpText}
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                                <span className="new-role__policy-card-heading-status">
-                                  {lateralApprovalEnabledValue ? t("Ativada") : t("Desativada")}
+                                <span className="new-role__policy-card-heading-title">
+                                  <Users size={14} />
+                                  <span className="new-role__policy-card-heading-label">
+                                    {t("Aprovação lateral")}
+                                  </span>
+                                </span>
+                                <span className="new-role__policy-card-heading-meta">
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          type="button"
+                                          className="new-role__policy-help"
+                                          aria-label={t("Entender como funciona a aprovação lateral")}
+                                        >
+                                          <HelpCircle size={14} />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent className="new-role__policy-help-tooltip" side="top">
+                                        {lateralHelpText}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                  <span className="new-role__policy-card-heading-status">
+                                    {lateralApprovalEnabledValue ? t("Ativada") : t("Desativada")}
+                                  </span>
                                 </span>
                               </h4>
                               <span className="new-role__policy-card-caption">

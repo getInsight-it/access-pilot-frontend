@@ -169,6 +169,11 @@
     gap: var(--system-form-field-gap);
   }
 
+  &__input-wrap {
+    position: relative;
+    width: 100%;
+  }
+
   &__label {
     color: var(--title-color);
     font-size: var(--system-form-field-label-font-size);
@@ -183,6 +188,33 @@
   &__textarea {
     border-color: var(--system-form-input-border-color);
     color: var(--system-form-input-text-color);
+  }
+
+  &__input--readonly {
+    padding-inline-end: var(--input-padding-inline-with-icon);
+    background-color: var(--content-background-color);
+    color: var(--description-color);
+    cursor: not-allowed;
+    transition: none;
+  }
+
+  &__input-wrap--readonly &__input--readonly:hover,
+  &__input-wrap--readonly &__input--readonly:focus-visible {
+    background-color: var(--content-background-color);
+    border-color: var(--system-form-input-border-color);
+    box-shadow: none;
+    outline: none;
+  }
+
+  &__input-lock {
+    position: absolute;
+    inset-inline-end: var(--input-icon-left-offset);
+    inset-block-start: 50%;
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
+    color: var(--description-color);
+    transform: translateY(-50%);
+    pointer-events: none;
   }
 
   &__textarea {

@@ -3,7 +3,8 @@ export const AUTH_ROUTES = {
 };
 
 export const PUBLIC_ROUTES = {
-  INVITATION: '/invitation'
+  INVITATION: '/invitation',
+  LOADER_PREVIEW: '/loader-preview'
 };
 
 export const PRIVATE_ROUTES = {

@@ -129,13 +129,22 @@
     gap: var(--system-form-form-column-gap);
   }
 
+  &__picker-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--system-form-form-column-gap);
+  }
+
   &__field {
     display: flex;
     flex-direction: column;
     gap: var(--system-form-field-gap);
   }
 
-  &__field--icon {
+  &__picker-row &__field--icon {
+    flex: 0 1 var(--system-form-field-min-width);
+    min-width: min(var(--system-form-field-min-width), 100%);
     max-width: var(--system-form-field-min-width);
   }
 
@@ -260,6 +269,25 @@
     line-height: 1.2;
   }
 
+  &__policy-card-heading-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+    min-width: 0;
+  }
+
+  &__policy-card-heading-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-detail-field-gap);
+    min-width: 0;
+  }
+
+  &__policy-card-heading-label {
+    display: inline-flex;
+    align-items: center;
+  }
+
   &__policy-card-heading-status {
     color: var(--description-color);
     font-size: var(--system-form-counter-font-size);
@@ -274,6 +302,14 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: var(--system-detail-field-gap);
+  }
+
+  &__policy-card--lateral &__policy-card-heading {
+    gap: var(--system-detail-field-gap);
+  }
+
+  &__policy-card--lateral &__policy-card-header-text {
+    gap: var(--system-form-step-text-gap);
   }
 
   &__policy-card--auto &__toggle-control {
@@ -359,6 +395,10 @@
     color: var(--description-color);
     font-size: var(--system-form-counter-font-size);
     font-weight: var(--default-text-font-weight);
+  }
+
+  &__policy-card--lateral &__toggle-description {
+    line-height: 1.4;
   }
 
   &__lateral-config {

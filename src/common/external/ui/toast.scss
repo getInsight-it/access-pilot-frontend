@@ -72,8 +72,8 @@
 
   &--destructive {
     border-color: var(--request-status-tone-danger-solid-color);
-    background-color: var(--request-status-tone-danger-surface-color);
-    color: var(--request-status-tone-danger-text-color);
+    background-color: color-mix(in srgb, var(--request-status-tone-danger-solid-color) 24%, var(--background));
+    color: var(--default-text-color);
   }
 
   &--success {
@@ -105,6 +105,15 @@
     font-size: var(--typography-body-sm-font-size);
     line-height: var(--typography-body-sm-line-height);
     opacity: 0.9;
+  }
+
+  &--destructive &__description {
+    opacity: 1;
+  }
+
+  &--destructive &__title,
+  &--destructive &__description {
+    color: inherit;
   }
 
   &__action {
