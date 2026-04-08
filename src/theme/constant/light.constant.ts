@@ -286,11 +286,16 @@ export const LIGHT_THEME: Theme = {
     "system-detail-role-indent-size": "20px",
     "system-detail-role-expand-size": "24px",
     "system-detail-role-icon-box-size": "24px",
-    "role-hierarchy-flow-node-min-width": "160px",
-    "role-hierarchy-flow-node-max-width": "280px",
+    "role-hierarchy-flow-node-min-width": "200px",
+    "role-hierarchy-flow-node-max-width": "320px",
     "role-hierarchy-flow-node-min-height": "56px",
     "role-hierarchy-flow-node-padding-inline": "16px",
     "role-hierarchy-flow-node-padding-block": "12px",
+    "role-hierarchy-flow-node-border-width": "1px",
+    "role-hierarchy-flow-node-stripe-width": "12px",
+    "role-hierarchy-flow-node-indicator-slot-width": "44px",
+    "role-hierarchy-flow-node-surface-color": "#ffffff",
+    "role-hierarchy-flow-node-text-color": "#111827",
 
     // request-detail
     "request-detail-page-padding-inline": "28px",

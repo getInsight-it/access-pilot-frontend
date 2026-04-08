@@ -1,4 +1,6 @@
 .new-role {
+  --new-role-lateral-action-cell-width: 100px;
+
   max-width: var(--main-content-default-max-width);
   margin-inline: auto;
   display: flex;
@@ -207,15 +209,17 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--system-form-toggle-row-gap);
+    align-items: start;
   }
 
   &__policy-card {
     display: flex;
     flex-direction: column;
     gap: var(--system-form-field-gap);
+    min-width: 0;
     border: var(--system-form-control-border);
     border-radius: var(--system-form-control-radius);
-    padding: 16px;
+    padding: var(--system-detail-attachment-padding);
     background-color: var(--background);
   }
 
@@ -229,24 +233,27 @@
 
   &__policy-card-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: var(--system-form-step-text-gap);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   &__policy-card-header-text {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: var(--system-detail-field-gap);
   }
 
   &__policy-card-heading {
     margin: 0;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    white-space: nowrap;
+    flex-wrap: wrap;
+    gap: var(--request-detail-field-gap);
+    white-space: normal;
     color: var(--title-color);
     font-size: var(--system-form-field-label-font-size);
     font-weight: var(--title-font-weight);
@@ -257,6 +264,20 @@
     color: var(--description-color);
     font-size: var(--system-form-counter-font-size);
     font-weight: var(--default-text-font-weight);
+  }
+
+  &__policy-card--auto &__policy-card-header {
+    align-items: center;
+  }
+
+  &__policy-card--auto &__policy-card-heading {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--system-detail-field-gap);
+  }
+
+  &__policy-card--auto &__toggle-control {
+    align-self: center;
   }
 
   &__policy-help {
@@ -323,6 +344,8 @@
   &__toggle-control {
     display: inline-flex;
     align-items: center;
+    align-self: flex-start;
+    flex: 0 0 auto;
     gap: var(--system-form-step-text-gap);
   }
 
@@ -341,16 +364,36 @@
   &__lateral-config {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    min-width: 0;
+    gap: var(--system-form-header-container-gap);
+  }
+
+  &__lateral-table-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   &__lateral-table {
     width: 100%;
+    min-width: 620px;
     --app-table-row-min-height: 56px;
   }
 
+  &__lateral-table .app-table__row {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+  }
+
+  &__lateral-table .app-table__cell {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+
   &__lateral-table-cell {
-    flex: 1 1 0;
+    min-width: 0;
   }
 
   &__lateral-table-cell--role {
@@ -359,13 +402,26 @@
   }
 
   &__lateral-table-cell--action {
-    flex: 0 0 88px;
-    width: 88px;
-    min-width: 88px;
-    max-width: 88px;
+    align-items: center;
+    flex: 0 0 var(--new-role-lateral-action-cell-width);
+    width: var(--new-role-lateral-action-cell-width);
+    min-width: var(--new-role-lateral-action-cell-width);
+    max-width: var(--new-role-lateral-action-cell-width);
     justify-content: center;
     text-align: center;
-    padding-inline: 8px;
+    padding-inline: 0;
+  }
+
+  &__lateral-table .app-table__header &__lateral-table-cell--action {
+    justify-content: center;
+  }
+
+  &__lateral-table .app-table__header &__lateral-table-cell--action span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
   }
 
   &__lateral-table-row &__lateral-table-cell--role {
@@ -379,14 +435,14 @@
   &__lateral-role-cell {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--system-form-step-text-gap);
     min-width: 0;
   }
 
   &__lateral-role-text {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--system-detail-field-gap);
     min-width: 0;
   }
 
@@ -395,9 +451,12 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    min-height: 100%;
   }
 
   &__lateral-checkbox {
+    display: block;
+    flex: 0 0 auto;
     width: 15px;
     height: 15px;
     border-radius: 3px;
@@ -414,7 +473,7 @@
 
   &__lateral-item-title {
     color: var(--title-color);
-    font-size: 12px;
+    font-size: var(--typography-body-sm-font-size);
     font-weight: var(--title-font-weight);
     white-space: nowrap;
     overflow: hidden;
@@ -423,7 +482,7 @@
 
   &__lateral-item-code {
     color: var(--description-color);
-    font-size: 10px;
+    font-size: var(--typography-caption-font-size);
     font-weight: 500;
     white-space: nowrap;
     text-transform: uppercase;
@@ -446,10 +505,25 @@
     letter-spacing: 0.02em;
   }
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1024px) {
     &__policy-grid {
-      grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.7fr) minmax(240px, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       align-items: stretch;
+    }
+
+    &__policy-card--readonly {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    &__policy-card--auto {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    &__policy-card--lateral {
+      grid-column: 1 / -1;
+      grid-row: 2;
     }
   }
 

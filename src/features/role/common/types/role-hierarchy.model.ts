@@ -6,6 +6,9 @@ export interface ArboristNode {
   levelName: string;
   icon?: string;
   color?: string | null;
+  levelColor?: string | null;
+  autoApprovalEnabled?: boolean;
+  lateralApprovalEnabled?: boolean;
   children?: ArboristNode[];
 }
 

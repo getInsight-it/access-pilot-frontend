@@ -20,13 +20,14 @@ import { toast } from "../../../../../../common/external/ui/use-toast.ts";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Badge } from "../../../../../../common/external/ui/badge.tsx";
 import IconRenderer from "../../../../../../common/components/icon/IconRenderer.tsx";
-import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
+import { ArrowRightLeft, ChevronDown, ChevronRight, User, Users, Zap } from "lucide-react";
 import { StepLoader } from "../../../../../../common/components/loading/StepLoader.tsx";
 import { roleService } from "../../../../common/service/role-service.ts";
-import { RoleResponseInterface } from "../../../../common/types/role.model.ts";
+import { ApprovalPolicyType, RoleResponseInterface } from "../../../../common/types/role.model.ts";
 import { formatErrorMessages } from "../../../../../../common/utils/error-utils.ts";
 import { ArboristNode, RoleHierarchyProps, RoleUpdatePayload } from "../../../../common/types/role-hierarchy.model.ts";
 import { useI18n } from "../../../../../../common/context/i18n/I18nContext.tsx";
+import { getBuiltInSphereColor } from "../../../../../level/common/constants/level-constants.ts";
 import "./role-hierarchy.scss";
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -35,15 +36,22 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const TREE_FALLBACK_HEIGHT = 420;
 const TREE_FALLBACK_ROW_HEIGHT = 38;
 const TREE_FALLBACK_INDENT = 20;
-const FLOW_NODE_FALLBACK_MIN_WIDTH = 160;
-const FLOW_NODE_FALLBACK_MAX_WIDTH = 280;
+const FLOW_NODE_FALLBACK_MIN_WIDTH = 200;
+const FLOW_NODE_FALLBACK_MAX_WIDTH = 320;
 const FLOW_NODE_FALLBACK_MIN_HEIGHT = 56;
 const FLOW_NODE_FALLBACK_PADDING_INLINE = 16;
 const FLOW_NODE_FALLBACK_PADDING_BLOCK = 12;
+const FLOW_NODE_FALLBACK_STRIPE_WIDTH = 12;
+const FLOW_NODE_FALLBACK_INDICATOR_SLOT_WIDTH = 44;
 const FLOW_NODE_MAX_LINES = 2;
+const AUTO_APPROVAL_POLICY: ApprovalPolicyType = "AUTO_APPROVAL";
+const LATERAL_APPROVAL_POLICY: ApprovalPolicyType = "LATERAL_APPROVAL";
 
 type RoleFlowNodeData = {
   label: string;
+  levelColor?: string | null;
+  autoApprovalEnabled: boolean;
+  lateralApprovalEnabled: boolean;
 };
 
 type RoleFlowNode = Node<RoleFlowNodeData, "role-node">;
@@ -93,19 +101,26 @@ function measureTextWidth(label: string, fontSize: number, fontWeight: string, f
   return context.measureText(label).width;
 }
 
-function getFlowNodeSize(label: string): { width: number; height: number } {
+function getFlowNodeSize(label: string, hasIndicators: boolean): { width: number; height: number } {
   const minWidth = getThemeSizeToken("--role-hierarchy-flow-node-min-width", FLOW_NODE_FALLBACK_MIN_WIDTH);
   const maxWidth = Math.max(minWidth, getThemeSizeToken("--role-hierarchy-flow-node-max-width", FLOW_NODE_FALLBACK_MAX_WIDTH));
   const minHeight = getThemeSizeToken("--role-hierarchy-flow-node-min-height", FLOW_NODE_FALLBACK_MIN_HEIGHT);
   const paddingInline = getThemeSizeToken("--role-hierarchy-flow-node-padding-inline", FLOW_NODE_FALLBACK_PADDING_INLINE);
   const paddingBlock = getThemeSizeToken("--role-hierarchy-flow-node-padding-block", FLOW_NODE_FALLBACK_PADDING_BLOCK);
+  const stripeWidth = getThemeSizeToken("--role-hierarchy-flow-node-stripe-width", FLOW_NODE_FALLBACK_STRIPE_WIDTH);
+  const indicatorSlotWidth = hasIndicators
+    ? getThemeSizeToken("--role-hierarchy-flow-node-indicator-slot-width", FLOW_NODE_FALLBACK_INDICATOR_SLOT_WIDTH)
+    : 0;
   const fontSize = getThemeSizeToken("--typography-body-md-font-size", 14);
   const fontWeight = getThemeStringToken("--typography-body-md-font-weight", "400");
   const fontFamily = getThemeStringToken("--font-family", "sans-serif");
   const lineHeight = getThemeLineHeightToken("--typography-body-md-line-height", fontSize, 1.45);
   const measuredTextWidth = measureTextWidth(label, fontSize, fontWeight, fontFamily);
-  const width = Math.min(maxWidth, Math.max(minWidth, measuredTextWidth + paddingInline * 2));
-  const availableTextWidth = Math.max(width - paddingInline * 2, fontSize);
+  const width = Math.min(
+    maxWidth,
+    Math.max(minWidth, measuredTextWidth + paddingInline * 2 + stripeWidth + indicatorSlotWidth)
+  );
+  const availableTextWidth = Math.max(width - paddingInline * 2 - stripeWidth - indicatorSlotWidth, fontSize);
   const lineCount = Math.min(FLOW_NODE_MAX_LINES, Math.max(1, Math.ceil(measuredTextWidth / availableTextWidth)));
   const height = Math.max(minHeight, Math.ceil(lineCount * lineHeight + paddingBlock * 2));
 
@@ -116,15 +131,35 @@ function getFlowNodeSize(label: string): { width: number; height: number } {
 }
 
 function RoleHierarchyFlowNode({ data }: Readonly<FlowNodeProps<RoleFlowNode>>) {
+  const hasIndicators = data.autoApprovalEnabled || data.lateralApprovalEnabled;
+  const nodeClassName = [
+    "role-hierarchy__flow-node",
+    hasIndicators ? "role-hierarchy__flow-node--has-indicators" : ""
+  ].filter(Boolean).join(" ");
+  const nodeStyle = data.levelColor
+    ? {
+        "--role-hierarchy-flow-node-accent-color": data.levelColor
+      } as CSSProperties
+    : undefined;
+
   return (
-    <div className="role-hierarchy__flow-node" title={data.label}>
+    <div className={nodeClassName} style={nodeStyle} title={data.label}>
       <Handle
         type="target"
         position={Position.Top}
         className="role-hierarchy__flow-handle role-hierarchy__flow-handle--target"
         isConnectable={false}
       />
-      <span className="role-hierarchy__flow-node-label">{data.label}</span>
+      <span aria-hidden="true" className="role-hierarchy__flow-node-stripe" />
+      <div className="role-hierarchy__flow-node-body">
+        <span className="role-hierarchy__flow-node-label">{data.label}</span>
+        {hasIndicators && (
+          <span className="role-hierarchy__flow-node-indicators">
+            {data.autoApprovalEnabled && <Zap className="role-hierarchy__flow-node-indicator" />}
+            {data.lateralApprovalEnabled && <ArrowRightLeft className="role-hierarchy__flow-node-indicator" />}
+          </span>
+        )}
+      </div>
       <Handle
         type="source"
         position={Position.Bottom}
@@ -139,6 +174,81 @@ const roleHierarchyNodeTypes = {
   "role-node": RoleHierarchyFlowNode
 };
 
+function getRoleLevelColor(role: RoleResponseInterface): string | null {
+  return role.level?.color || getBuiltInSphereColor(role.level?.name) || getBuiltInSphereColor(role.level?.sigla);
+}
+
+function hasEnabledApprovalPolicy(role: RoleResponseInterface, type: ApprovalPolicyType): boolean {
+  return Boolean(
+    role.approvalPolicies?.some(policy => policy.type === type && policy.enabled)
+  );
+}
+
+function getTranslatableLevelName(levelName: string, t: (key: string, params?: Record<string, string | number>) => string): string {
+  const normalizedLevelName = levelName.trim().toUpperCase();
+
+  if (normalizedLevelName === "FEDERAL") {
+    return t("Federal");
+  }
+
+  if (normalizedLevelName === "ESTADUAL") {
+    return t("Estadual");
+  }
+
+  if (normalizedLevelName === "MUNICIPAL") {
+    return t("Municipal");
+  }
+
+  return levelName;
+}
+
+function collectHierarchyLegend(nodes: ArboristNode[]) {
+  const levels = new Map<string, { label: string; color: string }>();
+  const levelOrder = ["FEDERAL", "ESTADUAL", "MUNICIPAL"];
+
+  const visit = (nodeList: ArboristNode[]) => {
+    nodeList.forEach(node => {
+      if (node.levelName && node.levelColor) {
+        const levelKey = `${node.levelName}:${node.levelColor}`;
+
+        if (!levels.has(levelKey)) {
+          levels.set(levelKey, {
+            label: node.levelName,
+            color: node.levelColor
+          });
+        }
+      }
+
+      if (node.children?.length) {
+        visit(node.children);
+      }
+    });
+  };
+
+  visit(nodes);
+
+  return {
+    levels: Array.from(levels.values()).sort((left, right) => {
+      const leftIndex = levelOrder.indexOf(left.label.trim().toUpperCase());
+      const rightIndex = levelOrder.indexOf(right.label.trim().toUpperCase());
+
+      if (leftIndex === -1 && rightIndex === -1) {
+        return left.label.localeCompare(right.label);
+      }
+
+      if (leftIndex === -1) {
+        return 1;
+      }
+
+      if (rightIndex === -1) {
+        return -1;
+      }
+
+      return leftIndex - rightIndex;
+    })
+  };
+}
+
 function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
   const nodeMap = new Map<number, ArboristNode>();
 
@@ -149,6 +259,9 @@ function buildArboristTree(data: RoleResponseInterface[]): ArboristNode[] {
       levelName: role.level?.name || role.level?.sigla || "",
       icon: role.icon,
       color: role.color,
+      levelColor: getRoleLevelColor(role),
+      autoApprovalEnabled: hasEnabledApprovalPolicy(role, AUTO_APPROVAL_POLICY),
+      lateralApprovalEnabled: hasEnabledApprovalPolicy(role, LATERAL_APPROVAL_POLICY),
       children: []
     });
   });
@@ -189,13 +302,19 @@ function arboristTreeToFlowElements(nodes: ArboristNode[]): { nodes: RoleFlowNod
 
   function flatten(nodeList: ArboristNode[], parentId?: string) {
     for (const node of nodeList) {
-      const nodeSize = getFlowNodeSize(node.name);
+      const hasIndicators = Boolean(node.autoApprovalEnabled || node.lateralApprovalEnabled);
+      const nodeSize = getFlowNodeSize(node.name, hasIndicators);
       dagreGraph.setNode(node.id, { width: nodeSize.width, height: nodeSize.height });
       flowNodes.push({
         id: node.id,
         type: "role-node",
         className: "role-hierarchy__flow-node-wrapper",
-        data: { label: node.name },
+        data: {
+          label: node.name,
+          levelColor: node.levelColor,
+          autoApprovalEnabled: Boolean(node.autoApprovalEnabled),
+          lateralApprovalEnabled: Boolean(node.lateralApprovalEnabled)
+        },
         position: { x: 0, y: 0 },
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
@@ -346,6 +465,8 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
     }
   }, [treeData, setNodes, setEdges]);
 
+  const hierarchyLegend = collectHierarchyLegend(treeData);
+
   const handleMove = ({ dragIds, parentId, index }: { dragIds: string[]; parentId: string | null; index: number }) => {
     setTreeData(prev => {
       const newTree: ArboristNode[] = JSON.parse(JSON.stringify(prev));
@@ -463,21 +584,64 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
           </div>
 
           <div className="role-hierarchy__flow-surface">
-          <ReactFlow
-            className="role-hierarchy__flow"
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={roleHierarchyNodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            fitView
-            nodesDraggable={false}
-            nodesConnectable={false}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background variant={BackgroundVariant.Dots} color="var(--table-border-color)" />
-            <Controls />
-          </ReactFlow>
+            <ReactFlow
+              className="role-hierarchy__flow"
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={roleHierarchyNodeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              fitView
+              nodesDraggable={false}
+              nodesConnectable={false}
+              proOptions={{ hideAttribution: true }}
+            >
+              <Background variant={BackgroundVariant.Dots} color="var(--table-border-color)" />
+              <Controls />
+            </ReactFlow>
+
+            {(hierarchyLegend.levels.length > 0 || nodes.length > 0) && (
+              <div className="role-hierarchy__flow-legend" aria-label={t("Legenda da visualização")}>
+                <div className="role-hierarchy__flow-legend-section">
+                  <div className="role-hierarchy__flow-legend-heading">
+                    {t("Hierarquias")}
+                  </div>
+                  <div className="role-hierarchy__flow-legend-list">
+                    {hierarchyLegend.levels.map(level => (
+                      <div key={`${level.label}-${level.color}`} className="role-hierarchy__flow-legend-item">
+                        <span
+                          aria-hidden="true"
+                          className="role-hierarchy__flow-legend-swatch"
+                          style={{ "--role-hierarchy-flow-node-accent-color": level.color } as CSSProperties}
+                        />
+                        <span className="role-hierarchy__flow-legend-text">
+                          {getTranslatableLevelName(level.label, t)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="role-hierarchy__flow-legend-divider" />
+
+                <div className="role-hierarchy__flow-legend-section">
+                  <div className="role-hierarchy__flow-legend-heading">
+                    {t("Capacidades")}
+                  </div>
+                  <div className="role-hierarchy__flow-legend-list">
+                    <div className="role-hierarchy__flow-legend-item">
+                      <Zap className="role-hierarchy__flow-legend-icon" />
+                      <span className="role-hierarchy__flow-legend-text">{t("Autoaprovação")}</span>
+                    </div>
+
+                    <div className="role-hierarchy__flow-legend-item">
+                      <ArrowRightLeft className="role-hierarchy__flow-legend-icon" />
+                      <span className="role-hierarchy__flow-legend-text">{t("Aprovação lateral")}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

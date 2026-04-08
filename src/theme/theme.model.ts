@@ -312,6 +312,11 @@ export interface ThemeAttributes {
   "role-hierarchy-flow-node-min-height"?: string,
   "role-hierarchy-flow-node-padding-inline"?: string,
   "role-hierarchy-flow-node-padding-block"?: string,
+  "role-hierarchy-flow-node-border-width"?: string,
+  "role-hierarchy-flow-node-stripe-width"?: string,
+  "role-hierarchy-flow-node-indicator-slot-width"?: string,
+  "role-hierarchy-flow-node-surface-color"?: string,
+  "role-hierarchy-flow-node-text-color"?: string,
 
   // request-detail
   "request-detail-page-padding-inline"?: string,
