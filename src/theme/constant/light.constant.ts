@@ -172,12 +172,12 @@ export const LIGHT_THEME: Theme = {
     "badge-icon-size": "10px",
     "badge-icon-gap": "6px",
     // badge - systems list feature
-    "badge-status-published-text-color": "#01bc78",
-    "badge-status-published-background-color": "rgba(16, 185, 129, 0.1)",
-    "badge-status-published-border-color": "rgba(16, 185, 129, 0.3)",
-    "badge-status-unpublished-text-color": "#fcb600",
-    "badge-status-unpublished-background-color": "rgba(245, 158, 11, 0.1)",
-    "badge-status-unpublished-border-color": "rgba(245, 158, 11, 0.2)",
+    "badge-status-published-text-color": "var(--request-status-tone-success-text-color)",
+    "badge-status-published-background-color": "var(--request-status-tone-success-surface-color)",
+    "badge-status-published-border-color": "var(--request-status-tone-success-surface-color)",
+    "badge-status-unpublished-text-color": "var(--request-status-tone-warning-text-color)",
+    "badge-status-unpublished-background-color": "var(--request-status-tone-warning-surface-color)",
+    "badge-status-unpublished-border-color": "var(--request-status-tone-warning-surface-color)",
     // badge - common
     "badge-header-text-color": "#1d4ed8",
     "badge-header-background-color": "rgba(59, 130, 246, 0.2)",

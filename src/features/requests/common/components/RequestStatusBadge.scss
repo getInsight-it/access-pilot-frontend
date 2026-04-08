@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--badge-icon-gap);
+  gap: 0;
   min-height: var(--badge-height);
   padding-inline: var(--badge-padding-inline);
   border-radius: var(--badge-radius);
@@ -10,14 +10,6 @@
   font-weight: var(--default-text-font-weight);
   line-height: 1;
   white-space: nowrap;
-
-  &__dot {
-    width: var(--badge-icon-size);
-    height: var(--badge-icon-size);
-    border-radius: var(--badge-radius);
-    background-color: currentColor;
-    flex: 0 0 auto;
-  }
 
   &--created {
     color: var(--request-status-tone-primary-text-color);
