@@ -1,0 +1,52 @@
+.app-tooltip {
+  z-index: var(--dropdown-z-index);
+  overflow: hidden;
+  max-width: min(320px, calc(100vw - 24px));
+  padding-inline: var(--sidebar-tooltip-padding-inline);
+  padding-block: var(--sidebar-tooltip-padding-block);
+  border: var(--sidebar-tooltip-border);
+  border-radius: var(--sidebar-tooltip-radius);
+  background-color: var(--sidebar-tooltip-background-color);
+  color: var(--sidebar-tooltip-text-color);
+  box-shadow: var(--sidebar-tooltip-shadow);
+  font-size: var(--sidebar-tooltip-font-size);
+  font-weight: var(--sidebar-tooltip-font-weight);
+  line-height: var(--typography-body-sm-line-height);
+  pointer-events: none;
+  white-space: normal;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition:
+    opacity var(--motion-layout-default),
+    transform var(--motion-layout-default);
+
+  &[data-state="delayed-open"],
+  &[data-state="instant-open"] {
+    opacity: 1;
+  }
+
+  &[data-state="closed"] {
+    opacity: 0;
+  }
+
+  &[data-side="top"] {
+    transform-origin: bottom center;
+  }
+
+  &[data-side="right"] {
+    transform-origin: left center;
+  }
+
+  &[data-side="bottom"] {
+    transform-origin: top center;
+  }
+
+  &[data-side="left"] {
+    transform-origin: right center;
+  }
+
+  p {
+    margin: 0;
+    color: inherit;
+  }
+}
