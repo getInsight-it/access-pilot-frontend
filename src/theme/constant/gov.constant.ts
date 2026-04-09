@@ -192,6 +192,9 @@ export const GOV_THEME: Theme = {
     "dropdown-separator-margin-block": "4px",
     "dropdown-shortcut-opacity": "0.7",
 
+    // tabs
+    "tabs-surface-background-color": "#ffffff",
+
     // toggle
     "toggle-width": "48px",
     "toggle-height": "24px",
@@ -257,6 +260,8 @@ export const GOV_THEME: Theme = {
     "role-hierarchy-flow-node-min-width": "200px",
     "role-hierarchy-flow-node-max-width": "320px",
     "role-hierarchy-flow-node-min-height": "56px",
+    "role-hierarchy-surface-background-color": "var(--content-background-color)",
+    "role-hierarchy-surface-shadow": "none",
     "role-hierarchy-flow-node-padding-inline": "16px",
     "role-hierarchy-flow-node-padding-block": "12px",
     "role-hierarchy-flow-node-border-width": "1px",

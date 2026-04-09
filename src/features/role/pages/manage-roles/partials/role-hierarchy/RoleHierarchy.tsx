@@ -4,6 +4,7 @@ import {
   ReactFlow,
   Background,
   BackgroundVariant,
+  ControlButton,
   Controls,
   Handle,
   Position,
@@ -20,7 +21,7 @@ import { toast } from "../../../../../../common/external/ui/use-toast.ts";
 import { Button } from "../../../../../../common/external/ui/button.tsx";
 import { Badge } from "../../../../../../common/external/ui/badge.tsx";
 import IconRenderer from "../../../../../../common/components/icon/IconRenderer.tsx";
-import { ArrowRightLeft, ChevronDown, ChevronRight, User, Users, Zap } from "lucide-react";
+import { ArrowRightLeft, ChevronDown, ChevronRight, Eye, EyeOff, User, Users, Zap } from "lucide-react";
 import { StepLoader } from "../../../../../../common/components/loading/StepLoader.tsx";
 import { roleService } from "../../../../common/service/role-service.ts";
 import { ApprovalPolicyType, RoleResponseInterface } from "../../../../common/types/role.model.ts";
@@ -432,6 +433,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
   const [treeWidth, setTreeWidth] = useState(0);
   const [treeRowHeight, setTreeRowHeight] = useState(TREE_FALLBACK_ROW_HEIGHT);
   const [treeIndent, setTreeIndent] = useState(TREE_FALLBACK_INDENT);
+  const [legendVisible, setLegendVisible] = useState(true);
 
   useEffect(() => {
     const el = treeContainerRef.current;
@@ -466,6 +468,7 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
   }, [treeData, setNodes, setEdges]);
 
   const hierarchyLegend = collectHierarchyLegend(treeData);
+  const canRenderLegend = hierarchyLegend.levels.length > 0 || nodes.length > 0;
 
   const handleMove = ({ dragIds, parentId, index }: { dragIds: string[]; parentId: string | null; index: number }) => {
     setTreeData(prev => {
@@ -597,14 +600,28 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
               proOptions={{ hideAttribution: true }}
             >
               <Background variant={BackgroundVariant.Dots} color="var(--table-border-color)" />
-              <Controls />
+              <Controls>
+                <ControlButton
+                  className={[
+                    "role-hierarchy__flow-controls-toggle",
+                    legendVisible ? "role-hierarchy__flow-controls-toggle--active" : ""
+                  ].filter(Boolean).join(" ")}
+                  aria-label={legendVisible ? t("Ocultar legenda") : t("Mostrar legenda")}
+                  title={legendVisible ? t("Ocultar legenda") : t("Mostrar legenda")}
+                  onClick={() => setLegendVisible(current => !current)}
+                >
+                  {legendVisible
+                    ? <EyeOff className="role-hierarchy__flow-controls-toggle-icon" />
+                    : <Eye className="role-hierarchy__flow-controls-toggle-icon" />}
+                </ControlButton>
+              </Controls>
             </ReactFlow>
 
-            {(hierarchyLegend.levels.length > 0 || nodes.length > 0) && (
+            {canRenderLegend && legendVisible && (
               <div className="role-hierarchy__flow-legend" aria-label={t("Legenda da visualização")}>
                 <div className="role-hierarchy__flow-legend-section">
                   <div className="role-hierarchy__flow-legend-heading">
-                    {t("Hierarquias")}
+                    {t("Esferas")}
                   </div>
                   <div className="role-hierarchy__flow-legend-list">
                     {hierarchyLegend.levels.map(level => (
@@ -624,9 +641,9 @@ function RoleHierarchy({ data, onSuccess }: Readonly<RoleHierarchyProps>) {
 
                 <div className="role-hierarchy__flow-legend-divider" />
 
-                <div className="role-hierarchy__flow-legend-section">
+                <div className="role-hierarchy__flow-legend-section role-hierarchy__flow-legend-section--approval">
                   <div className="role-hierarchy__flow-legend-heading">
-                    {t("Capacidades")}
+                    {t("Aprovação")}
                   </div>
                   <div className="role-hierarchy__flow-legend-list">
                     <div className="role-hierarchy__flow-legend-item">

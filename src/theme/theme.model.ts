@@ -227,6 +227,9 @@ export interface ThemeAttributes {
   "dropdown-separator-margin-block"?: string,
   "dropdown-shortcut-opacity"?: string,
 
+  // tabs
+  "tabs-surface-background-color"?: string,
+
   // toggle
   "toggle-width"?: string,
   "toggle-height"?: string,
@@ -318,6 +321,8 @@ export interface ThemeAttributes {
   "system-detail-role-indent-size"?: string,
   "system-detail-role-expand-size"?: string,
   "system-detail-role-icon-box-size"?: string,
+  "role-hierarchy-surface-background-color"?: string,
+  "role-hierarchy-surface-shadow"?: string,
   "role-hierarchy-flow-node-min-width"?: string,
   "role-hierarchy-flow-node-max-width"?: string,
   "role-hierarchy-flow-node-min-height"?: string,

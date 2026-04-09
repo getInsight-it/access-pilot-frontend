@@ -4,8 +4,8 @@
   height: 600px;
   border: 1px solid var(--table-border-color);
   border-radius: var(--system-detail-card-radius);
-  background-color: var(--background);
-  box-shadow: var(--dropdown-shadow);
+  background-color: var(--role-hierarchy-surface-background-color);
+  box-shadow: var(--role-hierarchy-surface-shadow);
   overflow: hidden;
 
   &__panel {
@@ -13,7 +13,7 @@
     flex-direction: column;
     min-width: 0;
     overflow: hidden;
-    background-color: var(--background);
+    background-color: var(--role-hierarchy-surface-background-color);
   }
 
   &__panel--editor {
@@ -324,6 +324,20 @@
     background-color: var(--dropdown-item-hover-background-color);
   }
 
+  &__flow-controls-toggle {
+    color: var(--default-text-color);
+  }
+
+  &__flow-controls-toggle--active {
+    color: var(--color-primary-700);
+    background-color: var(--dropdown-item-hover-background-color);
+  }
+
+  &__flow-controls-toggle-icon {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+
   &__flow-legend {
     position: absolute;
     right: var(--system-detail-header-container-gap);
@@ -357,6 +371,10 @@
     display: flex;
     flex-direction: column;
     gap: var(--system-detail-field-gap);
+  }
+
+  &__flow-legend-section--approval {
+    padding-top: var(--request-detail-field-gap);
   }
 
   &__flow-legend-heading {

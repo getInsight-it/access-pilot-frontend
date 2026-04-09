@@ -371,9 +371,14 @@
   }
 
   &__policy-card-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     align-self: flex-start;
     margin-top: auto;
     min-height: var(--pagination-control-height);
+    padding-inline: var(--system-form-action-button-padding-inline);
+    border-radius: var(--system-form-control-radius);
     border: var(--system-form-control-border);
   }
 

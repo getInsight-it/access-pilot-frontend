@@ -206,6 +206,9 @@ export const LIGHT_THEME: Theme = {
     "dropdown-separator-margin-block": "4px",
     "dropdown-shortcut-opacity": "0.7",
 
+    // tabs
+    "tabs-surface-background-color": "#ffffff",
+
     // toggle
     "toggle-width": "48px",
     "toggle-height": "24px",
@@ -297,6 +300,8 @@ export const LIGHT_THEME: Theme = {
     "system-detail-role-indent-size": "20px",
     "system-detail-role-expand-size": "24px",
     "system-detail-role-icon-box-size": "24px",
+    "role-hierarchy-surface-background-color": "var(--content-background-color)",
+    "role-hierarchy-surface-shadow": "none",
     "role-hierarchy-flow-node-min-width": "200px",
     "role-hierarchy-flow-node-max-width": "320px",
     "role-hierarchy-flow-node-min-height": "56px",
