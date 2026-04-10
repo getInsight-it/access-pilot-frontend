@@ -136,6 +136,20 @@
     gap: var(--system-form-form-column-gap);
   }
 
+  &__picker-row .icon-picker__trigger,
+  &__picker-row .color-picker__trigger {
+    min-height: var(--input-height);
+  }
+
+  &__picker-row .icon-picker__preview,
+  &__picker-row .icon-picker__clear,
+  &__picker-row .color-picker__preview,
+  &__picker-row .color-picker__clear {
+    width: var(--input-height);
+    height: var(--input-height);
+    box-sizing: border-box;
+  }
+
   &__field {
     display: flex;
     flex-direction: column;

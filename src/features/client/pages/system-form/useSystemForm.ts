@@ -26,7 +26,7 @@ export const formSchema = z.object({
     .string()
     .min(3, { message: "O baseUrl do sistema deve conter no mínimo 3 caracteres" })
     .regex(/^(https|http?:\/\/)?([\w.-:?-]+)$/, { message: "baseUrl inválido" }),
-  managed: z.boolean().default(false),
+  managed: z.boolean().default(true),
   status: z.string().optional().nullable().default(ClientStatusEnum.UNPUBLISHED)
 });
 
@@ -36,7 +36,7 @@ const defaultValues: SystemFormData = {
   name: "",
   clientId: "",
   description: "",
-  managed: false,
+  managed: true,
   baseUrl: "",
   status: ClientStatusEnum.UNPUBLISHED
 };

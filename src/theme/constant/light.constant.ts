@@ -108,7 +108,7 @@ export const LIGHT_THEME: Theme = {
     "helmet-loader-image-drop-shadow": "0 8px 18px rgba(15, 23, 42, 0.12)",
 
     // layout
-    "main-content-default-max-width": "1260px",
+    "main-content-default-max-width": "100%",
     "title-color": "#111827",
     "title-size": "var(--typography-heading-lg-font-size)",
     "description-color": "#6c727f",
