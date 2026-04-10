@@ -3,7 +3,7 @@ import { AuthContextType, useAuth } from "./AuthContext.tsx";
 import { Navigate, useLocation } from "react-router-dom";
 import { ERROR_ROUTES } from "../../constants/routes.ts";
 import { STORAGE_KEYS } from "../../constants/storage.ts";
-import HighlightLoader from "../../components/loading/HighLightLoader.tsx";
+import { SectionLoader } from "../../components/loading/section-loader/SectionLoader.tsx";
 import { KeycloakClientRoles } from "@getinsight.it/getinsight-common/dist/auth/interface/KeycloakRoles";
 import { UserRoleEnum } from "../../types/user/user.model.ts";
 import { KeycloakSystemsEnum } from "../../types/keycloak/keycloak-systems.enum.ts";
@@ -24,12 +24,19 @@ const hasRequiredRoles = (roles: string[] | undefined, authData: AuthContextType
 
   const userRoles: string[] = [];
 
-  const isAdmin: boolean = authData.roles?.clientRoles
-    ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloakSystemsEnum.ACCESS_PILOT)
-    ?.[KeycloakSystemsEnum.ACCESS_PILOT].includes(UserRoleEnum.ADMIN) ?? false;
+  const accessPilotClientRoles: string[] = authData.roles?.clientRoles
+    ?.find((role: KeycloakClientRoles) => Object.keys(role)[0] === KeycloakSystemsEnum.ACCESS_PILOT_BACKEND)
+    ?.[KeycloakSystemsEnum.ACCESS_PILOT_BACKEND] ?? [];
 
-  if(isAdmin) userRoles.push(UserRoleEnum.ADMIN);
+  if(accessPilotClientRoles.includes(UserRoleEnum.ADMIN)) {
+    userRoles.push(UserRoleEnum.ADMIN);
+  }
+
   if(authData.isApprover) userRoles.push(UserRoleEnum.APPROVER);
+
+  if(accessPilotClientRoles.includes(UserRoleEnum.INVITE_SENDER)) {
+    userRoles.push(UserRoleEnum.INVITE_SENDER);
+  }
 
   return roles
     ? roles.some((role) => userRoles.includes(role))
@@ -47,11 +54,7 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ children, roles }) => {
   }, [location]);
 
   if(!authData.isAuthenticated || !authData.user) {
-    return (
-      <div className="flex items-center justify-center h-dvh md:h-screen" style={{ height: 'calc(var(--mobile-vh, 1vh) * 100)' }}>
-        <HighlightLoader />
-      </div>
-    );
+    return <SectionLoader fullHeight={true} />;
   }
 
   if(!hasRequiredRoles(roles, authData)) {

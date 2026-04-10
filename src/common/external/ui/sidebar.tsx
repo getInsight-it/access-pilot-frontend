@@ -1,7 +1,8 @@
 import { cn } from "../../../config/lib/utils.ts";
 import React, { createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { ChevronLeft, Menu, X } from "lucide-react";
+import "./sidebar.scss";
 
 interface SidebarContextProps {
   open: boolean;
@@ -40,17 +41,37 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "ui-sidebar ui-sidebar--desktop",
+          !open && "ui-sidebar--collapsed",
           className
         )}
         animate={{
-          width: animate ? (open ? "300px" : "60px") : "300px"
+          width: animate
+            ? (open ? "var(--size-layout-sidebar)" : "var(--size-layout-sidebar-collapsed)")
+            : "var(--size-layout-sidebar)"
         }}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
         {...props}
       >
-        {children}
+        <div className="ui-sidebar__desktop-content">
+          {children}
+        </div>
+        <footer className="ui-sidebar__footer">
+          <button
+            type="button"
+            className="ui-sidebar__footer-button"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Recolher menu" : "Expandir menu"}>
+            <ChevronLeft
+              className={cn(
+                "ui-sidebar__footer-icon",
+                !open && "ui-sidebar__footer-icon--collapsed"
+              )}
+            />
+            {open && (
+              <span className="ui-sidebar__footer-label">Recolher menu</span>
+            )}
+          </button>
+        </footer>
       </motion.div>
     </>
   );
@@ -65,14 +86,12 @@ export const MobileSidebar = ({
   return (
     <>
       <div
-        className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
-        )}
+        className="ui-sidebar ui-sidebar--mobile-trigger"
         {...props}
       >
-        <div className="flex justify-end z-20 w-full">
+        <div className="ui-sidebar__mobile-menu">
           <Menu
-            className="text-neutral-800 dark:text-neutral-200"
+            className="ui-sidebar__mobile-menu-icon"
             onClick={() => setOpen(!open)}
           />
         </div>
@@ -83,16 +102,15 @@ export const MobileSidebar = ({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
               transition={{
-                duration: 0.3,
-                ease: "easeInOut"
+                duration: 0.3
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+                "ui-sidebar ui-sidebar--mobile-sheet",
                 className
               )}
             >
               <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200"
+                className="ui-sidebar__mobile-close"
                 onClick={() => setOpen(!open)}
               >
                 <X />

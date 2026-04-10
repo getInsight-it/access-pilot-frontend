@@ -1,0 +1,86 @@
+.dashboard-nav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+
+  &__item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  &__link {
+    width: calc(100% - 32px);
+    min-height: calc(var(--size-layout-header) - 16px);
+    padding: 0 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    color: var(--sidebar-item-color);
+    font-size: var(--typography-body-md-font-size);
+    line-height: var(--typography-body-md-line-height);
+    font-weight: var(--typography-label-font-weight);
+    text-decoration: none;
+    text-align: left;
+  }
+
+  &__link:hover {
+    color: var(--sidebar-item-selected-color);
+    background-color: var(--sidebar-item-hover-color);
+  }
+
+  &__link--active {
+    color: var(--sidebar-item-selected-color);
+    background-color: var(--sidebar-item-hover-color);
+    box-shadow: inset -3px 0 0 0 var(--sidebar-item-accent-color);
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  &__label {
+    text-align: left;
+  }
+
+  &--collapsed &__link {
+    justify-content: center;
+  }
+
+  &--collapsed &__icon {
+    margin-inline: auto;
+  }
+
+  &__hover-label {
+    position: absolute;
+    inset-inline-start: calc(100% + var(--sidebar-tooltip-offset));
+    inset-block-start: var(--sidebar-tooltip-offset-block);
+    background-color: var(--sidebar-tooltip-background-color);
+    border: var(--sidebar-tooltip-border);
+    border-radius: var(--sidebar-tooltip-radius);
+    color: var(--sidebar-tooltip-text-color);
+    box-shadow: var(--sidebar-tooltip-shadow);
+    font-size: var(--sidebar-tooltip-font-size);
+    font-weight: var(--sidebar-tooltip-font-weight);
+    padding-inline: var(--sidebar-tooltip-padding-inline);
+    padding-block: var(--sidebar-tooltip-padding-block);
+    white-space: nowrap;
+    pointer-events: none;
+    display: none;
+    z-index: var(--dropdown-z-index);
+  }
+
+  &--collapsed &__item:hover &__hover-label {
+    display: block;
+  }
+}

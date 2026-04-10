@@ -1,0 +1,367 @@
+.attachment-configuration-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--attachment-configuration-section-gap);
+  width: 100%;
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--attachment-configuration-title-font-size);
+    font-weight: var(--attachment-configuration-title-font-weight);
+  }
+
+  &__surface {
+    background-color: var(--attachment-configuration-surface-background-color);
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-radius);
+    padding: var(--attachment-configuration-surface-padding);
+  }
+
+  &__form-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-form-gap);
+  }
+
+  &__top-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--attachment-configuration-top-column-min-width), 1fr));
+    gap: var(--attachment-configuration-top-row-gap);
+    width: 100%;
+  }
+
+  &__picker-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--attachment-configuration-top-row-gap);
+    width: 100%;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-field-gap);
+  }
+
+  &__picker-row &__field {
+    flex: 0 1 var(--attachment-configuration-top-column-min-width);
+    min-width: min(var(--attachment-configuration-top-column-min-width), 100%);
+    max-width: var(--attachment-configuration-top-column-min-width);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__required {
+    color: var(--system-form-required-color);
+  }
+
+  &__input,
+  &__textarea {
+    border-color: var(--input-border-color);
+    color: var(--default-text-color);
+  }
+
+  &__textarea {
+    min-height: var(--attachment-configuration-description-min-height);
+    resize: none;
+  }
+
+  &__input--error,
+  &__textarea--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--system-form-required-color);
+    font-size: var(--system-form-error-font-size);
+  }
+
+  &__icon-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--attachment-configuration-icon-row-gap);
+  }
+
+  &__icon-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--attachment-configuration-icon-preview-size);
+    height: var(--attachment-configuration-icon-preview-size);
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-radius);
+    background-color: var(--attachment-configuration-icon-preview-background-color);
+    color: var(--color-primary-500);
+    flex: 0 0 auto;
+  }
+
+  &__icon-preview-icon {
+    width: var(--attachment-configuration-icon-size);
+    height: var(--attachment-configuration-icon-size);
+  }
+
+  &__extensions-picker {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--attachment-configuration-extension-picker-gap);
+  }
+
+  &__extension-option {
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-extension-badge-radius);
+    background-color: var(--background);
+    color: var(--attachment-configuration-extension-badge-text-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+    min-height: var(--attachment-configuration-extension-option-height);
+    padding-inline: var(--attachment-configuration-extension-option-padding-inline);
+    cursor: pointer;
+  }
+
+  &__extension-option--selected {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-500);
+    color: var(--inverse-default-text-color);
+  }
+
+  &__toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: var(--attachment-configuration-toggle-padding-top);
+    border-top: var(--attachment-configuration-border);
+  }
+
+  &__toggle-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--attachment-configuration-icon-row-gap);
+  }
+
+  &__action-button--add {
+    width: fit-content;
+  }
+
+  &__import-export-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--attachment-configuration-import-export-gap);
+  }
+
+  &__action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--pagination-control-height);
+    padding-inline: var(--attachment-configuration-action-button-padding-inline);
+    border-radius: var(--system-form-control-radius);
+  }
+
+  &__action-button--white {
+    border: var(--attachment-configuration-border);
+  }
+
+  &__action-button--primary {
+    border: 0;
+  }
+
+  &__button-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--attachment-configuration-button-content-gap);
+  }
+
+  &__button-icon {
+    width: var(--attachment-configuration-button-icon-size);
+    height: var(--attachment-configuration-button-icon-size);
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__list-section {
+    width: 100%;
+  }
+
+  &__empty-state {
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-radius);
+    background-color: var(--background);
+    padding: var(--attachment-configuration-empty-state-padding);
+  }
+
+  &__empty-state-text {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--default-button-font-size);
+  }
+
+  &__list-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--attachment-configuration-list-max-columns), minmax(0, 1fr));
+    gap: var(--attachment-configuration-list-gap);
+    width: 100%;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    border: var(--attachment-configuration-border);
+    border-radius: var(--attachment-configuration-radius);
+    background-color: var(--background);
+    padding: var(--attachment-configuration-card-padding);
+    gap: var(--attachment-configuration-card-gap);
+    max-width: 100%;
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__card-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--attachment-configuration-icon-preview-size);
+    height: var(--attachment-configuration-icon-preview-size);
+    border-radius: var(--attachment-configuration-radius);
+    background-color: var(--attachment-configuration-icon-preview-background-color);
+    color: var(--color-primary-500);
+  }
+
+  &__card-icon {
+    width: var(--attachment-configuration-icon-size);
+    height: var(--attachment-configuration-icon-size);
+  }
+
+  &__delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--attachment-configuration-delete-button-size);
+    height: var(--attachment-configuration-delete-button-size);
+    border: 0;
+    background-color: transparent;
+    color: var(--description-color);
+    cursor: pointer;
+  }
+
+  &__delete-icon {
+    width: var(--attachment-configuration-button-icon-size);
+    height: var(--attachment-configuration-button-icon-size);
+  }
+
+  &__card-name {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--attachment-configuration-card-name-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__card-badge-wrap {
+    display: flex;
+    align-items: center;
+    padding-bottom: var(--attachment-configuration-badge-wrap-padding-bottom);
+    border-bottom: var(--attachment-configuration-border);
+  }
+
+  &__optional-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--badge-height);
+    border-radius: var(--badge-radius);
+    background-color: var(--attachment-configuration-optional-badge-background-color);
+    color: var(--attachment-configuration-optional-badge-text-color);
+    font-size: var(--badge-font-size);
+    font-weight: var(--default-text-font-weight);
+    padding-inline: var(--badge-padding-inline);
+  }
+
+  &__card-extensions-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-card-extensions-gap);
+  }
+
+  &__card-extensions-label {
+    color: var(--attachment-configuration-extension-label-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__card-extensions-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--attachment-configuration-extension-picker-gap);
+  }
+
+  &__extension-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--attachment-configuration-extension-badge-height);
+    border-radius: var(--attachment-configuration-extension-badge-radius);
+    background-color: var(--attachment-configuration-extension-badge-background-color);
+    color: var(--attachment-configuration-extension-badge-text-color);
+    font-size: var(--attachment-configuration-extension-badge-font-size);
+    font-weight: var(--default-text-font-weight);
+    padding-inline: var(--attachment-configuration-extension-badge-padding-inline);
+  }
+
+  &__dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-section-gap);
+  }
+
+  &__dialog-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-field-gap);
+  }
+
+  &__dialog-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--default-button-font-size);
+  }
+
+  &__dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-field-gap);
+  }
+
+  &__dialog-description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--default-button-font-size);
+  }
+
+  &__dialog-list {
+    margin: 0;
+    padding-inline-start: var(--attachment-configuration-dialog-list-padding-inline-start);
+    color: var(--default-text-color);
+    font-size: var(--default-button-font-size);
+  }
+
+  &__dialog-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--attachment-configuration-field-gap);
+  }
+}

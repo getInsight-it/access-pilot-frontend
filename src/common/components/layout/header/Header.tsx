@@ -1,33 +1,33 @@
-import { cn } from "../../../../config/lib/utils.ts";
 import { Link } from "react-router-dom";
-import { UserNav } from "./partials/UserNav.tsx";
-import { MobileSidebar } from "../sidebar/MobileSidebar.tsx";
+import { MobileSidebar } from "../sidebar/mobile-sidebar/MobileSidebar.tsx";
 import { PRIVATE_ROUTES } from "../../../constants/routes.ts";
-
 import ThemeToggle from "../../../../theme/theme-toggle.tsx";
-import ThemedLogo from "./partials/ThemedLogo.tsx";
-import Notifications from "./partials/Notifications.tsx";
+import ThemedLogo from "./partials/themed-logo/ThemedLogo.tsx";
+import Notifications from "./partials/notifications/Notifications.tsx";
+import { UserNav } from "./partials/user-nav/UserNav.tsx";
+import LanguageToggle from "./partials/language-toggle/LanguageToggle.tsx";
+import "./Header.scss";
 
 export default function Header() {
   return (
-    <div
-      className="supports-backdrop-blur:bg-background/60 border-b bg-background/95 backdrop-blur">
-      <nav className="flex h-16 items-center justify-between px-2 sm:px-4">
-        <div className="hidden md:block flex-shrink-0">
-          <Link to={PRIVATE_ROUTES.DASHBOARD}>
+    <header className="dashboard-header">
+      <nav className="dashboard-header__nav">
+        <div className="dashboard-header__left">
+          <div className="dashboard-header__mobile-toggle">
+            <MobileSidebar />
+          </div>
+          <Link className="dashboard-header__brand-link" to={PRIVATE_ROUTES.DASHBOARD}>
             <ThemedLogo />
           </Link>
         </div>
-        <div className={cn("block md:!hidden flex-shrink-0")}>
-          <MobileSidebar />
-        </div>
 
-        <div className="flex items-center gap-3 sm:gap-3 md:gap-4 flex-shrink-0">
+        <div className="dashboard-header__right">
+          <LanguageToggle />
           <ThemeToggle />
           <Notifications />
           <UserNav />
         </div>
       </nav>
-    </div>
+    </header>
   );
 }

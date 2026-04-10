@@ -1,7 +1,7 @@
 import { NavItem } from "../../../../types";
 import { UserRoleEnum } from "../../../../types/user/user.model.ts";
 
-export const navItems: NavItem[] = [
+export const primaryNavItems: NavItem[] = [
   {
     title: "Dashboard",
     href: "/dashboard/general-info",
@@ -9,25 +9,20 @@ export const navItems: NavItem[] = [
     label: "Dashboard",
     protected: true,
   },
+];
+
+export const requestNavItems: NavItem[] = [
   {
     title: "Minhas solicitações",
     href: "/my-access-requests",
-    icon: "book",
+    icon: "post",
     label: "Minhas solicitações"
   },
   {
     title: "Solicitar acesso",
     href: "/request-access",
-    icon: "key",
+    icon: "hand",
     label: "Solicitar acesso"
-  },
-  {
-    title: "Gerenciar sistemas",
-    href: "/systems",
-    icon: "cog",
-    label: "Gerenciar Sistemas",
-    protected: true,
-    roles: [UserRoleEnum.ADMIN]
   },
   {
     title: "Gerenciar solicitações",
@@ -36,6 +31,42 @@ export const navItems: NavItem[] = [
     label: "Gerenciar solicitações",
     protected: true,
     roles: [UserRoleEnum.APPROVER]
+  },
+];
+
+export const inviteNavItems: NavItem[] = [
+  {
+    title: "Meus convites",
+    href: "/my-invites",
+    icon: "mail",
+    label: "Meus convites"
+  },
+  {
+    title: "Convidar",
+    href: "/invite",
+    icon: "userplus",
+    label: "Convidar",
+    protected: true,
+    roles: [UserRoleEnum.INVITE_SENDER]
+  },
+  {
+    title: "Gerenciar convites",
+    href: "/manage-invites",
+    icon: "bookuser",
+    label: "Gerenciar convites",
+    protected: true,
+    roles: [UserRoleEnum.INVITE_SENDER]
+  }
+];
+
+export const administrationNavItems: NavItem[] = [
+  {
+    title: "Gerenciar sistemas",
+    href: "/systems",
+    icon: "settings",
+    label: "Gerenciar Sistemas",
+    protected: true,
+    roles: [UserRoleEnum.ADMIN]
   },
   {
     title: "Gerenciar esferas",
@@ -47,4 +78,12 @@ export const navItems: NavItem[] = [
   }
 ];
 
-export const supportNavItems: NavItem[] = []
+export const supportNavItems: NavItem[] = [];
+
+export const navItems: NavItem[] = [
+  ...primaryNavItems,
+  ...requestNavItems,
+  ...inviteNavItems,
+  ...administrationNavItems,
+  ...supportNavItems
+];

@@ -1,0 +1,317 @@
+.system-form {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-header-container-gap);
+    padding-inline: var(--system-form-page-padding-inline);
+    padding-top: var(--system-form-header-padding-top);
+    padding-bottom: var(--system-form-header-padding-bottom);
+    border-bottom: var(--system-form-header-container-border);
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--system-form-header-gap);
+    width: 100%;
+  }
+
+  &__header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--system-form-header-main-gap);
+  }
+
+  &__back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--pagination-control-height);
+    height: var(--pagination-control-height);
+    border: var(--system-form-control-border);
+    border-radius: var(--system-form-control-radius);
+    background-color: var(--background);
+    color: var(--default-text-color);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  &__heading-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-heading-content-gap);
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--system-form-title-gap);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--title-size);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__scroll-area {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__scroll-viewport {
+    padding-inline: var(--system-form-page-padding-inline);
+    padding-top: var(--system-form-page-padding-top);
+    padding-bottom: calc(
+      var(--system-form-page-padding-bottom)
+      + var(--system-form-actions-padding-top)
+      + var(--pagination-control-height)
+    );
+    box-sizing: border-box;
+  }
+
+  &__content-wrapper {
+    width: 100%;
+  }
+
+  &__card {
+    width: 100%;
+    border: var(--system-form-card-border);
+    border-radius: var(--system-form-card-radius);
+    background-color: var(--background);
+    box-shadow: var(--system-form-card-shadow);
+    overflow: hidden;
+  }
+
+  &__card-header {
+    height: var(--system-form-header-min-height);
+    padding-inline: var(--system-form-header-padding-inline);
+    background-color: var(--system-form-header-background-color);
+    border-bottom: var(--system-form-header-border);
+    box-sizing: border-box;
+  }
+
+  &__steps {
+    display: flex;
+    align-items: center;
+    gap: var(--system-form-step-gap);
+    height: 100%;
+  }
+
+  &__step-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+    height: 100%;
+    box-sizing: border-box;
+    color: var(--system-form-step-text-color-inactive);
+    font-size: var(--system-form-step-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__step-item--active {
+    color: var(--system-form-step-text-color-active);
+    box-shadow: var(--system-form-step-active-shadow);
+  }
+
+  &__step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--system-form-step-number-size);
+    height: var(--system-form-step-number-size);
+    border-radius: var(--system-form-step-number-radius);
+    background-color: var(--system-form-step-number-background-color-inactive);
+    color: var(--system-form-step-number-color-inactive);
+    font-size: var(--system-form-step-number-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__step-item--active &__step-number {
+    background-color: var(--color-primary-500);
+    color: var(--inverse-default-text-color);
+  }
+
+  &__card-content {
+    padding: var(--system-form-content-padding);
+  }
+
+  &__attachment-step,
+  &__form-step {
+    width: 100%;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-form-row-gap);
+  }
+
+  &__form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--system-form-field-min-width), 1fr));
+    gap: var(--system-form-form-column-gap);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__input-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__required {
+    color: var(--system-form-required-color);
+  }
+
+  &__input,
+  &__textarea {
+    border-color: var(--system-form-input-border-color);
+    color: var(--system-form-input-text-color);
+  }
+
+  &__input--readonly {
+    padding-inline-end: var(--input-padding-inline-with-icon);
+    background-color: var(--content-background-color);
+    color: var(--description-color);
+    cursor: not-allowed;
+    transition: none;
+  }
+
+  &__input-wrap--readonly &__input--readonly:hover,
+  &__input-wrap--readonly &__input--readonly:focus-visible {
+    background-color: var(--content-background-color);
+    border-color: var(--system-form-input-border-color);
+    box-shadow: none;
+    outline: none;
+  }
+
+  &__input-lock {
+    position: absolute;
+    inset-inline-end: var(--input-icon-left-offset);
+    inset-block-start: 50%;
+    width: var(--input-icon-size);
+    height: var(--input-icon-size);
+    color: var(--description-color);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  &__textarea {
+    min-height: var(--system-form-textarea-min-height);
+    resize: none;
+    padding-block: var(--system-form-textarea-padding-block);
+  }
+
+  &__input--error,
+  &__textarea--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__error {
+    margin: 0;
+    color: var(--system-form-required-color);
+    font-size: var(--system-form-error-font-size);
+  }
+
+  &__counter {
+    margin: 0;
+    margin-inline-start: auto;
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+  }
+
+  &__toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--system-form-toggle-row-gap);
+    padding-top: var(--system-form-toggle-row-padding-top);
+    border-top: var(--system-form-toggle-row-border);
+  }
+
+  &__toggle-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+    min-width: var(--system-form-toggle-min-width);
+  }
+
+  &__toggle-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+  }
+
+  &__toggle-value {
+    color: var(--system-form-input-text-color);
+    font-size: var(--system-form-field-label-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__toggle-description {
+    color: var(--description-color);
+    font-size: var(--system-form-counter-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-footer-gap);
+    width: 100%;
+    padding-top: var(--system-form-actions-padding-top);
+  }
+
+  &__action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--pagination-control-height);
+    padding-inline: var(--system-form-action-button-padding-inline);
+    border-radius: var(--system-form-control-radius);
+  }
+
+  &__action-button--white {
+    border: var(--system-form-control-border);
+  }
+
+  &__action-button--primary {
+    border: 0;
+  }
+
+  &__footer-action-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-step-text-gap);
+  }
+
+  &__continue-icon {
+    width: var(--system-form-continue-icon-size);
+    height: var(--system-form-continue-icon-size);
+  }
+}

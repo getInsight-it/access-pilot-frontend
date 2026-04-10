@@ -16,5 +16,6 @@ export type UserModel = {
  */
 export enum UserRoleEnum {
   APPROVER = 'APPROVER',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  INVITE_SENDER = 'INVITE_SENDER'
 }

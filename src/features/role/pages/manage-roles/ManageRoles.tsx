@@ -1,27 +1,25 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import TreeRole from "./partials/TreeRole.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
+import { HeaderContainer, Heading } from "@common/components/heading/heading.tsx";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { CirclePlus, KeyRound, Server } from "lucide-react";
+import { useEffect } from "react";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "../../../../common/external/ui/button.tsx";
-import { Plus } from "lucide-react";
 import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
+import { Separator } from "../../../../common/external/ui/separator.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../common/external/ui/tabs.tsx";
+import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
+import RoleHierarchy from "./partials/role-hierarchy/RoleHierarchy.tsx";
+import { RolesTable } from "./partials/roles-table/RolesTable.tsx";
 import { useManageRolesData, useRoleNavigation } from "./useManageRoles.ts";
-import { RolesTable } from "./partials/RolesTable.tsx";
-
-const breadcrumbItems = [
-  { title: "Gerenciar Sistemas", link: PRIVATE_ROUTES.SYSTEMS },
-  { title: "Gerenciar papéis", link: PRIVATE_ROUTES.ROLES }
-];
+import "./ManageRoles.scss";
 
 export default function ManageRoles() {
+  const { t } = useI18n();
   const { clientId } = useParams<{ clientId: string }>();
+  const [searchParams] = useSearchParams();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
+  const defaultTab = searchParams.get("tab") === "roles_hierarchy" ? "roles_hierarchy" : "roles";
 
   const {
     allRoles,
@@ -30,7 +28,9 @@ export default function ManageRoles() {
     currentPage,
     totalPages,
     handlePageChange,
-    getData
+    getData,
+    client,
+    getClientData
   } = useManageRolesData(clientId);
 
   const {
@@ -42,75 +42,103 @@ export default function ManageRoles() {
   useEffect(() => {
     if (isAuthenticated) {
       getData();
+      getClientData();
     }
-  }, [isAuthenticated, getData]);
+  }, [isAuthenticated, getData, getClientData]);
 
   useEffect(() => {
     if (allRoles.length > 0) {
       getData();
     }
-  }, [currentPage]);
+  }, [allRoles.length, currentPage, getData]);
 
   return (
-    <>
-      <motion.div
-        className="flex flex-col h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-
-        <div className="flex-none">
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div className="pl-1 flex flex-col md:flex-row items-start justify-between gap-4">
-              <Heading
-                title="Gerenciar papéis"
-                badgeValue={allRoles.length.toString() || "0"}
-                customDescription={
-                  <span className="text-md">
-                    Sistema: <span
+    <motion.div
+      className="manage-roles"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <div>
+        <HeaderContainer className="manage-roles__header-container">
+          <div className="manage-roles__header">
+            <Heading
+              className="manage-roles__heading"
+              title={t("Gerenciar papéis")}
+              badgeValue={allRoles.length}
+              badgeClassName="app-badge app-badge--header"
+              customDescription={(
+                <div className="manage-roles__meta">
+                  <button
+                    type="button"
+                    onClick={navigateToSystemDetails}
+                    className="manage-roles__meta-card"
+                  >
+                    <KeyRound className="manage-roles__meta-icon" />
+                      <span className="manage-roles__meta-content">
+                        <span className="manage-roles__meta-label">{t("Client Id")}</span>
+                        <span className="manage-roles__meta-value">{clientId}</span>
+                      </span>
+                  </button>
+                  {client?.name && (
+                    <button
+                      type="button"
                       onClick={navigateToSystemDetails}
-                      className="text-primary-600 cursor-pointer underline">{clientId}</span>
-                  </span>
-                }
-              />
-              <Button onClick={navigateToNewRole}>
-                <Plus className="mr-2 h-4 w-4" /> Novo papel
+                      className="manage-roles__meta-card"
+                    >
+                      <Server className="manage-roles__meta-icon" />
+                      <span className="manage-roles__meta-content">
+                        <span className="manage-roles__meta-label">{t("Sistema")}</span>
+                        <span className="manage-roles__meta-value">{client.name}</span>
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )}
+            />
+
+            <div className="manage-roles__actions">
+              <Button
+                className="theme-button--primary manage-roles__primary-action"
+                onClick={navigateToNewRole}
+              >
+                <CirclePlus /> {t("Novo papel")}
               </Button>
             </div>
-          </HeaderContainer>
-          <Separator></Separator>
-        </div>
-
-        <ScrollArea className="flex-grow" viewportClassName="px-4 md:px-6">
-          <div className="py-6 max-w-content-container m-auto">
-            <Tabs defaultValue="roles">
-              <TabsList className="mb-4">
-                <TabsTrigger value="roles">Papéis</TabsTrigger>
-                <TabsTrigger value="roles_hierarchy">Hierarquia de papéis</TabsTrigger>
-              </TabsList>
-              <TabsContent value="roles" className="flex flex-col gap-4">
-                <RolesTable
-                  roles={paginatedRoles}
-                  allRoles={allRoles}
-                  loading={loading}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  onEditRole={navigateToEditRole}
-                />
-              </TabsContent>
-              <TabsContent value="roles_hierarchy">
-                <div>
-                  <h2 className="text-xl mb-4">Arraste para organizar a hierarquia.</h2>
-                  {!loading && <TreeRole data={allRoles} onSuccess={() => getData()} />}
-                </div>
-              </TabsContent>
-            </Tabs>
           </div>
-        </ScrollArea>
-      </motion.div>
-    </>
+        </HeaderContainer>
+        <Separator className="manage-roles__separator" />
+      </div>
+
+      <ScrollArea className="manage-roles__scroll-area" viewportClassName="manage-roles__scroll-viewport">
+        <div className="max-w-content-container manage-roles__content">
+          <Tabs defaultValue={defaultTab} className="manage-roles__tabs">
+            <TabsList className="app-tabs">
+              <TabsTrigger value="roles" asChild>
+                <button type="button" className="app-tabs__trigger">{t("Papéis")}</button>
+              </TabsTrigger>
+              <TabsTrigger value="roles_hierarchy" asChild>
+                <button type="button" className="app-tabs__trigger">{t("Hierarquia de papéis")}</button>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="roles" className="manage-roles__tabs-content">
+              <RolesTable
+                roles={paginatedRoles}
+                allRoles={allRoles}
+                loading={loading}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onEditRole={navigateToEditRole}
+              />
+            </TabsContent>
+            <TabsContent value="roles_hierarchy" className="manage-roles__tabs-content">
+              <div className="manage-roles__hierarchy">
+                {!loading && <RoleHierarchy data={allRoles} onSuccess={() => getData()} />}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 }
-

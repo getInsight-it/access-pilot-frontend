@@ -1,14 +1,21 @@
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
+import { ColorUsage } from "../../../../common/types/color-usage.model.ts";
 import { roleService } from "../../common/service/role-service.ts";
 import { clientService } from "../../../client/common/service/client-service.ts";
 import { levelService } from "../../../level/common/api/level-service.ts";
-import { RoleResponseInterface } from "../../common/types/role.model.ts";
+import {
+  ApprovalPolicyRequestInterface,
+  ApprovalPolicyRoleRequestInterface,
+  RoleResponseInterface,
+  RoleUpsertInterface
+} from "../../common/types/role.model.ts";
 import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
 import { LevelInterface } from "../../../level/common/types/level.model.ts";
 import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 
 import * as z from "zod";
 
@@ -17,7 +24,18 @@ export const formSchema = z.object({
   description: z.string().min(3, { message: "A descrição do sistema deve conter no mínimo 3 caracteres" }),
   label: z.string().min(3, { message: "A label do sistema deve conter no mínimo 3 caracteres" }),
   levelId: z.string().optional(),
-  icon: z.string().optional()
+  icon: z.string().optional(),
+  color: z.string().optional(),
+  autoApprovalEnabled: z.boolean().default(false),
+  lateralApprovalEnabled: z.boolean().default(false),
+  lateralTargets: z.array(
+    z.object({
+      roleId: z.number(),
+      canApprove: z.boolean().default(false),
+      canReject: z.boolean().default(false),
+      canRevoke: z.boolean().default(false)
+    })
+  ).default([])
 });
 
 export type RoleFormData = z.infer<typeof formSchema>;
@@ -26,7 +44,14 @@ interface RoleFormDataWithId extends RoleFormData {
   id?: number;
 }
 
+const AUTO_APPROVAL_POLICY = "AUTO_APPROVAL";
+const LATERAL_APPROVAL_POLICY = "LATERAL_APPROVAL";
+
+const getRolePolicy = (role: RoleResponseInterface, type: string) =>
+  role.approvalPolicies?.find(policy => policy.type === type);
+
 export const useNewRoleData = () => {
+  const { t } = useI18n();
   const params = useParams<{ clientId: string; id: string }>();
 
   const isEditing = !!params.id;
@@ -39,12 +64,19 @@ export const useNewRoleData = () => {
   const [dataLoading, setDataLoading] = useState(true);
   const [loadingLevels, setLoadingLevels] = useState(false);
   const [initialData, setInitialData] = useState<RoleFormDataWithId | null>(null);
+  const [roleDetails, setRoleDetails] = useState<RoleResponseInterface | null>(null);
+  const [clientRoles, setClientRoles] = useState<RoleResponseInterface[]>([]);
+  const [roleColors, setRoleColors] = useState<ColorUsage[]>([]);
 
   const getRoleToEdit = useCallback(async () => {
     if(!roleId || !clientId) return;
 
     try {
       const role: RoleResponseInterface = await roleService.getRoleById(roleId);
+      setRoleDetails(role);
+
+      const autoApprovalPolicy = getRolePolicy(role, AUTO_APPROVAL_POLICY);
+      const lateralApprovalPolicy = getRolePolicy(role, LATERAL_APPROVAL_POLICY);
 
       const formData: RoleFormDataWithId = {
         id: role.id,
@@ -52,7 +84,16 @@ export const useNewRoleData = () => {
         label: role.label || "",
         description: role.description || "",
         levelId: role.level?.id ? role.level.id.toString() : "",
-        icon: role.icon || ""
+        icon: role.icon || "",
+        color: role.color || "",
+        autoApprovalEnabled: Boolean(autoApprovalPolicy?.enabled),
+        lateralApprovalEnabled: Boolean(lateralApprovalPolicy?.enabled),
+        lateralTargets: (lateralApprovalPolicy?.roles || []).map(target => ({
+          roleId: Number(target.roleId),
+          canApprove: Boolean(target.canApprove),
+          canReject: Boolean(target.canReject),
+          canRevoke: Boolean(target.canRevoke)
+        }))
       };
 
       setInitialData(formData);
@@ -60,13 +101,13 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do papel",
+        title: t("Erro ao buscar dados do papel"),
         description: errorMessage,
         variant: "destructive"
       });
       return null;
     }
-  }, [roleId, clientId]);
+  }, [clientId, roleId, t]);
 
   const getClientData = useCallback(async () => {
     if(!clientId) return;
@@ -79,7 +120,39 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar dados do sistema",
+        title: t("Erro ao buscar dados do sistema"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [clientId, t]);
+
+  const fetchRoleColors = useCallback(async () => {
+    if (!clientId) return;
+
+    try {
+      const colors = await roleService.getRoleColors(clientId);
+      setRoleColors(colors);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar cores dos papéis"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [clientId, t]);
+
+  const getClientRoles = useCallback(async () => {
+    if(!clientId) return;
+
+    try {
+      const roles = await roleService.getRolesByClientId(clientId);
+      setClientRoles(roles);
+    } catch (error: unknown) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: "Erro ao buscar papéis do sistema",
         description: errorMessage,
         variant: "destructive"
       });
@@ -96,29 +169,31 @@ export const useNewRoleData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar esferas",
+        title: t("Erro ao carregar esferas"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoadingLevels(false);
     }
-  }, []);
+  }, [t]);
 
   const loadData = useCallback(async () => {
     setDataLoading(true);
     if(isEditing && roleId) {
-      const [, , roleData] = await Promise.all([
+      const [, , , , roleData] = await Promise.all([
         getClientData(),
         fetchLevels(),
+        getClientRoles(),
+        fetchRoleColors(),
         getRoleToEdit()
       ]);
       return roleData;
     } else {
-      await Promise.all([getClientData(), fetchLevels()]);
+      await Promise.all([getClientData(), fetchLevels(), getClientRoles(), fetchRoleColors()]);
       return null;
     }
-  }, [isEditing, roleId, getClientData, fetchLevels, getRoleToEdit]);
+  }, [isEditing, roleId, getClientData, fetchLevels, getClientRoles, fetchRoleColors, getRoleToEdit]);
 
   return {
     client,
@@ -129,6 +204,9 @@ export const useNewRoleData = () => {
     setDataLoading,
     loadingLevels,
     initialData,
+    roleDetails,
+    clientRoles,
+    roleColors,
     isEditing,
     roleId,
     clientId,
@@ -142,15 +220,42 @@ export const useRoleSubmit = (
   isEditing: boolean,
   setLoading: (loading: boolean) => void
 ) => {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const onSubmit = useCallback(async (form: RoleFormData) => {
-    const role = {
-      ...form,
-      levelId: form.levelId === undefined || form.levelId === "empty" || form.levelId === ""
-        ? undefined
-        : Number(form.levelId)
-    } as RoleResponseInterface;
+    const levelId = form.levelId === undefined || form.levelId === "empty" || form.levelId === ""
+      ? undefined
+      : Number(form.levelId);
+    const lateralTargets: ApprovalPolicyRoleRequestInterface[] = (form.lateralTargets || []).map(target => ({
+      roleId: Number(target.roleId),
+      canApprove: Boolean(target.canApprove),
+      canReject: Boolean(target.canReject),
+      canRevoke: Boolean(target.canRevoke)
+    }));
+    const hasLateralTargets = lateralTargets.length > 0;
+    const approvalPolicies: ApprovalPolicyRequestInterface[] = [
+      {
+        type: AUTO_APPROVAL_POLICY,
+        enabled: Boolean(form.autoApprovalEnabled),
+        roles: []
+      },
+      {
+        type: LATERAL_APPROVAL_POLICY,
+        enabled: Boolean(form.lateralApprovalEnabled) && hasLateralTargets,
+        roles: lateralTargets
+      }
+    ];
+
+    const role: RoleUpsertInterface = {
+      name: form.name,
+      label: form.label,
+      description: form.description,
+      icon: form.icon,
+      color: form.color || null,
+      levelId,
+      approvalPolicies
+    };
 
     role.client = client;
     setLoading(true);
@@ -159,14 +264,14 @@ export const useRoleSubmit = (
       if(initialData?.id) {
         await roleService.updateRole(initialData.id, role);
         toast({
-          title: "Papel atualizado",
-          description: `O papel ${role.name} foi atualizado com sucesso.`
+          title: t("Papel atualizado"),
+          description: t("O papel {{name}} foi atualizado com sucesso.", { name: role.name })
         });
       } else {
         await roleService.createRole(role);
         toast({
-          title: "Papel criado",
-          description: `O papel ${role.name} foi criado com sucesso.`
+          title: t("Papel criado"),
+          description: t("O papel {{name}} foi criado com sucesso.", { name: role.name })
         });
       }
 
@@ -176,14 +281,14 @@ export const useRoleSubmit = (
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: isEditing ? "Erro ao atualizar papel" : "Erro ao criar papel",
+        title: isEditing ? t("Erro ao atualizar papel") : t("Erro ao criar papel"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [client, initialData, isEditing, setLoading, navigate]);
+  }, [client, initialData, isEditing, navigate, setLoading, t]);
 
   return { onSubmit };
 };
@@ -196,8 +301,13 @@ export const useRoleNavigation = (clientId?: string) => {
     navigate(PRIVATE_ROUTES.SYSTEMS_DETAILS.replace(":clientId", clientId));
   }, [navigate, clientId]);
 
+  const navigateToRoleHierarchy = useCallback(() => {
+    if(!clientId) return;
+    navigate(`${PRIVATE_ROUTES.ROLES.replace(":clientId", clientId)}?tab=roles_hierarchy`);
+  }, [navigate, clientId]);
+
   return {
-    navigateToSystemDetails
+    navigateToSystemDetails,
+    navigateToRoleHierarchy
   };
 };
-

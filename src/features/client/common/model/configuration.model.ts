@@ -4,6 +4,8 @@ export interface AttachmentConfigurationInterface {
   key: string;
   name: string;
   description: string;
+  icon?: string;
+  color?: string | null;
   required: boolean;
   allowedExtensions: string[];
   active?: boolean;

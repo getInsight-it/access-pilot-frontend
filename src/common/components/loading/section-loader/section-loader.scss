@@ -1,0 +1,33 @@
+.section-loader {
+  width: 100%;
+  max-width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--request-access-system-step-grid-gap);
+  overflow: hidden;
+  padding-inline: var(--request-access-page-padding-inline);
+  padding-block: var(--request-access-page-padding-top);
+
+  &__message {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--typography-body-md-font-size);
+    line-height: var(--typography-body-md-line-height);
+    text-align: center;
+  }
+
+  &--full-height {
+    height: 100%;
+    min-height: calc(var(--mobile-vh, 1vh) * 100);
+  }
+
+  @media (max-width: 640px) {
+    padding-inline: 0;
+  }
+}

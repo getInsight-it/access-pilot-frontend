@@ -1,0 +1,215 @@
+.request-invite-emails-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-access-justification-gap);
+  padding: var(--request-access-system-step-padding);
+  box-sizing: border-box;
+
+  &__intro,
+  &__summary,
+  &__empty-state {
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-step-panel-surface-color);
+  }
+
+  &__intro {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--request-access-system-step-card-main-gap);
+  }
+
+  &__icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-system-step-icon-box-size);
+    height: var(--request-access-system-step-icon-box-size);
+    border-radius: var(--request-access-system-step-icon-box-radius);
+    background-color: var(--request-access-system-step-icon-box-background-active);
+    color: var(--request-access-system-step-icon-color-active);
+    flex: 0 0 auto;
+  }
+
+  &__icon,
+  &__add-icon,
+  &__chip-icon {
+    width: var(--request-access-system-step-icon-size);
+    height: var(--request-access-system-step-icon-size);
+  }
+
+  &__intro-content,
+  &__field,
+  &__summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__title,
+  &__summary-title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__description,
+  &__empty-text {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__required,
+  &__error {
+    color: var(--system-form-required-color);
+  }
+
+  &__composer {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--request-access-step-panel-footer-gap);
+  }
+
+  &__textarea {
+    min-height: var(--request-access-stepper-item-min-width);
+    resize: vertical;
+  }
+
+  &__textarea--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--system-form-field-gap);
+    min-height: var(--login-action-height);
+    padding-inline: var(--system-form-action-button-padding-inline);
+    border: var(--request-access-system-step-card-border-inactive);
+    border-radius: var(--request-access-step-panel-action-radius);
+    background-color: var(--request-access-system-step-card-background-inactive);
+    color: var(--title-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+    cursor: pointer;
+    transition: transform var(--option-select-item-transition), border-color var(--option-select-item-transition);
+    flex: 0 0 auto;
+  }
+
+  &__add-button:hover {
+    border: var(--request-access-system-step-card-border-active);
+    transform: var(--option-select-item-active-transform);
+  }
+
+  &__summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__badge {
+    flex: 0 0 auto;
+  }
+
+  &__chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--request-access-justification-card-min-width), 1fr));
+    gap: var(--system-form-field-gap);
+  }
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--system-form-field-gap);
+    min-height: var(--request-access-system-step-icon-box-size);
+    padding: var(--request-access-justification-file-item-padding);
+    border-radius: var(--request-access-justification-file-item-radius);
+    background-color: var(--request-access-justification-file-item-background);
+    border: var(--request-access-justification-file-item-border);
+    box-sizing: border-box;
+  }
+
+  &__chip-main {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    min-width: 0;
+  }
+
+  &__chip-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--request-access-system-step-selected-indicator-size) + var(--pagination-gap));
+    height: calc(var(--request-access-system-step-selected-indicator-size) + var(--pagination-gap));
+    border-radius: var(--request-access-step-panel-action-radius);
+    background-color: var(--request-access-system-step-icon-box-background-active);
+    color: var(--request-access-system-step-icon-color-active);
+    flex: 0 0 auto;
+  }
+
+  &__chip-icon {
+    width: var(--request-access-system-step-selected-icon-size);
+    height: var(--request-access-system-step-selected-icon-size);
+  }
+
+  &__chip-label {
+    color: var(--title-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+    word-break: break-word;
+  }
+
+  &__chip-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--badge-height);
+    height: var(--badge-height);
+    border: none;
+    border-radius: var(--badge-radius);
+    background: transparent;
+    color: var(--description-color);
+    cursor: pointer;
+    transition: color var(--option-select-item-transition), background-color var(--option-select-item-transition);
+  }
+
+  &__chip-action:hover {
+    color: var(--title-color);
+    background-color: var(--request-access-justification-file-item-background);
+  }
+
+  &__empty-state {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__error {
+    margin: 0;
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  @media (max-width: 768px) {
+    &__composer {
+      flex-direction: column;
+    }
+
+    &__add-button {
+      width: 100%;
+    }
+  }
+}

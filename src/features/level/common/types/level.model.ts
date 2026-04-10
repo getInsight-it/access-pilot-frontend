@@ -8,8 +8,11 @@ export interface LevelInterface {
   description: string;
   type: LevelType | string;
   parent?: LevelInterface;
+  parentId?: number;
   externalUrl?: string;
   apiKey?: string;
+  icon?: string;
+  color?: string | null;
 }
 
 export interface LevelResponseInterface {
@@ -26,6 +29,7 @@ export interface CreateLevelData {
   externalUrl?: string;
   apiKey?: string;
   uuid?: string;
+  color?: string | null;
 }
 
 export interface UpdateLevelData extends CreateLevelData {

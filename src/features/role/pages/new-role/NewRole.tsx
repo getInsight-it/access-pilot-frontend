@@ -1,33 +1,37 @@
-import { Breadcrumbs } from "../../../../common/components/breadcrumbs.tsx";
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
-import { FormControl, FormField, FormItem } from "../../../../common/external/ui/form.tsx";
-import { Input } from "../../../../common/external/ui/input.tsx";
-import { Textarea } from "../../../../common/external/ui/textarea.tsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../common/external/ui/select.tsx";
-import { IconPicker } from "../../../../common/components/icon/IconPicker.tsx";
-import { Label } from "../../../../common/external/ui/label.tsx";
-import { goToPreviousRoute } from "../../../../common/utils/NavigationStateManager.ts";
-import HighlightLoader from "../../../../common/components/loading/HighLightLoader.tsx";
-import { formSchema, RoleFormData, useNewRoleData, useRoleSubmit, useRoleNavigation } from "./useNewRole.ts";
+import { ArrowLeft, ChevronDown, HelpCircle, Lock, Users } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { HeaderContainer } from "@common/components/heading/heading.tsx";
+import { ColorPicker } from "@common/components/color-picker/ColorPicker.tsx";
+import { IconPicker } from "@common/components/icon/IconPicker.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
+import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
+import { Button } from "@common/external/ui/button.tsx";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@common/external/ui/tooltip.tsx";
+import { SectionLoader } from "@common/components/loading/section-loader/SectionLoader.tsx";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import useAuthStore, { AuthState } from "../../../../store/authStore.ts";
+import { formSchema, RoleFormData, useNewRoleData, useRoleNavigation, useRoleSubmit } from "./useNewRole.ts";
+import "./NewRole.scss";
 
 const defaultValues: RoleFormData = {
   name: "",
   description: "",
   label: "",
   levelId: "",
-  icon: ""
+  icon: "",
+  color: "",
+  autoApprovalEnabled: false,
+  lateralApprovalEnabled: false,
+  lateralTargets: []
 };
 
 export default function NewRole() {
+  const { t } = useI18n();
   const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const navigate = useNavigate();
 
@@ -40,6 +44,9 @@ export default function NewRole() {
     setDataLoading,
     loadingLevels,
     initialData,
+    roleDetails,
+    clientRoles,
+    roleColors,
     isEditing,
     clientId,
     loadData
@@ -47,271 +54,543 @@ export default function NewRole() {
 
   const methods = useForm<RoleFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues,
+    defaultValues,
     mode: "onChange"
   });
 
   const { onSubmit } = useRoleSubmit(client, initialData, isEditing, setLoading);
-  const { navigateToSystemDetails } = useRoleNavigation(clientId);
+  const { navigateToSystemDetails, navigateToRoleHierarchy } = useRoleNavigation(clientId);
+
+  const pageTitle = isEditing ? t("Editar papel") : t("Novo papel");
+  const pageDescription = isEditing
+    ? t("Atualize os dados do papel e salve as alterações.")
+    : t("Preencha os dados para criar um novo papel para o sistema selecionado.");
+
+  const rolesRoute = clientId
+    ? PRIVATE_ROUTES.ROLES.replace(":clientId", clientId)
+    : PRIVATE_ROUTES.SYSTEMS;
+
+  const descriptionValue = methods.watch("description", "");
+  const selectedRoleColor = methods.watch("color", "");
+  const autoApprovalEnabledValue = methods.watch("autoApprovalEnabled", false);
+  const lateralApprovalEnabledValue = methods.watch("lateralApprovalEnabled", false);
+  const lateralTargets = methods.watch("lateralTargets", []);
+  const parentRoleLabel = roleDetails?.roleParent?.label || roleDetails?.roleParent?.name || "";
+  const hasParentApproval = Boolean(parentRoleLabel);
+  const parentRoleId = roleDetails?.roleParent?.id;
+  const currentRoleLevelId = roleDetails?.level?.id ?? null;
+  const currentRoleDisplayName = roleDetails?.label || roleDetails?.name || t("este papel");
+  const siblingRoles = parentRoleId
+    ? clientRoles.filter((role) => {
+      const siblingLevelId = role.level?.id ?? null;
+      return role.id !== roleDetails?.id
+        && role.roleParent?.id === parentRoleId
+        && siblingLevelId === currentRoleLevelId;
+    })
+    : [];
+
+  const exampleSiblingRoleName = siblingRoles[0]?.label || siblingRoles[0]?.name || null;
+  const lateralHelpText = exampleSiblingRoleName
+    ? t("Exemplo: se você estiver editando o papel {{currentRole}} e marcar {{siblingRole}}, {{siblingRole}} poderá atuar em solicitações de {{currentRole}}. O inverso não acontece automaticamente.", {
+      currentRole: currentRoleDisplayName,
+      siblingRole: exampleSiblingRoleName
+    })
+    : t("Os papéis selecionados poderão atuar em solicitações deste papel. O inverso não acontece automaticamente.");
+
+  const getLateralTarget = (roleId: number) =>
+    lateralTargets.find((target) => Number(target.roleId) === Number(roleId));
+
+  const handleToggleLateralTarget = (roleId: number, enabled: boolean) => {
+    const currentTargets = methods.getValues("lateralTargets") || [];
+    if (enabled) {
+      if (currentTargets.some((target) => Number(target.roleId) === Number(roleId))) {
+        return;
+      }
+      methods.setValue("lateralTargets", [
+        ...currentTargets,
+        { roleId, canApprove: true, canReject: true, canRevoke: false }
+      ], { shouldDirty: true, shouldTouch: true });
+      return;
+    }
+
+    methods.setValue(
+      "lateralTargets",
+      currentTargets.filter((target) => Number(target.roleId) !== Number(roleId)),
+      { shouldDirty: true, shouldTouch: true }
+    );
+  };
+
+  const handleToggleLateralPermission = (
+    roleId: number,
+    permission: "canApprove" | "canReject" | "canRevoke",
+    enabled: boolean
+  ) => {
+    const currentTargets = methods.getValues("lateralTargets") || [];
+    const targetIndex = currentTargets.findIndex((target) => Number(target.roleId) === Number(roleId));
+
+    if (targetIndex < 0) {
+      if (!enabled) {
+        return;
+      }
+      methods.setValue("lateralTargets", [
+        ...currentTargets,
+        {
+          roleId,
+          canApprove: permission === "canApprove",
+          canReject: permission === "canReject",
+          canRevoke: permission === "canRevoke"
+        }
+      ], { shouldDirty: true, shouldTouch: true });
+      return;
+    }
+
+    const updatedTargets = currentTargets.map((target, index) => (
+      index === targetIndex ? { ...target, [permission]: enabled } : target
+    ));
+    methods.setValue("lateralTargets", updatedTargets, { shouldDirty: true, shouldTouch: true });
+  };
 
   useEffect(() => {
     const initializeData = async () => {
       if (isAuthenticated) {
         const roleData = await loadData();
         setDataLoading(false);
-        
+
         if (roleData) {
           methods.reset(roleData);
         }
       }
     };
 
-    initializeData();
+    void initializeData();
   }, [isAuthenticated, loadData, methods, setDataLoading]);
 
-  const breadcrumbItems = [
-    { title: isEditing ? "Editar papel" : "Adicionar novo papel", link: "" }
-  ];
+  useEffect(() => {
+    if (!lateralTargets?.length) {
+      return;
+    }
+    const allowedRoleIds = new Set(siblingRoles.map((role) => Number(role.id)));
+    const validTargets = lateralTargets.filter((target) => allowedRoleIds.has(Number(target.roleId)));
+    if (validTargets.length !== lateralTargets.length) {
+      methods.setValue("lateralTargets", validTargets, { shouldDirty: true, shouldTouch: true });
+    }
+  }, [lateralTargets, siblingRoles, methods]);
 
   if (dataLoading || loadingLevels) {
     return (
-      <motion.div
-        className="flex flex-col h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-
-        <div className="flex-none">
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div className="pl-1 flex items-start justify-between">
-              <Heading
-                title={isEditing ? "Carregando papel..." : "Carregando..."}
-                returnButton={true}
-                onReturnClick={() => {goToPreviousRoute(navigate);}}
-              />
-            </div>
-          </HeaderContainer>
-
-          <Separator />
-        </div>
-
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b">
-          <div className="h-full flex items-center justify-center">
-            <div className="flex items-center justify-center min-h-[60vh]">
-              <HighlightLoader />
-            </div>
-          </div>
-        </ScrollArea>
-
-        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
-          <Button disabled>
-            {isEditing ? "Atualizando..." : "Criando..."}
-          </Button>
-        </footer>
-      </motion.div>
+      <div className="new-role__loader">
+        <SectionLoader />
+      </div>
     );
   }
 
   return (
-    <ScrollArea className="h-full">
-      <motion.div
-        className="flex flex-col h-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
+    <motion.div
+      className="new-role"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <HeaderContainer className="new-role__header-container">
+        <div className="new-role__header">
+          <div className="new-role__header-main">
+            <button
+              type="button"
+              className="new-role__back-button"
+              onClick={() => navigate(rolesRoute)}
+            >
+              <ArrowLeft size={18} />
+            </button>
 
-        <div className="flex-none">
-          <HeaderContainer>
-            <Breadcrumbs items={breadcrumbItems} />
-
-            <div className="pl-1 flex items-start justify-between">
-              <Heading
-                title={isEditing ? "Editar papel" : "Novo papel"}
-                returnButton={true}
-                onReturnClick={() => {goToPreviousRoute(navigate);}}
-                customDescription={
-                  <span className="text-md">
-                    Sistema: <span
-                    onClick={navigateToSystemDetails}
-                    className="text-primary-600 cursor-pointer underline">{client?.clientId || ""}</span>
-                  </span>
-                }
-                code={ isEditing ? client?.id?.toString() || "" : null}
-              />
+            <div className="new-role__heading-content">
+              <div className="new-role__title-row">
+                <h2 className="new-role__title">{pageTitle}</h2>
+              </div>
+              <p className="new-role__description">{pageDescription}</p>
+              <p className="new-role__context">
+                {t("Sistema")}:
+                <button
+                  type="button"
+                  className="new-role__system-link"
+                  onClick={navigateToSystemDetails}
+                >
+                  {client?.name || "-"}
+                </button>
+              </p>
             </div>
-          </HeaderContainer>
-
-          <Separator />
+          </div>
         </div>
+      </HeaderContainer>
 
-        <ScrollArea className="flex-grow bg-gray-0 dark:bg-gray-900 border-b" viewportClassName="px-6">
-          <div className="py-6 max-w-content-container m-auto">
-            <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmit)} className="w-full mt-4 max-w-content-container m-auto">
-                <div className="space-y-4 pb-10">
-                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    <FormField
-                      control={methods.control}
+      <ScrollArea className="new-role__scroll-area" viewportClassName="new-role__scroll-viewport">
+        <div className="new-role__content-wrapper">
+          <form className="new-role__form" onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className="new-role__card">
+              <div className="new-role__card-content">
+                <div className="new-role__row">
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="name">
+                      {t("Nome")} <span className="new-role__required">*</span>
+                    </label>
+                    <Controller
                       name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="name">
-                            Nome <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Input
-                              id="name"
-                              className={`mt-2 ${methods.formState.errors.name ? "border-red-500" : ""}`}
-                              placeholder="Nome do papel"
-                              disabled={loading}
-                              {...field}
-                              value={(field.value || "").toString().toUpperCase()}
-                              onChange={(e) => {
-                                const upper = e.target.value.toString().toUpperCase();
-                                field.value = upper;
-                                field.onChange(upper);
-                              }}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.name && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {methods.formState.errors.name?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
                       control={methods.control}
-                      name="label"
                       render={({ field }) => (
-                        <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="label">
-                            Label <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Input
-                              id="label"
-                              className={`mt-2 ${methods.formState.errors.label ? "border-red-500" : ""}`}
-                              placeholder="Label do papel"
-                              disabled={loading}
-                              {...field}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.label && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {methods.formState.errors.label?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
+                        <input
+                          id="name"
+                          placeholder={t("Nome do papel")}
+                          disabled={loading}
+                          className={`app-input new-role__input${methods.formState.errors.name ? " new-role__input--error" : ""}`}
+                          value={(field.value || "").toUpperCase()}
+                          onChange={(event) => {
+                            const uppercaseName = event.target.value.toUpperCase();
+                            field.onChange(uppercaseName);
+                          }}
+                        />
                       )}
                     />
-
-                    <FormField
-                      control={methods.control}
-                      name="levelId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="levelId">
-                            Esfera
-                          </Label>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                              disabled={loading}
-                            >
-                              <SelectTrigger className={`mt-2 ${methods.formState.errors.levelId ? "border-red-500" : ""}`}>
-                                <SelectValue placeholder="Selecione uma esfera" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="empty">Nenhuma esfera</SelectItem>
-                                {levels && levels.length > 0 && levels.map((level) => (
-                                  <SelectItem key={level.id} value={level.id.toString()}>
-                                    {level.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          {methods.formState.errors.levelId && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {methods.formState.errors.levelId?.message?.toString()}
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
+                    {methods.formState.errors.name && (
+                      <p className="new-role__error">{t(methods.formState.errors.name.message?.toString() || "")}</p>
+                    )}
                   </div>
 
-                  <div>
-                    <FormField
-                      control={methods.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="description">
-                            Descrição <span className="text-primary-600">*</span>
-                          </Label>
-                          <FormControl>
-                            <Textarea
-                              id="description"
-                              placeholder="Descrição do papel"
-                              className={`resize-none mt-2 ${methods.formState.errors.description ? "border-red-500" : ""}`}
-                              disabled={loading}
-                              {...field}
-                              maxLength={200}
-                            />
-                          </FormControl>
-                          {methods.formState.errors.description && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {methods.formState.errors.description?.message?.toString()}
-                            </p>
-                          )}
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
-                            {field.value?.length || 0}/200 caracteres
-                          </div>
-                        </FormItem>
-                      )}
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="label">
+                      {t("Label")} <span className="new-role__required">*</span>
+                    </label>
+                    <input
+                      id="label"
+                      placeholder={t("Label do papel")}
+                      disabled={loading}
+                      className={`app-input new-role__input${methods.formState.errors.label ? " new-role__input--error" : ""}`}
+                      {...methods.register("label")}
                     />
+                    {methods.formState.errors.label && (
+                      <p className="new-role__error">{t(methods.formState.errors.label.message?.toString() || "")}</p>
+                    )}
                   </div>
 
-                  <div>
-                    <FormField
-                      control={methods.control}
+                  <div className="new-role__field">
+                    <label className="new-role__label" htmlFor="levelId">
+                      {t("Esfera")}
+                    </label>
+                    <div className="app-select-field">
+                      <select
+                        id="levelId"
+                        disabled={loading}
+                        className={`app-input app-select new-role__select${methods.formState.errors.levelId ? " new-role__select--error" : ""}`}
+                        {...methods.register("levelId")}
+                      >
+                        <option value="">{t("Nenhuma esfera")}</option>
+                        {levels.map((level) => (
+                          <option key={level.id} value={level.id.toString()}>
+                            {`${level.name} (${level.type})`}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="app-select-field__icon" />
+                    </div>
+                    {methods.formState.errors.levelId && (
+                      <p className="new-role__error">{t(methods.formState.errors.levelId.message?.toString() || "")}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="new-role__field">
+                  <label className="new-role__label" htmlFor="description">
+                    {t("Descrição")} <span className="new-role__required">*</span>
+                  </label>
+                  <textarea
+                    id="description"
+                    placeholder={t("Descrição do papel")}
+                    disabled={loading}
+                    maxLength={200}
+                    className={`app-textarea new-role__textarea${methods.formState.errors.description ? " new-role__textarea--error" : ""}`}
+                    {...methods.register("description")}
+                  />
+                  {methods.formState.errors.description ? (
+                    <p className="new-role__error">{t(methods.formState.errors.description.message?.toString() || "")}</p>
+                  ) : (
+                    <p className="new-role__counter">{descriptionValue.length}/200 {t("caracteres")}</p>
+                  )}
+                </div>
+
+                <div className="new-role__picker-row">
+                  <div className="new-role__field new-role__field--icon">
+                    <label className="new-role__label" htmlFor="icon-picker-trigger">
+                      {t("Ícone")} <span className="new-role__optional">{t("(opcional)")}</span>
+                    </label>
+                    <Controller
                       name="icon"
+                      control={methods.control}
                       render={({ field }) => (
-                        <FormItem>
-                          <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                            Ícone <span className="italic text-sm">(opcional)</span>
-                          </Label>
-                          <FormControl>
-                            <div className="mt-2">
-                              <IconPicker value={field.value} onChange={field.onChange} />
-                            </div>
-                          </FormControl>
-                        </FormItem>
+                        <IconPicker
+                          value={field.value}
+                          color={selectedRoleColor}
+                          onChange={field.onChange}
+                          disabled={loading}
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="new-role__field new-role__field--icon">
+                    <label className="new-role__label" htmlFor="color-picker-trigger">
+                      {t("Cor")} <span className="new-role__optional">{t("(opcional)")}</span>
+                    </label>
+                    <Controller
+                      name="color"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <ColorPicker
+                          value={field.value}
+                          options={roleColors}
+                          onChange={field.onChange}
+                          disabled={loading}
+                        />
                       )}
                     />
                   </div>
                 </div>
-              </form>
-            </FormProvider>
-          </div>
-        </ScrollArea>
 
-        <footer className="px-6 h-[88px] flex items-center justify-end bg-white dark:bg-gray-800 border-t">
-          <Button
-            type="submit"
-            onClick={methods.handleSubmit(onSubmit)}
-            disabled={loading}
-          >
-            {loading ? (isEditing ? "Atualizando..." : "Criando...") : (isEditing ? "Atualizar papel" : "Adicionar papel")}
-          </Button>
-        </footer>
-      </motion.div>
-    </ScrollArea>
+                <div className="new-role__policy-section">
+                  <h3 className="new-role__policy-title">Políticas de aprovação</h3>
+                  <p className="new-role__policy-description">
+                    Configure regras de aprovação para este papel.
+                  </p>
+
+                  <div className="new-role__policy-grid">
+                    <div className="new-role__policy-card new-role__policy-card--readonly">
+                      <div className="new-role__policy-card-header">
+                        <span className="new-role__policy-card-title">
+                          <Lock size={16} />
+                          Aprovação por hierarquia
+                        </span>
+                      </div>
+                      <span className="new-role__policy-card-status">
+                        Aprovador padrão
+                      </span>
+                      <span className="new-role__policy-card-status new-role__policy-card-status--strong">
+                        {hasParentApproval
+                          ? parentRoleLabel
+                          : "Fallback administrativo"}
+                      </span>
+                      <span className="new-role__toggle-description">
+                        A hierarquia de papéis define quem aprova quando a autoaprovação estiver desativada.
+                      </span>
+                      <Button
+                        type="button"
+                        variant="white"
+                        className="new-role__policy-card-action"
+                        onClick={navigateToRoleHierarchy}
+                      >
+                        Gerenciar hierarquia
+                      </Button>
+                    </div>
+
+                    <Controller
+                      name="lateralApprovalEnabled"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <div className="new-role__policy-card new-role__policy-card--lateral">
+                          <div className="new-role__policy-card-header">
+                            <div className="new-role__policy-card-header-text">
+                              <h4 className="new-role__policy-card-heading">
+                                <span className="new-role__policy-card-heading-title">
+                                  <Users size={14} />
+                                  <span className="new-role__policy-card-heading-label">
+                                    {t("Aprovação lateral")}
+                                  </span>
+                                </span>
+                                <span className="new-role__policy-card-heading-meta">
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button
+                                          type="button"
+                                          className="new-role__policy-help"
+                                          aria-label={t("Entender como funciona a aprovação lateral")}
+                                        >
+                                          <HelpCircle size={14} />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent className="new-role__policy-help-tooltip" side="top">
+                                        {lateralHelpText}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                  <span className="new-role__policy-card-heading-status">
+                                    {lateralApprovalEnabledValue ? t("Ativada") : t("Desativada")}
+                                  </span>
+                                </span>
+                              </h4>
+                              <span className="new-role__policy-card-caption">
+                                {t("Defina quais papéis irmãos podem visualizar e decidir solicitações deste papel.")}
+                              </span>
+                            </div>
+                            <div className="new-role__toggle-control">
+                              <Toggle
+                                checked={Boolean(field.value)}
+                                onCheckedChange={field.onChange}
+                                disabled={loading}
+                                aria-label={t("Ativar aprovação lateral para este papel")}
+                              />
+                            </div>
+                          </div>
+                          <span className="new-role__toggle-description">
+                            {t("Os papéis selecionados podem atuar sobre solicitações deste papel. Isso não substitui a aprovação por hierarquia.")}
+                          </span>
+
+                          {lateralApprovalEnabledValue && (
+                            <div className="new-role__lateral-config">
+                              {!hasParentApproval && (
+                                <span className="new-role__toggle-description">
+                                  {t("Este papel precisa ter um papel pai para listar papéis irmãos elegíveis.")}
+                                </span>
+                              )}
+
+                              {hasParentApproval && siblingRoles.length === 0 && (
+                                <span className="new-role__toggle-description">
+                                  {t("Não há papéis irmãos da mesma esfera que possam atuar sobre este papel.")}
+                                </span>
+                              )}
+
+                              {hasParentApproval && siblingRoles.length > 0 && (
+                                <div className="new-role__lateral-table-shell">
+                                  <div className="app-table app-table--no-filter app-table--no-footer new-role__lateral-table">
+                                    <div className="app-table__header">
+                                      <div className="app-table__row">
+                                        <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--role">
+                                          <span>{t("Papel")}</span>
+                                        </div>
+                                        <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                          <span>{t("Aprovar")}</span>
+                                        </div>
+                                        <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                          <span>{t("Rejeitar")}</span>
+                                        </div>
+                                        <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                          <span>{t("Revogar")}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div className="app-table__body">
+                                      {siblingRoles.map((siblingRole) => {
+                                        const target = getLateralTarget(siblingRole.id);
+                                        const isSelected = Boolean(target);
+                                        return (
+                                          <div key={siblingRole.id} className="app-table__row new-role__lateral-table-row">
+                                            <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--role">
+                                              <div className="new-role__lateral-role-cell">
+                                                <Toggle
+                                                  checked={isSelected}
+                                                  onCheckedChange={(checked) => handleToggleLateralTarget(siblingRole.id, checked)}
+                                                  disabled={loading}
+                                                  aria-label={t("Permitir que {{role}} atue em solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
+                                                />
+                                                <div className="new-role__lateral-role-text">
+                                                  <span className="new-role__lateral-item-title">
+                                                    {siblingRole.label || siblingRole.name}
+                                                  </span>
+                                                  <span className="new-role__lateral-item-code">
+                                                    {siblingRole.name}
+                                                  </span>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                              <div className="new-role__lateral-action-cell">
+                                                <input
+                                                  type="checkbox"
+                                                  className="new-role__lateral-checkbox"
+                                                  checked={Boolean(target?.canApprove)}
+                                                  onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canApprove", event.target.checked)}
+                                                  disabled={loading || !isSelected}
+                                                  aria-label={t("Permitir que {{role}} aprove solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
+                                                />
+                                              </div>
+                                            </div>
+                                            <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                              <div className="new-role__lateral-action-cell">
+                                                <input
+                                                  type="checkbox"
+                                                  className="new-role__lateral-checkbox"
+                                                  checked={Boolean(target?.canReject)}
+                                                  onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canReject", event.target.checked)}
+                                                  disabled={loading || !isSelected}
+                                                  aria-label={t("Permitir que {{role}} rejeite solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
+                                                />
+                                              </div>
+                                            </div>
+                                            <div className="app-table__cell app-table__cell--content new-role__lateral-table-cell new-role__lateral-table-cell--action">
+                                              <div className="new-role__lateral-action-cell">
+                                                <input
+                                                  type="checkbox"
+                                                  className="new-role__lateral-checkbox"
+                                                  checked={Boolean(target?.canRevoke)}
+                                                  onChange={(event) => handleToggleLateralPermission(siblingRole.id, "canRevoke", event.target.checked)}
+                                                  disabled={loading || !isSelected}
+                                                  aria-label={t("Permitir que {{role}} revogue solicitações deste papel", { role: siblingRole.label || siblingRole.name })}
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    />
+
+                    <Controller
+                      name="autoApprovalEnabled"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <div className="new-role__policy-card new-role__policy-card--auto">
+                          <div className="new-role__policy-card-header">
+                            <div className="new-role__policy-card-header-text">
+                              <h4 className="new-role__policy-card-heading">
+                                Autoaprovação
+                                <span className="new-role__policy-card-heading-status">
+                                  {autoApprovalEnabledValue ? "Ativada" : "Desativada"}
+                                </span>
+                              </h4>
+                            </div>
+                            <div className="new-role__toggle-control">
+                              <Toggle
+                                checked={Boolean(field.value)}
+                                onCheckedChange={field.onChange}
+                                disabled={loading}
+                                aria-label="Ativar autoaprovação para este papel"
+                              />
+                            </div>
+                          </div>
+                          <span className="new-role__toggle-description">
+                            Quando ativado, solicitações deste papel entram já aprovadas e essa política
+                            tem prioridade sobre a aprovação por hierarquia.
+                          </span>
+                        </div>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="new-role__actions">
+              <Button type="submit" className="new-role__action-button" disabled={loading}>
+                {loading ? (isEditing ? t("Atualizando...") : t("Criando...")) : (isEditing ? t("Atualizar papel") : t("Adicionar papel"))}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ScrollArea>
+    </motion.div>
   );
 }
-

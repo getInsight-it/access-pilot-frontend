@@ -1,53 +1,137 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@use "./theme/scss/components/button";
+@use "./theme/scss/components/badge";
+@use "./theme/scss/components/input";
+@use "./theme/scss/components/textarea";
+@use "./theme/scss/components/select";
+@use "./theme/scss/components/table";
+@use "./theme/scss/components/tabs";
+@use "./theme/scss/components/option-select";
+@use "./theme/scss/components/dialog";
+@use "./theme/scss/components/typography";
+@use "./theme/scss/components/iconography";
 
-@layer base {
-  * {
-    @apply border-border;
+@import url("https://cdngovbr-ds.estaleiro.serpro.gov.br/design-system/fonts/rawline/css/rawline.css");
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap");
+
+:root {
+  --vh: 1vh;
+  --mobile-vh: 1vh;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  color: var(--default-text-color);
+  font-family: var(--font-family);
+  font-size: var(--typography-body-md-font-size);
+  line-height: var(--typography-body-md-line-height);
+  background-color: var(--content-background-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family);
+}
+
+html {
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+.app-loader {
+  --highlight-loader-gap: var(--request-access-system-step-grid-gap);
+  --highlight-loader-track-width-lg: 28vw;
+  --highlight-loader-track-height-lg: calc(var(--mobile-vh, 1vh) * 9);
+  --highlight-loader-logo-width-lg: 76%;
+  --highlight-loader-logo-max-height-lg: 58%;
+
+  width: 100vw;
+  min-height: 100dvh;
+  min-height: calc(var(--mobile-vh, 1vh) * 100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--content-background-color);
+  color: var(--default-text-color);
+
+  @media (max-width: 1024px) {
+    --highlight-loader-track-width-lg: 36vw;
+    --highlight-loader-track-height-lg: calc(var(--mobile-vh, 1vh) * 8);
+    --highlight-loader-logo-width-lg: 76%;
+    --highlight-loader-logo-max-height-lg: 56%;
   }
 
-  :root {
-    --vh: 1vh;
-    --mobile-vh: 1vh;
-  }
-
-  body {
-    @apply bg-background;
-    color: var(--text-default-color);
-    font-family: var(--font-family);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    overflow: hidden;
-  }
-
-  html {
-    overflow: hidden;
-    scroll-behavior: smooth;
+  @media (max-width: 640px) {
+    --highlight-loader-track-width-lg: 64vw;
+    --highlight-loader-track-height-lg: calc(var(--mobile-vh, 1vh) * 7);
+    --highlight-loader-logo-width-lg: 76%;
+    --highlight-loader-logo-max-height-lg: 54%;
   }
 }
 
-@layer components {
-  .table-card {
-    @apply font-semibold rounded-lg border border-gray-400;
+.max-w-content-container {
+  width: 100%;
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+}
 
-    &__header {
-      @apply flex justify-end items-center font-bold p-2 border-b border-gray-200;
-    }
-    &__content {
-      @apply px-4;
-      &__row {
-        @apply flex items-start justify-between py-4 border-b border-gray-200;
-        &:last-child {
-          @apply border-none;
-        }
+.table-card {
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: var(--border-layout-default);
+  background-color: var(--background);
+
+  &__header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: 700;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--table-border-color);
+  }
+
+  &__content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    &__row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--table-border-color);
+
+      &:last-child {
+        border: none;
       }
     }
-    &__label {
-      @apply text-sm text-gray-600 mr-2 dark:text-gray-100 font-bold;
-    }
-    &__value {
-      @apply text-sm text-gray-800 dark:text-gray-100 font-normal;
-    }
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: var(--description-color);
+    margin-right: 0.5rem;
+    font-weight: 700;
+  }
+
+  &__value {
+    font-size: 0.875rem;
+    color: var(--default-text-color);
+    font-weight: 400;
   }
 }
 
@@ -57,18 +141,18 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f0f0f0;
+  background: var(--content-background-color);
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--table-border-color);
   border-radius: 6px;
-  border: 2px solid #f0f0f0;
+  border: 2px solid var(--content-background-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--description-color);
 }
 
 .no-visible-scrollbar {
@@ -117,6 +201,6 @@
 }
 
 .markdown a {
-  color: var(--color-blue-600);
+  color: var(--color-primary-700);
   text-decoration: underline;
 }

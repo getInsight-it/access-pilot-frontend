@@ -1,0 +1,13 @@
+.themed-logo {
+  display: inline-flex;
+  align-items: center;
+  max-width: var(--header-brand-min-width);
+
+  &__image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: calc(var(--header-logo-icon-box-size) + var(--header-logo-icon-box-radius));
+    object-fit: contain;
+  }
+}

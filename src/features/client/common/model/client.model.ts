@@ -16,3 +16,11 @@ export type ClientResponseInterface = {
   allowedItemsHierarchy: ItemTreeInterface[];
 
 }
+
+export type ClientSyncSummaryInterface = {
+  created: number;
+  updated: number;
+  ignored: number;
+  errors: number;
+  duration: number;
+};

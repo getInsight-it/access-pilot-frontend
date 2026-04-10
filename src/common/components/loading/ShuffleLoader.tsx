@@ -77,8 +77,8 @@ export const ShuffleLoader = () => {
   };
 
   return (
-    <div className="grid h-[40px] place-content-center p-5">
-      <div ref={scope} className="flex divide-x divide-neutral-950">
+    <div>
+      <div ref={scope}>
         {blocks.map((b) => {
           return (
             <motion.div
@@ -90,7 +90,6 @@ export const ShuffleLoader = () => {
                 width: BLOCK_SIZE,
                 height: BLOCK_SIZE,
               }}
-              className="bg-primary"
             />
           );
         })}

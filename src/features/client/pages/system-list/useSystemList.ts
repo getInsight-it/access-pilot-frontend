@@ -2,14 +2,16 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@ui/use-toast.ts";
 import { clientService } from "../../common/service/client-service.ts";
-import { ClientResponseInterface } from "../../common/model/client.model.ts";
+import { ClientResponseInterface, ClientSyncSummaryInterface } from "../../common/model/client.model.ts";
 import { ClientStatusEnum } from "../../common/enum/client-status.enum.ts";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { savePreviousRoute } from "@utils/NavigationStateManager.ts";
 import { PRIVATE_ROUTES } from "@constants/routes.ts";
 import { PAGINATION } from "@constants/pagination.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
 
 export const useSystemListData = () => {
+  const { t } = useI18n();
   const [clients, setClients] = useState<ClientResponseInterface[]>([]);
   const [totalSystems, setTotalSystems] = useState(0);
   const [pageSize] = useState(PAGINATION.DEFAULT_PAGE_SIZE);
@@ -28,14 +30,14 @@ export const useSystemListData = () => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao carregar sistemas",
+        title: t("Erro ao carregar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, setClients, setTotalSystems, setTotalPages]);
+  }, [setIsLoading, setClients, setTotalSystems, setTotalPages, t]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -66,30 +68,67 @@ export const useSystemListData = () => {
 };
 
 export const useSystemOperations = (
-  setClients: React.Dispatch<React.SetStateAction<ClientResponseInterface[]>>
+  setClients: React.Dispatch<React.SetStateAction<ClientResponseInterface[]>>,
+  refreshSystems: () => void
 ) => {
+  const { t } = useI18n();
+  const [syncAllLoading, setSyncAllLoading] = useState(false);
+
   const syncClient = useCallback(async (client: ClientResponseInterface) => {
     try {
       await clientService.syncClient(client.clientId);
       toast({
-        title: "Sistema sincronizado",
-        description: "O sistema foi sincronizado com sucesso"
+        title: t("Sistema sincronizado"),
+        description: t("O sistema foi sincronizado com sucesso")
       });
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao sincronizar sistema",
+        title: t("Erro ao sincronizar sistema"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, []);
+  }, [t]);
+
+  const syncAllClients = useCallback(async (syncRoles: boolean): Promise<ClientSyncSummaryInterface | null> => {
+    setSyncAllLoading(true);
+    try {
+      const summary = await clientService.syncAllClients(syncRoles);
+      const durationLabel = summary.duration >= 1000
+        ? `${(summary.duration / 1000).toFixed(1)}s`
+        : `${summary.duration}ms`;
+
+      toast({
+        title: t("Sincronização concluída"),
+        description: t("Criados {{created}} • Atualizados {{updated}} • Ignorados {{ignored}} • Erros {{errors}} • Duração {{duration}}", {
+          created: summary.created,
+          updated: summary.updated,
+          ignored: summary.ignored,
+          errors: summary.errors,
+          duration: durationLabel
+        })
+      });
+      refreshSystems();
+      return summary;
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao sincronizar sistemas"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+      return null;
+    } finally {
+      setSyncAllLoading(false);
+    }
+  }, [refreshSystems, t]);
 
   const handlePublicationChange = useCallback(async (client: ClientResponseInterface) => {
     if (!client.id) {
       toast({
-        title: "Erro",
-        description: "ID do sistema não encontrado",
+        title: t("Erro"),
+        description: t("ID do sistema não encontrado"),
         variant: "destructive"
       });
       return;
@@ -110,21 +149,23 @@ export const useSystemOperations = (
       );
 
       toast({
-        title: "Sistema atualizado",
-        description: `O sistema foi ${toastMessage} com sucesso!`
+        title: t("Sistema atualizado"),
+        description: t("O sistema foi {{status}} com sucesso!", { status: t(toastMessage) })
       });
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: `Erro ao ${toastMessage} sistema`,
+        title: t("Erro ao {{status}} sistema", { status: t(toastMessage) }),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [setClients]);
+  }, [setClients, t]);
 
   return {
     syncClient,
+    syncAllClients,
+    syncAllLoading,
     handlePublicationChange
   };
 };
@@ -158,4 +199,3 @@ export const usePopoverState = () => {
     handleMouseLeave
   };
 };
-

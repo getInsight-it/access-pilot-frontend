@@ -1,0 +1,36 @@
+.dashboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--system-detail-field-gap);
+  min-height: calc(var(--system-form-header-min-height) * 2);
+  padding: var(--system-detail-card-padding);
+  border: var(--system-detail-control-border-width) dashed var(--table-border-color);
+  border-radius: var(--system-detail-card-radius);
+  background-color: var(--request-access-step-panel-surface-color);
+  box-sizing: border-box;
+  text-align: center;
+
+  &__icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--system-detail-attachment-icon-box-size);
+    height: var(--system-detail-attachment-icon-box-size);
+    border-radius: var(--system-detail-attachment-icon-box-radius);
+    background-color: var(--background);
+    color: var(--description-color);
+  }
+
+  &__icon {
+    width: var(--system-detail-attachment-icon-size);
+    height: var(--system-detail-attachment-icon-size);
+  }
+
+  &__message {
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+}

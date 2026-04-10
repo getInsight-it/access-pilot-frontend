@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { useI18n } from "../../../../common/context/i18n/I18nContext.tsx";
 import { requestService } from "../../common/api/request-service.ts";
 import { RequestInterface } from "../../common/types/request.model.ts";
 import { toast } from "../../../../common/external/ui/use-toast.ts";
@@ -49,6 +50,7 @@ export const useSearchFilter = () => {
 };
 
 export const useRequestListData = (requestType: string) => {
+  const { t } = useI18n();
   const [requests, setRequests] = useState<RequestInterface[]>([]);
   const [totalRequests, setTotalRequests] = useState(0);
   const [currentPage, setCurrentPage] = useState(DEFAULT_PAGINATION.INITIAL_PAGE);
@@ -74,14 +76,14 @@ export const useRequestListData = (requestType: string) => {
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
       toast({
-        title: "Erro ao buscar solicitações",
+        title: t("Erro ao buscar solicitações"),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  }, [requestType]);
+  }, [requestType, t]);
 
   const handlePageChange = useCallback((page: number, filter?: string): void => {
     void fetchRequests({
@@ -126,16 +128,17 @@ export const useRequestNavigation = (requestType: string) => {
 };
 
 export const useRequestFormatting = () => {
+  const { language } = useI18n();
+
   const formatDate = useCallback((date: string): string => {
-    return new Date(date).toLocaleString("pt-BR", {
+    return new Date(date).toLocaleString(language, {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit"
     }).replace(",", " -");
-  }, []);
+  }, [language]);
 
   return { formatDate };
 };
-

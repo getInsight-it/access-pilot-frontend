@@ -1,0 +1,109 @@
+.dashboard-sidebar {
+  width: var(--size-layout-sidebar);
+  height: 100%;
+  border-right: var(--border-layout-default);
+  background-color: var(--sidebar-background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: width var(--motion-layout-default);
+  overflow: visible;
+
+  &--collapsed {
+    width: var(--size-layout-sidebar-collapsed);
+  }
+
+  &__header,
+  &__footer {
+    min-height: var(--size-layout-header);
+    border-bottom: var(--border-layout-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+  }
+
+  &__header {
+    border-top: none;
+  }
+
+  &__header-label {
+    text-align: center;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
+  }
+
+  &__nav-items {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sidebar-section-gap);
+  }
+
+  &__group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__section-title {
+    margin: 0;
+    padding-inline: var(--sidebar-section-title-padding-inline);
+    padding-block: var(--sidebar-section-title-padding-block);
+    color: var(--sidebar-section-title-color);
+    font-size: var(--sidebar-section-title-font-size);
+    font-weight: var(--sidebar-section-title-font-weight);
+    text-transform: uppercase;
+  }
+
+  &__group:empty {
+    display: none;
+  }
+
+  &__footer {
+    border-top: var(--border-layout-default);
+    border-bottom: none;
+  }
+
+  &__toggle-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  &__toggle-icon {
+    transition: transform var(--motion-layout-default);
+  }
+
+  &__toggle-icon--collapsed {
+    transform: rotate(180deg);
+  }
+
+  &__toggle-label {
+    text-align: center;
+  }
+
+  &--collapsed &__section-title {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-sidebar {
+    display: none;
+  }
+}

@@ -1,5 +1,7 @@
 FROM docker.io/library/nginx:latest
 
-WORKDIR /usr/share/nginx/html
+RUN rm /etc/nginx/conf.d/default.conf
 
-ADD ./dist /usr/share/nginx/html
+COPY env/nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY ./dist /usr/share/nginx/html

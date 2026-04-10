@@ -1,5 +1,20 @@
 export const BUILT_IN_SPHERES = ["FEDERAL", "ESTADUAL", "MUNICIPAL"] as const;
 
+export const BUILT_IN_SPHERE_COLORS: Record<(typeof BUILT_IN_SPHERES)[number], string> = {
+  FEDERAL: "#1E88E5",
+  ESTADUAL: "#43A047",
+  MUNICIPAL: "#FDD835"
+};
+
+export const getBuiltInSphereColor = (name?: string | null): string | null => {
+  if (!name) {
+    return null;
+  }
+
+  const normalizedName = name.toUpperCase() as (typeof BUILT_IN_SPHERES)[number];
+  return BUILT_IN_SPHERE_COLORS[normalizedName] || null;
+};
+
 export const LEVEL_PAGINATION = {
   DEFAULT_PAGE_SIZE: 10,
   LARGE_PAGE_SIZE: 100,
@@ -21,4 +36,3 @@ export const LEVEL_TYPE_DISPLAY_NAMES = {
   EXTERNAL: "Externa",
   BUILT_IN: "Interna",
 } as const;
-

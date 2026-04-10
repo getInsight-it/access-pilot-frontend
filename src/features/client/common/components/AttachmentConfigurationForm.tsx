@@ -1,47 +1,71 @@
-import React, { useRef, useState } from "react";
-import { Plus, Settings, Upload, X } from "lucide-react";
-import { Input } from "@ui/input.tsx";
-import { Button } from "@ui/button.tsx";
-import { Switch } from "@ui/switch.tsx";
-import { Textarea } from "@ui/textarea.tsx";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/accordion.tsx";
-import { Label } from "@ui/label.tsx";
-import { Card } from "@ui/card.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover.tsx";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Download, Plus, Upload, X } from "lucide-react";
+import { ColorPicker } from "@common/components/color-picker/ColorPicker.tsx";
+import { Toggle } from "@common/components/toggle/Toggle.tsx";
+import IconRenderer from "@common/components/icon/IconRenderer.tsx";
+import { IconPicker } from "@common/components/icon/IconPicker.tsx";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog.tsx";
 import { AttachmentConfigurationInterface, AVAILABLE_EXTENSIONS } from "../model/configuration.model.ts";
 import { clientService } from "../service/client-service.ts";
 import { HttpRequestError, HttpRequestResponse } from "@getinsight.it/getinsight-common";
 import { formatErrorMessages } from "@utils/error-utils.ts";
 import { toast } from "@ui/use-toast.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import { ColorUsage } from "@common/types/color-usage.model.ts";
+import "./AttachmentConfigurationForm.scss";
 
 export interface AttachmentConfigSectionProps {
+  currentClientId?: string;
   configurations: AttachmentConfigurationInterface[];
   onAddConfiguration: (config: AttachmentConfigurationInterface) => void;
   onDeleteConfiguration: (name: string) => void;
 }
 
 export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps> = ({
+  currentClientId,
   configurations,
   onAddConfiguration,
   onDeleteConfiguration
 }) => {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [icon, setIcon] = useState("");
+  const [color, setColor] = useState("");
   const [required, setRequired] = useState(false);
   const [selectedExtensions, setSelectedExtensions] = useState<string[]>([]);
+  const [availableColors, setAvailableColors] = useState<ColorUsage[]>([]);
   const [formError, setFormError] = useState<{
     name?: string;
     description?: string;
     extensions?: string;
   }>({});
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [duplicateNames, setDuplicateNames] = useState<string[]>([]);
   const [importedConfigs, setImportedConfigs] = useState<AttachmentConfigurationInterface[]>([]);
-  const [accordionValue, setAccordionValue] = useState<string>("add-config");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const activeConfigurations = configurations.filter(config => config.active !== false);
+
+  const fetchAvailableColors = useCallback(async () => {
+    try {
+      const colors = await clientService.getAttachmentConfigurationColors(currentClientId);
+      setAvailableColors(colors);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar cores das configurações de anexo"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [currentClientId, t]);
+
+  useEffect(() => {
+    void fetchAvailableColors();
+  }, [fetchAvailableColors]);
 
   const handleAddConfig = () => {
     const errors: {
@@ -62,9 +86,11 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
     setFormError({});
     onAddConfiguration({
-      key: '',
+      key: "",
       name,
       description,
+      icon,
+      color,
       required,
       allowedExtensions: selectedExtensions,
       active: true
@@ -72,6 +98,8 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
 
     setName("");
     setDescription("");
+    setIcon("");
+    setColor("");
     setRequired(false);
     setSelectedExtensions([]);
   };
@@ -112,7 +140,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     if(!file) return;
 
     if(file.type !== "text/csv" && !file.name.endsWith(".csv")) {
-      alert("Por favor, selecione apenas arquivos CSV.");
+      alert(t("Por favor, selecione apenas arquivos CSV."));
       if(fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -135,7 +163,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             setImportModalOpen(true);
           } else {
             importedConfigurations.forEach(config => {
-              onAddConfiguration({...config, active: true});
+              onAddConfiguration({ ...config, active: true });
             });
           }
         }
@@ -143,7 +171,7 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
       .catch((error: any) => {
         const errorMessage: string = formatErrorMessages(error.error);
         toast({
-          title: "Erro ao importar configurações",
+          title: t("Erro ao importar configurações"),
           description: errorMessage,
           variant: "destructive"
         });
@@ -157,12 +185,12 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
   };
 
   const confirmImport = () => {
-    duplicateNames.forEach(name => {
-      onDeleteConfiguration(name);
+    duplicateNames.forEach(entry => {
+      onDeleteConfiguration(entry);
     });
 
     importedConfigs.forEach(config => {
-      onAddConfiguration({...config, active: true});
+      onAddConfiguration({ ...config, active: true });
     });
 
     setImportModalOpen(false);
@@ -176,240 +204,292 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
     setImportedConfigs([]);
   };
 
-  const activeConfigurations = configurations.filter(config => config.active !== false);
+  const handleExportClick = async () => {
+    if(activeConfigurations.length === 0) {
+      toast({
+        title: t("Nenhuma configuração para exportar"),
+        description: t("Adicione pelo menos uma configuração antes de exportar."),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setExporting(true);
+      const response = await clientService.exportAttachmentConfigurationsPreview(activeConfigurations);
+      const url = window.URL.createObjectURL(response.data as Blob);
+      const link = document.createElement("a");
+      const fileName = response.headers["content-disposition"]?.match(/filename="?(.+?)"?$/)?.[1]
+        || "attachments_configurations.csv";
+
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao exportar configurações"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
-    <div className="col-span-1 md:col-span-2">
-      <h3 className="text-lg font-semibold mb-4">Anexos</h3>
+    <div className="attachment-configuration-form">
+      <h3 className="attachment-configuration-form__title">{t("Anexos")}</h3>
 
-      <div className="mb-6">
-        <Accordion type="single" collapsible className="w-full" value={accordionValue} onValueChange={setAccordionValue}>
-          <AccordionItem value="add-config" className="border !border-outline-button-border rounded-lg">
-            <AccordionTrigger className="px-4 py-3 hover:no-underline">
-              <div className="flex flex-row items-center gap-2">
-                <Plus className="h-4 w-4 text-primary-600" />
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Adicionar Novo Tipo de Anexo
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="config-name">
-                      Nome <span className="text-primary-600">*</span>
-                    </Label>
-                    <Input
-                      id="config-name"
-                      value={name}
-                      onChange={handleNameChange}
-                      placeholder="Nome da configuração"
-                      className={`mt-2 ${formError.name ? "border-red-500" : ""}`}
-                    />
-                    {formError.name && (
-                      <p className="text-sm text-red-500 mt-1">{formError.name}</p>
-                    )}
-                  </div>
+      <div className="attachment-configuration-form__surface">
+        <div className="attachment-configuration-form__form-content">
+          <div className="attachment-configuration-form__top-row">
+            <div className="attachment-configuration-form__field">
+              <label className="attachment-configuration-form__label" htmlFor="config-name">
+                {t("Nome")} <span className="attachment-configuration-form__required">*</span>
+              </label>
+              <input
+                id="config-name"
+                value={name}
+                onChange={handleNameChange}
+                placeholder={t("Nome da configuração")}
+                className={`app-input attachment-configuration-form__input${formError.name ? " attachment-configuration-form__input--error" : ""}`}
+              />
+              {formError.name && (
+                <p className="attachment-configuration-form__error">{t(formError.name)}</p>
+              )}
+            </div>
 
-                  <div>
-                    <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                      Tornar anexo obrigatório
-                    </Label>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Switch
-                        checked={required}
-                        onCheckedChange={setRequired}
-                      />
-                      <span className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                        {required ? "Obrigatório" : "Opcional"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300" htmlFor="config-description">
-                    Descrição <span className="text-primary-600">*</span>
-                  </Label>
-                  <Textarea
-                    id="config-description"
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    placeholder="Descrição da configuração"
-                    className={`mt-2 ${formError.description ? "border-red-500" : ""}`}
+            <div className="attachment-configuration-form__picker-row">
+              <div className="attachment-configuration-form__field">
+                <span className="attachment-configuration-form__label">{t("Ícone")}</span>
+                <div className="attachment-configuration-form__icon-row">
+                  <IconPicker
+                    value={icon}
+                    color={color}
+                    onChange={setIcon}
+                    disabled={loading}
+                    triggerLabel={t("Selecionar ícone")}
                   />
-                  {formError.description && (
-                    <p className="text-sm text-red-500 mt-1">{formError.description}</p>
-                  )}
                 </div>
-
-                <div>
-                  <Label className="text-sm font-normal text-gray-700 dark:text-gray-300">
-                    Extensões Permitidas <span className="text-primary-600">*</span>
-                  </Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {AVAILABLE_EXTENSIONS.map((extension) => (
-                      <div
-                        key={extension}
-                        onClick={() => toggleExtension(extension)}
-                        className={`px-3 py-1 rounded-md cursor-pointer transition-colors text-sm ${
-                          selectedExtensions.includes(extension)
-                            ? "bg-primary-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        }`}
-                      >
-                        {extension}
-                      </div>
-                    ))}
-                  </div>
-                  {formError.extensions && (
-                    <p className="text-sm text-red-500 mt-1">{formError.extensions}</p>
-                  )}
-                </div>
-
-                <Button onClick={handleAddConfig} type="button" className="mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Configuração
-                </Button>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
 
-        <div className="mt-4">
-          <Button
-            variant="outline"
-            onClick={handleImportClick}
-            disabled={loading}
-            className="flex items-center gap-2 min-h-[44px]"
-          >
-            <Upload className="h-4 w-4 text-primary-600" />
-            <span>Importar Configuração</span>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".csv"
-              className="hidden"
-              disabled={loading}
+              <div className="attachment-configuration-form__field">
+                <span className="attachment-configuration-form__label">{t("Cor")}</span>
+                <div className="attachment-configuration-form__icon-row">
+                  <ColorPicker
+                    value={color}
+                    options={availableColors}
+                    onChange={setColor}
+                    disabled={loading}
+                    triggerLabel={t("Selecionar cor")}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="attachment-configuration-form__field">
+            <label className="attachment-configuration-form__label" htmlFor="config-description">
+              {t("Descrição")} <span className="attachment-configuration-form__required">*</span>
+            </label>
+            <textarea
+              id="config-description"
+              value={description}
+              onChange={handleDescriptionChange}
+              placeholder={t("Descrição da configuração")}
+              className={`app-textarea attachment-configuration-form__textarea${formError.description ? " attachment-configuration-form__textarea--error" : ""}`}
             />
-          </Button>
+            {formError.description && (
+              <p className="attachment-configuration-form__error">{t(formError.description)}</p>
+            )}
+          </div>
+
+          <div className="attachment-configuration-form__field">
+            <span className="attachment-configuration-form__label">
+              {t("Extensões Permitidas")} <span className="attachment-configuration-form__required">*</span>
+            </span>
+            <div className="attachment-configuration-form__extensions-picker">
+              {AVAILABLE_EXTENSIONS.map((extension) => (
+                <button
+                  type="button"
+                  key={extension}
+                  onClick={() => toggleExtension(extension)}
+                  className={`attachment-configuration-form__extension-option${selectedExtensions.includes(extension) ? " attachment-configuration-form__extension-option--selected" : ""}`}
+                >
+                  {extension}
+                </button>
+              ))}
+            </div>
+            {formError.extensions && (
+              <p className="attachment-configuration-form__error">{t(formError.extensions)}</p>
+            )}
+          </div>
+
+          <div className="attachment-configuration-form__toggle-row">
+            <div className="attachment-configuration-form__toggle-control">
+              <Toggle
+                checked={required}
+                onCheckedChange={setRequired}
+              />
+              <span className="attachment-configuration-form__label">{t("Tornar anexo obrigatório")}</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="ui-button ui-button--primary attachment-configuration-form__action-button attachment-configuration-form__action-button--primary attachment-configuration-form__action-button--add"
+            onClick={handleAddConfig}
+          >
+            <span className="attachment-configuration-form__button-content">
+              <Plus className="attachment-configuration-form__button-icon" />
+              <span>{t("Adicionar Configuração")}</span>
+            </span>
+          </button>
         </div>
       </div>
 
-      <div>
+      <div className="attachment-configuration-form__import-export-actions">
+        <button
+          type="button"
+          className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+          onClick={handleImportClick}
+          disabled={loading}
+        >
+          <span className="attachment-configuration-form__button-content">
+            <Upload className="attachment-configuration-form__button-icon" />
+            <span>{t("Importar Configuração")}</span>
+          </span>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".csv"
+            className="attachment-configuration-form__file-input"
+            disabled={loading}
+          />
+        </button>
+
+        <button
+          type="button"
+          className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+          onClick={handleExportClick}
+          disabled={exporting}
+        >
+          <span className="attachment-configuration-form__button-content">
+            <Download className="attachment-configuration-form__button-icon" />
+            <span>{t("Exportar Configuração")}</span>
+          </span>
+        </button>
+      </div>
+
+      <div className="attachment-configuration-form__list-section">
         {activeConfigurations.length === 0 ? (
-          <div className="p-8 text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-            <p className="text-gray-500 dark:text-gray-400">Nenhum tipo de anexo adicionado</p>
+          <div className="attachment-configuration-form__empty-state">
+            <p className="attachment-configuration-form__empty-state-text">{t("Nenhum tipo de anexo adicionado")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="attachment-configuration-form__list-grid">
             {activeConfigurations.map((config) => (
-              <Card
+              <div
                 key={config.name}
-                className="relative p-4 border !border-outline-button-border bg-white dark:bg-gray-800"
+                className="attachment-configuration-form__card"
               >
-                <button
-                  onClick={() => onDeleteConfiguration(config.name)}
-                  className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors"
-                  aria-label="Remover configuração"
-                  type="button"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+                <div className="attachment-configuration-form__card-header">
+                  <span className="attachment-configuration-form__card-icon-box">
+                    <IconRenderer
+                      iconName={config.icon}
+                      className="attachment-configuration-form__card-icon"
+                      color={config.color}
+                      showPlaceholder={true}
+                    />
+                  </span>
+                  <button
+                    onClick={() => onDeleteConfiguration(config.name)}
+                    aria-label={t("Remover configuração")}
+                    type="button"
+                    className="attachment-configuration-form__delete-button"
+                  >
+                    <X className="attachment-configuration-form__delete-icon" />
+                  </button>
+                </div>
 
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <div className="cursor-pointer flex flex-col items-center text-center">
-                      <Settings className="h-6 w-6 text-gray-600 dark:text-gray-400 mb-2" />
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
-                        {truncateText(config.name, 50)}
+                <p className="attachment-configuration-form__card-name">{truncateText(config.name, 50)}</p>
+
+                <div className="attachment-configuration-form__card-badge-wrap">
+                  {config.required ? (
+                    <span className="app-badge app-badge--header">{t("Obrigatório")}</span>
+                  ) : (
+                    <span className="attachment-configuration-form__optional-badge">{t("Opcional")}</span>
+                  )}
+                </div>
+
+                <div className="attachment-configuration-form__card-extensions-section">
+                  <span className="attachment-configuration-form__card-extensions-label">{t("Extensões permitidas:")}</span>
+                  <div className="attachment-configuration-form__card-extensions-list">
+                    {config.allowedExtensions.map((extension) => (
+                      <span key={`${config.name}-${extension}`} className="attachment-configuration-form__extension-badge">
+                        {extension}
                       </span>
-                      <span
-                        className={`text-xs ${config.required ? "text-primary-600" : "text-gray-500"} mt-1`}>
-                        {config.required ? "Obrigatório" : "Opcional"}
-                      </span>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Nome:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.name}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.description}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Obrigatório:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.required ? "Sim" : "Não"}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Extensões:</span>
-                        <p className="text-sm text-gray-900 dark:text-gray-100">{config.allowedExtensions.join(", ")}</p>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </Card>
+                    ))}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
       </div>
 
       <Dialog open={importModalOpen} onOpenChange={setImportModalOpen}>
-        <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Confirmação de Importação
+            <DialogTitle>
+              {t("Confirmação de Importação")}
             </DialogTitle>
           </DialogHeader>
 
-          <div className="py-3 sm:py-4 space-y-3 sm:space-y-4">
-            <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Configurações duplicadas
-              </h4>
-              <div className="border border-amber-200 dark:border-amber-800 rounded-md p-2 sm:p-3 bg-amber-50 dark:bg-amber-950/30">
-                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  As seguintes configurações já existem e serão sobrescritas:
+          <div className="attachment-configuration-form__dialog-content">
+            <div className="attachment-configuration-form__dialog-section">
+              <h4 className="attachment-configuration-form__dialog-title">{t("Configurações duplicadas")}</h4>
+              <div className="attachment-configuration-form__dialog-body">
+                <p className="attachment-configuration-form__dialog-description">
+                  {t("As seguintes configurações já existem e serão sobrescritas:")}
                 </p>
-                <ul className="list-disc pl-4 sm:pl-5 space-y-1">
-                  {duplicateNames.map(name => (
-                    <li key={name} className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 break-words">
-                      <strong>{name}</strong>
+                <ul className="attachment-configuration-form__dialog-list">
+                  {duplicateNames.map(entry => (
+                    <li key={entry}>
+                      <strong>{entry}</strong>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div>
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Configurações a serem importadas
-              </h4>
-              <div className="max-h-[200px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-2 sm:p-3 bg-gray-50 dark:bg-gray-800">
-                <ul className="space-y-2 sm:space-y-3">
+            <div className="attachment-configuration-form__dialog-section">
+              <h4 className="attachment-configuration-form__dialog-title">{t("Configurações a serem importadas")}</h4>
+              <div className="attachment-configuration-form__dialog-body">
+                <ul className="attachment-configuration-form__dialog-list">
                   {importedConfigs.map(config => (
-                    <li key={config.name} className="pb-2 sm:pb-3 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
-                      <div className="space-y-1">
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Nome:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.name}</span>
+                    <li key={config.name}>
+                      <div className="attachment-configuration-form__dialog-item">
+                        <div>
+                          <span>{t("Nome")}:</span>{" "}
+                          <span>{config.name}</span>
                         </div>
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Descrição:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.description}</span>
+                        <div>
+                          <span>{t("Descrição")}:</span>{" "}
+                          <span>{config.description}</span>
                         </div>
-                        <div className="text-xs sm:text-sm">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Obrigatório:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.required ? "Sim" : "Não"}</span>
+                        <div>
+                          <span>{t("Obrigatório:")}</span>{" "}
+                          <span>{config.required ? t("Sim") : t("Não")}</span>
                         </div>
-                        <div className="text-xs sm:text-sm break-words">
-                          <span className="font-medium text-gray-700 dark:text-gray-300">Extensões:</span>{" "}
-                          <span className="text-gray-900 dark:text-gray-100">{config.allowedExtensions.join(", ")}</span>
+                        <div>
+                          <span>{t("Extensões:")}</span>{" "}
+                          <span>{config.allowedExtensions.join(", ")}</span>
                         </div>
                       </div>
                     </li>
@@ -419,13 +499,21 @@ export const AttachmentConfigurationForm: React.FC<AttachmentConfigSectionProps>
             </div>
           </div>
 
-          <DialogFooter className="mt-3 sm:mt-4">
-            <Button variant="outline" onClick={cancelImport} className="w-full sm:w-auto">
-              Cancelar
-            </Button>
-            <Button onClick={confirmImport} className="w-full sm:w-auto">
-              Confirmar Importação
-            </Button>
+          <DialogFooter>
+            <button
+              type="button"
+              className="ui-button ui-button--white attachment-configuration-form__action-button attachment-configuration-form__action-button--white"
+              onClick={cancelImport}
+            >
+              {t("Cancelar")}
+            </button>
+            <button
+              type="button"
+              className="ui-button ui-button--primary attachment-configuration-form__action-button attachment-configuration-form__action-button--primary"
+              onClick={confirmImport}
+            >
+              {t("Confirmar Importação")}
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

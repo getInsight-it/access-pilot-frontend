@@ -1,32 +1,29 @@
-import { ScrollArea } from "../../../../common/external/ui/scroll-area.tsx";
-import { HeaderContainer, Heading } from "../../../../common/components/heading.tsx";
+import { ScrollArea } from "@common/external/ui/scroll-area.tsx";
 import { motion } from "framer-motion";
-import { cn } from "../../../../config/lib/utils.ts";
-import { Check } from "lucide-react";
-import { AutoHeight } from "../../../../common/components/AutoHeigth.tsx";
-import { CardContent, CardFooter, CardHeader, CardTitle } from "../../../../common/external/ui/card.tsx";
-import { Button } from "../../../../common/external/ui/button.tsx";
 import { ErrorFeedback } from "./partials/ErrorFeedbackComponent.tsx";
 import { SuccessFeedback } from "./partials/SuccessFeedbackForm.tsx";
-import { StepLoader } from "../../../../common/components/loading/StepLoader.tsx";
+import { StepLoader } from "@common/components/loading/StepLoader.tsx";
 import { ConfirmRequestDialog } from "./partials/ConfirmRequestDialog.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState, useCallback } from "react";
-import { RoleResponseInterface } from "../../../role/common/types/role.model.ts";
-import { ClientResponseInterface } from "../../../client/common/model/client.model.ts";
-import useAuthStore from "../../../../store/authStore.ts";
-import { useToast } from "../../../../common/external/ui/use-toast.ts";
-import { clientService } from "../../../client/common/service/client-service.ts";
-import { roleService } from "../../../role/common/service/role-service.ts";
-import useWindowSize from "../../../../common/hooks/use-window-size.ts";
-import { ClientStep } from "./partials/ClientSelectionStep.tsx";
-import { RoleStep } from "./partials/RoleSelectionStep.tsx";
-import AttachmentStep, { FileAttachment } from "./partials/AttachmentStep.tsx";
-import { DetailsStep } from "./partials/DetailsStep.tsx";
+import { ReactNode, useEffect, useState, useCallback } from "react";
+import { RoleResponseInterface } from "@features/role/common/types/role.model.ts";
+import { ClientResponseInterface } from "@features/client/common/model/client.model.ts";
+import useAuthStore from "@store/authStore.ts";
+import { useI18n } from "@common/context/i18n/I18nContext.tsx";
+import { useToast } from "@common/external/ui/use-toast.ts";
+import { clientService } from "@features/client/common/service/client-service.ts";
+import { roleService } from "@features/role/common/service/role-service.ts";
 import { requestService } from "../../common/api/request-service.ts";
-import { Separator } from "../../../../common/external/ui/separator.tsx";
-import { formatErrorMessages } from "../../../../common/utils/error-utils.ts";
-import { PRIVATE_ROUTES } from "../../../../common/constants/routes.ts";
+import { formatErrorMessages } from "@common/utils/error-utils.ts";
+import { PRIVATE_ROUTES } from "@common/constants/routes.ts";
+import { RequestStepper } from "../../common/components/request-stepper/RequestStepper.tsx";
+import { RequestStepLayout } from "../../common/components/request-step-layout/RequestStepLayout.tsx";
+import { RequestSystemStep } from "../../common/components/request-system-step/RequestSystemStep.tsx";
+import { RequestRoleStep } from "../../common/components/request-role-step/RequestRoleStep.tsx";
+import { RequestJustificationStep } from "../../common/components/request-justification-step/RequestJustificationStep.tsx";
+import { RequestReviewStep } from "../../common/components/request-review-step/RequestReviewStep.tsx";
+import { FileAttachment } from "../../common/types/access-request.model.ts";
+import "./RequestAccess.scss";
 
 export interface BasicFormFieldInterface {
   [key: string]: {
@@ -38,8 +35,18 @@ export interface BasicFormFieldInterface {
 
 export type RequestFormFieldType = "clientId" | "roleId" | "codeItem" | "externalCode" | "reason" | "attachments";
 
+interface RequestStepConfig {
+  id: number;
+  number: number;
+  title: string;
+  description: string;
+  panelTitle: string;
+  content: ReactNode;
+}
+
 export default function RequestAccess() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(1);
   const [roles, setRoles] = useState<RoleResponseInterface[]>([]);
   const [clients, setClients] = useState<ClientResponseInterface[]>([]);
@@ -47,13 +54,6 @@ export default function RequestAccess() {
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [stepsState, setStepsState] = useState<Record<number, "pending" | "completed" | "error">>({
-    1: "pending",
-    2: "pending",
-    3: "pending",
-    4: "pending"
-  });
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { toast } = useToast();
   const location = useLocation();
@@ -89,25 +89,25 @@ export default function RequestAccess() {
     let isValid = true;
 
     if(currentStep === 1 && !customForm["clientId"].value) {
-      setBasicFormFieldValue({ field: "clientId", error: "Selecione um sistema." });
+      setBasicFormFieldValue({ field: "clientId", error: t("Selecione um sistema.") });
       isValid = false;
     }
 
     if(currentStep === 2) {
       if(!customForm["roleId"].value) {
-        setBasicFormFieldValue({ field: "roleId", error: "Selecione um papel." });
+        setBasicFormFieldValue({ field: "roleId", error: t("Selecione um papel.") });
         isValid = false;
       }
       const role = roles.find(role => role.id.toString() === customForm["roleId"].value);
       if((customForm["roleId"].value && role!.level) && !customForm["codeItem"].value) {
-        setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+        setBasicFormFieldValue({ field: "codeItem", error: t("Preencha a hierarquia de esferas.") });
         isValid = false;
       }
     }
 
     if(currentStep === 3) {
       if(!customForm["reason"].value) {
-        setBasicFormFieldValue({ field: "reason", error: "Preencha o motivo da solicitação." });
+        setBasicFormFieldValue({ field: "reason", error: t("Preencha o motivo da solicitação.") });
         isValid = false;
       }
 
@@ -123,24 +123,18 @@ export default function RequestAccess() {
         setBasicFormFieldValue({
           field: "attachments",
           value: customForm["attachments"].value,
-          error: "Anexe todos os arquivos necessários."
+          error: t("Anexe todos os arquivos necessários.")
         });
         isValid = false;
       }
     }
 
     if(isValid) {
-      const currentStepAux = currentStep;
       setCurrentStep(currentStep + 1);
-      setStepsState((prevState) => {
-        const newState = { ...prevState };
-        newState[currentStepAux] = "completed";
-        return newState;
-      });
     } else {
       toast({
-        title: "Campos obrigatórios",
-        description: `Por favor, preencha todos os campos obrigatórios antes de prosseguir.`,
+        title: t("Campos obrigatórios"),
+        description: t("Por favor, preencha todos os campos obrigatórios antes de prosseguir."),
         variant: "destructive"
       });
     }
@@ -154,27 +148,47 @@ export default function RequestAccess() {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao carregar sistemas",
+        title: t("Erro ao carregar sistemas"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
 
   const getRolesByClientId = useCallback(async (clientId: string) => {
     try {
-      const fetchedRoles = await roleService.getRolesByClientId(clientId, true);
+      const fetchedRoles = await roleService.getRolesByClientId(clientId);
       setRoles(fetchedRoles);
     } catch (error: any) {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao carregar papéis",
+        title: t("Erro ao carregar papéis"),
         description: errorMessage,
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [t, toast]);
+
+  const handleSelectRole = useCallback(async (role: RoleResponseInterface) => {
+    setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
+    setBasicFormFieldValue({ field: "codeItem", value: "", error: null });
+    setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
+
+    try {
+      const roleWithDetails = await roleService.getRoleById(role.id.toString());
+      setRoles((prevRoles) => prevRoles.map((item) => (
+        item.id === roleWithDetails.id ? roleWithDetails : item
+      )));
+    } catch (error: any) {
+      const errorMessage: string = formatErrorMessages(error);
+      toast({
+        title: t("Erro ao carregar detalhes do papel"),
+        description: errorMessage,
+        variant: "destructive"
+      });
+    }
+  }, [setBasicFormFieldValue, t, toast]);
 
   const handlerSelectedClient = useCallback((client: ClientResponseInterface, autoAdvance: boolean = false) => {
     setBasicFormFieldValue({ field: "clientId", value: client.clientId, error: null });
@@ -185,19 +199,17 @@ export default function RequestAccess() {
     setBasicFormFieldValue({ field: "attachments", value: [], error: null });
 
     if (autoAdvance) {
-      setStepsState({ 1: "completed", 2: "pending", 3: "pending", 4: "pending" });
       setCurrentStep(2);
     } else {
-      setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
       setCurrentStep(1);
     }
 
     getRolesByClientId(client.clientId);
-  }, [setBasicFormFieldValue, setStepsState, setCurrentStep, getRolesByClientId]);
+  }, [setBasicFormFieldValue, setCurrentStep, getRolesByClientId]);
 
   const init = useCallback(() => {
     if(isAuthenticated) {
-      getClients();
+      void getClients();
       const client = location.state;
       if(client) {
         handlerSelectedClient(client, true);
@@ -209,64 +221,59 @@ export default function RequestAccess() {
     init();
   }, [init]);
 
-  const { width } = useWindowSize();
-  const isLargeScreen = width >= 1024;
-
-  const steps = [
+  const steps: RequestStepConfig[] = [
     {
       id: 1,
-      title: "Para qual sistema você quer acesso?",
+      title: t("Sistema"),
       number: 1,
-      description: "Escolha o sistema que você quer se conectar.",
+      description: t("Para qual sistema você precisa de acesso"),
+      panelTitle: t("Escolha o sistema que você precisa de acesso:"),
       content: (
-        <ClientStep
-          form={customForm}
+        <RequestSystemStep
           clients={clients}
-          selectedClient={customForm["clientId"].value}
-          handlerSelectedClient={handlerSelectedClient}
-          isLargeScreen={isLargeScreen}
-          isFormSubmitted={isFormSubmitted}
+          selectedClientId={customForm["clientId"].value || null}
+          errorMessage={customForm["clientId"].error}
+          onSelectClient={(client) => handlerSelectedClient(client)}
         />
       )
     },
     {
       id: 2,
-      title: "Qual será o seu papel?",
+      title: t("Papel"),
       number: 2,
-      description: "Escolha como você irá usar o sistema.",
+      description: t("Qual seria seu papel?"),
+      panelTitle: t("Escolha o tipo de acesso que você precisa:"),
       content: (
-        <RoleStep
-          form={customForm}
+        <RequestRoleStep
           roles={roles}
-          handlerSelectedRole={(role) => {
-            setBasicFormFieldValue({ field: "roleId", value: role.id.toString(), error: null });
-          }}
-          handlerSelectedSphere={(codeItem, externalCode) => {
+          selectedRoleId={customForm["roleId"].value || null}
+          roleError={customForm["roleId"].error}
+          currentCodeItem={customForm["codeItem"].value}
+          codeItemError={!!customForm["codeItem"].error}
+          onSelectRole={handleSelectRole}
+          onSelectSphere={(codeItem, externalCode) => {
             if(codeItem) {
               setBasicFormFieldValue({ field: "codeItem", value: codeItem, error: null });
               setBasicFormFieldValue({ field: "externalCode", value: externalCode || "", error: null });
             } else {
-              setBasicFormFieldValue({ field: "codeItem", error: "Preencha a hierarquia de esferas." });
+              setBasicFormFieldValue({ field: "codeItem", error: t("Preencha a hierarquia de esferas.") });
               setBasicFormFieldValue({ field: "externalCode", value: "", error: null });
             }
           }}
-          handlerClearSphereHierarchyError={() => {
+          onClearSphereError={() => {
             clearError("codeItem");
           }}
-          isLargeScreen={isLargeScreen}
-          isFormSubmitted={isFormSubmitted}
-          selectedRole={null}
-          selectedClientId={customForm["clientId"].value}
         />
       )
     },
     {
       id: 3,
-      title: "Por que você precisa desse acesso?",
+      title: t("Justificativa"),
       number: 3,
-      description: "Nos ajude a entender o porquê deste acesso.",
+      description: t("Por que você precisa desse acesso"),
+      panelTitle: t("Descreva a justificativa para este acesso:"),
       content: (
-        <AttachmentStep
+        <RequestJustificationStep
           onAttach={(attachments: FileAttachment[]) => {
             setBasicFormFieldValue({ field: "attachments", value: attachments, error: null });
           }}
@@ -280,17 +287,17 @@ export default function RequestAccess() {
             attachments: !!customForm["attachments"].error,
             reason: !!customForm["reason"].error
           }}
-        >
-        </AttachmentStep>
+        />
       )
     },
     {
       id: 4,
-      title: "Confira os detalhes antes de enviar!",
+      title: t("Revisão"),
       number: 4,
-      description: "Certifique-se de que está tudo certo antes de enviar.",
+      description: t("Confira os detalhes antes de enviar."),
+      panelTitle: t("Revise as informações antes de enviar:"),
       content: (
-        <DetailsStep
+        <RequestReviewStep
           selectedClient={customForm["clientId"].value}
           selectedRole={customForm["roleId"].value}
           reason={customForm["reason"].value}
@@ -302,7 +309,6 @@ export default function RequestAccess() {
   ];
 
   const handleFinalSubmit = async () => {
-    setIsFormSubmitted(true);
     setIsConfirmModalOpen(true);
   };
 
@@ -316,7 +322,7 @@ export default function RequestAccess() {
       const request = {
         clientId: customForm["clientId"].value,
         roleId: Number(customForm["roleId"].value),
-        ...(customForm["externalCode"].value ? 
+        ...(customForm["externalCode"].value ?
           { codeItem: customForm["externalCode"].value } :
           customForm["codeItem"].value && { codeItem: customForm["codeItem"].value }
         ),
@@ -332,14 +338,14 @@ export default function RequestAccess() {
 
       await requestService.createRequest(payloadFormData);
 
-      toast({ title: "Solicitação enviada com sucesso!", description: "Sua solicitação foi processada." });
+      toast({ title: t("Solicitação enviada com sucesso!"), description: t("Sua solicitação foi processada.") });
       navigate(PRIVATE_ROUTES.MY_ACCESS_REQUESTS);
       setShowContent(false);
     } catch (error: unknown) {
       const errorMessage: string = formatErrorMessages(error);
 
       toast({
-        title: "Erro ao processar solicitação de acesso",
+        title: t("Erro ao processar solicitação de acesso"),
         description: errorMessage,
         variant: "destructive"
       });
@@ -351,8 +357,6 @@ export default function RequestAccess() {
   const handleNewRequest = () => {
     setCustomForm(initialFormState);
     setCurrentStep(1);
-    setStepsState({ 1: "pending", 2: "pending", 3: "pending", 4: "pending" });
-    setIsFormSubmitted(false);
   };
 
   const handleLoaderClose = () => {
@@ -370,158 +374,74 @@ export default function RequestAccess() {
     }
   };
 
+  const selectedClient = clients.find((client) => client.clientId === customForm["clientId"].value) || null;
+
   return (
     <motion.div
-      className="flex flex-col h-full"
+      className="request-access"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}>
-
-      <div className="flex-none">
-        <HeaderContainer>
-          <div className="pl-1 flex items-start justify-between">
-            <Heading
-              title="Solicitar acesso"
-              description="Preencha o formulário e solicite o acesso a um sistema."
-            />
-          </div>
-        </HeaderContainer>
-      </div>
-
-      <ScrollArea className="flex-grow">
-        <div className="py-4 sm:py-6 max-w-content-container m-auto">
-          <div className="px-4 sm:px-6">
-            {showContent && !hasError && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
-                }}
-                className="grid grid-cols-1 lg:grid-cols-[340px,1fr] xl:grid-cols-[400px,1fr] gap-4 lg:gap-6">
-
-                <div className="relative py-4 sm:py-8 rounded-xl space-y-8 sm:space-y-10 md:space-y-12">
-                  {steps.map((step, index) => (
-                    <motion.div
-                      key={step.id}
-                      className="flex items-start relative"
-                      initial={false}
-                      animate={{
-                        opacity: step.id <= currentStep ? 1 : 0.5,
-                        transition: { duration: 0.3, ease: "easeInOut" }
-                      }}>
-                      <motion.div
-                        className={cn(
-                          "w-8 h-8 sm:w-9 sm:h-9 bg-gray-500 rounded-full flex items-center justify-center z-10 flex-shrink-0",
-                          step.id === currentStep
-                            ? "hover:bg-primary-500 bg-primary-500 text-gray-100"
-                            : stepsState[step.id] === "completed"
-                              ? "hover:bg-primary-500 bg-primary-500 text-white"
-                              : "bg-gray-400 text-gray-100"
-                        )}
-                        initial={{ opacity: 0, x: -500 }}
-                        animate={{
-                          scale: step.id === currentStep ? 1.1 : 1,
-                          transition: { duration: 0.3, ease: "easeOut", delay: 0.3 },
-                          opacity: 1, x: 0
-                        }}>
-                        <motion.span
-                          key={step.number}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}>
-                          {stepsState[step.id] === "completed" ? (
-                            <Check className="w-5 h-5 sm:w-6 sm:h-6" />
-                          ) : (
-                            <span
-                              className={stepsState[step.id] === "completed" ? "text-white" : ""}>{step.number}</span>
-                          )}
-                        </motion.span>
-                      </motion.div>
-
-                      <div className="ml-3 sm:ml-4 flex-1 min-w-0">
-                        <h3
-                          className={`text-sm sm:text-md lg:text-lg mt-1 ${step.id === currentStep ? "font-bold" : ""}`}>
-                          {step.title}
-                        </h3>
-                      </div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: -100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 2.8 }}
-                        className="absolute left-4 top-8 w-[2px] h-[calc(70%+24px)] last:h-[0px] bg-gray-300">
-                      </motion.div>
-
-                      {index < steps.length - 1 && (
-                        <motion.div
-                          className="absolute left-4 top-8 w-[2px] h-[calc(100%+24px)]"
-                          initial={{ backgroundColor: "var(--color-primary-500)", y: -500 }}
-                          animate={{
-                            backgroundColor: stepsState[step.id] === "completed" ? "var(--color-primary-500)" : "var(--color-gray-200)",
-                            opacity: step.id < currentStep ? 1 : 0,
-                            y: 0
-                          }}
-                          transition={{ duration: 0.3, delay: 0.5 }}
-                        />
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-
-                <AutoHeight>
-                  <CardHeader className="p-4 sm:p-6">
-                    <CardTitle className="text-base sm:text-lg">
-                      Passo {currentStep}/{steps.length}
-                    </CardTitle>
-                    <Separator />
-                  </CardHeader>
-
-                  <CardContent className="p-4 sm:p-6">{steps[currentStep - 1].content}</CardContent>
-
-                  <CardFooter className="flex flex-col sm:flex-row gap-3 sm:gap-x-4 mt-3 sm:mt-4 p-4 sm:p-6">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="bg-secondary text-primary w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10"
-                      onClick={handleBack}
-                      disabled={currentStep === 1}>
-                      Voltar
-                    </Button>
-                    {currentStep < steps.length
-                      ? (<Button onClick={goToNextStep} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Próximo</Button>)
-                      : (<Button onClick={handleFinalSubmit} className="w-full sm:w-auto text-sm sm:text-base h-9 sm:h-10">Enviar</Button>)
-                    }
-                  </CardFooter>
-                </AutoHeight>
-              </motion.div>
-            )}
-
-            {hasError && (
-              <ErrorFeedback words={["Tente novamente.", "Vamos tentar de novo!"]} onRetry={handleNewRequest} />)}
-            {!showContent && !hasError && (
-              <SuccessFeedback
-                words={["com sucesso.", "rapidamente."]}
-                selectedClient={customForm["clientId"].value}
-                selectedRole={roles.find(role => role.id.toString() === customForm["roleId"].value)!.name}
-                description={customForm["description"].value}
-                attachments={customForm["attachments"].value}
-                onRequestNew={handleNewRequest}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: 0.3, ease: "easeOut" } }}
+    >
+      <ScrollArea className="request-access__scroll-area" viewportClassName="request-access__scroll-viewport">
+        <div className="request-access__content">
+          {showContent && !hasError && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.3, delay: 0.3, ease: "easeInOut" }
+              }}
+            >
+              <RequestStepper
+                currentStep={currentStep}
+                steps={steps.map((step) => ({
+                  id: step.id,
+                  number: step.number,
+                  title: step.title,
+                  description: step.description
+                }))}
               />
-            )}
 
-            <StepLoader loading={loading} onClose={handleLoaderClose} />
+              <div className="request-access__step-content">
+                <RequestStepLayout
+                  title={steps[currentStep - 1].panelTitle}
+                  onBack={handleBack}
+                  onNext={currentStep < steps.length ? goToNextStep : handleFinalSubmit}
+                  backButtonDisabled={currentStep === 1}
+                  nextButtonLabel={currentStep < steps.length ? t("Próximo") : t("Enviar")}
+                  showNextIcon={currentStep < steps.length}
+                >
+                  {steps[currentStep - 1].content}
+                </RequestStepLayout>
+              </div>
+            </motion.div>
+          )}
 
-            <ConfirmRequestDialog
-              isOpen={isConfirmModalOpen}
-              onOpenChange={setIsConfirmModalOpen}
-              reason={customForm["reason"].value}
-              clientId={customForm["clientId"].value}
-              roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
+          {hasError && (
+            <ErrorFeedback words={["Tente novamente.", "Vamos tentar de novo!"]} onRetry={handleNewRequest} />)}
+
+          {!showContent && !hasError && (
+            <SuccessFeedback
+              words={["com sucesso.", "rapidamente."]}
+              selectedClient={customForm["clientId"].value}
+              selectedRole={roles.find(role => role.id.toString() === customForm["roleId"].value)?.name || ""}
+              description={customForm["reason"].value}
               attachments={customForm["attachments"].value}
-              onConfirm={handleSubmitForm}
+              onRequestNew={handleNewRequest}
             />
-          </div>
+          )}
+
+          <StepLoader loading={loading} onClose={handleLoaderClose} />
+
+          <ConfirmRequestDialog
+            isOpen={isConfirmModalOpen}
+            onOpenChange={setIsConfirmModalOpen}
+            reason={customForm["reason"].value}
+            clientName={selectedClient?.name || customForm["clientId"].value}
+            roleLabel={roles.find(role => role.id.toString() === customForm["roleId"].value)?.label || ""}
+            attachments={customForm["attachments"].value}
+            onConfirm={handleSubmitForm}
+          />
         </div>
       </ScrollArea>
     </motion.div>

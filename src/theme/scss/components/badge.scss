@@ -1,0 +1,43 @@
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--badge-icon-gap);
+  height: var(--badge-height);
+  padding-inline: var(--badge-padding-inline);
+  border-radius: var(--badge-radius);
+  border: 1px solid transparent;
+  font-size: var(--badge-font-size);
+  font-weight: var(--default-text-font-weight);
+  box-sizing: border-box;
+  white-space: nowrap;
+
+  &__icon {
+    width: var(--badge-icon-size);
+    height: var(--badge-icon-size);
+    stroke-width: 0;
+    fill: currentColor;
+  }
+
+  &--status-published {
+    gap: 0;
+    inline-size: var(--badge-status-min-width);
+    color: var(--badge-status-published-text-color);
+    background-color: var(--badge-status-published-background-color);
+    border-color: var(--badge-status-published-border-color);
+  }
+
+  &--status-unpublished {
+    gap: 0;
+    inline-size: var(--badge-status-min-width);
+    color: var(--badge-status-unpublished-text-color);
+    background-color: var(--badge-status-unpublished-background-color);
+    border-color: var(--badge-status-unpublished-border-color);
+  }
+
+  &--header {
+    color: var(--badge-header-text-color);
+    background-color: var(--badge-header-background-color);
+    border-color: var(--badge-header-border-color);
+  }
+}

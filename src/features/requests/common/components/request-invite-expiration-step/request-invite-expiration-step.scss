@@ -1,0 +1,233 @@
+.request-invite-expiration-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--request-access-justification-gap);
+  padding: var(--request-access-system-step-padding);
+  box-sizing: border-box;
+
+  &__intro,
+  &__summary,
+  &__popover {
+    padding: var(--request-access-justification-card-padding);
+    border: var(--request-access-justification-card-border);
+    border-radius: var(--request-access-justification-card-radius);
+    background-color: var(--request-access-step-panel-surface-color);
+    box-sizing: border-box;
+  }
+
+  &__intro {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--request-access-system-step-card-main-gap);
+  }
+
+  &__icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-system-step-icon-box-size);
+    height: var(--request-access-system-step-icon-box-size);
+    border-radius: var(--request-access-system-step-icon-box-radius);
+    background-color: var(--request-access-system-step-icon-box-background-active);
+    color: var(--request-access-system-step-icon-color-active);
+    flex: 0 0 auto;
+  }
+
+  &__icon,
+  &__trigger-icon,
+  &__calendar-nav-icon {
+    width: var(--request-access-system-step-icon-size);
+    height: var(--request-access-system-step-icon-size);
+  }
+
+  &__intro-content,
+  &__field,
+  &__summary,
+  &__calendar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-justification-title-font-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__description,
+  &__summary-label {
+    margin: 0;
+    color: var(--description-color);
+    font-size: var(--description-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__label {
+    color: var(--title-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__time-label {
+    color: var(--description-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__required,
+  &__error {
+    color: var(--system-form-required-color);
+  }
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--input-height);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__trigger--error {
+    border-color: var(--system-form-required-color);
+  }
+
+  &__trigger--selected {
+    border-color: var(--request-access-system-step-card-border-active);
+  }
+
+  &__trigger-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--system-form-field-gap);
+    min-width: 0;
+  }
+
+  &__trigger-label {
+    color: var(--default-text-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__time-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--system-form-field-gap);
+  }
+
+  &__time-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__time-input {
+    min-height: var(--input-height);
+  }
+
+  &__popover {
+    width: min(100%, calc(var(--request-access-justification-card-min-width) + var(--request-access-system-step-card-main-gap)));
+  }
+
+  &__calendar-header {
+    display: grid;
+    grid-template-columns: var(--request-access-system-step-icon-box-size) 1fr var(--request-access-system-step-icon-box-size);
+    align-items: center;
+    gap: var(--system-form-field-gap);
+  }
+
+  &__calendar-title,
+  &__summary-value {
+    margin: 0;
+    color: var(--title-color);
+    font-size: var(--request-access-system-step-name-font-size);
+    font-weight: var(--request-access-system-step-name-font-weight);
+    text-align: center;
+  }
+
+  &__summary-value {
+    text-align: left;
+  }
+
+  &__calendar-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--request-access-system-step-icon-box-size);
+    height: var(--request-access-system-step-icon-box-size);
+    border: var(--request-access-system-step-card-border-inactive);
+    border-radius: var(--request-access-step-panel-action-radius);
+    background-color: var(--background);
+    color: var(--title-color);
+    cursor: pointer;
+    transition: transform var(--option-select-item-transition), border-color var(--option-select-item-transition);
+  }
+
+  &__calendar-nav:hover {
+    border: var(--request-access-system-step-card-border-active);
+    transform: var(--option-select-item-active-transform);
+  }
+
+  &__calendar-weekdays,
+  &__calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--pagination-gap);
+  }
+
+  &__calendar-weekday {
+    display: inline-flex;
+    justify-content: center;
+    color: var(--description-color);
+    font-size: var(--request-access-justification-dropzone-hint-size);
+    font-weight: var(--request-access-stepper-title-font-weight);
+  }
+
+  &__calendar-day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--request-access-system-step-icon-box-size);
+    border: var(--request-access-system-step-card-border-inactive);
+    border-radius: var(--request-access-step-panel-action-radius);
+    background-color: var(--background);
+    color: var(--title-color);
+    font-size: var(--default-button-font-size);
+    font-weight: var(--default-text-font-weight);
+    cursor: pointer;
+    transition: transform var(--option-select-item-transition), border-color var(--option-select-item-transition), background-color var(--option-select-item-transition), color var(--option-select-item-transition);
+  }
+
+  &__calendar-day:hover:not(:disabled) {
+    border: var(--request-access-system-step-card-border-active);
+    transform: var(--option-select-item-active-transform);
+  }
+
+  &__calendar-day--selected {
+    border: var(--request-access-system-step-card-border-active);
+    background-color: var(--request-access-system-step-card-background-active);
+    color: var(--request-access-system-step-name-color-active);
+  }
+
+  &__calendar-day--today {
+    background-color: var(--request-access-step-panel-surface-color);
+  }
+
+  &__calendar-day--outside {
+    color: var(--description-color);
+    opacity: var(--option-select-item-disabled-opacity);
+  }
+
+  &__calendar-day:disabled {
+    cursor: not-allowed;
+    opacity: var(--option-select-item-disabled-opacity);
+  }
+
+  &__error {
+    margin: 0;
+    font-size: var(--system-form-error-font-size);
+    font-weight: var(--default-text-font-weight);
+  }
+}

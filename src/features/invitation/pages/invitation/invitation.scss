@@ -1,0 +1,220 @@
+.invitation {
+  min-height: var(--invitation-page-min-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--invitation-page-padding-inline);
+  padding-top: 0;
+  padding-bottom: var(--invitation-page-padding-block);
+  background-color: var(--invitation-page-background-color);
+
+  &__card {
+    width: 100%;
+    max-width: var(--invitation-card-max-width);
+    border: var(--invitation-card-border);
+    border-radius: var(--invitation-card-radius);
+    background-color: var(--invitation-card-background-color);
+    box-shadow: var(--invitation-card-shadow);
+    overflow: hidden;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--invitation-body-gap);
+    padding-inline: var(--invitation-body-padding-inline);
+    padding-top: var(--invitation-body-padding-top);
+    padding-bottom: var(--invitation-body-padding-bottom);
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__brand-logo {
+    display: block;
+    height: var(--invitation-brand-icon-box-size);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  &__hero {
+    width: 100%;
+    height: var(--invitation-hero-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__hero-artwork {
+    width: auto;
+    max-width: 100%;
+    max-height: 116%;
+    object-fit: contain;
+  }
+
+  &__content {
+    width: 100%;
+    max-width: var(--invitation-description-max-width);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--invitation-content-gap);
+    text-align: center;
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--invitation-title-color);
+    font-size: var(--invitation-title-font-size);
+    font-weight: var(--invitation-title-font-weight);
+    line-height: var(--invitation-title-line-height);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--invitation-description-color);
+    font-size: var(--invitation-description-font-size);
+    line-height: var(--invitation-description-line-height);
+  }
+
+  &__details {
+    width: 100%;
+    margin: 0;
+    padding: var(--invitation-details-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--invitation-details-gap);
+    border: var(--invitation-details-border);
+    border-radius: var(--invitation-details-radius);
+    background-color: var(--invitation-details-background-color);
+    box-sizing: border-box;
+  }
+
+  &__detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--invitation-details-gap);
+    padding-bottom: var(--invitation-details-gap);
+    border-bottom: 1px solid var(--invitation-detail-divider-color);
+  }
+
+  &__detail-row--last {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  &__detail-label {
+    margin: 0;
+    color: var(--invitation-detail-label-color);
+    font-size: var(--invitation-detail-label-font-size);
+    font-weight: var(--invitation-detail-label-font-weight);
+  }
+
+  &__detail-value {
+    margin: 0;
+    color: var(--invitation-detail-value-color);
+    font-size: var(--invitation-detail-value-font-size);
+    font-weight: var(--invitation-detail-value-font-weight);
+    text-align: right;
+  }
+
+  &__detail-value--with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--invitation-detail-value-gap);
+  }
+
+  &__detail-icon {
+    width: var(--invitation-detail-icon-size);
+    height: var(--invitation-detail-icon-size);
+    flex-shrink: 0;
+  }
+
+  &__actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--invitation-actions-gap);
+  }
+
+  &__actions-hint {
+    margin: 0;
+    color: var(--invitation-footer-color);
+    font-size: var(--invitation-footer-font-size);
+    line-height: var(--invitation-footer-line-height);
+    text-align: center;
+  }
+
+  &__primary-action {
+    width: 100%;
+    min-height: var(--invitation-primary-action-min-height);
+    border-radius: var(--invitation-primary-action-radius);
+    font-size: var(--invitation-primary-action-font-size);
+    font-weight: var(--invitation-primary-action-font-weight);
+  }
+
+  &__footer {
+    padding-inline: var(--invitation-footer-padding-inline);
+    padding-block: var(--invitation-footer-padding-block);
+    border-top: var(--invitation-footer-border-top);
+    background-color: var(--invitation-footer-background-color);
+    color: var(--invitation-footer-color);
+    font-size: var(--invitation-footer-font-size);
+    line-height: var(--invitation-footer-line-height);
+    text-align: center;
+  }
+
+  &__message {
+    width: 100%;
+    margin: 0;
+    padding: var(--invitation-details-padding);
+    border: var(--invitation-details-border);
+    border-radius: var(--invitation-details-radius);
+    background-color: var(--invitation-details-background-color);
+    box-sizing: border-box;
+  }
+
+  &__message-title {
+    margin: 0 0 var(--invitation-detail-value-gap);
+    color: var(--invitation-title-color);
+    font-size: var(--invitation-detail-value-font-size);
+    font-weight: var(--invitation-title-font-weight);
+  }
+
+  &__message-description {
+    margin: 0;
+    color: var(--invitation-description-color);
+    font-size: var(--invitation-description-font-size);
+    line-height: var(--invitation-description-line-height);
+  }
+
+  &__message--error {
+    background-color: var(--invitation-footer-background-color);
+  }
+
+  @media (max-width: var(--invitation-breakpoint-stack)) {
+    &__body {
+      padding-inline: var(--invitation-page-padding-inline);
+    }
+
+    &__footer {
+      padding-inline: var(--invitation-page-padding-inline);
+    }
+
+    &__detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__detail-value {
+      text-align: left;
+    }
+  }
+}

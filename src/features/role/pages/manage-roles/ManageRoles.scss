@@ -1,0 +1,126 @@
+.manage-roles {
+  max-width: var(--main-content-default-max-width);
+  margin-inline: auto;
+
+  &__header-container {
+    display: flex;
+    flex-direction: column;
+    padding-inline: 28px;
+    padding-top: 36px;
+    padding-bottom: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  &__meta-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--table-border-color);
+    border-radius: 12px;
+    background: var(--background);
+    cursor: pointer;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  &__meta-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--meta-label-color);
+    flex: 0 0 auto;
+  }
+
+  &__meta-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__meta-label {
+    color: var(--meta-label-color);
+    font-size: 14px;
+    font-weight: var(--default-text-font-weight);
+  }
+
+  &__meta-value {
+    color: var(--meta-value-color);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: flex-start;
+  }
+
+  &__primary-action {
+    gap: 12px;
+  }
+
+  &__separator {
+    width: 100%;
+  }
+
+  &__scroll-viewport {
+    padding-inline: 28px;
+  }
+
+  &__content {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  &__tabs {
+    width: 100%;
+  }
+
+  &__tabs-content {
+    margin-top: 16px;
+  }
+
+  &__hierarchy {
+    width: 100%;
+  }
+
+  &__hierarchy-title {
+    margin: 0 0 12px;
+    color: var(--default-text-color);
+    font-size: var(--title-size);
+    font-weight: 700;
+  }
+
+  @media (max-width: 1024px) {
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__meta {
+      width: 100%;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+  }
+}

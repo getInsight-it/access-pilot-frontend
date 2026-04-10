@@ -7,12 +7,13 @@ import {
   DialogHeader,
   DialogTitle
 } from "../../../../../common/external/ui/dialog.tsx";
-import { FileAttachment } from "./AttachmentStep.tsx";
+import { FileAttachment } from "../components/request-justification-step/RequestJustificationStep.tsx";
+import { useI18n } from "../../../../../common/context/i18n/I18nContext.tsx";
 
 interface ConfirmRequestDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  clientId: string,
+  clientName: string,
   roleLabel: string,
   reason: string,
   attachments: FileAttachment[];
@@ -22,35 +23,37 @@ interface ConfirmRequestDialogProps {
 export const ConfirmRequestDialog = ({
   isOpen,
   onOpenChange,
-  clientId,
+  clientName,
   roleLabel,
   reason,
   attachments,
   onConfirm
 }: ConfirmRequestDialogProps) => {
+  const { t } = useI18n();
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Confirmar envio</DialogTitle>
-          <DialogDescription className="text-sm">
-            Você tem certeza que deseja enviar esta solicitação?
+          <DialogTitle>{t("Confirmar envio")}</DialogTitle>
+          <DialogDescription>
+            {t("Você tem certeza que deseja enviar esta solicitação?")}
           </DialogDescription>
         </DialogHeader>
-        <div className="py-3 sm:py-4">
-          <h4 className="text-sm sm:text-base font-medium mb-2 sm:mb-3">Resumo da solicitação:</h4>
-          <ul className="space-y-2 text-sm">
-            <li className="break-words"><strong>Sistema:</strong> {clientId}</li>
-            <li className="break-words">
-              <strong>Papel:</strong> {roleLabel}
+        <div>
+          <h4>{t("Resumo da solicitação:")}</h4>
+          <ul>
+            <li><strong>{t("Sistema")}:</strong> {clientName}</li>
+            <li>
+              <strong>{t("Papel")}:</strong> {roleLabel}
             </li>
-            <li className="break-words"><strong>Motivo:</strong> {reason}</li>
+            <li><strong>{t("Motivo")}:</strong> {reason}</li>
             {attachments.length > 0 && (
               <li>
-                <strong>Anexos:</strong>
-                <ul className="mt-1 space-y-1">
+                <strong>{t("Anexos")}:</strong>
+                <ul>
                   {attachments.map((file, index) => (
-                    <li key={index} className="break-words ml-2">- {file.fileName}</li>
+                    <li key={index}>- {file.fileName}</li>
                   ))}
                 </ul>
               </li>
@@ -58,10 +61,10 @@ export const ConfirmRequestDialog = ({
           </ul>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
-            Cancelar
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t("Cancelar")}
           </Button>
-          <Button onClick={onConfirm} className="w-full sm:w-auto">Confirmar</Button>
+          <Button onClick={onConfirm}>{t("Confirmar")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

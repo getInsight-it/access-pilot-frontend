@@ -2,16 +2,17 @@ import { AppRouter } from "./App.router.tsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "./store/authStore.ts";
-import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES } from "./common/constants/routes.ts";
+import { AUTH_ROUTES, ERROR_ROUTES, PRIVATE_ROUTES, PUBLIC_ROUTES } from "./common/constants/routes.ts";
 import { AuthInitEvent } from "@getinsight.it/getinsight-common";
 import { ThemeProvider } from "./theme/theme-provider.tsx";
 import { registerHttpAuthorization } from "./config/http/http.ts";
 import { motion } from "framer-motion";
 import "./App.scss";
-import HighlightLoader from "./common/components/loading/HighLightLoader.tsx";
+import HelmetPulseLoader from "./common/components/loading/helmet-pulse-loader/HelmetPulseLoader.tsx";
 import { authService } from "./features/auth/common/AuthService.ts";
 import { userService } from "./common/service/user-service.ts";
 import { initMobileViewportFix } from "./common/utils/mobileViewportFix.ts";
+import { STORAGE_KEYS } from "./common/constants/storage.ts";
 
 function App() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function App() {
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const isLoaderPreviewRoute = window.location.pathname === PUBLIC_ROUTES.LOADER_PREVIEW;
 
   const getUserInfo = async () => {
     const fetchedUserData = await userService.getUser();
@@ -49,12 +51,24 @@ function App() {
         setUserRoles(authService.getRoles());
 
         const currentRoute = window.location.pathname;
+        const invitationUuid = sessionStorage.getItem(STORAGE_KEYS.INVITATION_UUID);
+        const shouldRedirectToInviteRequest = Boolean(
+          invitationUuid &&
+          (
+            currentRoute === "/" ||
+            currentRoute === AUTH_ROUTES.LOGIN ||
+            currentRoute === PUBLIC_ROUTES.INVITATION
+          )
+        );
 
-        if(currentRoute === PRIVATE_ROUTES.DASHBOARD || currentRoute === "/" || currentRoute === AUTH_ROUTES.LOGIN) {
+        if(shouldRedirectToInviteRequest) {
+          navigate(PRIVATE_ROUTES.MY_INVITE_REQUEST);
           return;
         }
 
-        navigate(PRIVATE_ROUTES.DASHBOARD);
+        if(currentRoute === "/" || currentRoute === AUTH_ROUTES.LOGIN) {
+          navigate(PRIVATE_ROUTES.DASHBOARD);
+        }
       }
     });
 
@@ -82,26 +96,29 @@ function App() {
   };
 
   useEffect(() => {
-    init();
     initMobileViewportFix();
-  }, []);
 
-  if(!isInitialized) {
-    return (
-      <motion.div
-        className="flex items-center justify-center h-dvh md:h-screen bg-gray-100"
-        style={{ height: "calc(var(--mobile-vh, 1vh) * 100)" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}>
-        <HighlightLoader />
-      </motion.div>
-    );
-  }
+    if(isLoaderPreviewRoute) {
+      setIsInitialized(true);
+      return;
+    }
+
+    init();
+  }, [isLoaderPreviewRoute]);
 
   return (
     <ThemeProvider>
-      <AppRouter />
+      {!isInitialized ? (
+        <motion.div
+          className="app-loader"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}>
+          <HelmetPulseLoader size="lg" />
+        </motion.div>
+      ) : (
+        <AppRouter />
+      )}
     </ThemeProvider>
   );
 }
