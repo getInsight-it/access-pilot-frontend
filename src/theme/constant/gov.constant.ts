@@ -97,7 +97,7 @@ export const GOV_THEME: Theme = {
     "highlight-loader-message-color": "var(--description-color)",
 
     // layout
-    "main-content-default-max-width": "1260px",
+    "main-content-default-max-width": "100%",
     "title-color": "#1c1d1f",
     "title-size": "var(--typography-heading-lg-font-size)",
     "description-color": "#565c65",

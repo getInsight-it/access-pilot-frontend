@@ -84,7 +84,7 @@ html {
 
 .max-w-content-container {
   width: 100%;
-  max-width: 1600px;
+  max-width: var(--main-content-default-max-width);
   margin-inline: auto;
 }
 
